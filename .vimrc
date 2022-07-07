@@ -1,4 +1,5 @@
 syntax on 
+
 set exrc 
 set nu
 set relativenumber 
@@ -94,4 +95,5 @@ map Ь M
 map Б <
 map Ю >
 map Ё /|
+
 
