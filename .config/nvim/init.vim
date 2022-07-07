@@ -32,7 +32,7 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 " Use K to show documentation in preview window.
-nnoremap <silent> K :call ShowDocumentation()<CR>
+nnoremap <silent> <leader>q :call ShowDocumentation()<CR>
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
@@ -65,9 +65,12 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 
 " Functions
 function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  elseif CocAction('hasProvider', 'hover')
     call CocActionAsync('doHover')
   else
     call feedkeys('K', 'in')
   endif
 endfunction
+
