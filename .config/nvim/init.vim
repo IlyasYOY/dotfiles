@@ -3,6 +3,13 @@ source ~/.vimrc
 
 " Plugins
 call plug#begin('~/.vim/plugged')
+" I Installed:
+" coc-go
+" coc-pyright
+" coc-rust-analyzer
+" coc-json
+" coc-java 
+" coc-java-debug
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
