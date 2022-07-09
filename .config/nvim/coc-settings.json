@@ -1,0 +1,3 @@
+{
+    "java.jdt.ls.vmargs": "-javaagent:/Users/iilinykh/.config/coc/extensions/coc-java-data/lombok.jar"
+}
