@@ -23,11 +23,16 @@ if __name__ == '__main__':
     print('WARNING! ⚠️  This scripts load lombok for coc-java, so be sure you have already '
           + 'install plugins & coc-java itself')
     download_lombok()
-    print(f'Backing up 🛡 your coc config at {coc_settings_json_path} to {coc_settings_json_bak_path}')
-    coc_config_file_content = coc_settings_json_path.read_text()
-    coc_settings_json_bak_path.write_text(coc_config_file_content)
-    print(f'Your file was backed up!😎')
-    coc_config_dict = json.loads(coc_config_file_content)
+    coc_config_dict = {}
+    if not coc_settings_json_path.exists():
+        print(f"You dont have any config setup, creating one at {coc_settings_json_path}")
+        coc_settings_json_path.touch()
+    else:
+        print(f'Backing up 🛡 your coc config at {coc_settings_json_path} to {coc_settings_json_bak_path}')
+        coc_config_file_content = coc_settings_json_path.read_text()
+        coc_settings_json_bak_path.write_text(coc_config_file_content)
+        print(f'Your file was backed up!😎')
+        coc_config_dict = json.loads(coc_config_file_content)
     print(f'Parsed 🔎 coc config file to dict: {coc_config_dict}')
     coc_config_dict['java.jdt.ls.vmargs'] = f'-javaagent:{lombok_download_path}'
     print(f'New config ✨ file content:\n{coc_config_dict}')
