@@ -1,3 +1,4 @@
 {
-    "java.jdt.ls.vmargs": "-javaagent:/Users/iilinykh/.config/coc/extensions/coc-java-data/lombok.jar"
+    "java.jdt.ls.vmargs": "-javaagent:/Users/iilinykh/.config/coc/extensions/coc-java-data/lombok.jar",
+    "diagnostic.checkCurrentLine": true
 }
