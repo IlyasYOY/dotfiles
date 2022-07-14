@@ -18,13 +18,12 @@ set incsearch
 set scrolloff=8
 set signcolumn=yes 
 set colorcolumn=80
-" set showcmd
+set showcmd
 
 nnoremap <SPACE> <Nop>
-" set mapleader=" "
 let mapleader = "\<Space>" 
 
-map <leader>s :Sex!<CR>
+" map <leader>s :Sex!<CR>
 
 " Remap help key.
 imap jj <Esc>

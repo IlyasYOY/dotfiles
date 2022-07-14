@@ -11,12 +11,15 @@ call plug#begin('~/.vim/plugged')
 " coc-java 
 " coc-vimlsp
 " coc-lua
+" coc-lists
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'vim-airline/vim-airline'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+Plug 'mhinz/vim-startify'
 
 Plug 'gruvbox-community/gruvbox'
 call plug#end()
@@ -27,6 +30,7 @@ colorscheme gruvbox
 " Fzf
 " Trigger fuzzy files search prvided by fzf
 nnoremap <C-p> :Files<CR>
+nnoremap <C-w>t :tabnew<CR>
 
 " Terminal mappings
 " Use <Esc> to close the terminal
@@ -54,7 +58,7 @@ xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>F :Format<CR>
 " Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
+nmap <leader>h  <Plug>(coc-fix-current)
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
