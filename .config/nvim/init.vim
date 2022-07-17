@@ -22,10 +22,17 @@ Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-startify'
 
 Plug 'gruvbox-community/gruvbox'
+Plug 'tanvirtin/monokai.nvim'
+Plug 'tomasiser/vim-code-dark'
 call plug#end()
 
 " Colors 
-colorscheme gruvbox
+" colorscheme gruvbox
+" colorscheme monokai
+" colorscheme monokai_pro
+" colorscheme monokai_soda
+" colorscheme monokai_ristretto
+colorscheme codedark
 
 " Fzf
 " Trigger fuzzy files search prvided by fzf
