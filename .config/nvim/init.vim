@@ -12,6 +12,7 @@ call plug#begin('~/.vim/plugged')
 " coc-vimlsp
 " coc-lua
 " coc-lists
+" coc-markdownlint
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'vim-airline/vim-airline'
