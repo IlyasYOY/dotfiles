@@ -1,1 +1,7 @@
+# This is my small backup file
 .config/nvim/coc-settings.json.bak
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
