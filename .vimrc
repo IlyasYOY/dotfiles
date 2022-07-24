@@ -19,15 +19,23 @@ set scrolloff=8
 set signcolumn=yes 
 set colorcolumn=80
 set showcmd
+set belloff=all
 
+nnoremap <C-w>t :tabnew<CR>
 nnoremap <SPACE> <Nop>
+
 let mapleader = "\<Space>" 
+
+map [[ ?{<CR>w99[{
+map ][ /}<CR>b99]}
+map ]] j0[[%/{<CR>
+map [] k$][%?}<CR>
 
 " map <leader>s :Sex!<CR>
 
-" Remap help key.
 imap jj <Esc>
 
+" Russian mapppings
 map й q
 map ц w
 map у e

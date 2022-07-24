@@ -3,7 +3,8 @@ source ~/.vimrc
 
 " Plugins
 call plug#begin('~/.vim/plugged')
-" I Installed:
+
+" coc configuration 
 " coc-go
 " coc-pyright
 " coc-rust-analyzer
@@ -13,32 +14,38 @@ call plug#begin('~/.vim/plugged')
 " coc-lua
 " coc-lists
 " coc-markdownlint
+" coc-snippets
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'vim-airline/vim-airline'
 
+" This allows me to do fuzzy search 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-Plug 'mhinz/vim-startify'
+" Some utilities for lua 
+Plug 'nvim-lua/plenary.nvim'
 
+Plug 'honza/vim-snippets'
+
+" Themes
 Plug 'gruvbox-community/gruvbox'
 Plug 'tanvirtin/monokai.nvim'
 Plug 'tomasiser/vim-code-dark'
+
 call plug#end()
 
 " Colors 
-" colorscheme gruvbox
+colorscheme gruvbox
 " colorscheme monokai
 " colorscheme monokai_pro
 " colorscheme monokai_soda
 " colorscheme monokai_ristretto
-colorscheme codedark
+" colorscheme codedark
 
 " Fzf
 " Trigger fuzzy files search prvided by fzf
 nnoremap <C-p> :Files<CR>
-nnoremap <C-w>t :tabnew<CR>
 
 " Terminal mappings
 " Use <Esc> to close the terminal
@@ -46,41 +53,53 @@ tnoremap <Esc> <C-\><C-n>
 
 " Coc; More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
 " Interactive mode mappings 
-inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent><expr> <S-space> coc#refresh()
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 inoremap <silent><expr> <TAB> <SID>tabCompleteSwitch(0)
 inoremap <silent><expr> <S-TAB> <SID>tabCompleteSwitch(1)
-" Normal mode mappings 
+
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gD <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
 nnoremap <silent> <leader>q :call ShowDocumentation()<CR>
 inoremap <C-P> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
+
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
+
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>F :Format<CR>
+nmap <leader>O :OR<CR>
+
 " Apply AutoFix to problem on the current line.
-nmap <leader>h  <Plug>(coc-fix-current)
+nmap <leader><cr>  <Plug>(coc-fix-current)
+
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
+
 " Run the Code Lens action on the current line.
 nmap <leader>cl  <Plug>(coc-codelens-action)
+
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
 nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
+
 " Find symbol of current document.
 nnoremap <silent><nowait> <leader>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <leader>s  :<C-u>CocList -I symbols<cr>
+" Show me the lists
+nnoremap <silent><nowait> <leader>L  :<C-u>CocList<cr>
+
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
