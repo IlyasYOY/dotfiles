@@ -1,3 +1,20 @@
 "" Source your .vimrc
 source ~/.vimrc
 
+" IDEA stuff
+set ideajoin
+set ideastatusicon=gray
+set idearefactormode=keep
+
+" Plugins
+Plug 'preservim/nerdtree'
+
+" Mappings
+
+map <leader>rn <Action>(RenameElement)
+map <leader>o <Action>(FileStructurePopup)
+map <leader>F <Action>(ReformatCode)
+map <leader>h <Action>(ShowIntentionActions)
+map <leader>q <Action>(QuickJavaDoc)
+
+
