@@ -3,8 +3,8 @@ source ~/.vimrc
 
 " IDEA stuff
 set ideajoin
-set ideastatusicon=gray
 set idearefactormode=keep
+set ideamarks
 
 " Plugins
 Plug 'preservim/nerdtree'
