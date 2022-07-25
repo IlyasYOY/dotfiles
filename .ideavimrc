@@ -13,8 +13,20 @@ Plug 'preservim/nerdtree'
 
 map <leader>rn <Action>(RenameElement)
 map <leader>o <Action>(FileStructurePopup)
-map <leader>F <Action>(ReformatCode)
-map <leader>h <Action>(ShowIntentionActions)
+map <leader>s <Action>(SearchEverywhere)
+map <leader><cr> <Action>(ShowIntentionActions)
 map <leader>q <Action>(QuickJavaDoc)
+
+map <leader>F <Action>(ReformatCode)
+map <leader>O <Action>(OptimizeImports)
+
+map <C-s> <Action>(EditorSelectWord)
+map <S-space> <Action>(CodeCompletion)
+
+map gr <Action>(GotoDeclaration)
+map gi <Action>(GotoImplementation)
+map gd <Action>(GotoDeclaration)
+map gD <Action>(GotoTypeDeclaration)
+
 
 
