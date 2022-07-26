@@ -21,7 +21,7 @@ map <leader>F <Action>(ReformatCode)
 map <leader>O <Action>(OptimizeImports)
 
 map <C-s> <Action>(EditorSelectWord)
-map <S-space> <Action>(CodeCompletion)
+imap <S-space> <Action>(CodeCompletion)
 
 map gr <Action>(GotoDeclaration)
 map gi <Action>(GotoImplementation)
