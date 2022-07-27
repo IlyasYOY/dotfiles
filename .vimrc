@@ -21,6 +21,10 @@ set colorcolumn=80
 set showcmd
 set belloff=all
 
+" File explorer settings
+let g:netrw_banner = 0 " Now we won't have bloated top of the window 
+let g:netrw_liststyle = 3 " Now it will be a tree view  
+
 nnoremap <C-w>t :tabnew<CR>
 nnoremap <SPACE> <Nop>
 

@@ -45,7 +45,8 @@ colorscheme gruvbox
 
 " Fzf
 " Trigger fuzzy files search prvided by fzf
-nnoremap <C-p> :Files<CR>
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fc :Ag<CR>
 
 " Terminal mappings
 " Use <Esc> to close the terminal
