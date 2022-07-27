@@ -40,11 +40,11 @@ call plug#end()
 
 " Colors 
 " colorscheme gruvbox
-colorscheme monokai
+" colorscheme monokai
 " colorscheme monokai_pro
 " colorscheme monokai_soda
 " colorscheme monokai_ristretto
-" colorscheme codedark
+colorscheme codedark
 
 " Fzf
 " Trigger fuzzy files search prvided by fzf
@@ -76,9 +76,9 @@ inoremap <C-P> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>F :Format<CR>
+xmap <leader>l  <Plug>(coc-format-selected)
+nmap <leader>l  <Plug>(coc-format-selected)
+nmap <leader>L :Format<CR>
 nmap <leader>O :OR<CR>
 
 " Apply AutoFix to problem on the current line.
@@ -88,9 +88,6 @@ nmap <leader><cr>  <Plug>(coc-fix-current)
 " Example: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Run the Code Lens action on the current line.
-nmap <leader>cl  <Plug>(coc-codelens-action)
 
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
@@ -102,7 +99,7 @@ nnoremap <silent><nowait> <leader>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <leader>s  :<C-u>CocList -I symbols<cr>
 " Show me the lists
-nnoremap <silent><nowait> <leader>L  :<C-u>CocList<cr>
+nnoremap <silent><nowait> <leader>cl  :<C-u>CocList<cr>
 
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
