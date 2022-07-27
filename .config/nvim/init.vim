@@ -51,7 +51,8 @@ nnoremap <C-p> :Files<CR>
 " Use <Esc> to close the terminal
 tnoremap <Esc> <C-\><C-n>
 
-" Coc; More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
+"" CoC
+" More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
 " Interactive mode mappings 
 inoremap <silent><expr> <S-space> coc#refresh()
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
@@ -139,3 +140,4 @@ function! s:tabCompleteSwitch(shiftPressed)
   return "\<C-g>u\<TAB>"
 endfunction
 
+"" END CoC
