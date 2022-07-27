@@ -39,8 +39,8 @@ Plug 'nvim-lua/plenary.nvim'
 call plug#end()
 
 " Colors 
-colorscheme gruvbox
-" colorscheme monokai
+" colorscheme gruvbox
+colorscheme monokai
 " colorscheme monokai_pro
 " colorscheme monokai_soda
 " colorscheme monokai_ristretto
@@ -62,8 +62,6 @@ tnoremap <Esc> <C-\><C-n>
 inoremap <silent><expr> <S-space> coc#refresh()
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-inoremap <silent><expr> <TAB> <SID>tabCompleteSwitch(0)
-inoremap <silent><expr> <S-TAB> <SID>tabCompleteSwitch(1)
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -127,22 +125,6 @@ function! ShowDocumentation()
   else
     call feedkeys('K', 'in')
   endif
-endfunction
-
-function! s:tabCompleteSwitch(shiftPressed)
-  let info = complete_info(['pum_visible', 'items'])
-
-  if info.pum_visible
-    if len(info.items) > 1 && a:shiftPressed == 0
-      return "\<C-n>"
-    elseif len(info.items) > 1 && a:shiftPressed == 1
-      return "\<C-p>"
-    else
-      return "\<CR>"
-    endif
-  endif
-
-  return "\<C-g>u\<TAB>"
 endfunction
 
 "" END CoC
