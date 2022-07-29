@@ -13,7 +13,7 @@ Plug 'preservim/nerdtree'
 
 map <leader>rn <Action>(RenameElement)
 map <leader>a <Action>(ShowIntentionActions)
-map <leader><cr> <Action>a(ShowIntentionActions)
+map <leader><cr> <Action>(ShowIntentionActions)
 map <leader>q <Action>(QuickJavaDoc)
 imap <C-p> <Action>(QuickJavaDoc)
 
