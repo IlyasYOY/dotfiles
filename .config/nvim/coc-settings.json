@@ -1,5 +1,5 @@
 {
-    "java.jdt.ls.vmargs": "-javaagent:/Users/iilinykh/.config/coc/extensions/coc-java-data/lombok.jar",
+    "java.jdt.ls.vmargs": "-javaagent:/Users/ilyasyoy/.config/coc/extensions/coc-java-data/lombok.jar",
     "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
     "diagnostic.checkCurrentLine": true,
     "diagnostic.virtualText": true,
