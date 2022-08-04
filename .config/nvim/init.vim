@@ -17,8 +17,10 @@ call plug#begin('~/.vim/plugged')
 " coc-snippets
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+" Git  
 Plug 'tpope/vim-fugitive'
 
+" Status line
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 
@@ -60,8 +62,7 @@ tnoremap <Esc> <C-\><C-n>
 " More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
 " Interactive mode mappings 
 inoremap <silent><expr> <S-space> coc#refresh()
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -71,6 +72,8 @@ nmap <silent> gr <Plug>(coc-references)
 
 nnoremap <silent> <leader>q :call ShowDocumentation()<CR>
 inoremap <C-P> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
+
+inoremap <silent><expr> <C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)

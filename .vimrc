@@ -1,4 +1,6 @@
 syntax on 
+filetype plugin on
+set nocompatible
 
 set exrc 
 set nu
