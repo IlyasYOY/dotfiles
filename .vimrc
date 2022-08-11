@@ -22,6 +22,7 @@ set signcolumn=yes
 set colorcolumn=80
 set showcmd
 set belloff=all
+set cursorline
 
 " File explorer settings
 let g:netrw_banner = 0 " Now we won't have bloated top of the window 
@@ -31,11 +32,6 @@ nnoremap <C-w>t :tabnew<CR>
 nnoremap <SPACE> <Nop>
 
 let mapleader = "\<Space>" 
-
-map [[ ?{<CR>w99[{
-map ][ /}<CR>b99]}
-map ]] j0[[%/{<CR>
-map [] k$][%?}<CR>
 
 " map <leader>s :Sex!<CR>
 

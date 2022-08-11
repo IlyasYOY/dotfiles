@@ -3,5 +3,7 @@
     "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
     "diagnostic.checkCurrentLine": true,
     "diagnostic.virtualText": true,
-    "diagnostic.virtualTextCurrentLineOnly": false
+    "diagnostic.virtualTextCurrentLineOnly": false,
+    "suggest.selection": "recentlyUsed",
+    "suggest.autoTrigger": "none"
 }

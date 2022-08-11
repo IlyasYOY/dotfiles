@@ -17,12 +17,15 @@ call plug#begin('~/.vim/plugged')
 " coc-snippets
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+
 " Git  
 Plug 'tpope/vim-fugitive'
 
 " Status line
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
+
+Plug 'fiatjaf/neuron.vim'
 
 " This allows me to do fuzzy search 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -41,16 +44,18 @@ Plug 'nvim-lua/plenary.nvim'
 call plug#end()
 
 " Colors 
-" colorscheme gruvbox
+colorscheme gruvbox
 " colorscheme monokai
 " colorscheme monokai_pro
 " colorscheme monokai_soda
 " colorscheme monokai_ristretto
-colorscheme codedark
+" colorscheme codedark
 
 " Fzf
 " Trigger fuzzy files search prvided by fzf
+" Find File 
 nnoremap <leader>ff :Files<CR>
+" Find Content
 nnoremap <leader>fc :Ag<CR>
 let g:fzf_buffers_jump = 1
 
@@ -65,30 +70,38 @@ inoremap <silent><expr> <S-space> coc#refresh()
 inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
 
 " GoTo code navigation.
+" Go Def
 nmap <silent> gd <Plug>(coc-definition)
+" Go (type) DEF
 nmap <silent> gD <Plug>(coc-type-definition)
+" Go Impl 
 nmap <silent> gi <Plug>(coc-implementation)
+" Go Ref
 nmap <silent> gr <Plug>(coc-references)
 
-nnoremap <silent> <leader>q :call ShowDocumentation()<CR>
-inoremap <C-P> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
+" Help
+nnoremap <silent> <leader>h :call ShowDocumentation()<CR>
+inoremap <C-s> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
 
 inoremap <silent><expr> <C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
 
-" Symbol renaming.
+" ReName.
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>l  <Plug>(coc-format-selected)
-nmap <leader>l  <Plug>(coc-format-selected)
-nmap <leader>L :Format<CR>
-nmap <leader>O :OR<CR>
+" Org Code 
+xmap <leader>oc  <Plug>(coc-format-selected)
+nmap <leader>oc  <Plug>(coc-format-selected)
+nmap <leader>oc :Format<CR>
+" Org Import 
+nmap <leader>oi :OR<CR>
 
 " Apply AutoFix to problem on the current line.
 nmap <leader><cr>  <Plug>(coc-fix-current)
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
+" Action
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 
@@ -98,11 +111,11 @@ nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Find symbol of current document.
-nnoremap <silent><nowait> <leader>o  :<C-u>CocList outline<cr>
+nnoremap <silent><nowait> <leader>O  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <leader>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait> <leader>S  :<C-u>CocList -I symbols<cr>
 " Show me the lists
-nnoremap <silent><nowait> <leader>cl  :<C-u>CocList<cr>
+nnoremap <silent><nowait> <leader>L  :<C-u>CocList<cr>
 
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
