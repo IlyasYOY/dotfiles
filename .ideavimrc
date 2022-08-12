@@ -22,8 +22,8 @@ map <leader>S <Action>(SearchEverywhere)
 map <leader>fc <Action>(FindInPath)
 map <leader>ff <Action>(GotoFile)
 
-map <leader>OC <Action>(ReformatCode)
-map <leader>OI <Action>(OptimizeImports)
+map <leader>oc <Action>(ReformatCode)
+map <leader>oi <Action>(OptimizeImports)
 
 map <C-s> <Action>(EditorSelectWord)
 imap <S-space> <Action>(CodeCompletion)
