@@ -67,7 +67,10 @@ tnoremap <Esc> <C-\><C-n>
 " More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
 " Interactive mode mappings 
 inoremap <silent><expr> <S-space> coc#refresh()
-inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " GoTo code navigation.
 " Go Def
@@ -95,9 +98,12 @@ nmap <leader>oc  <Plug>(coc-format-selected)
 nmap <leader>oc :Format<CR>
 " Org Import 
 nmap <leader>oi :OR<CR>
+" Org All 
+nmap <leader>oa :OR<CR>:Format<CR>
 
 " Apply AutoFix to problem on the current line.
-nmap <leader><cr>  <Plug>(coc-fix-current)
+" Help
+nmap <leader>H  <Plug>(coc-fix-current)
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
