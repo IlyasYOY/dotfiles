@@ -59,6 +59,13 @@ class ZshrcNvimConfigAliasAddLineInstaller(AddLineInstaller):
         super().__init__(self._alias_name, Path.home() / self._zshrc_name)
 
 
+class ZshrcNvimConfigNvimEditorAddLineInstaller(AddLineInstaller):
+    _zshrc_name = '.zshrc'
+    _alias_name = 'export EDITOR=nvim'
+
+    def __init__(self) -> None:
+        super().__init__(self._alias_name, Path.home() / self._zshrc_name)
+
 class ZshrcVimConfigAliasAddLineInstaller(AddLineInstaller):
     _zshrc_name = '.zshrc'
     _alias_name = 'alias vimconfig="vim ~/.vimrc"'
@@ -201,5 +208,6 @@ installers: List[Installer] = [
     IdeaVimrcLinkingInstaller(),
     NvimConfigLikningInstaller(),
     ZshrcNvimConfigAliasAddLineInstaller(),
-    ZshrcVimConfigAliasAddLineInstaller()
+    ZshrcVimConfigAliasAddLineInstaller(),
+    ZshrcNvimConfigNvimEditorAddLineInstaller()
 ]
