@@ -31,6 +31,10 @@ let g:netrw_liststyle = 3 " Now it will be a tree view
 nnoremap <C-w>t :tabnew<CR>
 nnoremap <SPACE> <Nop>
 
+nnoremap <F3> :w<cr>
+" This allows me to save from inssert mode 
+inoremap <F3> <C-\><C-o>:w<CR>
+
 let mapleader = "\<Space>" 
 
 " map <leader>s :Sex!<CR>
