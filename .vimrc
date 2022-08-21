@@ -2,26 +2,49 @@ syntax on
 filetype plugin on
 set nocompatible
 
+" Allow me to use custom vimrc from the current folder
 set exrc 
+
+" Numbers settings
 set nu
 set relativenumber 
-set nohlsearch
-set hidden 
+
+" Bells 
 set noerrorbells 
+set belloff=all
+
+set hidden 
+
+" Tabs and indent settings
 set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab 
 set smartindent 
+
+" Swap files 
 set noswapfile 
 set nobackup
+
+" Undo files 
 set undodir=~/.vim/undodir
 set undofile 
+
+" Shows the search before we 
 set incsearch
+
+" Number of lines to keep above/below the cursor 
 set scrolloff=8
+
+" Column with extra info 
 set signcolumn=yes 
+
+" Line length column 
 set colorcolumn=80
+
+" Shows currently running command
 set showcmd
-set belloff=all
+
+" heps me to find a current line
 set cursorline
 
 " File explorer settings
@@ -30,6 +53,9 @@ let g:netrw_liststyle = 3 " Now it will be a tree view
 
 nnoremap <C-w>t :tabnew<CR>
 nnoremap <SPACE> <Nop>
+
+" noh - no highlight
+nnoremap <Esc> :noh <CR>
 
 nnoremap <F3> :w<cr>
 " This allows me to save from inssert mode 
