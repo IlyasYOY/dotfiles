@@ -47,6 +47,13 @@ set showcmd
 " heps me to find a current line
 set cursorline
 
+" autocomplete for command mode 
+set wildmenu
+set wildmode=full
+
+" increase history size 
+set history=50
+
 " File explorer settings
 let g:netrw_banner = 0 " Now we won't have bloated top of the window 
 let g:netrw_liststyle = 3 " Now it will be a tree view  
@@ -57,7 +64,7 @@ nnoremap <SPACE> <Nop>
 " noh - no highlight
 nnoremap <Esc> :noh <CR>
 
-nnoremap <F3> :w<cr>
+nnoremap <F3> :w<CR>
 " This allows me to save from inssert mode 
 inoremap <F3> <C-\><C-o>:w<CR>
 
@@ -66,6 +73,12 @@ let mapleader = "\<Space>"
 " map <leader>s :Sex!<CR>
 
 imap jj <Esc>
+
+" Set keymap so i can run commands in russian 
+" This option doesn't work very well 
+" https://habr.com/en/post/175709/
+" https://github.com/vim/vim/blob/master/runtime/keymap/russian-jcukenmac.vim
+" set keymap=russian-jcukenmac
 
 " Russian mapppings
 map й q
