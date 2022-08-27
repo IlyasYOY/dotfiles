@@ -72,6 +72,12 @@ let mapleader = "\<Space>"
 
 " map <leader>s :Sex!<CR>
 
+" Switch buffers using keys
+nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<CR> 
+nnoremap <silent> [B :bfirst<CR> 
+nnoremap <silent> ]B :blast<CR>
+
 imap jj <Esc>
 
 " Set keymap so i can run commands in russian 
