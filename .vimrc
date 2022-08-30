@@ -106,6 +106,24 @@ Plug 'honza/vim-snippets'
 Plug 'gruvbox-community/gruvbox'
 Plug 'tomasiser/vim-code-dark'
 
+if has('nvim')
+    " coc configuration 
+    " coc-go
+    " coc-pyright
+    " coc-rust-analyzer
+    " coc-json
+    " coc-java 
+    " coc-vimlsp
+    " coc-lua
+    " coc-lists
+    " coc-markdownlint
+    " coc-snippets
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    
+    " Some utilities for lua IO
+    Plug 'nvim-lua/plenary.nvim'
+end
+
 call plug#end()
 
 " Colors 

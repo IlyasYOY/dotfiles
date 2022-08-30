@@ -1,27 +1,3 @@
-" Plugins
-call plug#begin('~/.vim/plugged')
-
-" coc configuration 
-" coc-go
-" coc-pyright
-" coc-rust-analyzer
-" coc-json
-" coc-java 
-" coc-vimlsp
-" coc-lua
-" coc-lists
-" coc-markdownlint
-" coc-snippets
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Themes
-Plug 'tanvirtin/monokai.nvim'
-
-" Some utilities for lua IO
-Plug 'nvim-lua/plenary.nvim'
-
-call plug#end()
-
 " Basic setup 
 source ~/.vimrc
 
