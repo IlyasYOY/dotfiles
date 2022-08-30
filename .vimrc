@@ -2,6 +2,9 @@ syntax on
 filetype plugin on
 set nocompatible
 
+nnoremap <SPACE> <Nop>
+let mapleader = "\<Space>" 
+
 " Allow me to use custom vimrc from the current folder
 set exrc 
 
@@ -59,7 +62,6 @@ let g:netrw_banner = 0 " Now we won't have bloated top of the window
 let g:netrw_liststyle = 3 " Now it will be a tree view  
 
 nnoremap <C-w>t :tabnew<CR>
-nnoremap <SPACE> <Nop>
 
 " noh - no highlight
 nnoremap <Esc> :noh <CR>
@@ -67,8 +69,6 @@ nnoremap <Esc> :noh <CR>
 nnoremap <F3> :w<CR>
 " This allows me to save from inssert mode 
 inoremap <F3> <C-\><C-o>:w<CR>
-
-let mapleader = "\<Space>" 
 
 " map <leader>s :Sex!<CR>
 
@@ -79,6 +79,50 @@ nnoremap <silent> [B :bfirst<CR>
 nnoremap <silent> ]B :blast<CR>
 
 imap jj <Esc>
+
+" :h matchit  
+" Helps you to match syntax constuctions in Vim
+runtime macros/matchit.vim
+
+" Plugins
+call plug#begin('~/.vim/plugged')
+
+" Git  
+Plug 'tpope/vim-fugitive'
+" Surround
+Plug 'tpope/vim-surround'
+
+" Status line
+Plug 'vim-airline/vim-airline'
+Plug 'airblade/vim-gitgutter'
+
+" This allows me to do fuzzy search 
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+Plug 'honza/vim-snippets'
+
+" Themes
+Plug 'gruvbox-community/gruvbox'
+Plug 'tomasiser/vim-code-dark'
+
+call plug#end()
+
+" Colors 
+colorscheme gruvbox
+" colorscheme monokai
+" colorscheme monokai_pro
+" colorscheme monokai_soda
+" colorscheme monokai_ristretto
+" colorscheme codedark
+
+" Fzf
+" Trigger fuzzy files search prvided by fzf
+" Find File 
+nnoremap <leader>ff :Files<CR>
+" Find Content
+nnoremap <leader>fc :Ag<CR>
+let g:fzf_buffers_jump = 1
 
 " Set keymap so i can run commands in russian 
 " This option doesn't work very well 
@@ -153,5 +197,4 @@ map Ь M
 map Б <
 map Ю >
 map Ё /|
-
 

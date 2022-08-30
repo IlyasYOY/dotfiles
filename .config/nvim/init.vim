@@ -1,6 +1,3 @@
-" Basic setup 
-source ~/.vimrc
-
 " Plugins
 call plug#begin('~/.vim/plugged')
 
@@ -17,47 +14,16 @@ call plug#begin('~/.vim/plugged')
 " coc-snippets
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-
-" Git  
-Plug 'tpope/vim-fugitive'
-
-" Status line
-Plug 'vim-airline/vim-airline'
-Plug 'airblade/vim-gitgutter'
-
-Plug 'fiatjaf/neuron.vim'
-
-" This allows me to do fuzzy search 
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-Plug 'honza/vim-snippets'
-
 " Themes
-Plug 'gruvbox-community/gruvbox'
 Plug 'tanvirtin/monokai.nvim'
-Plug 'tomasiser/vim-code-dark'
 
 " Some utilities for lua IO
 Plug 'nvim-lua/plenary.nvim'
 
 call plug#end()
 
-" Colors 
-colorscheme gruvbox
-" colorscheme monokai
-" colorscheme monokai_pro
-" colorscheme monokai_soda
-" colorscheme monokai_ristretto
-" colorscheme codedark
-
-" Fzf
-" Trigger fuzzy files search prvided by fzf
-" Find File 
-nnoremap <leader>ff :Files<CR>
-" Find Content
-nnoremap <leader>fc :Ag<CR>
-let g:fzf_buffers_jump = 1
+" Basic setup 
+source ~/.vimrc
 
 " Terminal mappings
 " Use <Esc> to close the terminal
