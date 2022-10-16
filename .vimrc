@@ -97,8 +97,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 
 " This allows me to do fuzzy search 
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Plug 'junegunn/fzf.vim'
 
 Plug 'honza/vim-snippets'
 
@@ -122,6 +122,10 @@ if has('nvim')
     
     " Some utilities for lua IO
     Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
+    
+    Plug 'renerocksai/calendar-vim'
+    Plug 'renerocksai/telekasten.nvim'
 end
 
 call plug#end()
@@ -133,14 +137,6 @@ colorscheme gruvbox
 " colorscheme monokai_soda
 " colorscheme monokai_ristretto
 " colorscheme codedark
-
-" Fzf
-" Trigger fuzzy files search prvided by fzf
-" Find File 
-nnoremap <leader>ff :Files<CR>
-" Find Content
-nnoremap <leader>fc :Ag<CR>
-let g:fzf_buffers_jump = 1
 
 " Set keymap so i can run commands in russian 
 " This option doesn't work very well 
