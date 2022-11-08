@@ -18,7 +18,7 @@ map <leader>h <Action>(QuickJavaDoc)
 imap <C-s> <Action>(QuickJavaDoc)
 
 map <leader>O <Action>(FileStructurePopup)
-map <leader>S <Action>(SearchEverywhere)
+map <leader>S <Action>(GotoSymbol)
 map <leader>fc <Action>(FindInPath)
 map <leader>ff <Action>(GotoFile)
 
@@ -27,7 +27,7 @@ map <leader>oi <Action>(OptimizeImports)
 map <leader>oa <Action>(ReformatCode)<Action>(OptimizeImports)
 
 map <C-s> <Action>(EditorSelectWord)
-imap <S-space> <Action>(CodeCompletion)
+imap <C-space> <Action>(CodeCompletion)
 
 map gr <Action>(GotoDeclaration)
 map gi <Action>(GotoImplementation)
