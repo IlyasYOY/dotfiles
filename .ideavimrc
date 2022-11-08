@@ -11,28 +11,35 @@ Plug 'preservim/nerdtree'
 
 " Mappings
 
-map <leader>rn <Action>(RenameElement)
-map <leader>a <Action>(ShowIntentionActions)
-map <leader><cr> <Action>(ShowIntentionActions)
-map <leader>h <Action>(QuickJavaDoc)
-imap <C-s> <Action>(QuickJavaDoc)
-
-map <leader>O <Action>(FileStructurePopup)
-map <leader>S <Action>(GotoSymbol)
 map <leader>fc <Action>(FindInPath)
 map <leader>ff <Action>(GotoFile)
+
+imap <C-space> <Action>(CodeCompletion)
+
+map gD <Action>(GotoTypeDeclaration)
+map gd <Action>(GotoDeclaration)
+map gi <Action>(GotoImplementation)
+map gr <Action>(GotoDeclaration)
+
+map <leader>h <Action>(QuickJavaDoc)
+# todo inoremap show signature help 
+
+map <leader>rn <Action>(RenameElement)
+map <leader>h <Action>(QuickJavaDoc)
+imap <C-s> <Action>(QuickJavaDoc)
 
 map <leader>oc <Action>(ReformatCode)
 map <leader>oi <Action>(OptimizeImports)
 map <leader>oa <Action>(ReformatCode)<Action>(OptimizeImports)
 
-map <C-s> <Action>(EditorSelectWord)
-imap <C-space> <Action>(CodeCompletion)
+map <leader>a <Action>(ShowIntentionActions)
 
-map gr <Action>(GotoDeclaration)
-map gi <Action>(GotoImplementation)
-map gd <Action>(GotoDeclaration)
-map gD <Action>(GotoTypeDeclaration)
+map <C-s> <Action>(EditorSelectWord)
+
+map <leader>O <Action>(FileStructurePopup)
+map <leader>S <Action>(GotoSymbol)
+
+
 
 
 
