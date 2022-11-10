@@ -30,7 +30,7 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Help
 nnoremap <silent> <leader>h :call ShowDocumentation()<CR>
-inoremap <C-s> <C-\><C-O>:call CocActionAsync('showSignatureHelp')<cr>
+inoremap <C-s> <C-O>:call CocActionAsync('showSignatureHelp')<cr>
 
 inoremap <silent><expr> <C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
 
@@ -61,6 +61,17 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 " Requires 'textDocument/selectionRange' support of language server.
 nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 " Find symbol of current document.
 nnoremap <silent><nowait> <leader>O  :<C-u>CocList outline<cr>

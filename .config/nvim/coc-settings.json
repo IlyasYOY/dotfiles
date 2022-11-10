@@ -5,5 +5,8 @@
     "diagnostic.virtualText": true,
     "diagnostic.virtualTextCurrentLineOnly": false,
     "suggest.selection": "recentlyUsed",
-    "suggest.autoTrigger": "none"
+    "suggest.autoTrigger": "none",
+    "java.signatureHelp.enabled": true, 
+    "java.maven.downloadSources": true,
+    "java.completion.guessMethodArguments": false
 }
