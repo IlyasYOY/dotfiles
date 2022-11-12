@@ -60,6 +60,9 @@ set history=50
 " File explorer settings
 let g:netrw_banner = 0 " Now we won't have bloated top of the window 
 let g:netrw_liststyle = 3 " Now it will be a tree view  
+let g:netrw_bufsettings = 'nu nobl'
+nmap <leader>e :Ex<CR>
+
 
 nnoremap <C-w>t :tabnew<CR>
 
@@ -125,7 +128,7 @@ if has('nvim')
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
     
     Plug 'renerocksai/calendar-vim'
-    Plug 'renerocksai/telekasten.nvim'
+    Plug 'IlyasYOY/telekasten.nvim'
 end
 
 call plug#end()
