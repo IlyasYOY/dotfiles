@@ -79,6 +79,8 @@ nnoremap <silent><nowait> <leader>O  :<C-u>CocList outline<cr>
 nnoremap <silent><nowait> <leader>S  :<C-u>CocList -I symbols<cr>
 " Show me the lists
 nnoremap <silent><nowait> <leader>L  :<C-u>CocList<cr>
+" Show me the lists
+nnoremap <silent><nowait> <leader>E  :<C-u>CocCommand explorer<cr>
 
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
