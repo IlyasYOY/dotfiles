@@ -128,9 +128,7 @@ if has('nvim')
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
     
     Plug 'renerocksai/calendar-vim'
-    " Plug 'renerocksai/telekasten.nvim'
-    Plug 'IlyasYOY/telekasten.nvim'
-    " Plug '~/Projects/other/telekasten.nvim'
+    Plug 'renerocksai/telekasten.nvim'
 end
 
 call plug#end()
