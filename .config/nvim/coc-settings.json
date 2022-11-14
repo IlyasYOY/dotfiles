@@ -8,5 +8,7 @@
     "suggest.autoTrigger": "none",
     "java.signatureHelp.enabled": true, 
     "java.maven.downloadSources": true,
-    "java.completion.guessMethodArguments": false
+    "java.completion.guessMethodArguments": false,
+    "sumneko-lua.enableNvimLuaDev": true,
+    "Lua.telemetry.enable": false
 }
