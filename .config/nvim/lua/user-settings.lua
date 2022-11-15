@@ -17,51 +17,61 @@ local function map_normal(lhs, rhs, opts)
     map("n", lhs, rhs, opts)
 end
 
--- Search commands 
+-- Search commands
 
 map_normal("<leader>ff", "<cmd>Telescope find_files<CR>")
 map_normal("<leader>fg", "<cmd>Telescope live_grep<CR>")
 
--- Terminal commands 
+-- Terminal commands
 
 map("t", "<Esc>", "<C-\\><C-n>")
 
 -- CoC commands
 
 -- More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
--- Interactive mode mappings 
+-- Interactive mode mappings
 map("i", "<C-space>", "coc#refresh()", { silent = true, expr = true })
 -- Make <CR> to accept selected completion item or notify coc.nvim to format
 -- <C-g>u breaks current undo, please make your own choice.
-map("i", "<CR>", "coc#pum#visible() ? coc#pum#confirm() : \"\\<C-g>u\\<CR>\\<c-r>=coc#on_enter()\\<CR>\"", { silent = true, expr = true })
+map("i", "<CR>", "coc#pum#visible() ? coc#pum#confirm() : \"\\<C-g>u\\<CR>\\<c-r>=coc#on_enter()\\<CR>\"",
+    { silent = true, expr = true })
 
 -- GoTo code navigation.
 -- Go Def
 map_normal("gd", "<Plug>(coc-definition)", { silent = true })
 -- Go (type) DEF
 map_normal("gD", "<Plug>(coc-type-definition)", { silent = true })
--- Go Impl 
+-- Go Impl
 map_normal("gi", "<Plug>(coc-implementation)", { silent = true })
 -- Go Ref
 map_normal("gr", "<Plug>(coc-references)", { silent = true })
 
 -- Help
-map_normal("<leader>h", ":call ShowDocumentation()<CR>", { silent = true })
+vim.keymap.set("n", "<leader>h", function()
+    if vim.bo.filetype == "vim" then
+        vim.api.nvim_command("h " .. vim.expand("<cword>"))
+        return
+    elseif vim.fn["CocAction"]("hasProvider", "hover") then
+        vim.fn["CocAction"]("doHover")
+    else
+        print("No help found")
+    end
+end, { silent = true })
 map("i", "<C-s>", "<C-O>:call CocActionAsync('showSignatureHelp')<CR>")
-map("i", "<C-p>", "coc#pum#visible() ? coc#pum#prev(1) : \"\\<C-p>\"", { silent = true, expr = true})
+map("i", "<C-p>", "coc#pum#visible() ? coc#pum#prev(1) : \"\\<C-p>\"", { silent = true, expr = true })
 
 -- ReName.
 map_normal("<leader>rn", "<Plug>(coc-rename)")
 
 -- Formatting selected code.
--- Org Code 
+-- Org Code
 map("x", "<leader>oc", " <Plug>(coc-format-selected)")
 map_normal("<leader>oc ", "<Plug>(coc-format-selected)")
-map_normal("<leader>oc", ":Format<CR>")
--- Org Import 
-map_normal("<leader>oi", ":OR<CR>")
--- Org All 
-map_normal("<leader>oa", ":OR<CR>:Format<CR>")
+map_normal("<leader>oc", "<cmd>Format<CR>")
+-- Org Import
+map_normal("<leader>oi", "<cmd>OR<CR>")
+-- Org All
+map_normal("<leader>oa", "<cmd>OR<CR><cnd>Format<CR>")
 
 -- Apply AutoFix to problem on the current line.
 -- Help
@@ -90,15 +100,20 @@ map("x", "ac", "<Plug>(coc-classobj-a)")
 map("o", "ac", "<Plug>(coc-classobj-a)")
 
 -- Find symbol of current document.
-map_normal("<leader>O", " :<C-u>CocList outline<CR>", { silent = true, nowait = true })
+map_normal("<leader>O", "<cmd>CocList outline<CR>", { silent = true, nowait = true })
 -- Search workspace symbols.
-map_normal("<leader>S", " :<C-u>CocList -I symbols<CR>", { silent = true, nowait = true })
+map_normal("<leader>S", "<cmd>CocList -I symbols<CR>", { silent = true, nowait = true })
 -- Show me the lists
-map_normal("<leader>L", " :<C-u>CocList<CR>", { silent = true, nowait = true })
+map_normal("<leader>L", "<cmd>CocList<CR>", { silent = true, nowait = true })
 -- Show me the lists
-map_normal("<leader>E", " :<C-u>CocCommand explorer<CR>", { silent = true, nowait = true })
+map_normal("<leader>E", "<cmd>CocCommand explorer<CR>", { silent = true, nowait = true })
 
--- Telekasten commands 
+vim.api.nvim_create_user_command("Format", ":call CocActionAsync('format')", { desc = "Formats buffer" })
+vim.api.nvim_create_user_command("Fold", ":call CocAction('fold', <f-args>)", { desc = "Folds code" })
+vim.api.nvim_create_user_command("OR", ":call CocActionAsync('runCommand', 'editor.action.organizeImport')",
+    { desc = "Orginizes imports" })
+
+-- Telekasten commands
 
 map_normal("<leader>z", "<cmd>Telekasten<CR>")
 
@@ -117,7 +132,7 @@ map_normal("<leader>zrn", "<cmd>Telekasten rename_note<CR>")
 map_normal("<leader>zff", "<cmd>Telekasten find_notes<CR>")
 map_normal("<leader>zfg", "<cmd>Telekasten search_notes<CR>")
 
--- Telekasten settings 
+-- Telekasten settings
 
 local wiki_home = vim.fn.expand("~/vimwiki")
 local diary_home = wiki_home .. "/" .. "diary"
