@@ -1,13 +1,5 @@
 lua require'settings'
 
-" Terminal mappings
-" Use <Esc> to close the terminal
-tnoremap <Esc> <C-\><C-n>
-
-" Telescope 
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-
 "" CoC
 " More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
 " Interactive mode mappings 
@@ -105,23 +97,4 @@ function! ShowDocumentation()
 endfunction
 
 "" END CoC
-
-" Telekasten
-
-nnoremap <leader>z :Telekasten<CR>
-
-nnoremap <leader>zb :Telekasten show_backlinks<CR>
-nnoremap <leader>zt :Telekasten show_tags<CR>
-nnoremap <leader>zz :Telekasten follow_link<CR>
-nnoremap <leader>zl :Telekasten insert_link<CR>
-nnoremap <leader>zn :Telekasten new_note<CR>
-
-nnoremap <leader>zd :Telekasten goto_today<CR>
-nnoremap <leader>zw :Telekasten goto_thisweek<CR>
-nnoremap <leader>zc :Telekasten show_calendar<CR>
-
-nnoremap <leader>zrn :Telekasten rename_note<CR>
-
-nnoremap <leader>zff :Telekasten find_notes<CR>
-nnoremap <leader>zfg :Telekasten search_notes<CR>
 
