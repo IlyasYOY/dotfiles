@@ -1,0 +1,82 @@
+syntax on 
+filetype plugin on
+set nocompatible
+
+" Allow me to use custom vimrc from the current folder
+set exrc 
+
+" Numbers settings
+set nu
+set relativenumber 
+
+" Bells 
+set noerrorbells 
+set belloff=all
+
+set hidden 
+
+" Tabs and indent settings
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab 
+set smartindent 
+
+" Swap files 
+set noswapfile 
+set nobackup
+
+" Undo files 
+set undodir=~/.vim/undodir
+set undofile 
+
+" Shows the search before we 
+set incsearch
+
+" Number of lines to keep above/below the cursor 
+set scrolloff=8
+
+" Column with extra info 
+set signcolumn=yes 
+
+" Line length column 
+set colorcolumn=80
+
+" Shows currently running command
+set showcmd
+
+" heps me to find a current line
+set cursorline
+
+" autocomplete for command mode 
+set wildmenu
+set wildmode=full
+
+" increase history size 
+set history=50
+
+" File explorer settings
+nmap <leader>e :Ex<CR>
+
+nnoremap <C-w>t :tabnew<CR>
+
+" noh - no highlight
+nnoremap <Esc> :noh <CR>
+
+nnoremap <F3> :w<CR>
+" This allows me to save from inssert mode 
+inoremap <F3> <C-\><C-o>:w<CR>
+
+" map <leader>s :Sex!<CR>
+
+" Switch buffers using keys
+nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<CR> 
+nnoremap <silent> [B :bfirst<CR> 
+nnoremap <silent> ]B :blast<CR>
+
+imap jj <Esc>
+
+" :h matchit  
+" Helps you to match syntax constuctions in Vim
+runtime macros/matchit.vim
+
