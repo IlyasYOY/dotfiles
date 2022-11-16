@@ -59,9 +59,8 @@ map_normal("<leader>H ", "<Plug>(coc-fix-current)")
 
 -- Applying codeAction to the selected region.
 -- Example: `<leader>aap` for current paragraph
--- Action
-map_visual("<leader>a", "<Plug>(coc-codeaction-selected)")
-map_normal("<leader>a ", "<Plug>(coc-codeaction-selected)")
+map_normal("<leader>a ", "<Plug>(coc-codeaction-selected)", { silent = true, nowait = true })
+map_visual("<leader>a", "<Plug>(coc-codeaction-selected)", { silent = true, nowait = true })
 
 -- Use CTRL-S for selections ranges.
 -- Requires 'textDocument/selectionRange' support of language server.
@@ -70,14 +69,14 @@ map_visual("<C-s>", "<Plug>(coc-range-select)", { silent = true })
 
 -- Map function and class text objects
 -- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-map_visual("if", "<Plug>(coc-funcobj-i)")
-map_operator("if", "<Plug>(coc-funcobj-i)")
-map_visual("af", "<Plug>(coc-funcobj-a)")
-map_operator("af", "<Plug>(coc-funcobj-a)")
-map_visual("ic", "<Plug>(coc-classobj-i)")
-map_operator("ic", "<Plug>(coc-classobj-i)")
-map_visual("ac", "<Plug>(coc-classobj-a)")
-map_operator("ac", "<Plug>(coc-classobj-a)")
+map_visual("if", "<Plug>(coc-funcobj-i)", { silent = true, nowait = true })
+map_operator("if", "<Plug>(coc-funcobj-i)", { silent = true, nowait = true })
+map_visual("af", "<Plug>(coc-funcobj-a)", { silent = true, nowait = true })
+map_operator("af", "<Plug>(coc-funcobj-a)", { silent = true, nowait = true })
+map_visual("ic", "<Plug>(coc-classobj-i)", { silent = true, nowait = true })
+map_operator("ic", "<Plug>(coc-classobj-i)", { silent = true, nowait = true })
+map_visual("ac", "<Plug>(coc-classobj-a)", { silent = true, nowait = true })
+map_operator("ac", "<Plug>(coc-classobj-a)", { silent = true, nowait = true })
 
 -- Find symbol of current document.
 map_normal("<leader>O", "<cmd>CocList outline<CR>", { silent = true, nowait = true })
