@@ -51,29 +51,6 @@ class AddLineInstaller(Installer):
         return f'Adding line {self._line} to {self._file}'
 
 
-class ZshrcNvimConfigAliasAddLineInstaller(AddLineInstaller):
-    _zshrc_name = '.zshrc'
-    _alias_name = 'alias nvimconfig="nvim ~/.config/nvim/init.vim"'
-
-    def __init__(self) -> None:
-        super().__init__(self._alias_name, Path.home() / self._zshrc_name)
-
-
-class ZshrcNvimConfigNvimEditorAddLineInstaller(AddLineInstaller):
-    _zshrc_name = '.zshrc'
-    _alias_name = 'export EDITOR=nvim'
-
-    def __init__(self) -> None:
-        super().__init__(self._alias_name, Path.home() / self._zshrc_name)
-
-class ZshrcVimConfigAliasAddLineInstaller(AddLineInstaller):
-    _zshrc_name = '.zshrc'
-    _alias_name = 'alias vimconfig="vim ~/.vimrc"'
-
-    def __init__(self) -> None:
-        super().__init__(self._alias_name, Path.home() / self._zshrc_name)
-
-
 class LinkingInstaller(Installer):
     def __init__(self, target_path: Path, source_path: Path) -> None:
         super().__init__()
@@ -100,28 +77,6 @@ class LinkingInstaller(Installer):
 
     def get_description(self) -> str:
         return f'Here we set links from {self._source_path} to {self._target_path}'
-
-
-class NvimConfigLikningInstaller(LinkingInstaller):
-    _nvim_config_dir = '.config/nvim'
-
-    def __init__(self) -> None:
-        super().__init__(Path.home() / self._nvim_config_dir,
-                         Path.cwd() / self._nvim_config_dir)
-
-
-class VimrcLinkingInstaller(LinkingInstaller):
-    _vimrc_name = '.vimrc'
-
-    def __init__(self) -> None:
-        super().__init__(Path.home() / self._vimrc_name, Path.cwd() / self._vimrc_name)
-
-
-class IdeaVimrcLinkingInstaller(LinkingInstaller):
-    _vimrc_name = '.ideavimrc'
-
-    def __init__(self) -> None:
-        super().__init__(Path.home() / self._vimrc_name, Path.cwd() / self._vimrc_name)
 
 
 class GitAliasesInstaller(Installer):
@@ -200,14 +155,18 @@ def backup_file(file: Path) -> Optional[Path]:
         backup_file.write_bytes(file.read_bytes())
         return backup_file
 
+HOME = Path.home()
+CWD = Path.cwd()
+
+ZSHRC_PATH = Path.home() / '.zshrc'
 
 installers: List[Installer] = [
     LombokForCocInstaller(),
     GitAliasesInstaller(),
-    VimrcLinkingInstaller(),
-    IdeaVimrcLinkingInstaller(),
-    NvimConfigLikningInstaller(),
-    ZshrcNvimConfigAliasAddLineInstaller(),
-    ZshrcVimConfigAliasAddLineInstaller(),
-    ZshrcNvimConfigNvimEditorAddLineInstaller()
+    LinkingInstaller(HOME / '.config/nvim', CWD / '.config/nvim'),
+    LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
+    LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
+    AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
+    AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
+    AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
 ]
