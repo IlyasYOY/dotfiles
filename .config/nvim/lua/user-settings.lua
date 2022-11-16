@@ -1,134 +1,170 @@
-vim.cmd("source ~/.vimrc")
+local mapping = require('map-functions')
 
--- Functional wrapper for mapping custom keybindings
-local function map(mode, alias, command, custom_options)
-    local default_options = { noremap = true }
-    if custom_options then
-        default_options = vim.tbl_extend("force", default_options, custom_options)
-        if default_options == nil then
-            print("Cannot map mode:" .. mode .. " alias:" .. alias .. " for:" .. command .. " options:" .. custom_options)
-            return
-        end
-    end
-    vim.api.nvim_set_keymap(mode, alias, command, default_options)
-end
-
-local function map_normal(lhs, rhs, opts)
-    map("n", lhs, rhs, opts)
-end
-
--- Search commands
-
-map_normal("<leader>ff", "<cmd>Telescope find_files<CR>")
-map_normal("<leader>fg", "<cmd>Telescope live_grep<CR>")
+local map = mapping.map
+local map_terminal = mapping.map_terminal
+local map_normal = mapping.map_normal
 
 -- Terminal commands
+map_terminal("<Esc>", "<C-\\><C-n>")
 
-map("t", "<Esc>", "<C-\\><C-n>")
+vim.cmd([[
+syntax on 
+filetype plugin on
+set nocompatible
 
--- CoC commands
+nnoremap <SPACE> <Nop>
+let mapleader = "\<Space>" 
 
--- More here: https://github.com/neoclide/coc.nvim#example-vim-configuration
--- Interactive mode mappings
-map("i", "<C-space>", "coc#refresh()", { silent = true, expr = true })
--- Make <CR> to accept selected completion item or notify coc.nvim to format
--- <C-g>u breaks current undo, please make your own choice.
-map("i", "<CR>", "coc#pum#visible() ? coc#pum#confirm() : \"\\<C-g>u\\<CR>\\<c-r>=coc#on_enter()\\<CR>\"",
-    { silent = true, expr = true })
+" Allow me to use custom vimrc from the current folder
+set exrc 
 
--- GoTo code navigation.
--- Go Def
-map_normal("gd", "<Plug>(coc-definition)", { silent = true })
--- Go (type) DEF
-map_normal("gD", "<Plug>(coc-type-definition)", { silent = true })
--- Go Impl
-map_normal("gi", "<Plug>(coc-implementation)", { silent = true })
--- Go Ref
-map_normal("gr", "<Plug>(coc-references)", { silent = true })
+" Numbers settings
+set nu
+set relativenumber 
 
--- Help
-vim.keymap.set("n", "<leader>h", function()
-    if vim.bo.filetype == "vim" then
-        vim.api.nvim_command("h " .. vim.expand("<cword>"))
-        return
-    elseif vim.fn["CocAction"]("hasProvider", "hover") then
-        vim.fn["CocAction"]("doHover")
-    else
-        print("No help found")
-    end
-end, { silent = true })
-map("i", "<C-s>", "<C-O>:call CocActionAsync('showSignatureHelp')<CR>")
-map("i", "<C-p>", "coc#pum#visible() ? coc#pum#prev(1) : \"\\<C-p>\"", { silent = true, expr = true })
+" Bells 
+set noerrorbells 
+set belloff=all
 
--- ReName.
-map_normal("<leader>rn", "<Plug>(coc-rename)")
+set hidden 
 
--- Formatting selected code.
--- Org Code
-map("x", "<leader>oc", " <Plug>(coc-format-selected)")
-map_normal("<leader>oc ", "<Plug>(coc-format-selected)")
-map_normal("<leader>oc", "<cmd>Format<CR>")
--- Org Import
-map_normal("<leader>oi", "<cmd>OR<CR>")
--- Org All
-map_normal("<leader>oa", "<cmd>OR<CR><cnd>Format<CR>")
+" Tabs and indent settings
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab 
+set smartindent 
 
--- Apply AutoFix to problem on the current line.
--- Help
-map_normal("<leader>H ", "<Plug>(coc-fix-current)")
+" Swap files 
+set noswapfile 
+set nobackup
 
--- Applying codeAction to the selected region.
--- Example: `<leader>aap` for current paragraph
--- Action
-map("x", "<leader>a", "<Plug>(coc-codeaction-selected)")
-map_normal("<leader>a ", "<Plug>(coc-codeaction-selected)")
+" Undo files 
+set undodir=~/.vim/undodir
+set undofile 
 
--- Use CTRL-S for selections ranges.
--- Requires 'textDocument/selectionRange' support of language server.
-map_normal("<C-s>", "<Plug>(coc-range-select)", { silent = true })
-map("x", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
+" Shows the search before we 
+set incsearch
 
--- Map function and class text objects
--- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-map("x", "if", "<Plug>(coc-funcobj-i)")
-map("o", "if", "<Plug>(coc-funcobj-i)")
-map("x", "af", "<Plug>(coc-funcobj-a)")
-map("o", "af", "<Plug>(coc-funcobj-a)")
-map("x", "ic", "<Plug>(coc-classobj-i)")
-map("o", "ic", "<Plug>(coc-classobj-i)")
-map("x", "ac", "<Plug>(coc-classobj-a)")
-map("o", "ac", "<Plug>(coc-classobj-a)")
+" Number of lines to keep above/below the cursor 
+set scrolloff=8
 
--- Find symbol of current document.
-map_normal("<leader>O", "<cmd>CocList outline<CR>", { silent = true, nowait = true })
--- Search workspace symbols.
-map_normal("<leader>S", "<cmd>CocList -I symbols<CR>", { silent = true, nowait = true })
--- Show me the lists
-map_normal("<leader>L", "<cmd>CocList<CR>", { silent = true, nowait = true })
--- Show me the lists
-map_normal("<leader>E", "<cmd>CocCommand explorer<CR>", { silent = true, nowait = true })
+" Column with extra info 
+set signcolumn=yes 
 
-vim.api.nvim_create_user_command("Format", ":call CocActionAsync('format')", { desc = "Formats buffer" })
-vim.api.nvim_create_user_command("Fold", ":call CocAction('fold', <f-args>)", { desc = "Folds code" })
-vim.api.nvim_create_user_command("OR", ":call CocActionAsync('runCommand', 'editor.action.organizeImport')",
-    { desc = "Orginizes imports" })
+" Line length column 
+set colorcolumn=80
 
--- Telekasten commands
+" Shows currently running command
+set showcmd
 
-map_normal("<leader>z", "<cmd>Telekasten<CR>")
+" heps me to find a current line
+set cursorline
 
-map_normal("<leader>zb", "<cmd>Telekasten show_backlinks<CR>")
-map_normal("<leader>zt", "<cmd>Telekasten show_tags<CR>")
-map_normal("<leader>zz", "<cmd>Telekasten follow_link<CR>")
-map_normal("<leader>zl", "<cmd>Telekasten insert_link<CR>")
-map_normal("<leader>zn", "<cmd>Telekasten new_note<CR>")
+" autocomplete for command mode 
+set wildmenu
+set wildmode=full
 
-map_normal("<leader>zd", "<cmd>Telekasten goto_today<CR>")
-map_normal("<leader>zw", "<cmd>Telekasten goto_thisweek<CR>")
-map_normal("<leader>zc", "<cmd>Telekasten show_calendar<CR>")
+" increase history size 
+set history=50
 
-map_normal("<leader>zrn", "<cmd>Telekasten rename_note<CR>")
+" File explorer settings
+let g:netrw_banner = 0 " Now we won't have bloated top of the window 
+let g:netrw_liststyle = 3 " Now it will be a tree view  
+let g:netrw_bufsettings = 'nu nobl'
+nmap <leader>e :Ex<CR>
 
-map_normal("<leader>zff", "<cmd>Telekasten find_notes<CR>")
-map_normal("<leader>zfg", "<cmd>Telekasten search_notes<CR>")
+
+nnoremap <C-w>t :tabnew<CR>
+
+" noh - no highlight
+nnoremap <Esc> :noh <CR>
+
+nnoremap <F3> :w<CR>
+" This allows me to save from inssert mode 
+inoremap <F3> <C-\><C-o>:w<CR>
+
+" map <leader>s :Sex!<CR>
+
+" Switch buffers using keys
+nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<CR> 
+nnoremap <silent> [B :bfirst<CR> 
+nnoremap <silent> ]B :blast<CR>
+
+imap jj <Esc>
+
+" :h matchit  
+" Helps you to match syntax constuctions in Vim
+runtime macros/matchit.vim
+
+colorscheme gruvbox
+" Russian mapppings
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+map ё \
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+map Ё /|
+]])
+
 

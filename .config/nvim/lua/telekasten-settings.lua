@@ -1,10 +1,12 @@
 -- Telekasten settings
 
+local telekasten = require("telekasten")
+
 local wiki_home = vim.fn.expand("~/vimwiki")
 local diary_home = wiki_home .. "/" .. "diary"
 local templates_home = wiki_home .. "/meta/templates"
 
-require("telekasten").setup({
+telekasten.setup({
     home                        = wiki_home,
     take_over_my_home           = true,
     auto_set_filetype           = true,
@@ -42,3 +44,24 @@ require("telekasten").setup({
     rename_update_links         = true,
     media_previewer             = "telescope-media-files",
 })
+
+-- Telekasten commands
+
+local map_normal = require("map-functions").map_normal
+
+map_normal("<leader>z", "<cmd>Telekasten<CR>")
+
+map_normal("<leader>zb", "<cmd>Telekasten show_backlinks<CR>")
+map_normal("<leader>zt", "<cmd>Telekasten show_tags<CR>")
+map_normal("<leader>zz", "<cmd>Telekasten follow_link<CR>")
+map_normal("<leader>zl", "<cmd>Telekasten insert_link<CR>")
+map_normal("<leader>zn", "<cmd>Telekasten new_note<CR>")
+
+map_normal("<leader>zd", "<cmd>Telekasten goto_today<CR>")
+map_normal("<leader>zw", "<cmd>Telekasten goto_thisweek<CR>")
+map_normal("<leader>zc", "<cmd>Telekasten show_calendar<CR>")
+
+map_normal("<leader>zrn", "<cmd>Telekasten rename_note<CR>")
+
+map_normal("<leader>zff", "<cmd>Telekasten find_notes<CR>")
+map_normal("<leader>zfg", "<cmd>Telekasten search_notes<CR>")

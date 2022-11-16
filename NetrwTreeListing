@@ -1,0 +1,22 @@
+../
+dotfiles/
+| .config/
+| | nvim/
+| | | lua/
+| | | | coc-settings.lua
+| | | | map-functions.lua
+| | | | telekasten-settings.lua
+| | | | user-settings.lua
+| | | snippets/
+| | | coc-settings.json
+| | | init.lua
+| .git/
+| .vim/
+| scripts/
+| .gitignore
+| .ideavimrc
+| .obsidian.vimrc
+| .vimrc
+| NetrwTreeListing
+| README.md
+| telescope-settings.lua
