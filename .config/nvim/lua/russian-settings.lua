@@ -1,70 +1,70 @@
 local mapping = require('map-functions')
 
-local map = mapping.map
-
-map({ "n", "v", "o" }, "й", "q")
-map({ "n", "v", "o" }, "ц", "w")
-map({ "n", "v", "o" }, "у", "e")
-map({ "n", "v", "o" }, "к", "r")
-map({ "n", "v", "o" }, "е", "t")
-map({ "n", "v", "o" }, "н", "y")
-map({ "n", "v", "o" }, "г", "u")
-map({ "n", "v", "o" }, "ш", "i")
-map({ "n", "v", "o" }, "щ", "o")
-map({ "n", "v", "o" }, "з", "p")
-map({ "n", "v", "o" }, "х", "[")
-map({ "n", "v", "o" }, "ъ", "]")
-map({ "n", "v", "o" }, "ф", "a")
-map({ "n", "v", "o" }, "ы", "s")
-map({ "n", "v", "o" }, "в", "d")
-map({ "n", "v", "o" }, "а", "f")
-map({ "n", "v", "o" }, "п", "g")
-map({ "n", "v", "o" }, "р", "h")
-map({ "n", "v", "o" }, "о", "j")
-map({ "n", "v", "o" }, "л", "k")
-map({ "n", "v", "o" }, "д", "l")
-map({ "n", "v", "o" }, "ж", ";")
-map({ "n", "v", "o" }, "э", "'")
-map({ "n", "v", "o" }, "ё", "\\")
-map({ "n", "v", "o" }, "я", "z")
-map({ "n", "v", "o" }, "ч", "x")
-map({ "n", "v", "o" }, "с", "c")
-map({ "n", "v", "o" }, "м", "v")
-map({ "n", "v", "o" }, "и", "b")
-map({ "n", "v", "o" }, "т", "n")
-map({ "n", "v", "o" }, "ь", "m")
-map({ "n", "v", "o" }, "б", ",")
-map({ "n", "v", "o" }, "ю", ".")
-map({ "n", "v", "o" }, "Й", "Q")
-map({ "n", "v", "o" }, "Ц", "W")
-map({ "n", "v", "o" }, "У", "E")
-map({ "n", "v", "o" }, "К", "R")
-map({ "n", "v", "o" }, "Е", "T")
-map({ "n", "v", "o" }, "Н", "Y")
-map({ "n", "v", "o" }, "Г", "U")
-map({ "n", "v", "o" }, "Ш", "I")
-map({ "n", "v", "o" }, "Щ", "O")
-map({ "n", "v", "o" }, "З", "P")
-map({ "n", "v", "o" }, "Х", "{")
-map({ "n", "v", "o" }, "Ъ", "}")
-map({ "n", "v", "o" }, "Ф", "A")
-map({ "n", "v", "o" }, "Ы", "S")
-map({ "n", "v", "o" }, "В", "D")
-map({ "n", "v", "o" }, "А", "F")
-map({ "n", "v", "o" }, "П", "G")
-map({ "n", "v", "o" }, "Р", "H")
-map({ "n", "v", "o" }, "О", "J")
-map({ "n", "v", "o" }, "Л", "K")
-map({ "n", "v", "o" }, "Д", "L")
-map({ "n", "v", "o" }, "Ж", ":")
-map({ "n", "v", "o" }, "Э", "\"")
-map({ "n", "v", "o" }, "Я", "Z")
-map({ "n", "v", "o" }, "Ч", "X")
-map({ "n", "v", "o" }, "С", "C")
-map({ "n", "v", "o" }, "М", "V")
-map({ "n", "v", "o" }, "И", "B")
-map({ "n", "v", "o" }, "Т", "N")
-map({ "n", "v", "o" }, "Ь", "M")
-map({ "n", "v", "o" }, "Б", "<")
-map({ "n", "v", "o" }, "Ю", ">")
-map({ "n", "v", "o" }, "Ё", "/|")
+vim.cmd([[
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+map ё \
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+map Ё /|
+]])
