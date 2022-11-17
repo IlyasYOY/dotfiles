@@ -1,5 +1,5 @@
 {
-    "java.jdt.ls.vmargs": "-javaagent:/Users/ilyasyoy/.config/coc/extensions/coc-java-data/lombok.jar",
+    "java.jdt.ls.vmargs": "-javaagent:/Users/iilinykh/.config/coc/extensions/coc-java-data/lombok.jar",
     "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
     "diagnostic.checkCurrentLine": true,
     "diagnostic.virtualText": true,
@@ -10,5 +10,6 @@
     "java.maven.downloadSources": true,
     "java.completion.guessMethodArguments": false,
     "sumneko-lua.enableNvimLuaDev": true,
-    "Lua.telemetry.enable": false
+    "Lua.telemetry.enable": false,
+    "snippets.ultisnips.pythonPrompt": false
 }
