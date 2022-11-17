@@ -52,10 +52,12 @@ local map_normal = require("map-functions").map_normal
 map_normal("<leader>z", "<cmd>Telekasten<CR>")
 
 map_normal("<leader>zb", "<cmd>Telekasten show_backlinks<CR>")
-map_normal("<leader>zt", "<cmd>Telekasten show_tags<CR>")
+map_normal("<leader>zT", "<cmd>Telekasten show_tags<CR>")
+map_normal("<leader>zt", "<cmd>Telekasten toggle_todo<CR>")
 map_normal("<leader>zz", "<cmd>Telekasten follow_link<CR>")
 map_normal("<leader>zl", "<cmd>Telekasten insert_link<CR>")
 map_normal("<leader>zn", "<cmd>Telekasten new_note<CR>")
+map_normal("<leader>zN", "<cmd>Telekasten new_templated_note<CR>")
 
 map_normal("<leader>zd", "<cmd>Telekasten goto_today<CR>")
 map_normal("<leader>zw", "<cmd>Telekasten goto_thisweek<CR>")
