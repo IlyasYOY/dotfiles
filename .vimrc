@@ -2,6 +2,8 @@ syntax on
 filetype plugin on
 set nocompatible
 
+let mapleader = " "
+
 " Allow me to use custom vimrc from the current folder
 set exrc 
 
