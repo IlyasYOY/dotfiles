@@ -14,31 +14,15 @@ local packer_bootstrap = ensure_packer()
 return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
-    -- Themes
-    use 'gruvbox-community/gruvbox'
-
-    -- Some utilities for lua IO
     use 'nvim-lua/plenary.nvim'
-
-    -- Git
-    use 'tpope/vim-fugitive'
-    -- Surround
-    use 'tpope/vim-surround'
-
-    -- Status line
-    use 'vim-airline/vim-airline'
-    use 'airblade/vim-gitgutter'
-
-    use 'honza/vim-snippets'
-
-    use 'renerocksai/calendar-vim'
-    -- use 'renerocksai/telekasten.nvim'
-    -- use 'IlyasYOY/telekasten.nvim'
-    use '~/Projects/other/telekasten.nvim'
-
     use {
-        'neoclide/coc.nvim', branch = 'release'
+        'nvim-treesitter/nvim-treesitter',
+        run = function()
+            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+            ts_update()
+        end,
     }
+    use 'nvim-treesitter/playground'
 
     -- Fuzzy search
     use {
@@ -46,12 +30,22 @@ return require('packer').startup(function(use)
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
 
+    use 'renerocksai/calendar-vim'
+    -- use 'renerocksai/telekasten.nvim'
+    -- use 'IlyasYOY/telekasten.nvim'
+    use '~/Projects/other/telekasten.nvim'
+
+    use 'gruvbox-community/gruvbox'
+
+    use 'tpope/vim-fugitive'
+    use 'tpope/vim-surround'
+
+    use 'vim-airline/vim-airline'
+    use 'airblade/vim-gitgutter'
+
+    use 'honza/vim-snippets'
     use {
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-            ts_update()
-        end,
+        'neoclide/coc.nvim', branch = 'release'
     }
 
     -- Automatically set up your configuration after cloning packer.nvim
