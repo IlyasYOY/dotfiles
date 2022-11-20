@@ -1,5 +1,6 @@
 
 require("pluggins")
+require("treesitter-settings")
 
 require("user-settings")
 require("russian-settings")

@@ -1,5 +1,3 @@
-local mapping = require('map-functions')
-
 vim.cmd([[
 map й q
 map ц w

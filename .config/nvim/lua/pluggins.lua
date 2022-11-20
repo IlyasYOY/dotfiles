@@ -32,7 +32,9 @@ return require('packer').startup(function(use)
     use 'honza/vim-snippets'
 
     use 'renerocksai/calendar-vim'
-    use 'renerocksai/telekasten.nvim'
+    -- use 'renerocksai/telekasten.nvim'
+    -- use 'IlyasYOY/telekasten.nvim'
+    use '~/Projects/other/telekasten.nvim'
 
     use {
         'neoclide/coc.nvim', branch = 'release'
@@ -42,6 +44,14 @@ return require('packer').startup(function(use)
     use {
         'nvim-telescope/telescope.nvim', tag = '0.1.x',
         requires = { { 'nvim-lua/plenary.nvim' } }
+    }
+
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        run = function()
+            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+            ts_update()
+        end,
     }
 
     -- Automatically set up your configuration after cloning packer.nvim

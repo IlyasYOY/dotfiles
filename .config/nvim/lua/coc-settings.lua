@@ -87,8 +87,6 @@ map_normal("<leader>L", "<cmd>CocList<CR>", { silent = true, nowait = true })
 -- Show me the lists
 map_normal("<leader>E", "<cmd>CocCommand explorer<CR>", { silent = true, nowait = true })
 
-
-
 vim.api.nvim_create_user_command("CocInstallMyExtensions",
     ":CocInstall coc-go coc-java coc-json coc-lists coc-pyright coc-rust-analyzer coc-snippets coc-vimlsp coc-explorer coc-sumneko-lua"
     , { desc = "Installs all my extensions" })

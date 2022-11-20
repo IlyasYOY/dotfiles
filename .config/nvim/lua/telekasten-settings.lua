@@ -3,7 +3,7 @@
 local telekasten = require("telekasten")
 
 local wiki_home = vim.fn.expand("~/vimwiki")
-local diary_home = wiki_home .. "/" .. "diary"
+local diary_home = wiki_home .. "/diary"
 local templates_home = wiki_home .. "/meta/templates"
 
 telekasten.setup({
