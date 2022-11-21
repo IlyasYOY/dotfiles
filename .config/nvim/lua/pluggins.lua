@@ -31,9 +31,9 @@ return require('packer').startup(function(use)
     }
 
     use 'renerocksai/calendar-vim'
-    -- use 'renerocksai/telekasten.nvim'
+    use 'renerocksai/telekasten.nvim'
     -- use 'IlyasYOY/telekasten.nvim'
-    use '~/Projects/other/telekasten.nvim'
+    -- use '~/Projects/other/telekasten.nvim'
 
     use 'gruvbox-community/gruvbox'
 
