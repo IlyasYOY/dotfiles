@@ -33,12 +33,12 @@ return require('packer').startup(function(use)
     use 'renerocksai/calendar-vim'
     use 'renerocksai/telekasten.nvim'
     -- use 'IlyasYOY/telekasten.nvim'
-    -- use '~/Projects/other/telekasten.nvim'
 
     use 'gruvbox-community/gruvbox'
 
     use 'tpope/vim-fugitive'
     use 'tpope/vim-surround'
+    use 'tpope/vim-repeat'
 
     use 'vim-airline/vim-airline'
     use 'airblade/vim-gitgutter'

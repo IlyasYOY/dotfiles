@@ -10,6 +10,7 @@ local function test_case(test_name, runnable)
 end
 
 local core = require("core-functions")
+local java = require("java-functions")
 
 test_case("string split should work", function()
     local result = core.string_split("hello world", " ")
@@ -23,20 +24,21 @@ test_case("string split should work with default parameter", function()
     assert(#result == 2, ("string splitted incorrectly, resulting %s"):format(#result))
 end)
 
-test_case("convert to indexable array", function()
-    local test_table = {}
-    table.insert(test_table, 10)
-    table.insert(test_table, 12)
-    table.insert(test_table, 14)
+test_case("processing assert all", function()
+    local test_string = [[
+    assertTrue(x == y, "message");
+    assertEquals(x, y);
+    assertFalse(x != y);
+    ]]
 
-    local result = core.to_indexed_array(test_table)
+    local result = java.wrap_with_assert_all(test_string)
 
-    assert(#result == 3, ("string splitted incorrectly, resulting %s"):format(#result))
-
-    local first = result[0]
-    local second = result[1]
-    local third = result[2]
-    assert(first == 10, "First element does not match")
-    assert(second == 12, "Second element does not match")
-    assert(third == 14, "Third element does not match")
+    local expected_string = [[
+assertAll(
+  () -> assertTrue(x == y, "message"),
+  () -> assertEquals(x, y),
+  () -> assertFalse(x != y)
+);
+]]
+    assert(result == expected_string, ("wrong result '%s', expected '%s'"):format(result, expected_string))
 end)
