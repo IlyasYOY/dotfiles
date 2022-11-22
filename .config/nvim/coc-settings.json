@@ -1,12 +1,27 @@
 {
     "java.jdt.ls.vmargs": "-javaagent:/Users/IlyasYOY/.config/coc/extensions/coc-java-data/lombok.jar",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-1.8",
+            "path": "~/.sdkman/candidates/java/8.0.342.fx-librca"
+        },
+        {
+            "name": "JavaSE-11",
+            "path": "~/.sdkman/candidates/java/11.0.16.fx-librca"
+        },
+        {
+            "default": true,
+            "name": "JavaSE-17",
+            "path": "~/.sdkman/candidates/java/17.0.4.fx-librca"
+        }
+    ],
     "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
     "diagnostic.checkCurrentLine": true,
     "diagnostic.virtualText": true,
     "diagnostic.virtualTextCurrentLineOnly": false,
     "suggest.selection": "recentlyUsed",
     "suggest.autoTrigger": "none",
-    "java.signatureHelp.enabled": true, 
+    "java.signatureHelp.enabled": true,
     "java.maven.downloadSources": true,
     "java.completion.guessMethodArguments": false,
     "sumneko-lua.enableNvimLuaDev": true,
