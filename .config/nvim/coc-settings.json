@@ -11,5 +11,6 @@
     "java.completion.guessMethodArguments": false,
     "sumneko-lua.enableNvimLuaDev": true,
     "Lua.telemetry.enable": false,
-    "snippets.ultisnips.pythonPrompt": false
+    "snippets.ultisnips.pythonPrompt": false,
+    "java.errors.incompleteClasspath.severity": "ignore"
 }

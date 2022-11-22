@@ -9,7 +9,7 @@ local templates_home = wiki_home .. "/meta/templates"
 telekasten.setup({
     home                        = wiki_home,
     take_over_my_home           = true,
-    auto_set_filetype           = true,
+    auto_set_filetype           = false,
     dailies                     = diary_home,
     weeklies                    = diary_home,
     templates                   = templates_home,
