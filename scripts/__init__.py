@@ -166,7 +166,9 @@ installers: List[Installer] = [
     LinkingInstaller(HOME / '.config/nvim', CWD / '.config/nvim'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
-    AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
+    AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
+    AddLineInstaller(f'alias gdotfiles="cd {CWD}"', ZSHRC_PATH),
+    AddLineInstaller(f'alias gnotes="cd ~/vimwiki"', ZSHRC_PATH),
 ]
