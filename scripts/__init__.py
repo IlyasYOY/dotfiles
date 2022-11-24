@@ -90,7 +90,9 @@ class GitAliasesInstaller(Installer):
         # git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
         lg_alias_result = subprocess.call(
             'git config --global alias.lg "log --color --graph --pretty=format:\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit" ', shell=True)
-        return status_alias_result == 0 and lg_alias_result == 0
+        c_result = subprocess.call('git config --global alias.c "commit" ', shell=True)
+        co_result = subprocess.call('git config --global alias.co "checkout" ', shell=True)
+        return status_alias_result == 0 and lg_alias_result == 0 and c_result == 0 and co_result == 0
 
 
 class LombokForCocInstaller(Installer):
