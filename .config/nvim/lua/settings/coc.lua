@@ -1,4 +1,4 @@
-local mapping = require("map-functions")
+local mapping = require("functions/map")
 
 local map_normal = mapping.map_normal
 local map_interactive = mapping.map_interactive

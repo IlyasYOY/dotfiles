@@ -1,4 +1,4 @@
-local mapping = require('map-functions')
+local mapping = require('functions/map')
 
 local map_terminal = mapping.map_terminal
 

@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 from urllib import request
 
 
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__file__)
 
 
@@ -44,7 +45,7 @@ class AddLineInstaller(Installer):
             self._file.write_text(file_content)
             return True
         else:
-            logger.warn(f'File already contains this line')
+            logger.warn(f'File {self._file} already contains this line "{self._line}"')
             return False
 
     def get_description(self) -> str:

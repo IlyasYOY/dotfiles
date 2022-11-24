@@ -47,7 +47,7 @@ telekasten.setup({
 
 -- Telekasten commands
 
-local map_normal = require("map-functions").map_normal
+local map_normal = require("functions/map").map_normal
 
 map_normal("<leader>z", "<cmd>Telekasten<CR>")
 

@@ -1,12 +1,12 @@
 
 require("pluggins")
-require("treesitter-settings")
+require("settings/treesitter")
 
-require("user-settings")
-require("git-settings")
-require("russian-settings")
+require("settings/user")
+require("settings/git")
+require("settings/russian")
 
-require("telekasten-settings")
-require("telescope-settings")
-require("coc-settings")
+require("settings/telekasten")
+require("settings/telescope")
+require("settings/coc")
 

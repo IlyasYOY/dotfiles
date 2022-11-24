@@ -9,8 +9,8 @@ local function test_case(test_name, runnable)
     end
 end
 
-local core = require("core-functions")
-local java = require("java-functions")
+local core = require("functions/core")
+local java = require("functions/java")
 
 test_case("string split should work", function()
     local result = core.string_split("hello world", " ")

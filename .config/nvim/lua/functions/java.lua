@@ -1,4 +1,4 @@
-local core = require("core-functions")
+local core = require("functions/core")
 
 local M = {}
 
