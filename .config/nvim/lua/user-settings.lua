@@ -12,9 +12,15 @@ vim.g.netrw_bufsettings = 'nu nobl'
 vim.cmd("source ~/.vimrc")
 
 vim.cmd("colorscheme gruvbox")
-vim.cmd("set spelllang=custom,ru_ru,en_us")
+
+-- Spelling
+
+vim.cmd([[
+set spelllang=ru_ru,en_us
+set spellfile=~/.config/nvim/spell/custom.utf-8.add
+]])
 
 vim.keymap.set("n", "<leader>sc", function()
-    vim.opt_local.spell = not(vim.opt_local.spell:get())
+    vim.opt_local.spell = not (vim.opt_local.spell:get())
     print("spell: " .. tostring(vim.o.spell))
 end)
