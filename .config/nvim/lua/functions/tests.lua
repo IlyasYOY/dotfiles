@@ -1,5 +1,8 @@
 local M = {}
 
+-- Simple test function, writes error if it happens.
+--- @param test_name string
+--- @param runnable function()
 local function test_case(test_name, runnable)
     local status, result = pcall(runnable)
     if status then
@@ -31,7 +34,7 @@ test_case("processing assert all", function()
     assertFalse(x != y);
     ]]
 
-    local result = java.wrap_with_assert_all(test_string)
+    local result = java.wrap_text_with_assert_all(test_string)
 
     local expected_string = [[
 assertAll(
