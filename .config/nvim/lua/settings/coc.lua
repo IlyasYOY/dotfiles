@@ -87,10 +87,13 @@ map_normal("<leader>L", "<cmd>CocList<CR>", { silent = true, nowait = true })
 -- Show me the lists
 map_normal("<leader>E", "<cmd>CocCommand explorer<CR>", { silent = true, nowait = true })
 
+map_normal("<F1>", "<cmd>CocCommand java.debug.vimspector.start<CR>")
+
 vim.api.nvim_create_user_command("CocInstallMyExtensions",
-    ":CocInstall coc-go coc-java coc-json coc-lists coc-pyright coc-rust-analyzer coc-snippets coc-vimlsp coc-explorer coc-sumneko-lua"
+    ":CocInstall coc-snippets coc-explorer coc-go coc-java coc-java-debug coc-json coc-lists coc-pyright coc-rust-analyzer coc-vimlsp coc-sumneko-lua"
     , { desc = "Installs all my extensions" })
 vim.api.nvim_create_user_command("Format", ":call CocActionAsync('format')", { desc = "Formats buffer" })
 vim.api.nvim_create_user_command("Fold", ":call CocAction('fold', <f-args>)", { desc = "Folds code" })
 vim.api.nvim_create_user_command("OR", ":call CocActionAsync('runCommand', 'editor.action.organizeImport')",
     { desc = "Orginizes imports" })
+

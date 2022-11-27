@@ -9,4 +9,5 @@ require("settings/russian")
 require("settings/telekasten")
 require("settings/telescope")
 require("settings/coc")
+require("settings/vimspector")
 

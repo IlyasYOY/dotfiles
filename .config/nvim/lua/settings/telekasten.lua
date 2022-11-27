@@ -33,7 +33,7 @@ telekasten.setup({
         calendar_monday = 1,
         calendar_mark = "left-fit",
     },
-    close_after_yanking         = false,
+    close_after_yanking         = true,
     insert_after_inserting      = true,
     tag_notation                = "#tag",
     command_palette_theme       = "ivy",
