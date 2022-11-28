@@ -51,7 +51,7 @@ map_normal("<leader>oc", "<cmd>Format<CR>")
 -- Org Import
 map_normal("<leader>oi", "<cmd>OR<CR>")
 -- Org All
-map_normal("<leader>oa", "<cmd>OR<CR><cnd>Format<CR>")
+map_normal("<leader>oa", "<cmd>OR<CR><cmd>Format<CR>")
 
 -- Apply AutoFix to problem on the current line.
 -- Help
