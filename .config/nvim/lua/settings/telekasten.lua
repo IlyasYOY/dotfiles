@@ -1,12 +1,12 @@
 -- Telekasten settings
 
-local telekasten = require("telekasten")
+local telekasten = require "telekasten"
 
-local wiki_home = vim.fn.expand("~/vimwiki")
+local wiki_home = vim.fn.expand "~/vimwiki"
 local diary_home = wiki_home .. "/diary"
 local templates_home = wiki_home .. "/meta/templates"
 
-telekasten.setup{
+telekasten.setup {
     home                        = wiki_home,
     take_over_my_home           = true,
     auto_set_filetype           = false,
@@ -47,7 +47,7 @@ telekasten.setup{
 
 -- Telekasten commands
 
-local mapping = require("functions/map")
+local mapping = require "functions/map"
 local map_n = mapping.map_normal
 local map_v = mapping.map_visual_and_select
 

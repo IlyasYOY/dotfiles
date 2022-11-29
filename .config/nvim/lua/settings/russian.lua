@@ -1,4 +1,4 @@
-vim.cmd([[
+vim.cmd [[
 map й q
 map ц w
 map у e
@@ -65,4 +65,4 @@ map Ь M
 map Б <
 map Ю >
 map Ё /|
-]])
+]]

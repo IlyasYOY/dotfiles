@@ -1,4 +1,4 @@
-local core = require("functions/core")
+local core = require "functions/core"
 
 local M = {}
 
@@ -26,8 +26,8 @@ end
 M.wrap_text_with_assert_all = wrap_text_with_assert_all
 
 M.wrap_selection_with_assert_all = function()
-    local start_position = vim.fn.getpos("'<")
-    local end_position = vim.fn.getpos("'>")
+    local start_position = vim.fn.getpos "'<"
+    local end_position = vim.fn.getpos "'>"
     local buffer_number = vim.api.nvim_get_current_buf()
 
     if end_position[3] == 2147483647 and start_position[3] == 1 then
@@ -35,7 +35,7 @@ M.wrap_selection_with_assert_all = function()
         local lines = core.string_split(wrap_text_with_assert_all(text), "\n")
         vim.api.nvim_buf_set_lines(buffer_number, start_position[2] - 1, end_position[2], false, lines)
     else
-        error("You should use line select (S-v)")
+        error "You should use line select (S-v)"
     end
 end
 

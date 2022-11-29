@@ -1,5 +1,4 @@
-
-local mapping = require("functions/map")
+local mapping = require "functions/map"
 
 local map_normal = mapping.map_normal
 

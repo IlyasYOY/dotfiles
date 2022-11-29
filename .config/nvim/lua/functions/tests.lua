@@ -12,8 +12,8 @@ local function test_case(test_name, runnable)
     end
 end
 
-local core = require("functions/core")
-local java = require("functions/java")
+local core = require "functions/core"
+local java = require "functions/java"
 
 test_case("string split should work", function()
     local result = core.string_split("hello world", " ")
@@ -22,7 +22,7 @@ test_case("string split should work", function()
 end)
 
 test_case("string split should work with default parameter", function()
-    local result = core.string_split("hello world")
+    local result = core.string_split "hello world"
 
     assert(#result == 2, ("string splitted incorrectly, resulting %s"):format(#result))
 end)

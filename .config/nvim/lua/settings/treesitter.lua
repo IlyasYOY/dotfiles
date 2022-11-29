@@ -1,4 +1,4 @@
-local ts_config = require('nvim-treesitter.configs')
+local ts_config = require "nvim-treesitter.configs"
 
 ts_config.setup {
     -- A list of parser names, or "all"
@@ -31,6 +31,3 @@ ts_config.setup {
         additional_vim_regex_highlighting = false,
     },
 }
-
-
-

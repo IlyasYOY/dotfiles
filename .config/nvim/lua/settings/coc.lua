@@ -1,4 +1,4 @@
-local mapping = require("functions/map")
+local mapping = require "functions/map"
 
 local map_normal = mapping.map_normal
 local map_interactive = mapping.map_interactive
@@ -45,8 +45,8 @@ map_normal("<leader>rn", "<Plug>(coc-rename)")
 
 -- Formatting selected code.
 -- Org Code
-map_visual("<leader>oc", " <Plug>(coc-format-selected)")
-map_normal("<leader>oc ", "<Plug>(coc-format-selected)")
+map_visual("<leader>oc", " <Plug>(coc-format-selected)", { silent = true })
+map_normal("<leader>oc ", "<Plug>(coc-format-selected)", { silent = true })
 map_normal("<leader>oc", "<cmd>Format<CR>")
 -- Org Import
 map_normal("<leader>oi", "<cmd>OR<CR>")
@@ -55,7 +55,7 @@ map_normal("<leader>oa", "<cmd>OR<CR><cmd>Format<CR>")
 
 -- Apply AutoFix to problem on the current line.
 -- Help
-map_normal("<leader>H ", "<Plug>(coc-fix-current)")
+map_normal("<leader>H", "<Plug>(coc-fix-current)", { silent = true, nowait = true })
 
 -- Applying codeAction to the selected region.
 -- Example: `<leader>aap` for current paragraph
@@ -89,11 +89,19 @@ map_normal("<leader>E", "<cmd>CocCommand explorer<CR>", { silent = true, nowait 
 
 map_normal("<F1>", "<cmd>CocCommand java.debug.vimspector.start<CR>")
 
+vim.api.nvim_create_user_command("Format", "call CocActionAsync('format')", { desc = "Formats buffer" })
+vim.api.nvim_create_user_command("Fold", "call CocAction('fold', <f-args>)", { desc = "Folds code" })
+vim.api.nvim_create_user_command("OR", "call CocActionAsync('runCommand', 'editor.action.organizeImport')",
+    { desc = "Orginizes imports" })
+
 vim.api.nvim_create_user_command("CocInstallMyExtensions",
     ":CocInstall coc-snippets coc-explorer coc-go coc-java coc-java-debug coc-json coc-lists coc-pyright coc-rust-analyzer coc-vimlsp coc-sumneko-lua"
     , { desc = "Installs all my extensions" })
-vim.api.nvim_create_user_command("Format", ":call CocActionAsync('format')", { desc = "Formats buffer" })
-vim.api.nvim_create_user_command("Fold", ":call CocAction('fold', <f-args>)", { desc = "Folds code" })
-vim.api.nvim_create_user_command("OR", ":call CocActionAsync('runCommand', 'editor.action.organizeImport')",
-    { desc = "Orginizes imports" })
 
+-- Highlight the symbol and its references when holding the cursor.
+vim.api.nvim_create_augroup("CocGroup", {})
+vim.api.nvim_create_autocmd("CursorHold", {
+    group = "CocGroup",
+    command = "silent call CocActionAsync('highlight')",
+    desc = "Highlight symbol under cursor on CursorHold"
+})

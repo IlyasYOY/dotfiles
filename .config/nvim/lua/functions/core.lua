@@ -39,7 +39,7 @@ M.merge_lines = merge_lines
 
 -- Splits string using separator.
 --- @param target string to split
---- @param separator string
+--- @param separator string?
 --- @return string[]
 local function string_split(target, separator)
     if separator == nil then
@@ -106,5 +106,17 @@ local function get_selected_text()
 end
 
 M.get_selected_text = get_selected_text
+
+-- Reloads module.
+--- @param name string
+local function reload_module(name)
+    if package.loaded[name] == nil then
+        package.loaded[name] = nil
+        print("module '" .. name .. "' is being reloaded")
+    end
+    return require(name)
+end
+
+M.reload_module = reload_module
 
 return M

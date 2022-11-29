@@ -1,13 +1,11 @@
+require "pluggins"
+require "settings/treesitter"
 
-require("pluggins")
-require("settings/treesitter")
+require "settings/user"
+require "settings/git"
+require "settings/russian"
 
-require("settings/user")
-require("settings/git")
-require("settings/russian")
-
-require("settings/telekasten")
-require("settings/telescope")
-require("settings/coc")
-require("settings/vimspector")
-
+require "settings/telekasten"
+require "settings/telescope"
+require "settings/coc"
+require "settings/vimspector"
