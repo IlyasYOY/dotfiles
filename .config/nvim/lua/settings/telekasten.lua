@@ -22,9 +22,9 @@ telekasten.setup {
     dailies_create_nonexisting  = true,
     weeklies_create_nonexisting = true,
     journal_auto_open           = false,
-    template_new_note           = templates_home .. "/zettel template.md",
-    template_new_daily          = templates_home .. "/daily template.md",
-    template_new_weekly         = templates_home .. "/weekly template.md",
+    template_new_note           = templates_home .. "/zettel.md",
+    template_new_daily          = templates_home .. "/daily.md",
+    template_new_weekly         = templates_home .. "/weekly.md",
     image_link_style            = "wiki",
     sort                        = "modified",
     plug_into_calendar          = true,
@@ -59,6 +59,7 @@ map_n("<leader>zt", "<cmd>Telekasten toggle_todo<CR>")
 map_v("<leader>zt", "<cmd>Telekasten toggle_todo<CR>")
 map_n("<leader>zz", "<cmd>Telekasten follow_link<CR>")
 map_n("<leader>zl", "<cmd>Telekasten insert_link<CR>")
+map_n("<leader>zy", "<cmd>Telekasten yank_notelink<CR>")
 map_n("<leader>zn", "<cmd>Telekasten new_note<CR>")
 map_n("<leader>zN", "<cmd>Telekasten new_templated_note<CR>")
 
