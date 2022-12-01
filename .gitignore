@@ -8,8 +8,7 @@ __pycache__/
 
 .config/nvim/plugin/packer_compiled.lua
 
-.config/nvim/spell/custom.utf-8.add
-.config/nvim/spell/custom.utf-8.add.spl
+.config/nvim/spell/
 
 NetrwTreeListing
 .vim/
