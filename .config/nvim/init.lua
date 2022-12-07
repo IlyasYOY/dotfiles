@@ -1,7 +1,6 @@
 require "pluggins"
 
 require "settings/user"
-require "settings/russian"
 
 require "settings/telescope"
 require "settings/treesitter"

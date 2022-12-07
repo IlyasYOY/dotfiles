@@ -71,10 +71,15 @@ inoremap <F3> <C-\><C-o>:w<CR>
 " map <leader>s :Sex!<CR>
 
 " Switch buffers using keys
-nnoremap <silent> [b :bprevious<CR>
-nnoremap <silent> ]b :bnext<CR> 
-nnoremap <silent> [B :bfirst<CR> 
-nnoremap <silent> ]B :blast<CR>
+nnoremap <silent> [b :bprevious<cr>
+nnoremap <silent> ]b :bnext<cr> 
+nnoremap <silent> [B :bfirst<cr> 
+nnoremap <silent> ]B :blast<cr>
+
+nnoremap <silent> [q :cprevious<cr>
+nnoremap <silent> ]q :cnext<cr> 
+nnoremap <silent> [Q :cfirst<cr> 
+nnoremap <silent> ]Q :clast<cr>
 
 imap jj <Esc>
 

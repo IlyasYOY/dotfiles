@@ -43,11 +43,14 @@ return require "packer".startup(function(use)
     use "vim-airline/vim-airline"
     use "airblade/vim-gitgutter"
 
-    use "williamboman/mason.nvim"
 
-    use "williamboman/mason-lspconfig.nvim"
     use 'neovim/nvim-lspconfig'
+    use "williamboman/mason.nvim"
+    use "williamboman/mason-lspconfig.nvim"
+
+    use "folke/neodev.nvim"
     use 'mfussenegger/nvim-jdtls'
+
     use 'L3MON4D3/LuaSnip'
 
     use 'hrsh7th/nvim-cmp'
