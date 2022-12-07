@@ -96,13 +96,10 @@ class GitAliasesInstaller(Installer):
         return status_alias_result == 0 and lg_alias_result == 0 and c_result == 0 and co_result == 0
 
 
-class LombokForCocInstaller(Installer):
-    _coc_java_dir_path = Path.home() / '.config/coc/extensions/coc-java-data'
-    _nvim_config_dir_path = Path.home() / '.config/nvim/'
-    _coc_settings_json_path = _nvim_config_dir_path / 'coc-settings.json'
+class LombokInstaller(Installer):
 
     _lombok_url = 'https://projectlombok.org/downloads/lombok.jar'
-    _lombok_download_path = _coc_java_dir_path / 'lombok.jar'
+    _lombok_download_path = Path.home() / 'lombok.jar'
 
     def _download_lombok(self):
         logger.info(f'Download lombok from {self._lombok_url}')
@@ -110,32 +107,12 @@ class LombokForCocInstaller(Installer):
         request.urlcleanup()
         logger.info(f'Lombok downloaded to {self._lombok_download_path}')
 
-    def _create_and_parse_config(self) -> Dict[str, str]:
-        coc_config_dict = {}
-
-        if not self._coc_settings_json_path.exists():
-            logger.debug(
-                f"You dont have any config setup, creating one at {self._coc_settings_json_path}")
-            self._coc_settings_json_path.touch()
-        else:
-            coc_config_file_content = self._coc_settings_json_path.read_text()
-            backup_file(self._coc_settings_json_path)
-            coc_config_dict = json.loads(coc_config_file_content)
-
-        return coc_config_dict
-
-    def _write_config(self, coc_config_dict: Dict[str, str]):
-        coc_config_file_content = json.dumps(coc_config_dict, indent=4)
-        self._coc_settings_json_path.write_text(coc_config_file_content)
 
     def get_description(self) -> str:
         return 'This scripts load lombok for coc-java, so be sure you have already install plugins & coc-java itself'
 
     def __call__(self) -> bool:
         self._download_lombok()
-        coc_config_dict = self._create_and_parse_config()
-        coc_config_dict['java.jdt.ls.vmargs'] = f'-javaagent:{self._lombok_download_path}'
-        self._write_config(coc_config_dict)
         return True
 
 
@@ -164,13 +141,13 @@ CWD = Path.cwd()
 ZSHRC_PATH = Path.home() / '.zshrc'
 
 installers: List[Installer] = [
-    # This one should be replaced with LSP adoption
-    # LombokForCocInstaller(),
+    LombokInstaller(),
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / '.config/nvim'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
+    AddLineInstaller('export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok.jar"', ZSHRC_PATH),
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
     AddLineInstaller(f'alias gdotfiles="cd {CWD}"', ZSHRC_PATH),
