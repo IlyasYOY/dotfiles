@@ -164,7 +164,8 @@ CWD = Path.cwd()
 ZSHRC_PATH = Path.home() / '.zshrc'
 
 installers: List[Installer] = [
-    LombokForCocInstaller(),
+    # This one should be replaced with LSP adoption
+    # LombokForCocInstaller(),
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / '.config/nvim'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),

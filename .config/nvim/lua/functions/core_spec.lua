@@ -1,5 +1,3 @@
-
-
 describe("core tests", function()
     local core = require "functions/core"
 
