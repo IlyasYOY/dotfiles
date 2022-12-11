@@ -30,11 +30,7 @@ return require "packer".startup(function(use)
         requires = { { "nvim-lua/plenary.nvim" } }
     }
 
-    use "renerocksai/calendar-vim"
-    use "renerocksai/telekasten.nvim"
-    -- use "IlyasYOY/telekasten.nvim"
-
-    use "gruvbox-community/gruvbox"
+    use "mhinz/vim-startify"
 
     use "tpope/vim-fugitive"
     use "tpope/vim-surround"
@@ -43,24 +39,25 @@ return require "packer".startup(function(use)
     use "vim-airline/vim-airline"
     use "airblade/vim-gitgutter"
 
+    use { "nvim-tree/nvim-tree.lua",
+        tag = "nightly"
+    }
 
-    use 'neovim/nvim-lspconfig'
+    use "neovim/nvim-lspconfig"
     use "williamboman/mason.nvim"
     use "williamboman/mason-lspconfig.nvim"
-
     use "folke/neodev.nvim"
-    use 'mfussenegger/nvim-jdtls'
+    use "L3MON4D3/LuaSnip"
 
-    use 'L3MON4D3/LuaSnip'
+    use "hrsh7th/nvim-cmp"
+    use "hrsh7th/cmp-nvim-lsp"
+    use "saadparwaiz1/cmp_luasnip"
 
-    use 'hrsh7th/nvim-cmp'
-    use 'hrsh7th/cmp-nvim-lsp'
-    use 'saadparwaiz1/cmp_luasnip'
+    use "renerocksai/calendar-vim"
+    use "renerocksai/telekasten.nvim"
 
-    use "mhinz/vim-startify"
+    use "gruvbox-community/gruvbox"
 
-    -- Automatically set up your configuration after cloning packer.nvim
-    -- Put this at the end after all plugins
     if packer_bootstrap then
         require "packer".sync()
     end

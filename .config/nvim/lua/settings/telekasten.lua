@@ -1,6 +1,6 @@
 -- Telekasten settings
 
-local telekasten = require "telekasten"
+local telekasten = require"telekasten"
 
 local wiki_home = vim.fn.expand "~/vimwiki"
 local diary_home = wiki_home .. "/diary"

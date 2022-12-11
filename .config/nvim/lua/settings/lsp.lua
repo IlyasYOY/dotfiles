@@ -1,5 +1,3 @@
-local core = require 'functions.core'
-
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }
@@ -23,7 +21,7 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
 
-    vim.keymap.set("n", "<leader>S", vim.lsp.buf.document_symbol, bufopts)
+    vim.keymap.set("n", "<leader>S", vim.lsp.buf.workspace_symbol, bufopts)
 
     vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, bufopts)
     vim.keymap.set({ "n", "i" }, "<C-s>", vim.lsp.buf.signature_help, bufopts)
@@ -41,9 +39,13 @@ local on_attach = function(client, bufnr)
     vim.keymap.set({ "v" }, "<space>a", vim.lsp.buf.code_action, bufopts)
 end
 
+local get_capabilities = function()
+    return require("cmp_nvim_lsp").default_capabilities()
+end
+
 local lspconfig = require("lspconfig")
 
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = get_capabilities()
 local generic_servers = { "gopls", "gradle_ls", "jdtls", "pyright", "rust_analyzer" }
 for _, lsp in ipairs(generic_servers) do
     lspconfig[lsp].setup {
@@ -60,7 +62,7 @@ table.insert(runtime_path, "lua/?/init.lua")
 local runtime_file = vim.api.nvim_get_runtime_file("", true)
 table.remove(runtime_file, 1)
 
-lspconfig["sumneko_lua"].setup {
+lspconfig.sumneko_lua.setup {
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -71,54 +73,10 @@ lspconfig["sumneko_lua"].setup {
                 library = runtime_file,
                 checkThirdParty = false,
             },
-            telemetry = { enable = false, },
+            telemetry = {
+                enable = false,
+            },
         },
     },
 }
 
--- luasnip setup
-local luasnip = require "luasnip"
-
--- nvim-cmp setup
-local cmp = require "cmp"
-cmp.setup {
-    completion = {
-        autocomplete = false
-    },
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert({
-        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-        },
-        ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-    }),
-    sources = {
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
-    },
-}

@@ -12,3 +12,6 @@ __pycache__/
 
 NetrwTreeListing
 .vim/
+
+.DB_Store
+.DS_Store

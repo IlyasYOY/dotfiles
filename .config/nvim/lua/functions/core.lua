@@ -28,7 +28,7 @@ local function merge_lines(lines, separator)
     end
 
     local result = ""
-    for i, line in ipairs(lines) do
+    for _, line in ipairs(lines) do
         result = result .. line .. separator
     end
 
