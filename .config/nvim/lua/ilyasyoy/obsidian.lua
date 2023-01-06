@@ -17,3 +17,11 @@ end, { desc = "[n]otes [f]ind [j]ournal" })
 vim.keymap.set("n", "<leader>nd", function()
     obsidian.vault:open_daily()
 end, { desc = "[n]otes [d]aily" })
+
+vim.keymap.set("n", "<leader>nff", function()
+    obsidian.vault:find_note()
+end, { desc = "[n]otes [f]iles [f]ind" })
+
+vim.keymap.set("n", "<leader>nfg", function()
+    obsidian.vault:grep_note()
+end, { desc = "[n]otes [f]iles [g]rep" })

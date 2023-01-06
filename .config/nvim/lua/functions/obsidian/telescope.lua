@@ -13,7 +13,7 @@ local M = {}
 --- @param callback fun(Array) functions to be applied to the resulting string
 --- @param opts table additional options for telescope
 --- @param entry_maker fun(table): table
-function M.find(title, items, callback, entry_maker, opts)
+function M.find_through_items(title, items, callback, entry_maker, opts)
     opts = opts or {}
 
     pickers
@@ -35,6 +35,18 @@ function M.find(title, items, callback, entry_maker, opts)
             end,
         })
         :find()
+end
+
+function M.grep_files(title, path, type_filter)
+    if type_filter == nil then
+        type_filter = "md"
+    end
+
+    return builtin.live_grep {
+        cwd = path,
+        prompt_title = title,
+        type_filter = type_filter
+    }
 end
 
 function M.find_files(title, path)

@@ -1,6 +1,7 @@
 local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
 local Journal = require "functions.obsidian.journal"
+local obsidian_telescope = require "functions.obsidian.telescope"
 
 -- table with vault options
 --- @class VaultOpts
@@ -52,6 +53,14 @@ local Vault = {}
 
 function Vault:find_and_insert_template(opts)
     self._templater:search_and_insert_template(opts)
+end
+
+function Vault:find_note()
+    obsidian_telescope.find_files("Find notes", self._home_path:expand())
+end
+
+function Vault:grep_note()
+    obsidian_telescope.grep_files("Grep notes", self._home_path:expand())
 end
 
 function Vault:open_daily()

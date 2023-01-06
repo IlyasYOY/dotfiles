@@ -75,7 +75,7 @@ end
 function Templater:search_and_insert_template(opts)
     opts = opts or {}
     local templates = self:list_templates()
-    return telescope.find("Templates", templates, function(selection)
+    return telescope.find_through_items("Templates", templates, function(selection)
         local selected_file = selection.value
         local templated_lines = core.lines_from(selected_file, function(line)
             return self:_process_for_current_buffer(line)
