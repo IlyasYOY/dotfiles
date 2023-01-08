@@ -46,26 +46,34 @@ end
 -- Check if str starts with prefix.
 --- @param str string? string to have prefix.
 --- @param prefix string? prefix itself.
+--- @param plain boolean? 
 --- @return boolean
-local function string_has_prefix(str, prefix)
+local function string_has_prefix(str, prefix, plain)
+    if plain == nil then 
+        plain = false
+    end
     if str == nil or prefix == nil then
         return false
     end
 
-    local index = string.find(str, prefix)
+    local index = string.find(str, prefix, 1, plain)
     return index == 1
 end
 
 -- Check if str ends with prefix.
 --- @param str string?
 --- @param suffix string?
+--- @param plain boolean? 
 --- @return boolean
-local function string_has_suffix(str, suffix)
+local function string_has_suffix(str, suffix, plain)
+    if plain == nil then 
+        plain = false
+    end
     if str == nil or suffix == nil then
         return false
     end
 
-    local index = string.find(str, suffix)
+    local index = string.find(str, suffix, 1, plain)
     if index == nil then
         return false
     end
@@ -226,9 +234,9 @@ end
 
 local function array_flat_map(items, mapper)
     local results = {}
-    for i, item in ipairs(items) do
+    for _, item in ipairs(items) do
         local mapped_items = mapper(item)
-        for j, mapped_item in ipairs(mapped_items) do
+        for _, mapped_item in ipairs(mapped_items) do
             results[#results + 1] = mapped_item
         end
     end

@@ -6,20 +6,17 @@ local telescope = require "functions.obsidian.telescope"
 -- options for VarProvider
 --- @class VarProviderOpts
 --- @field filename string?
-local VarProviderOpts = {}
 
 -- simple table to provide values for template
 --- @class VarProvider
 --- @field public name string
 --- @field public func fun(VarProviderOpts?):string
-local VarProvider = {}
 
 -- options to run tempalating
 --- @class TemplaterProcessingOpts
 --- @field public template string
 --- @field public template_name string
 --- @field public filename string
-local TemplaterProcessingOpts = {}
 
 -- options to create templater
 --- @class TemplaterOpts
@@ -91,7 +88,7 @@ function Templater:search_and_insert_template(opts)
 end
 
 -- lists templates
---- @return File[]
+--- @return ilyasyoy.File[]
 function Templater:list_templates()
     local home_path_string = self._home_path:expand()
     return File.list(home_path_string, "*.md")

@@ -25,3 +25,18 @@ end, { desc = "[n]otes [f]iles [f]ind" })
 vim.keymap.set("n", "<leader>nfg", function()
     obsidian.vault:grep_note()
 end, { desc = "[n]otes [f]iles [g]rep" })
+
+local group = vim.api.nvim_create_augroup("IlyasyoyObsidian", { clear = true })
+
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+    group = group,
+    pattern = "*.md",
+    desc = "Setup notes nvim-cmp source",
+    callback = function()
+        require("cmp").setup.buffer {
+            sources = {
+                { name = "obsidian" },
+            },
+        }
+    end,
+})

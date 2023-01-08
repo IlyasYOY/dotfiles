@@ -29,7 +29,7 @@ vim.keymap.set(
     described(opts, "Put [d]iagnostics to [q]uickfix list")
 )
 
-local generic_servers = { "gopls", "gradle_ls", "pyright", "rust_analyzer" }
+local generic_servers = { "gopls", "gradle_ls", "pyright", "rust_analyzer", "tsserver" }
 for _, client in ipairs(generic_servers) do
     lspconfig[client].setup {
         on_attach = lsp.on_attach,

@@ -1,7 +1,9 @@
 local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
+local File = require "functions.obsidian.file"
 local Journal = require "functions.obsidian.journal"
 local obsidian_telescope = require "functions.obsidian.telescope"
+local core = require "functions.core"
 
 -- table with vault options
 --- @class VaultOpts
@@ -15,32 +17,32 @@ local VaultOpts = {}
 function VaultOpts:new(opts)
     opts = opts or {}
     self.__index = self
-    local vaultOpts = setmetatable({}, self)
+    local vault_opts = setmetatable({}, self)
 
-    vaultOpts.vault_home = opts.vault_home
+    vault_opts.vault_home = opts.vault_home
         or (Path:new(Path.path.home) / "vimwiki"):expand()
 
-    vaultOpts.templates_home = (
-        Path:new(vaultOpts.vault_home)
+    vault_opts.templates_home = (
+        Path:new(vault_opts.vault_home)
         / "meta"
         / "templates"
     ):expand()
 
-    vaultOpts.journal_home = (Path:new(vaultOpts.vault_home) / "diary"):expand()
+    vault_opts.journal_home = (Path:new(vault_opts.vault_home) / "diary"):expand()
 
     local templater_opts = opts.templater or {}
-    vaultOpts.templater = vim.tbl_extend(
+    vault_opts.templater = vim.tbl_extend(
         "force",
-        { home = vaultOpts.templates_home, include_default_providers = true },
+        { home = vault_opts.templates_home, include_default_providers = true },
         templater_opts
     )
 
     local journal_opts = opts.journal or {}
-    vaultOpts.journal = vim.tbl_extend("force", {
-        home = vaultOpts.journal_home,
+    vault_opts.journal = vim.tbl_extend("force", {
+        home = vault_opts.journal_home,
     }, journal_opts)
 
-    return vaultOpts
+    return vault_opts
 end
 
 -- class representing vaults
@@ -71,8 +73,13 @@ function Vault:find_journal()
     self._journal:find_daily()
 end
 
+function Vault:list_notes()
+    local result = File.list(self._home_path:expand(), "**/*.md")
+    return result
+end
+
 -- creates Vault instance
---- @param opts VaultOpts? table options to craete a vault
+--- @param opts VaultOpts? table options to create a vault
 --- @return Vault
 function Vault:new(opts)
     opts = opts or {}

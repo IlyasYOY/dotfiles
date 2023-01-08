@@ -18,6 +18,7 @@ require("mason-lspconfig").setup {
         "sumneko_lua",
         "pyright",
         "rust_analyzer",
+        "tsserver"
     },
     automatic_installation = true,
 }

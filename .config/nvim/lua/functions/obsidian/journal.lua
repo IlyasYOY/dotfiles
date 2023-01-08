@@ -58,7 +58,7 @@ function Journal:find_daily()
 end
 
 -- lists journal entries
---- @return Array<File>
+--- @return Array<ilyasyoy.File>
 function Journal:list_dailies()
     local path = self._home_path:expand()
     local files = File.list(path, "????-??-??.md")
@@ -67,7 +67,7 @@ end
 
 -- get today note file
 --- @param create_if_missing boolean?
---- @return File
+--- @return ilyasyoy.File
 function Journal:today(create_if_missing)
     local filename = self._date_provider()
     --- @type Path

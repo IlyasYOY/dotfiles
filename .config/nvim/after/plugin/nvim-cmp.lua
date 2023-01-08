@@ -1,9 +1,25 @@
 local luasnip = require "luasnip"
 local cmp = require "cmp"
+local lspkind = require "lspkind"
+local cmp_source = require "functions.obsidian.cmp-source"
+
+cmp.register_source("obsidian", cmp_source.new())
 
 cmp.setup {
     completion = {
         autocomplete = false,
+    },
+    formatting = {
+        format = lspkind.cmp_format {
+            mode = "text",
+            maxwidth = 50,
+            ellipsis_char = "...",
+            menu = {
+                nvim_lsp = "[LSP]",
+                luasnip = "[Snippet]",
+                obsidian = "[Notes]"
+            },
+        },
     },
     snippet = {
         expand = function(args)

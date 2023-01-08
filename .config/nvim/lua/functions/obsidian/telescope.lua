@@ -45,7 +45,7 @@ function M.grep_files(title, path, type_filter)
     return builtin.live_grep {
         cwd = path,
         prompt_title = title,
-        type_filter = type_filter
+        type_filter = type_filter,
     }
 end
 
