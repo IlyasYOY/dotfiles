@@ -72,19 +72,28 @@ end
 function Templater:search_and_insert_template(opts)
     opts = opts or {}
     local templates = self:list_templates()
-    return telescope.find_through_items("Templates", templates, function(selection)
-        local selected_file = selection.value
-        local templated_lines = core.lines_from(selected_file, function(line)
-            return self:_process_for_current_buffer(line)
-        end)
-        vim.api.nvim_put(templated_lines, "", true, true)
-    end, function(entry)
-        return {
-            value = entry.path,
-            display = entry.name,
-            ordinal = entry.name,
-        }
-    end, opts)
+    return telescope.find_through_items(
+        "Templates",
+        templates,
+        function(selection)
+            local selected_file = selection.value
+            local templated_lines = core.lines_from(
+                selected_file,
+                function(line)
+                    return self:_process_for_current_buffer(line)
+                end
+            )
+            vim.api.nvim_put(templated_lines, "", true, true)
+        end,
+        function(entry)
+            return {
+                value = entry.path,
+                display = entry.name,
+                ordinal = entry.name,
+            }
+        end,
+        opts
+    )
 end
 
 -- lists templates

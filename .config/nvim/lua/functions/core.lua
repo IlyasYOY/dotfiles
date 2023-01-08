@@ -46,10 +46,10 @@ end
 -- Check if str starts with prefix.
 --- @param str string? string to have prefix.
 --- @param prefix string? prefix itself.
---- @param plain boolean? 
+--- @param plain boolean?
 --- @return boolean
 local function string_has_prefix(str, prefix, plain)
-    if plain == nil then 
+    if plain == nil then
         plain = false
     end
     if str == nil or prefix == nil then
@@ -63,22 +63,19 @@ end
 -- Check if str ends with prefix.
 --- @param str string?
 --- @param suffix string?
---- @param plain boolean? 
+--- @param plain boolean?
 --- @return boolean
 local function string_has_suffix(str, suffix, plain)
-    if plain == nil then 
+    if plain == nil then
         plain = false
     end
     if str == nil or suffix == nil then
         return false
     end
 
-    local index = string.find(str, suffix, 1, plain)
-    if index == nil then
-        return false
-    end
+    local _, end_index = string.find(str, suffix, 1, plain)
 
-    return #str == index + #suffix - 1
+    return end_index == #str
 end
 
 -- Strips tail if present.

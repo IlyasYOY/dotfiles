@@ -2,7 +2,7 @@ local Path = require "plenary.path"
 local File = require "functions.obsidian.file"
 local telescope = require "functions.obsidian.telescope"
 
--- journal opts
+---journal opts
 ---@class JournalOpts
 ---@field public home string
 ---@field public template_name string

@@ -24,11 +24,7 @@ end
 ---@param callback fun(response: lsp.CompletionResponse|nil)
 function source:complete(params, callback)
     if
-        not core.string_has_suffix(
-            params.context.cursor_before_line,
-            "[[",
-            true
-        )
+        not core.string_has_suffix(params.context.cursor_before_line, "%[%[$")
     then
         callback {
             items = {},

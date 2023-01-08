@@ -3,7 +3,6 @@ local Path = require "plenary.path"
 local File = require "functions.obsidian.file"
 local Journal = require "functions.obsidian.journal"
 local obsidian_telescope = require "functions.obsidian.telescope"
-local core = require "functions.core"
 
 -- table with vault options
 --- @class VaultOpts
