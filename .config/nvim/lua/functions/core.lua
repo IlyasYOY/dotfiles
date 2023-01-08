@@ -57,6 +57,7 @@ local function string_has_prefix(str, prefix, plain)
     end
 
     local index = string.find(str, prefix, 1, plain)
+
     return index == 1
 end
 
@@ -66,16 +67,10 @@ end
 --- @param plain boolean?
 --- @return boolean
 local function string_has_suffix(str, suffix, plain)
-    if plain == nil then
-        plain = false
-    end
     if str == nil or suffix == nil then
         return false
     end
-
-    local _, end_index = string.find(str, suffix, 1, plain)
-
-    return end_index == #str
+    return string_has_prefix(string.reverse(str), string.reverse(suffix), plain)
 end
 
 -- Strips tail if present.

@@ -26,9 +26,8 @@ end
 ---@param params cmp.SourceCompletionApiParams
 ---@param callback fun(response: lsp.CompletionResponse|nil)
 function source:complete(params, callback)
-    if
-        not core.string_has_suffix(params.context.cursor_before_line, "%[%[$")
-    then
+    local before_cursor = params.context.cursor_before_line
+    if not core.string_has_suffix(before_cursor, "[[", true) then
         callback {
             items = {},
             isIncomplete = false,
@@ -39,11 +38,12 @@ function source:complete(params, callback)
     local files = self.obsidian.vault:list_notes()
 
     local items = core.array_map(files, function(file)
+        local completion_ending = self._get_completion_ending(params)
         ---@type lsp.CompletionItem
         local item = {
             label = file.name,
             kind = 17,
-            insertText = file.name .. "]]",
+            insertText = file.name .. completion_ending,
             data = file,
         }
         return item
@@ -53,6 +53,16 @@ function source:complete(params, callback)
         items = items,
         isIncomplete = false,
     }
+end
+
+---@param params cmp.SourceCompletionApiParams
+---@return string
+function source._get_completion_ending(params)
+    local after_cursor = params.context.cursor_after_line
+    if core.string_has_prefix(after_cursor, "]]", true) then
+        return ""
+    end
+    return "]]"
 end
 
 ---Resolve doc as content of the file.
