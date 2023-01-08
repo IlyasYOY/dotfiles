@@ -11,7 +11,10 @@ end
 
 ---@return boolean
 function source:is_available()
-    return vim.bo.filetype == "markdown"
+    local vault_home_path = self.obsidian.vault._home_path:expand()
+    local file_dir = vim.fn.expand "%:p"
+    local is_in_vault = core.string_has_prefix(file_dir, vault_home_path, true)
+    return vim.bo.filetype == "markdown" and is_in_vault
 end
 
 ---@return string
