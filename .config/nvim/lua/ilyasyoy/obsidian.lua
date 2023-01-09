@@ -10,6 +10,10 @@ vim.keymap.set("n", "<leader>nT", function()
     obsidian.vault:find_and_insert_template()
 end, { desc = "Inserts [n]otes [T]emplate" })
 
+vim.keymap.set("n", "<leader>nn", function()
+    obsidian.vault:follow_link()
+end)
+
 vim.keymap.set("n", "<leader>nfj", function()
     obsidian.vault:find_journal()
 end, { desc = "[n]otes [f]ind [j]ournal" })
@@ -33,10 +37,13 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     pattern = "*.md",
     desc = "Setup notes nvim-cmp source",
     callback = function()
-        require("cmp").setup.buffer {
-            sources = {
-                { name = "obsidian" },
-            },
-        }
+        if obsidian.vault:is_current_buffer_in_vault() then
+            require("cmp").setup.buffer {
+                sources = {
+                    { name = "obsidian" },
+                },
+            }
+        end
     end,
 })
+

@@ -239,6 +239,32 @@ local function described(x, desc)
     return vim.tbl_extend("force", x, { desc = desc })
 end
 
+---@param str string
+---@param num number
+---@return string?
+local function find_link(str, num)
+    if #str <= 4 then
+        return nil
+    end
+
+    local start
+    local ending
+    for i = 2, #str do
+        local last_items = string.sub(str, i - 1, i)
+        if last_items == "[[" then
+            start = i + 1
+        end
+        if last_items == "]]" then
+            ending = i - 2
+        end
+        if start ~= nil and ending ~= nil then
+            if start <= num and ending >= num then
+                return string.sub(str, start, ending)
+            end
+        end
+    end
+end
+
 return {
     described = described,
     array_map = array_map,
@@ -259,4 +285,5 @@ return {
     string_at = string_at,
     string_split = string_split,
     string_merge = string_merge,
+    find_link = find_link,
 }

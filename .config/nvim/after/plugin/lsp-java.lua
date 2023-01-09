@@ -23,6 +23,9 @@ lspconfig.jdtls.setup {
     capabilities = lsp.get_capabilities(),
     settings = {
         java = {
+            eclipse = {
+                downloadSources = true,
+            },
             completion = {
                 favouriteStaticMembers = {
                     "java.util.Objects.*",

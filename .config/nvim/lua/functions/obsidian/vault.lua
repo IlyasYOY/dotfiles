@@ -1,3 +1,4 @@
+local core = require "functions.core"
 local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
 local File = require "functions.obsidian.file"
@@ -62,6 +63,44 @@ end
 
 function Vault:grep_note()
     obsidian_telescope.grep_files("Grep notes", self._home_path:expand())
+end
+
+function Vault:follow_link()
+    local _, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local line = vim.api.nvim_get_current_line()
+    local name_with_alias = core.find_link(line, col + 1)
+    if name_with_alias ~= nil then
+        local name = string.gsub(name_with_alias, "[|#].*", "")
+        local note = self:get_note(name)
+        if note ~= nil then
+            vim.fn.execute("edit " .. note.path)
+            return
+        end
+    end
+    vim.notify "No link was found under the cursor"
+end
+
+function Vault:is_current_buffer_in_vault()
+    local file_name = vim.api.nvim_buf_get_name(0)
+    return core.string_has_prefix(file_name, self._home_path:expand(), true)
+end
+
+---@param name string
+function Vault:open_note(name)
+    local note = self:get_note(name)
+    vim.fn.execute("edit " .. note.path)
+end
+
+---@param name string
+---@return ilyasyoy.File
+function Vault:get_note(name)
+    local notes = self:list_notes()
+
+    for _, note in ipairs(notes) do
+        if note.name == name then
+            return note
+        end
+    end
 end
 
 function Vault:open_daily()
