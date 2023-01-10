@@ -1,7 +1,6 @@
-
 -- reloads package with specified name.
 function G_R(package_name)
-    package.loaded = nil
+    package.loaded[package_name] = nil
     return require(package_name)
 end
 

@@ -81,6 +81,11 @@ nnoremap <silent> ]q :cnext<cr>
 nnoremap <silent> [Q :cfirst<cr> 
 nnoremap <silent> ]Q :clast<cr>
 
+nnoremap <silent> [l :lprevious<cr>
+nnoremap <silent> ]l :lnext<cr> 
+nnoremap <silent> [L :lfirst<cr> 
+nnoremap <silent> ]L :llast<cr>
+
 imap jj <Esc>
 
 " :h matchit  

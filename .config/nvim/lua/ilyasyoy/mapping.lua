@@ -1,9 +1,3 @@
-vim.keymap.set({ "s" }, "<leader>y", function()
-    local core = require "functions.core"
-    local text = core.get_selected_text()
-    vim.fn.setreg("+", text)
-end)
-
 vim.keymap.set("n", "<leader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
     vim.notify("spell: " .. tostring(vim.o.spell))

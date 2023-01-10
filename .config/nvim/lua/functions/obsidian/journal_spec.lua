@@ -61,7 +61,7 @@ describe("journal", function()
 
             local result = test_state.journal:today()
 
-            --- @type Path
+            ---@type Path
             local path = Path:new(result.path)
 
             assert(path:exists() == false)
@@ -76,7 +76,7 @@ describe("journal", function()
 
             local result = test_state.journal:today(true)
 
-            --- @type Path
+            ---@type Path
             local path = Path:new(result.path)
 
             assert(path:exists())
@@ -90,7 +90,7 @@ describe("journal", function()
                 template_name = "daily",
             }
 
-            --- @type Path
+            ---@type Path
             local daily_file_template = Path:new(
                 test_state.templates_dir_path.path
             ) / "daily.md"
@@ -100,7 +100,7 @@ describe("journal", function()
 
             local result = test_state.journal:today(true)
 
-            --- @type Path
+            ---@type Path
             local path = Path:new(result.path)
             local resulting_text = path:read()
             assert(

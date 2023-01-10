@@ -3,6 +3,11 @@ local core = require "functions.core"
 
 local M = {}
 
+---@class ilyasyoy.spec_utils.Path
+---@field public path Path path to the directory
+
+--- Creates empty directory per test
+---@return ilyasyoy.spec_utils.Path
 function M.temp_dir_fixture()
     local result = {}
 

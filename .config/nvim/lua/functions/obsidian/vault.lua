@@ -1,4 +1,5 @@
-local core = require "functions.core"
+local functions_obsidian_core = require "functions.obsidian.core"
+local functions_core = require "functions.core"
 local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
 local File = require "functions.obsidian.file"
@@ -6,14 +7,14 @@ local Journal = require "functions.obsidian.journal"
 local obsidian_telescope = require "functions.obsidian.telescope"
 
 -- table with vault options
---- @class VaultOpts
---- @field public vault_home string?
---- @field public templater TemplaterOpts?
---- @field public journal JournalOpts?
+---@class ilyasyoy.obsidian.VaultOpts
+---@field public vault_home string?
+---@field public templater ilyasyoy.obsidian.TemplaterOpts?
+---@field public journal ilyasyoy.obsidian.JournalOpts?
 local VaultOpts = {}
 
 -- simple constructor for options
---- @param opts VaultOpts?
+---@param opts ilyasyoy.obsidian.VaultOpts?
 function VaultOpts:new(opts)
     opts = opts or {}
     self.__index = self
@@ -45,16 +46,15 @@ function VaultOpts:new(opts)
     return vault_opts
 end
 
--- class representing vaults
---- @class Vault
---- @field protected _templates_path Path
---- @field protected _home_path Path
---- @field protected _templater Templater
---- @field protected _journal Journal
+---@class ilyasyoy.obsidian.Vault
+---@field protected _templates_path Path
+---@field protected _home_path Path
+---@field protected _templater ilyasyoy.obsidian.Templater
+---@field protected _journal ilyasyoy.obsidian.Journal
 local Vault = {}
 
-function Vault:find_and_insert_template(opts)
-    self._templater:search_and_insert_template(opts)
+function Vault:find_and_insert_template()
+    self._templater:search_and_insert_template()
 end
 
 function Vault:find_note()
@@ -65,11 +65,13 @@ function Vault:grep_note()
     obsidian_telescope.grep_files("Grep notes", self._home_path:expand())
 end
 
+---follows a link under the cursor
 function Vault:follow_link()
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
-    local name_with_alias = core.find_link(line, col + 1)
+    local name_with_alias = functions_obsidian_core.find_link(line, col + 1)
     if name_with_alias ~= nil then
+        -- TODO: Create fully fleged link table
         local name = string.gsub(name_with_alias, "[|#].*", "")
         local note = self:get_note(name)
         if note ~= nil then
@@ -80,19 +82,31 @@ function Vault:follow_link()
     vim.notify "No link was found under the cursor"
 end
 
+---checks if this buffer in the vault, usefull in autocommands.
+---@return boolean
 function Vault:is_current_buffer_in_vault()
     local file_name = vim.api.nvim_buf_get_name(0)
-    return core.string_has_prefix(file_name, self._home_path:expand(), true)
+    return functions_core.string_has_prefix(
+        file_name,
+        self._home_path:expand(),
+        true
+    )
 end
 
+---opens note to edit
 ---@param name string
 function Vault:open_note(name)
     local note = self:get_note(name)
-    vim.fn.execute("edit " .. note.path)
+    if note ~= nil then
+        vim.fn.execute("edit " .. note.path)
+    else
+        vim.notify("No note for name " .. name)
+    end
 end
 
+---get note from vault using name of the file
 ---@param name string
----@return ilyasyoy.File
+---@return ilyasyoy.obsidian.File?
 function Vault:get_note(name)
     local notes = self:list_notes()
 
@@ -111,14 +125,15 @@ function Vault:find_journal()
     self._journal:find_daily()
 end
 
+---lists notes from vault
+---@return ilyasyoy.obsidian.File[]
 function Vault:list_notes()
-    local result = File.list(self._home_path:expand(), "**/*.md")
-    return result
+    return File.list(self._home_path:expand(), "**/*.md")
 end
 
 -- creates Vault instance
---- @param opts VaultOpts? table options to create a vault
---- @return Vault
+---@param opts ilyasyoy.obsidian.VaultOpts? table options to create a vault
+---@return ilyasyoy.obsidian.Vault
 function Vault:new(opts)
     opts = opts or {}
 
@@ -127,9 +142,9 @@ function Vault:new(opts)
 
     opts = VaultOpts:new(opts)
 
-    --- @type Path
+    ---@type Path
     vault._home_path = Path:new(opts.vault_home)
-    --- @type Templater
+    ---@type ilyasyoy.obsidian.Templater
     local templater = Templater:new(opts.templater)
 
     vault._templater = templater

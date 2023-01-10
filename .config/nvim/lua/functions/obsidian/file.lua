@@ -1,18 +1,18 @@
 local core = require "functions.core"
 local Path = require "plenary.path"
 
---- Simple file wrapper
---- @class ilyasyoy.File
---- @field public path string
---- @field public name string
---- @field private _path Path
+---Simple file wrapper
+---@class ilyasyoy.obsidian.File
+---@field public path string
+---@field public name string
+---@field private _path Path
 local File = {}
 File.__index = File
 
 --- lists files from path matching glob pattern
---- @param path string
---- @param glob string
---- @return ilyasyoy.File[]
+---@param path string
+---@param glob string
+---@return ilyasyoy.obsidian.File[]
 function File.list(path, glob)
     -- TODO: Speed this up a bit. Maybe I should use `plenary.scandir`.
     local files_as_text = vim.fn.globpath(path, glob)
@@ -24,8 +24,8 @@ function File.list(path, glob)
 end
 
 --- creates file wrapper
---- @param path string
---- @return ilyasyoy.File
+---@param path string
+---@return ilyasyoy.obsidian.File
 function File:new(path)
     local path_split = core.string_split(path, "/")
     local name_with_extension = path_split[#path_split]
@@ -40,6 +40,8 @@ function File:new(path)
     }, self)
 end
 
+---Reads file content as string
+---@return string?
 function File:read()
     return self._path:read()
 end

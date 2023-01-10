@@ -1,9 +1,9 @@
-local core = require "functions/core"
+local core = require "functions.core"
 
 local M = {}
 
 -- Returns current woring branch
---- @return string? branch name if exists
+---@return string? branch name if exists
 function M.current_branch()
     local result = io.popen "git rev-parse --abbrev-ref HEAD"
     if not result then
@@ -14,7 +14,7 @@ function M.current_branch()
 end
 
 -- Resolves first remote using git remote.
---- @return string?
+---@return string?
 function M.get_first_remote()
     local result_handle = io.popen "git remote"
     if result_handle == nil then
@@ -26,8 +26,8 @@ function M.get_first_remote()
 end
 
 -- Resolves remote url using git.
---- @param remote string? name of the remote to fetch url for.
---- @return string? url of the remote server.
+---@param remote string? name of the remote to fetch url for.
+---@return string? url of the remote server.
 function M.get_remote_url(remote)
     remote = remote or M.get_first_remote()
     if remote == nil then
@@ -43,8 +43,8 @@ function M.get_remote_url(remote)
 end
 
 -- Converts URL to link.
---- @param url string? url to convert to link.
---- @return string? url of the remote server.
+---@param url string? url to convert to link.
+---@return string? url of the remote server.
 function M.url_to_link(url)
     if not url then
         return nil
@@ -66,20 +66,20 @@ function M.url_to_link(url)
 end
 
 -- Resolves link to current working file at remote location
---- @param link string full link to the repository: `https://github.com/IlyasYOY/python-streamer`
---- @param branch string
---- @param filepath string
---- @return string
+---@param link string full link to the repository: `https://github.com/IlyasYOY/python-streamer`
+---@param branch string
+---@param filepath string
+---@return string
 function M.resolve_link_to_current_working_file(link, branch, filepath)
     return link .. "/blob/" .. branch .. "/" .. filepath
 end
 
 -- Resolves link to current working file at remote location
---- @param link string full link to the repository: `https://github.com/IlyasYOY/python-streamer`
---- @param branch string
---- @param filepath string
---- @param line number
---- @return string
+---@param link string full link to the repository: `https://github.com/IlyasYOY/python-streamer`
+---@param branch string
+---@param filepath string
+---@param line number
+---@return string
 function M.resolve_link_to_current_line(link, branch, filepath, line)
     return M.resolve_link_to_current_working_file(link, branch, filepath)
         .. "#L"

@@ -8,11 +8,11 @@ local builtin = require "telescope.builtin"
 local M = {}
 
 -- helper to perform telescope routine
---- @param title string name for the widow
---- @param items Array<string> items to search through
---- @param callback fun(Array) functions to be applied to the resulting string
---- @param opts table additional options for telescope
---- @param entry_maker fun(table): table
+---@param title string name for the widow
+---@param items Array<string> items to search through
+---@param callback fun(Array) functions to be applied to the resulting string
+---@param entry_maker fun(table): table
+---@param opts table? additional options for telescope
 function M.find_through_items(title, items, callback, entry_maker, opts)
     opts = opts or {}
 
@@ -37,6 +37,10 @@ function M.find_through_items(title, items, callback, entry_maker, opts)
         :find()
 end
 
+---find files using live grep finder from telescope
+---@param title string
+---@param path string to search files at
+---@param type_filter string? file type, check rg docs typelist on the matter
 function M.grep_files(title, path, type_filter)
     if type_filter == nil then
         type_filter = "md"
@@ -49,6 +53,9 @@ function M.grep_files(title, path, type_filter)
     }
 end
 
+---find files using builtin telescope finder.
+---@param title string
+---@param path string to search files at
 function M.find_files(title, path)
     return builtin.find_files {
         cwd = path,

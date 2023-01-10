@@ -4,28 +4,29 @@ local File = require "functions.obsidian.file"
 local telescope = require "functions.obsidian.telescope"
 
 -- options for VarProvider
---- @class VarProviderOpts
---- @field filename string?
+---@class ilyasyoy.obsidian.VarProviderOpts
+---@field filename string?
 
 -- simple table to provide values for template
---- @class VarProvider
---- @field public name string
---- @field public func fun(VarProviderOpts?):string
+---@class ilyasyoy.obsidian.VarProvider
+---@field public name string
+---@field public func fun(VarProviderOpts?):string
 
 -- options to run tempalating
---- @class TemplaterProcessingOpts
---- @field public template string
---- @field public template_name string
---- @field public filename string
+---@class ilyasyoy.obsidian.TemplaterProcessingOpts
+---@field public template string?
+---@field public template_name string?
+---@field public filename string?
 
 -- options to create templater
---- @class TemplaterOpts
---- @field public include_default_providers? boolean
---- @field public home string
+---@class ilyasyoy.obsidian.TemplaterOpts
+---@field public include_default_providers? boolean
+---@field public home string
 local TemplaterOpts = {}
+TemplaterOpts.__index = TemplaterOpts
+
 function TemplaterOpts:new(opts)
     opts = opts or {}
-    self.__index = self
     local this = setmetatable(
         vim.tbl_extend("force", {
             include_default_providers = true,
@@ -36,14 +37,14 @@ function TemplaterOpts:new(opts)
 end
 
 -- class to run templating
---- @class Templater
---- @field private _var_providers VarProvider[]
---- @field private _home_path Path to the tamplates directory
+---@class ilyasyoy.obsidian.Templater
+---@field private _var_providers ilyasyoy.obsidian.VarProvider[]
+---@field private _home_path Path to the tamplates directory
 local Templater = {}
 
 -- create new Templater instance
---- @param opts TemplaterOpts
---- @return Templater instance
+---@param opts ilyasyoy.obsidian.TemplaterOpts
+---@return ilyasyoy.obsidian.Templater instance
 function Templater:new(opts)
     opts = opts or TemplaterOpts:new(opts)
 
@@ -52,7 +53,7 @@ function Templater:new(opts)
 
     templater._var_providers = {}
 
-    --- @type Path
+    ---@type Path
     templater._home_path = Path:new(opts.home)
 
     if opts.include_default_providers then
@@ -69,8 +70,8 @@ function Templater:new(opts)
     return templater
 end
 
-function Templater:search_and_insert_template(opts)
-    opts = opts or {}
+---seach for the template in vault and inserts expanded value
+function Templater:search_and_insert_template()
     local templates = self:list_templates()
     return telescope.find_through_items(
         "Templates",
@@ -91,21 +92,20 @@ function Templater:search_and_insert_template(opts)
                 display = entry.name,
                 ordinal = entry.name,
             }
-        end,
-        opts
+        end
     )
 end
 
 -- lists templates
---- @return ilyasyoy.File[]
+---@return ilyasyoy.obsidian.File[]
 function Templater:list_templates()
     local home_path_string = self._home_path:expand()
     return File.list(home_path_string, "*.md")
 end
 
 -- adds template variable for processing.
---- @param name string
---- @param func fun(VarProviderOpts?):string
+---@param name string
+---@param func fun(VarProviderOpts?):string
 function Templater:add_var_provider(name, func)
     for _, var_provider in pairs(self._var_providers) do
         if name == var_provider.name then
@@ -118,8 +118,8 @@ function Templater:add_var_provider(name, func)
 end
 
 -- performs templating.
---- @param opts TemplaterProcessingOpts
---- @return string templated string
+---@param opts ilyasyoy.obsidian.TemplaterProcessingOpts
+---@return string templated string
 function Templater:process(opts)
     opts = opts or {}
 
@@ -144,8 +144,8 @@ function Templater:process(opts)
 end
 
 -- performs templating using raw content and current buffer name
---- @param template string
---- @return string
+---@param template string
+---@return string
 function Templater:_process_for_current_buffer(template)
     return self:process {
         filename = vim.fn.expand "%:t",
@@ -154,8 +154,8 @@ function Templater:_process_for_current_buffer(template)
 end
 
 -- returns content of the template
---- @param name string
---- @return string?
+---@param name string
+---@return string?
 function Templater:_get_raw_template_content(name)
     local templates = self:list_templates()
     for _, template in ipairs(templates) do

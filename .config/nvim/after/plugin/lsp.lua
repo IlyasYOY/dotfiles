@@ -24,7 +24,7 @@ vim.keymap.set(
 )
 vim.keymap.set(
     "n",
-    "<leader>dq",
+    "<leader>dl",
     vim.diagnostic.setloclist,
     described(opts, "Put [d]iagnostics to [q]uickfix list")
 )
