@@ -1,4 +1,4 @@
-local lsp = require "ilyasyoy.lsp"
+local lsp = require "ilyasyoy.functions.lsp"
 local lspconfig = require "lspconfig"
 
 local library = {}

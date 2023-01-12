@@ -1,5 +1,5 @@
-local described = require("functions.core").described
-local lsp = require "ilyasyoy.lsp"
+local described = require("ilyasyoy.functions.core").described
+local lsp = require "ilyasyoy.functions.lsp"
 local lspconfig = require "lspconfig"
 
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions

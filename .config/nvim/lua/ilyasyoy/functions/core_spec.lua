@@ -1,7 +1,6 @@
 describe("core tests", function()
     local core = require "functions.core"
 
-
     describe("has suffix", function()
         it("nil suffix", function()
             assert(core.string_has_suffix("test", nil) == false)

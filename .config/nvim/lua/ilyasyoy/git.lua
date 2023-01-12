@@ -1,5 +1,5 @@
-local core = require "functions.core"
-local git = require "functions.git"
+local core = require "ilyasyoy.functions.core"
+local git = require "ilyasyoy.functions.git"
 
 vim.api.nvim_create_user_command("GitRemoteCopyRepoLink", function()
     local link = git.resolve_repo_url()

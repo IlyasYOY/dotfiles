@@ -1,10 +1,11 @@
-local Link = require "functions.obsidian.link"
-local functions_core = require "functions.core"
-local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
-local File = require "functions.obsidian.file"
-local Journal = require "functions.obsidian.journal"
-local obsidian_telescope = require "functions.obsidian.telescope"
+
+local Link = require "ilyasyoy.functions.obsidian.link"
+local functions_core = require "ilyasyoy.functions.core"
+local Templater = require "ilyasyoy.functions.obsidian.templater"
+local File = require "ilyasyoy.functions.obsidian.file"
+local Journal = require "ilyasyoy.functions.obsidian.journal"
+local obsidian_telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 -- table with vault options
 ---@class ilyasyoy.obsidian.VaultOpts

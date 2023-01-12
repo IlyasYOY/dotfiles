@@ -1,4 +1,4 @@
-local Vault = require "functions.obsidian.vault"
+local Vault = require "ilyasyoy.functions.obsidian.vault"
 
 local M = {}
 

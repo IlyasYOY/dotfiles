@@ -1,6 +1,6 @@
 local plenary_path = require "plenary.path"
-local core = require "functions.core"
-local lsp = require "ilyasyoy.lsp"
+local core = require "ilyasyoy.functions.core"
+local lsp = require "ilyasyoy.functions.lsp"
 local lspconfig = require "lspconfig"
 
 -- TODO: fully refactor to plenary

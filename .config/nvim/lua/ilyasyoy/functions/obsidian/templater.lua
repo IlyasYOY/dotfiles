@@ -1,7 +1,7 @@
-local core = require "functions.core"
 local Path = require "plenary.path"
-local File = require "functions.obsidian.file"
-local telescope = require "functions.obsidian.telescope"
+local core = require "ilyasyoy.functions.core"
+local File = require "ilyasyoy.functions.obsidian.file"
+local telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 -- options for VarProvider
 ---@class ilyasyoy.obsidian.VarProviderOpts

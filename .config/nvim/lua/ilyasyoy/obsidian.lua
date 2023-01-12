@@ -1,4 +1,4 @@
-local obsidian = require "functions.obsidian"
+local obsidian = require "ilyasyoy.functions.obsidian"
 
 obsidian.setup {
     journal = {

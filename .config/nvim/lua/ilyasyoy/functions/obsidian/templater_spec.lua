@@ -1,5 +1,5 @@
-local Templater = require "functions.obsidian.templater"
-local spec_utils = require "functions.spec_utils"
+local Templater = require "ilyasyoy.functions.obsidian.templater"
+local spec_utils = require "ilyasyoy.functions.spec_utils"
 
 describe("templater test", function()
     local templater

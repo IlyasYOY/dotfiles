@@ -1,10 +1,10 @@
-local core = require "functions.core"
+local core = require "ilyasyoy.functions.core"
 
 local source = {}
 
 function source.new()
     local self = setmetatable({
-        obsidian = require "functions.obsidian",
+        obsidian = require "ilyasyoy.functions.obsidian",
     }, { __index = source })
     return self
 end

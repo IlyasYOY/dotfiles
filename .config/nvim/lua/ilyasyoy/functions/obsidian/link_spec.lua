@@ -1,4 +1,4 @@
-local Link = require "functions.obsidian.link"
+local Link = require "ilyasyoy.functions.obsidian.link"
 
 describe("from string", function()
     it("empty string", function()

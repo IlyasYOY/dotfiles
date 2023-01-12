@@ -1,4 +1,4 @@
-local core = require "functions.core"
+local core = require "ilyasyoy.functions.core"
 local Path = require "plenary.path"
 
 ---Simple file wrapper

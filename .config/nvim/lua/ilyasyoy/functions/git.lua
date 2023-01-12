@@ -1,4 +1,4 @@
-local core = require "functions.core"
+local core = require "ilyasyoy.functions.core"
 
 local M = {}
 

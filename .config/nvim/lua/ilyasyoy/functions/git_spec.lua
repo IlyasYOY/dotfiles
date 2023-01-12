@@ -1,5 +1,5 @@
 describe("git stuff", function()
-    local git = require "functions.git"
+    local git = require "ilyasyoy.functions.git"
     it("url to link", function()
         local url_to_link = git.url_to_link
         it("nil param", function()

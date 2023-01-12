@@ -1,7 +1,7 @@
 local luasnip = require "luasnip"
 local cmp = require "cmp"
 local lspkind = require "lspkind"
-local cmp_source = require "functions.obsidian.cmp-source"
+local cmp_source = require "ilyasyoy.functions.obsidian.cmp-source"
 
 cmp.register_source("obsidian", cmp_source.new())
 

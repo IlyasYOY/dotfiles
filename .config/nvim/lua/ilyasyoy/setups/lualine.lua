@@ -1,5 +1,5 @@
 local lualine = require "lualine"
-local core = require "functions.core"
+local core = require "ilyasyoy.functions.core"
 
 local function active_lsp_names()
     local result = {}

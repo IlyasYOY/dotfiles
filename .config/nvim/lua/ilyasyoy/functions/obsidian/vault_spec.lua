@@ -1,5 +1,5 @@
-local Vault = require "functions.obsidian.vault"
-local spec_utils = require "functions.spec_utils"
+local Vault = require "ilyasyoy.functions.obsidian.vault"
+local spec_utils = require "ilyasyoy.functions.spec_utils"
 
 local function vault_fixture()
     local result = {}

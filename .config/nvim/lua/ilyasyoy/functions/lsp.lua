@@ -1,4 +1,4 @@
-local described = require("functions.core").described
+local described = require("ilyasyoy.functions.core").described
 
 local M = {}
 

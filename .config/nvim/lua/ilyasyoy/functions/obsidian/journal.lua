@@ -1,6 +1,6 @@
 local Path = require "plenary.path"
-local File = require "functions.obsidian.file"
-local telescope = require "functions.obsidian.telescope"
+local File = require "ilyasyoy.functions.obsidian.file"
+local telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 ---journal opts
 ---@class ilyasyoy.obsidian.JournalOpts
