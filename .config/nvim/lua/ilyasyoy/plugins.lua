@@ -86,6 +86,17 @@ return require("packer").startup(function(use)
     use "rafcamlet/nvim-luapad"
 
     use {
+        "numToStr/Comment.nvim",
+        config = function()
+            require("Comment").setup()
+        end,
+    }
+    use {
+        "folke/todo-comments.nvim",
+        requires = "nvim-lua/plenary.nvim",
+    }
+
+    use {
         "ellisonleao/gruvbox.nvim",
         "nvim-tree/nvim-web-devicons",
     }

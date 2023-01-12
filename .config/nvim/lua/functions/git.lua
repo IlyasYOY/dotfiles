@@ -86,4 +86,26 @@ function M.resolve_link_to_current_line(link, branch, filepath, line)
         .. line
 end
 
+function M.resolve_repo_url()
+    local first_remote = M.get_first_remote()
+    if not first_remote then
+        vim.notify "Unable to find remote url"
+        return nil
+    end
+
+    local url = M.get_remote_url(first_remote)
+    if url == nil then
+        vim.notify "Unable to find remote url"
+        return nil
+    end
+
+    local link = M.url_to_link(url)
+    if link == nil then
+        vim.notify("Unable to parse " .. url .. " to link")
+        return nil
+    end
+
+    return link
+end
+
 return M

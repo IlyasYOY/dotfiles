@@ -8,6 +8,7 @@ ts_config.setup {
         "kotlin",
         "python",
         "markdown",
+        "markdown_inline",
         "javascript",
     },
     sync_install = false,

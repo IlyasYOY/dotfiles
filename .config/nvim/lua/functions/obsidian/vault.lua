@@ -1,4 +1,4 @@
-local functions_obsidian_core = require "functions.obsidian.core"
+local Link = require "functions.obsidian.link"
 local functions_core = require "functions.core"
 local Templater = require "functions.obsidian.templater"
 local Path = require "plenary.path"
@@ -69,10 +69,9 @@ end
 function Vault:follow_link()
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
-    local name_with_alias = functions_obsidian_core.find_link(line, col + 1)
-    if name_with_alias ~= nil then
-        -- TODO: Create fully fleged link table
-        local name = string.gsub(name_with_alias, "[|#].*", "")
+    local link = Link.find_link_at(line, col + 1)
+    if link ~= nil then
+        local name = link.name
         local note = self:get_note(name)
         if note ~= nil then
             vim.fn.execute("edit " .. note.path)

@@ -34,6 +34,14 @@ vim.keymap.set("n", "<leader>ft", function()
     builtin.builtin(themes.get_ivy())
 end)
 
+vim.keymap.set("n", "<leader>fs", function()
+    builtin.lsp_document_symbols(themes.get_ivy())
+end)
+
+vim.keymap.set("n", "<leader>fS", function()
+    builtin.lsp_dynamic_workspace_symbols(themes.get_ivy())
+end)
+
 vim.keymap.set("n", "<leader>fm", function()
     builtin.man_pages()
 end)
