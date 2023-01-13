@@ -1,5 +1,5 @@
 describe("core tests", function()
-    local core = require "functions.core"
+    local core = require "ilyasyoy.functions.core"
 
     describe("has suffix", function()
         it("nil suffix", function()

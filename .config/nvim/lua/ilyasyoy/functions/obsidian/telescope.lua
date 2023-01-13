@@ -10,7 +10,7 @@ local M = {}
 -- helper to perform telescope routine
 ---@param title string name for the widow
 ---@param items Array<string> items to search through
----@param callback fun(Array) functions to be applied to the resulting string
+---@param callback fun(Array)? functions to be applied to the resulting string
 ---@param entry_maker fun(table): table
 ---@param opts table? additional options for telescope
 function M.find_through_items(title, items, callback, entry_maker, opts)
@@ -26,11 +26,13 @@ function M.find_through_items(title, items, callback, entry_maker, opts)
             },
             sorter = conf.generic_sorter(opts),
             attach_mappings = function(prompt_bufnr)
-                actions.select_default:replace(function()
-                    actions.close(prompt_bufnr)
-                    local selection = action_state.get_selected_entry()
-                    callback(selection)
-                end)
+                if callback then
+                    actions.select_default:replace(function()
+                        actions.close(prompt_bufnr)
+                        local selection = action_state.get_selected_entry()
+                        callback(selection)
+                    end)
+                end
                 return true
             end,
         })

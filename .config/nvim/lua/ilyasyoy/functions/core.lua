@@ -72,23 +72,25 @@ M.string_has_prefix = string_has_prefix
 ---@param suffix string?
 ---@param plain boolean?
 ---@return boolean
-function M.string_has_suffix(str, suffix, plain)
+local function string_has_suffix(str, suffix, plain)
     if str == nil or suffix == nil then
         return false
     end
     return string_has_prefix(string.reverse(str), string.reverse(suffix), plain)
 end
 
+M.string_has_suffix = string_has_suffix
+
 -- Strips tail if present.
 ---@param target string
 ---@param tail string
 ---@return string
 function M.string_strip_suffix(target, tail)
-    local target_tail = string.sub(target, #target - #tail + 1, #target)
-    if target_tail == tail then
-        return string.sub(target, 1, #target - #tail)
+    if not string_has_suffix(target, tail, true) then
+        return target
     end
-    return target
+
+    return string.sub(target, 1, #target - #tail)
 end
 
 -- Strips prefix if present.
@@ -96,7 +98,7 @@ end
 ---@param prefix string
 ---@return string
 function M.string_strip_prefix(target, prefix)
-    if not string_has_prefix(target, prefix) then
+    if not string_has_prefix(target, prefix, true) then
         return target
     end
 

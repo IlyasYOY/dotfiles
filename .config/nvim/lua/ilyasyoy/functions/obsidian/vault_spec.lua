@@ -18,6 +18,83 @@ end
 
 describe("vault", function()
     local state = vault_fixture()
+
+    describe("find backlinks", function()
+        it("no note", function()
+            local note = (state.home / "note.md")
+            note:touch()
+
+            local backlinks = state.vault:list_backlinks "note1"
+
+            assert(backlinks ~= nil)
+            assert(#backlinks == 0)
+        end)
+
+        it("no backlinks", function()
+            local note = (state.home / "note.md")
+            note:touch()
+
+            local backlinks = state.vault:list_backlinks "note"
+
+            assert(backlinks ~= nil)
+            assert(#backlinks == 0)
+        end)
+
+        it("one backlink", function()
+            ---@type Path
+            local note1 = (state.home / "note1.md")
+            note1:touch()
+            note1:write("This is file with a link to [[note]].", "w")
+
+            local note = (state.home / "note.md")
+            note:touch()
+
+            local backlinks = state.vault:list_backlinks "note"
+
+            assert(backlinks ~= nil)
+            assert(#backlinks == 1)
+            assert(backlinks[1].name == "note1")
+        end)
+
+        it("multiple backlink", function()
+            ---@type Path
+            local note1 = (state.home / "note1.md")
+            note1:touch()
+            note1:write("This is file with a link to [[note]].", "w")
+
+            ---@type Path
+            local note2 = (state.home / "note2.md")
+            note2:touch()
+            note2:write("This is the second file with a link to [[note]].", "w")
+
+            local note = (state.home / "note.md")
+            note:touch()
+
+            local backlinks = state.vault:list_backlinks "note"
+
+            assert(backlinks ~= nil)
+            assert(#backlinks == 2)
+        end)
+
+        it("multiple links per file backlink", function()
+            ---@type Path
+            local note1 = (state.home / "note1.md")
+            note1:touch()
+            note1:write(
+                "This is file with a link to [[note]] and one more [[note]].",
+                "w"
+            )
+
+            local note = (state.home / "note.md")
+            note:touch()
+
+            local backlinks = state.vault:list_backlinks "note"
+
+            assert(backlinks ~= nil)
+            assert(#backlinks == 1)
+        end)
+    end)
+
     describe("list", function()
         it("no items", function()
             local notes = state.vault:list_notes()

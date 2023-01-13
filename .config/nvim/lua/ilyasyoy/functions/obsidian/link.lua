@@ -19,6 +19,22 @@ function Link:new(name, alias, header)
     }, self)
 end
 
+---extracts links from the text
+--- TODO: This implementation gives flase positive links.
+--- It's ok for now but should be fixed in the future.
+---
+---@param text string
+---@return ilyasyoy.obsidian.Link[]
+function Link.from_text(text)
+    ---@type ilyasyoy.obsidian.Link[]
+    local links = {}
+    for match in string.gmatch(text, "%[%[(.-)%]%]") do
+        local link = Link.from_string(match)
+        table.insert(links, link)
+    end
+    return links
+end
+
 --- creates link from string like name, name|alias, name#title
 ---@param str string
 ---@return ilyasyoy.obsidian.Link?

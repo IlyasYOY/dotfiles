@@ -1,5 +1,6 @@
 local Path = require "plenary.path"
 
+local core = require "ilyasyoy.functions.core"
 local Link = require "ilyasyoy.functions.obsidian.link"
 local functions_core = require "ilyasyoy.functions.core"
 local Templater = require "ilyasyoy.functions.obsidian.templater"
@@ -47,6 +48,8 @@ function VaultOpts:new(opts)
     return vault_opts
 end
 
+--- TODO: Think of caching list methods. At least in-memory caching.
+---
 ---@class ilyasyoy.obsidian.Vault
 ---@field protected _templates_path Path
 ---@field protected _home_path Path
@@ -60,6 +63,32 @@ end
 
 function Vault:find_note()
     obsidian_telescope.find_files("Find notes", self._home_path:expand())
+end
+
+function Vault:find_current_note_backlinks()
+    local current_note = File:new(core.current_working_file())
+    self:find_backlinks(current_note.name)
+end
+
+function Vault:find_journal()
+    self._journal:find_daily()
+end
+
+function Vault:find_backlinks(name)
+    local notes = self:list_backlinks(name)
+
+    obsidian_telescope.find_through_items(
+        "Backlinks",
+        notes,
+        nil,
+        function(entry)
+            return {
+                value = entry.path,
+                display = entry.name,
+                ordinal = entry.name,
+            }
+        end
+    )
 end
 
 function Vault:grep_note()
@@ -93,6 +122,22 @@ function Vault:is_current_buffer_in_vault()
     )
 end
 
+---checks if this buffer in the vault, usefull in autocommands.
+---@return boolean
+function Vault:is_current_buffer_a_note()
+    return self:is_current_buffer_in_vault() and vim.bo.filetype == "markdown"
+end
+
+---checks if this buffer in the vault, usefull in autocommands.
+---@param callback fun()
+function Vault:run_if_note(callback)
+    if self:is_current_buffer_a_note() then
+        callback()
+    else
+        vim.notify "Current buffer is not a note"
+    end
+end
+
 ---opens note to edit
 ---@param name string
 function Vault:open_note(name)
@@ -117,18 +162,44 @@ function Vault:get_note(name)
     end
 end
 
+--- Opens daily note to be edited
 function Vault:open_daily()
     self._journal:open_daily()
-end
-
-function Vault:find_journal()
-    self._journal:find_daily()
 end
 
 ---lists notes from vault
 ---@return ilyasyoy.obsidian.File[]
 function Vault:list_notes()
     return File.list(self._home_path:expand(), "**/*.md")
+end
+
+---lists backlinks to a note using name
+---@param name string
+---@return ilyasyoy.obsidian.File[]
+function Vault:list_backlinks(name)
+    local note_for_name = self:get_note(name)
+    if note_for_name == nil then
+        return {}
+    end
+
+    ---@type ilyasyoy.obsidian.File[]
+    local notes_with_backlinks = {}
+    local notes = self:list_notes()
+    for _, note in ipairs(notes) do
+        local text = note:read()
+        local links = Link.from_text(text)
+        local has_backlink = false
+        for _, link in ipairs(links) do
+            if link.name == name then
+                has_backlink = true
+            end
+        end
+        if has_backlink then
+            table.insert(notes_with_backlinks, note)
+        end
+    end
+
+    return notes_with_backlinks
 end
 
 -- creates Vault instance

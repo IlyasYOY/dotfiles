@@ -1,5 +1,29 @@
 local Link = require "ilyasyoy.functions.obsidian.link"
 
+describe("from text", function ()
+    it("empty text", function ()
+        local result = Link.from_text ""
+        assert(result ~= nil)
+        assert(#result == 0)
+    end)
+
+    it("single link", function ()
+        local result = Link.from_text "[[name]]"
+        assert(result ~= nil)
+        assert(#result == 1)
+        assert(result[1].name == "name")
+    end)
+
+    it("multiple links", function ()
+        local result = Link.from_text "[[name]] [[full name|not really]]"
+        assert(result ~= nil)
+        assert(#result == 2)
+        assert(result[1].name == "name")
+        assert(result[2].name == "full name")
+        assert(result[2].alias == "not really")
+    end)
+end)
+
 describe("from string", function()
     it("empty string", function()
         local result = Link.from_string ""
