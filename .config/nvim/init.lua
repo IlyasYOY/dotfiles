@@ -1,4 +1,5 @@
 require "ilyasyoy"
+require "ilyasyoy.setups.colors"
 require "ilyasyoy.git"
 require "ilyasyoy.global"
 
@@ -8,7 +9,7 @@ require "ilyasyoy.obsidian"
 require "ilyasyoy.mapping"
 
 -- Run all setups!!! (they are stored at lua/ilyasyoy/setups)
--- TODO: Replace with packer's lazy loading.
+-- TODO: Replace with lazy loading.
 
 require "ilyasyoy.setups.nvim-luapad"
 require "ilyasyoy.setups.nvim-tree"

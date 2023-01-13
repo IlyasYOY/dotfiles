@@ -99,6 +99,8 @@ return require("packer").startup(function(use)
     use {
         "ellisonleao/gruvbox.nvim",
         "nvim-tree/nvim-web-devicons",
+        "tjdevries/colorbuddy.nvim",
+        "jesseleite/nvim-noirbuddy",
     }
 
     if packer_bootstrap then

@@ -16,10 +16,14 @@ local function get_cwd()
     return vim.fn.pathshorten(vim.fn.getcwd())
 end
 
+-- local noirbuddy_lualine = require "noirbuddy.plugins.lualine"
+
 lualine.setup {
     options = {
+        -- theme = noirbuddy_lualine.theme,
         theme = "gruvbox",
     },
+    -- inactive_sections = noirbuddy_lualine.inactive_sections,
     sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diagnostics" },

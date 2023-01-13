@@ -10,5 +10,5 @@ vim.opt.spellfile = vim.fn.expand "~/.config/nvim/spell/custom.utf-8.add"
 vim.opt.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<"
 vim.opt.list = true
 
-vim.cmd.colorscheme "gruvbox"
+require"todo-comments.search"
 

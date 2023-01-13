@@ -1,12 +1,12 @@
-local Path = require "plenary.path"
 
-local core = require "ilyasyoy.functions.core"
 local Link = require "ilyasyoy.functions.obsidian.link"
-local functions_core = require "ilyasyoy.functions.core"
 local Templater = require "ilyasyoy.functions.obsidian.templater"
 local File = require "ilyasyoy.functions.obsidian.file"
 local Journal = require "ilyasyoy.functions.obsidian.journal"
+local Path = require "plenary.path"
+
 local obsidian_telescope = require "ilyasyoy.functions.obsidian.telescope"
+local core = require "ilyasyoy.functions.core"
 
 -- table with vault options
 ---@class ilyasyoy.obsidian.VaultOpts
@@ -115,7 +115,7 @@ end
 ---@return boolean
 function Vault:is_current_buffer_in_vault()
     local file_name = vim.api.nvim_buf_get_name(0)
-    return functions_core.string_has_prefix(
+    return core.string_has_prefix(
         file_name,
         self._home_path:expand(),
         true
