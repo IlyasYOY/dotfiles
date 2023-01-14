@@ -1,3 +1,5 @@
+local Path = require "plenary.path"
+
 local M = {}
 
 ---Merges strings to a text blob
@@ -12,6 +14,7 @@ local function string_merge(strings, separator)
     local result = ""
     for number, line in ipairs(strings) do
         result = result .. line
+        -- add separator in case this is not las iteration
         if number ~= #strings then
             result = result .. separator
         end
@@ -22,41 +25,24 @@ end
 
 M.string_merge = string_merge
 
--- Splits string using separator.
+---Splits string using separator.
 ---@param target string to split
----@param separator string?
+---@param separator string
 ---@return string[]
 function M.string_split(target, separator)
-    if separator == nil then
-        separator = "%s"
-    end
-
-    local results = {}
-    for match in string.gmatch(target, "([^" .. separator .. "]+)") do
-        table.insert(results, match)
-    end
-
-    return results
-end
-
--- Gets string element at element using position.
----@param target string
----@param position number
----@return string
-function M.string_at(target, position)
-    return string.sub(target, position, position)
+    return vim.split(target, separator, { plain = true, trimempty = true })
 end
 
 -- Check if str starts with prefix.
----@param str string? string to have prefix.
+---@param str string string to have prefix.
 ---@param prefix string? prefix itself.
----@param plain boolean?
+---@param plain boolean? default is false
 ---@return boolean
 local function string_has_prefix(str, prefix, plain)
     if plain == nil then
         plain = false
     end
-    if str == nil or prefix == nil then
+    if prefix == nil then
         return false
     end
 
@@ -68,20 +54,22 @@ end
 M.string_has_prefix = string_has_prefix
 
 -- Check if str ends with prefix.
----@param str string?
+---@param str string
 ---@param suffix string?
----@param plain boolean?
+---@param plain boolean? default is false
 ---@return boolean
 local function string_has_suffix(str, suffix, plain)
-    if str == nil or suffix == nil then
+    if suffix == nil then
         return false
     end
+
     return string_has_prefix(string.reverse(str), string.reverse(suffix), plain)
 end
 
 M.string_has_suffix = string_has_suffix
 
 -- Strips tail if present.
+-- Works on plain strings.
 ---@param target string
 ---@param tail string
 ---@return string
@@ -94,6 +82,7 @@ function M.string_strip_suffix(target, tail)
 end
 
 -- Strips prefix if present.
+-- Works on plain strings.
 ---@param target string
 ---@param prefix string
 ---@return string
@@ -140,10 +129,16 @@ function M.get_selected_text()
     return string_merge(lines)
 end
 
--- Returns path to current file
+---Returns path to current file
 ---@return string
 function M.current_working_file()
     return vim.fn.expand "%:."
+end
+
+---Returns path to current file
+---@return string
+function M.current_working_file_dir()
+    return vim.fn.expand "%:p:h"
 end
 
 -- Saves string to + buffer
@@ -173,20 +168,18 @@ function M.get_nested_field(table, ...)
     return result
 end
 
--- Checks if file exists
+---checks if file exists
 ---@param filename string of the file we read it
 ---@return boolean if the file exists
 local function file_exists(filename)
-    local f = io.open(filename, "rb")
-    if f then
-        f:close()
-    end
-    return f ~= nil
+    ---@type Path
+    local path = Path:new(filename)
+    return path:exists()
 end
 
 M.file_exists = file_exists
 
--- Reades lines from file
+---reades lines from file
 ---@param filename string of the fiel to be read
 ---@param processor? fun(string):string transforms strings
 ---@return Array<string> transformed lines
@@ -209,7 +202,6 @@ end
 local uuid_template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
 
 ---generates uuid as string
----TODO: Create class to represent UUID
 ---@return string
 function M.uuid()
     local uuid_string = string.gsub(uuid_template, "[xy]", function(c)

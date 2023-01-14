@@ -76,6 +76,7 @@ function M.on_attach(client, bufnr)
         vim.lsp.buf.rename,
         described(bufopts, "[r]ename symbol under the cursor")
     )
+
     vim.keymap.set({ "n", "v" }, "<space>oc", function()
         vim.lsp.buf.format { async = true }
     end, described(bufopts, "[o]rganize [c]ode"))

@@ -1,6 +1,7 @@
 local lualine = require "lualine"
 local core = require "ilyasyoy.functions.core"
 
+---TODO: Consider adding cache here?
 local function active_lsp_names()
     local result = {}
     local clients = vim.lsp.get_active_clients()

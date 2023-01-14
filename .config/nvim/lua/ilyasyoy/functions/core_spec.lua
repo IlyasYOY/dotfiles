@@ -6,10 +6,6 @@ describe("core tests", function()
             assert(core.string_has_suffix("test", nil) == false)
         end)
 
-        it("nil string", function()
-            assert(core.string_has_suffix(nil, "test") == false)
-        end)
-
         it("no suffix", function()
             assert(core.string_has_suffix("test.txt", ".md") == false)
         end)
@@ -21,32 +17,33 @@ describe("core tests", function()
 
     describe("string split", function()
         local string_split = core.string_split
-        it("string split should work", function()
+        it("works with simple case", function()
             local result = string_split("hello world", " ")
 
-            assert(
-                #result == 2,
-                ("string splitted incorrectly, resulting %s"):format(#result)
-            )
+            assert(#result == 2)
+            assert(result[1] == "hello")
+            assert(result[2] == "world")
         end)
 
-        it("string split should work with default parameter", function()
-            local result = string_split "hello world"
+        it("work with parameter .", function()
+            local result = string_split("hello.world", ".")
 
-            assert(
-                #result == 2,
-                ("string splitted incorrectly, resulting %s"):format(#result)
-            )
+            assert(#result == 2)
+            assert(result[1] == "hello")
+            assert(result[2] == "world")
+        end)
+
+        it("work with new line separator", function()
+            local result = string_split("hello\nworld", "\n")
+
+            assert(#result == 2)
+            assert(result[1] == "hello")
+            assert(result[2] == "world")
         end)
     end)
 
     describe("starts_with", function()
         local starts_with = core.string_has_prefix
-
-        it("str param is nil", function()
-            local result = starts_with(nil, "test")
-            assert(not result)
-        end)
 
         it("prefix param is nil", function()
             local result = starts_with("abc test", nil)

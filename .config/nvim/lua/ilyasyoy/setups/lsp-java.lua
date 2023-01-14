@@ -1,20 +1,25 @@
-local plenary_path = require "plenary.path"
+local Path = require "plenary.path"
 local core = require "ilyasyoy.functions.core"
 local lsp = require "ilyasyoy.functions.lsp"
 local lspconfig = require "lspconfig"
 
+-- loads jdks from sdkman.
 -- TODO: fully refactor to plenary
+--
+---@param version string java version to search for
 local function get_java_dir(version)
-    local sdkman_dir = plenary_path.path.home .. "/.sdkman/candidates/java/"
+    local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
         if core.string_has_prefix(file, version) then
             return 1
         end
     end)
+
     local java_dir = java_dirs[1]
     if not java_dir then
         error(string.format("No %s java version was found", version))
     end
+
     return sdkman_dir .. java_dir
 end
 

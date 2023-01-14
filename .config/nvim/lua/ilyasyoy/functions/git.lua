@@ -20,8 +20,10 @@ function M.get_first_remote()
     if result_handle == nil then
         return nil
     end
+
     local lines_iterator = result_handle:lines()
     local first_remote = lines_iterator()
+
     return first_remote
 end
 
@@ -55,9 +57,10 @@ function M.url_to_link(url)
     end
 
     if core.string_has_prefix(url, "git@") then
-        local ssh_url
-        ssh_url = core.string_strip_suffix(url, ".git")
+        local ssh_url = url
+        ssh_url = core.string_strip_suffix(ssh_url, ".git")
         ssh_url = core.string_strip_prefix(ssh_url, "git@")
+
         local split = core.string_split(ssh_url, ":")
         local server, repo = split[1], split[2]
         local server_url = "https://" .. server .. "/"
@@ -86,6 +89,8 @@ function M.resolve_link_to_current_line(link, branch, filepath, line)
         .. line
 end
 
+---returns repository url
+---@return string/
 function M.resolve_repo_url()
     local first_remote = M.get_first_remote()
     if not first_remote then

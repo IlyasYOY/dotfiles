@@ -1,8 +1,9 @@
+local core = require "ilyasyoy.functions.core"
 local lsp = require "ilyasyoy.functions.lsp"
 local lspconfig = require "lspconfig"
 
 local library = {}
-local path = vim.split(package.path, ";")
+local path = core.string_split(package.path, ";")
 
 -- this is the ONLY correct way to setup your path
 table.insert(path, "lua/?.lua")
