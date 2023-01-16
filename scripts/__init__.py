@@ -143,7 +143,7 @@ ZSHRC_PATH = Path.home() / '.zshrc'
 installers: List[Installer] = [
     LombokInstaller(),
     GitAliasesInstaller(),
-    LinkingInstaller(HOME / '.config/nvim', CWD / '.config/nvim'),
+    LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
