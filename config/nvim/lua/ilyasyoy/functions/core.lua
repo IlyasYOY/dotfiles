@@ -147,27 +147,6 @@ function M.save_to_exchange_buffer(string)
     vim.fn.setreg("+", string)
 end
 
--- Extracts nested field from table
----@param table table? to get field from
-function M.get_nested_field(table, ...)
-    if table == nil then
-        return nil
-    end
-
-    local args = { n = select("#", ...), ... }
-    local result = table
-
-    for _, field in ipairs(args) do
-        local next_result = result[field]
-        if next_result == nil then
-            return nil
-        end
-        result = next_result
-    end
-
-    return result
-end
-
 ---checks if file exists
 ---@param filename string of the file we read it
 ---@return boolean if the file exists

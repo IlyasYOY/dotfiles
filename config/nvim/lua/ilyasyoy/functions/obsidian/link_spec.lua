@@ -1,68 +1,93 @@
 local Link = require "ilyasyoy.functions.obsidian.link"
+local spec_utils = require "ilyasyoy.functions.spec_utils"
 
-describe("from text", function ()
-    it("empty text", function ()
+---@param link ilyasyoy.obsidian.Link
+---@param header string?
+local function assert_link_header(link, header)
+    assert.are.equal(header, link.header, "wrong link header")
+end
+
+---@param link ilyasyoy.obsidian.Link
+---@param alias string?
+local function assert_link_alias(link, alias)
+    assert.are.equal(alias, link.alias, "wrong link alias")
+end
+
+---@param link ilyasyoy.obsidian.Link
+---@param name string?
+local function assert_link_name(link, name)
+    assert.are.equal(name, link.name, "wrong link name")
+end
+
+---@param link ilyasyoy.obsidian.Link
+---@param name string?
+---@param header string?
+---@param alias string?
+local function assert_link(link, name, header, alias)
+    assert_link_name(link, name)
+    assert_link_alias(link, header)
+    assert_link_header(link, alias)
+end
+
+describe("from text", function()
+    it("empty text", function()
         local result = Link.from_text ""
-        assert(result ~= nil)
-        assert(#result == 0)
+
+        assert.is_not_nil(result)
+        assert.list_size(result, 0)
     end)
 
-    it("single link", function ()
+    it("single link", function()
         local result = Link.from_text "[[name]]"
-        assert(result ~= nil)
-        assert(#result == 1)
-        assert(result[1].name == "name")
+
+        assert.is_not_nil(result)
+        assert.list_size(result, 1)
+        assert_link(result[1], "name")
     end)
 
-    it("multiple links", function ()
+    it("multiple links", function()
         local result = Link.from_text "[[name]] [[full name|not really]]"
-        assert(result ~= nil)
-        assert(#result == 2)
-        assert(result[1].name == "name")
-        assert(result[2].name == "full name")
-        assert(result[2].alias == "not really")
+        assert.is_not_nil(result)
+        assert.list_size(result, 2)
+        assert_link(result[1], "name")
+        assert_link(result[2], "full name", "not really")
     end)
 end)
 
 describe("from string", function()
     it("empty string", function()
         local result = Link.from_string ""
-        assert(result == nil)
+        assert.is_nil(result)
     end)
 
     it("raw link", function()
         local result = Link.from_string "name"
-        assert(result ~= nil)
-        assert(result.name == "name")
-        assert(result.alias == nil)
-        assert(result.header == nil)
+        assert.is_not_nil(result)
+        assert(result)
+        assert_link(result, "name")
     end)
 
-    local headers = {
+    for _, header in ipairs {
         "header",
         "big header",
-    }
-    for _, header in ipairs(headers) do
+    } do
         it("with header '" .. header .. "'", function()
             local result = Link.from_string("name#" .. header)
-            assert(result ~= nil)
-            assert(result.name == "name")
-            assert(result.alias == nil)
-            assert(result.header == header)
+            assert.is_not_nil(result ~= nil)
+            assert(result)
+            assert_link(result, "name", nil, header)
         end)
     end
 
-    local aliases = {
+    for _, alias in ipairs {
         "alias",
         "big alias",
-    }
-    for _, alias in ipairs(aliases) do
+    } do
         it("with alias '" .. alias .. "'", function()
             local result = Link.from_string("name|" .. alias)
-            assert(result ~= nil)
-            assert(result.name == "name")
-            assert(result.alias == alias)
-            assert(result.header == nil)
+            assert.is_not_nil(result)
+            assert(result)
+            assert_link(result, "name", alias, nil)
         end)
     end
 end)
@@ -71,19 +96,20 @@ describe("find link", function()
     local find_link = Link.find_link_at
     it("no link", function()
         local link = find_link("123 [[he 345", 6)
-        assert(link == nil)
+        assert.is_nil(link, "link should not be found")
     end)
 
     it("miss link", function()
         local link = find_link("123 [[hello]] 345", 2)
-        assert(link == nil)
+        assert.is_nil(link, "link should not be found")
     end)
 
     for _, num in ipairs { 7, 9, 11 } do
         it("has link with " .. num .. " index", function()
             local link = find_link("123 [[hello]] 345", num)
-            assert(link ~= nil)
-            assert(link.name == "hello")
+            assert.is_not_nil(link)
+            assert(link)
+            assert_link(link, "hello")
         end)
     end
 end)

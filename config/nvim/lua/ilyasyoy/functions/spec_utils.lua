@@ -26,4 +26,22 @@ function M.temp_dir_fixture()
     return result
 end
 
+---@generic T
+---@param list T[]
+---@param size number
+function M.assert_list_size(list, size)
+    assert.are.equal(size, #list, "wrong number of etries")
+end
+
+---@param template ilyasyoy.obsidian.File
+---@param name string?
+---@param path string?
+function M.assert_file(template, name, path)
+    assert.are.equal(name, template.name, "wrong file name")
+    assert.are.equal(path, template.path, "wrong file path")
+end
+
+assert.list_size = M.assert_list_size
+assert.file = M.assert_file
+
 return M

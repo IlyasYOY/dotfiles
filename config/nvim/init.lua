@@ -1,9 +1,11 @@
 require "ilyasyoy"
+
+require "ilyasyoy.plugins"
+
 require "ilyasyoy.setups.colors"
 require "ilyasyoy.git"
 require "ilyasyoy.global"
 
-require "ilyasyoy.plugins"
 
 require "ilyasyoy.obsidian"
 require "ilyasyoy.mapping"

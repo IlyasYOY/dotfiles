@@ -48,11 +48,14 @@ describe("journal", function()
 
             local result = test_state.journal:today()
 
-            assert(result.name == "2022-12-12")
-            assert(core.string_has_suffix(result.path, ".md"))
+            assert.are.equal("2022-12-12", result.name, "file name is wrong")
+            assert.is_true(
+                core.string_has_suffix(result.path, ".md"),
+                "file type is wrong"
+            )
         end)
 
-        it("get and not create", function()
+        it("get and not create file", function()
             test_state.journal_with_date_provider {
                 date_provider = function()
                     return "2022-12-12"
@@ -64,10 +67,10 @@ describe("journal", function()
             ---@type Path
             local path = Path:new(result.path)
 
-            assert(path:exists() == false)
+            assert.is_false(path:exists(), "file was created")
         end)
 
-        it("get and create", function()
+        it("get and create file", function()
             test_state.journal_with_date_provider {
                 date_provider = function()
                     return "2022-12-12"
@@ -79,7 +82,7 @@ describe("journal", function()
             ---@type Path
             local path = Path:new(result.path)
 
-            assert(path:exists())
+            assert.is_true(path:exists(), "file was not created")
         end)
 
         it("create matching template", function()
@@ -103,8 +106,10 @@ describe("journal", function()
             ---@type Path
             local path = Path:new(result.path)
             local resulting_text = path:read()
-            assert(
-                resulting_text == expected_text,
+
+            assert.are.equal(
+                resulting_text,
+                expected_text,
                 string.format(
                     "Expected mathing template '%s' but was '%s'",
                     expected_text,
@@ -120,7 +125,7 @@ describe("journal", function()
         it("no entries", function()
             local result = state.journal:list_dailies()
 
-            assert(#result == 0)
+            assert.are.equal(0, #result, "wrong number of dailies")
         end)
 
         it("correct entries", function()
@@ -131,7 +136,7 @@ describe("journal", function()
 
             local result = state.journal:list_dailies()
 
-            assert(#result == 2, string.format("Found %s", vim.inspect(result)))
+            assert.are.equal(2, #result, "wrong number of dailies")
         end)
     end)
 end)

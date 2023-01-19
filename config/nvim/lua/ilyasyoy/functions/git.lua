@@ -90,7 +90,7 @@ function M.resolve_link_to_current_line(link, branch, filepath, line)
 end
 
 ---returns repository url
----@return string/
+---@return string?
 function M.resolve_repo_url()
     local first_remote = M.get_first_remote()
     if not first_remote then

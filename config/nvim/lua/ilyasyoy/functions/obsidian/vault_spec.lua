@@ -16,139 +16,133 @@ local function vault_fixture()
     return result
 end
 
-describe("vault", function()
+describe("find backlinks", function()
     local state = vault_fixture()
 
-    describe("find backlinks", function()
-        it("no note", function()
-            local note = (state.home / "note.md")
-            note:touch()
+    it("no note", function()
+        local note = (state.home / "note.md")
+        note:touch()
 
-            local backlinks = state.vault:list_backlinks "note1"
+        local backlinks = state.vault:list_backlinks "note1"
 
-            assert(backlinks ~= nil)
-            assert(#backlinks == 0)
-        end)
-
-        it("no backlinks", function()
-            local note = (state.home / "note.md")
-            note:touch()
-
-            local backlinks = state.vault:list_backlinks "note"
-
-            assert(backlinks ~= nil)
-            assert(#backlinks == 0)
-        end)
-
-        it("one backlink", function()
-            ---@type Path
-            local note1 = (state.home / "note1.md")
-            note1:touch()
-            note1:write("This is file with a link to [[note]].", "w")
-
-            local note = (state.home / "note.md")
-            note:touch()
-
-            local backlinks = state.vault:list_backlinks "note"
-
-            assert(backlinks ~= nil)
-            assert(#backlinks == 1)
-            assert(backlinks[1].name == "note1")
-        end)
-
-        it("multiple backlink", function()
-            ---@type Path
-            local note1 = (state.home / "note1.md")
-            note1:touch()
-            note1:write("This is file with a link to [[note]].", "w")
-
-            ---@type Path
-            local note2 = (state.home / "note2.md")
-            note2:touch()
-            note2:write("This is the second file with a link to [[note]].", "w")
-
-            local note = (state.home / "note.md")
-            note:touch()
-
-            local backlinks = state.vault:list_backlinks "note"
-
-            assert(backlinks ~= nil)
-            assert(#backlinks == 2)
-        end)
-
-        it("multiple links per file backlink", function()
-            ---@type Path
-            local note1 = (state.home / "note1.md")
-            note1:touch()
-            note1:write(
-                "This is file with a link to [[note]] and one more [[note]].",
-                "w"
-            )
-
-            local note = (state.home / "note.md")
-            note:touch()
-
-            local backlinks = state.vault:list_backlinks "note"
-
-            assert(backlinks ~= nil)
-            assert(#backlinks == 1)
-        end)
+        assert.list_size(backlinks, 0)
     end)
 
-    describe("list", function()
-        it("no items", function()
-            local notes = state.vault:list_notes()
+    it("no backlinks", function()
+        local note = (state.home / "note.md")
+        note:touch()
 
-            assert(#notes == 0)
-        end)
+        local backlinks = state.vault:list_backlinks "note"
 
-        it("list item", function()
-            local file = (state.home / "note1.md")
-            file:touch()
+        assert.list_size(backlinks, 0)
+    end)
 
-            local notes = state.vault:list_notes()
+    it("one backlink", function()
+        ---@type Path
+        local note1 = (state.home / "note1.md")
+        note1:touch()
+        note1:write("This is file with a link to [[note]].", "w")
 
-            local note = notes[#notes]
+        local note = (state.home / "note.md")
+        note:touch()
 
-            assert(note.path == file:expand())
-            assert(note.name == "note1")
-        end)
+        local backlinks = state.vault:list_backlinks "note"
 
-        it("md items", function()
-            local file0 = (state.home / "note1.md")
-            local file1 = (state.home / "note2.md")
-            file0:touch()
-            file1:touch()
+        assert.list_size(backlinks, 1)
+        assert.file(backlinks[1], "note1", note1:expand())
+    end)
 
-            local notes = state.vault:list_notes()
+    it("multiple backlink", function()
+        ---@type Path
+        local note1 = (state.home / "note1.md")
+        note1:touch()
+        note1:write("This is file with a link to [[note]].", "w")
 
-            assert(#notes == 2)
-        end)
+        ---@type Path
+        local note2 = (state.home / "note2.md")
+        note2:touch()
+        note2:write("This is the second file with a link to [[note]].", "w")
 
-        it("nested md items", function()
-            local nested_dir = state.home / "dir"
-            nested_dir:mkdir()
+        local note = (state.home / "note.md")
+        note:touch()
 
-            local file0 = (nested_dir / "note1.md")
-            local file1 = (nested_dir / "note2.md")
+        local backlinks = state.vault:list_backlinks "note"
 
-            file0:touch()
-            file1:touch()
+        assert.list_size(backlinks, 2)
+    end)
 
-            local notes = state.vault:list_notes()
+    it("multiple links per file backlink", function()
+        ---@type Path
+        local note1 = (state.home / "note1.md")
+        note1:touch()
+        note1:write(
+            "This is file with a link to [[note]] and one more [[note]].",
+            "w"
+        )
 
-            assert(#notes == 2)
-        end)
+        local note = (state.home / "note.md")
+        note:touch()
 
-        it("not md items", function()
-            local file0 = (state.home / "note1.txt")
-            local file1 = (state.home / "note2.txt")
-            file0:touch()
-            file1:touch()
+        local backlinks = state.vault:list_backlinks "note"
 
-            local notes = state.vault:list_notes()
+        assert.list_size(backlinks, 1)
+    end)
+end)
 
-            assert(#notes == 0)
-        end)
+describe("list", function()
+    local state = vault_fixture()
+
+    it("no items", function()
+        local notes = state.vault:list_notes()
+
+        assert.list_size(notes, 0)
+    end)
+
+    it("list item", function()
+        local file = (state.home / "note1.md")
+        file:touch()
+
+        local notes = state.vault:list_notes()
+
+        local note = notes[#notes]
+
+        assert.file(note, "note1", file:expand())
+    end)
+
+    it("md items", function()
+        local file0 = (state.home / "note1.md")
+        local file1 = (state.home / "note2.md")
+        file0:touch()
+        file1:touch()
+
+        local notes = state.vault:list_notes()
+
+        assert.list_size(notes, 2)
+    end)
+
+    it("nested md items", function()
+        local nested_dir = state.home / "dir"
+        nested_dir:mkdir()
+
+        local file0 = (nested_dir / "note1.md")
+        local file1 = (nested_dir / "note2.md")
+
+        file0:touch()
+        file1:touch()
+
+        local notes = state.vault:list_notes()
+
+        assert.list_size(notes, 2)
+    end)
+
+    it("not md items", function()
+        local file0 = (state.home / "note1.txt")
+        local file1 = (state.home / "note2.txt")
+        file0:touch()
+        file1:touch()
+
+        local notes = state.vault:list_notes()
+
+        assert.list_size(notes, 0)
     end)
 end)
