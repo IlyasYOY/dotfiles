@@ -1,6 +1,15 @@
-local described = require("ilyasyoy.functions.core").described
-
 local M = {}
+
+---describes argument, useful in mapping when you have *prototype*-like mapping
+---options.
+---@param x table
+---@param desc string
+---@return table
+function M.described(x, desc)
+    return vim.tbl_extend("force", x, { desc = desc })
+end
+
+local described = M.described
 
 function M.on_attach(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
