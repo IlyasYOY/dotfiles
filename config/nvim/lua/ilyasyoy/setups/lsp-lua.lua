@@ -38,10 +38,8 @@ lspconfig.sumneko_lua.setup {
                     "assert",
                     "describe",
                     "it",
-                    "setup",
                     "before_each",
                     "after_each",
-                    "teardown",
                     "pending",
                     "clear",
 

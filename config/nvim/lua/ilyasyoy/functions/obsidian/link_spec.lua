@@ -1,5 +1,4 @@
 local Link = require "ilyasyoy.functions.obsidian.link"
-local spec_utils = require "ilyasyoy.functions.spec_utils"
 
 ---@param link ilyasyoy.obsidian.Link
 ---@param header string?
@@ -94,6 +93,7 @@ end)
 
 describe("find link", function()
     local find_link = Link.find_link_at
+
     it("no link", function()
         local link = find_link("123 [[he 345", 6)
         assert.is_nil(link, "link should not be found")

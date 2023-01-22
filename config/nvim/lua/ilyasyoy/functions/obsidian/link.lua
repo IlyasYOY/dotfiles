@@ -20,8 +20,8 @@ function Link:new(name, alias, header)
 end
 
 ---extracts links from the text
---- TODO: This implementation gives flase positive links.
---- It's ok for now but should be fixed in the future.
+--- FIXME: This implementation gives false positive links.
+--- It's ok for now, but MUST be fixed in the future.
 ---
 ---@param text string
 ---@return ilyasyoy.obsidian.Link[]
@@ -35,30 +35,31 @@ function Link.from_text(text)
     return links
 end
 
+local function split_on_index(to_split, index)
+    local before = string.sub(to_split, 1, index - 1)
+    local after = string.sub(to_split, index + 1, -1)
+    return before, after
+end
+
 --- creates link from string like name, name|alias, name#title
 ---@param str string
 ---@return ilyasyoy.obsidian.Link?
 function Link.from_string(str)
-    -- TODO: add link validation
+    -- FIXME: add link validation
+    -- now it assumes that the link is correct.
     if #str == 0 then
         return nil
     end
 
-    local function split_on(to_split, index)
-        local before = string.sub(to_split, 1, index - 1)
-        local after = string.sub(to_split, index + 1, -1)
-        return before, after
-    end
-
     local sharp_index = string.find(str, "#")
     if sharp_index then
-        local name, header = split_on(str, sharp_index)
+        local name, header = split_on_index(str, sharp_index)
         return Link:new(name, nil, header)
     end
 
     local pipe_index = string.find(str, "|")
     if pipe_index then
-        local name, alias = split_on(str, pipe_index)
+        local name, alias = split_on_index(str, pipe_index)
         return Link:new(name, alias, nil)
     end
 
