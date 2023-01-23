@@ -1,6 +1,6 @@
 local Path = require "plenary.path"
 local core = require "ilyasyoy.functions.core"
-local File = require "ilyasyoy.functions.obsidian.file"
+local File = require "ilyasyoy.functions.file"
 local telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 -- options for VarProvider

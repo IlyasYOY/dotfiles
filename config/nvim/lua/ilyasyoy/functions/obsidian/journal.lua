@@ -1,5 +1,5 @@
 local Path = require "plenary.path"
-local File = require "ilyasyoy.functions.obsidian.file"
+local File = require "ilyasyoy.functions.file"
 local telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 ---journal opts
@@ -43,7 +43,7 @@ function Journal:open_daily()
 end
 
 ---find in daily note files
-function Journal:find_daily()
+function Journal:find_journal()
     return telescope.find_files("Dailies", self._home_path:expand())
 end
 

@@ -5,7 +5,7 @@ local Path = require "plenary.path"
 ---@class ilyasyoy.obsidian.File
 ---@field public path string
 ---@field public name string
----@field private _path Path
+---@field private _plenary_path Path
 local File = {}
 File.__index = File
 
@@ -36,14 +36,19 @@ function File:new(path)
     return setmetatable({
         path = path,
         name = core.string_merge(name_with_extension_split, "."),
-        _path = Path:new(path),
+        _plenary_path = Path:new(path),
     }, self)
 end
 
 ---Reads file content as string
 ---@return string?
 function File:read()
-    return self._path:read()
+    return self._plenary_path:read()
+end
+
+---Opens file in buffeer for editing
+function File:edit()
+    vim.fn.execute("edit " .. self.path)
 end
 
 return File

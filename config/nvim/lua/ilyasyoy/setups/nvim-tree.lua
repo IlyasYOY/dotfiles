@@ -1,11 +1,13 @@
 -- this line breaks gx
 -- vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
 
 local nvimtree = require "nvim-tree"
 
 nvimtree.setup {
+    hijack_netrw = true,
+    disable_netrw = false,
     view = {
         number = true,
         relativenumber = true,
@@ -30,7 +32,7 @@ nvimtree.setup {
         show_on_open_dirs = true,
         debounce_delay = 50,
         severity = {
-            min = vim.diagnostic.severity.HINT,
+            min = vim.diagnostic.severity.WARN,
             max = vim.diagnostic.severity.ERROR,
         },
         icons = {

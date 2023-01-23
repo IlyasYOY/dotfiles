@@ -37,10 +37,10 @@ vim.keymap.set("n", "<leader>gt", function()
 
     if filetype == "lua" then
         if string.find(cwf, "_spec%.lua$") then
-            vim.cmd("edit " .. string.gsub(cwf, "(%w+)_spec%.lua$", "%1.lua"))
+            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_spec%.lua$", "%1.lua"))
             return
         elseif string.find(cwf, "%.lua$") then
-            vim.cmd("edit " .. string.gsub(cwf, "(%w+)%.lua$", "%1_spec.lua"))
+            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.lua$", "%1_spec.lua"))
             return
         end
     end

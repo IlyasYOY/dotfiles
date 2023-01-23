@@ -55,6 +55,7 @@ return require("packer").startup(function(use)
         "neovim/nvim-lspconfig",
         "jose-elias-alvarez/null-ls.nvim",
         "L3MON4D3/LuaSnip",
+        "folke/neodev.nvim"
     }
 
     use {

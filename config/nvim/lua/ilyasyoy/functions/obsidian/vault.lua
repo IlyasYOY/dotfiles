@@ -1,7 +1,7 @@
 
 local Link = require "ilyasyoy.functions.obsidian.link"
 local Templater = require "ilyasyoy.functions.obsidian.templater"
-local File = require "ilyasyoy.functions.obsidian.file"
+local File = require "ilyasyoy.functions.file"
 local Journal = require "ilyasyoy.functions.obsidian.journal"
 local Path = require "plenary.path"
 
@@ -71,7 +71,7 @@ function Vault:find_current_note_backlinks()
 end
 
 function Vault:find_journal()
-    self._journal:find_daily()
+    self._journal:find_journal()
 end
 
 function Vault:find_backlinks(name)
