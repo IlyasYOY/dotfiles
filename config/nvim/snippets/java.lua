@@ -6,7 +6,7 @@ local f = ls.function_node
 
 local function create_package()
     return f(function()
-        local core = require "ilyasyoy.functions.core"
+        local core = require "coredor"
 
         local file_dir = core.current_working_file_dir()
         local splitted = core.string_split(file_dir, "/java/")

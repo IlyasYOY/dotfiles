@@ -2,8 +2,8 @@ local Path = require "plenary.path"
 local Journal = require "ilyasyoy.functions.obsidian.journal"
 local Templater = require "ilyasyoy.functions.obsidian.templater"
 
-local spec_utils = require "ilyasyoy.functions.spec_utils"
-local core = require "ilyasyoy.functions.core"
+local spec_utils = require "coredor.spec"
+local core = require "coredor"
 
 local function journal_fixture()
     local result = {}

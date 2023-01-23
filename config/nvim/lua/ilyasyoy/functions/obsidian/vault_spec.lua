@@ -1,10 +1,10 @@
 local Vault = require "ilyasyoy.functions.obsidian.vault"
-local spec_utils = require "ilyasyoy.functions.spec_utils"
+local spec = require "coredor.spec"
 
 local function vault_fixture()
     local result = {}
 
-    local vault_home = spec_utils.temp_dir_fixture()
+    local vault_home = spec.temp_dir_fixture()
 
     before_each(function()
         result.vault = Vault:new {

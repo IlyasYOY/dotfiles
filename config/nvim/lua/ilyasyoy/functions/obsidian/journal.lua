@@ -1,5 +1,5 @@
 local Path = require "plenary.path"
-local File = require "ilyasyoy.functions.file"
+local File = require "coredor.file"
 local telescope = require "ilyasyoy.functions.obsidian.telescope"
 
 ---journal opts

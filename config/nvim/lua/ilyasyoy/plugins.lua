@@ -55,7 +55,8 @@ return require("packer").startup(function(use)
         "neovim/nvim-lspconfig",
         "jose-elias-alvarez/null-ls.nvim",
         "L3MON4D3/LuaSnip",
-        "folke/neodev.nvim"
+        "folke/neodev.nvim",
+        "simrat39/symbols-outline.nvim",
     }
 
     use {
@@ -100,6 +101,11 @@ return require("packer").startup(function(use)
         "ellisonleao/gruvbox.nvim",
         "nvim-tree/nvim-web-devicons",
         "tjdevries/colorbuddy.nvim",
+    }
+
+    use {
+        "Ilyasyoy/coredor.nvim",
+        "Ilyasyoy/git-link.nvim",
     }
 
     if packer_bootstrap then

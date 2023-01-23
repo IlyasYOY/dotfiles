@@ -1,4 +1,4 @@
-local core = require "ilyasyoy.functions.core"
+local core = require "coredor"
 
 local source = {}
 

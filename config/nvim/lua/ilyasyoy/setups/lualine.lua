@@ -1,5 +1,5 @@
 local lualine = require "lualine"
-local core = require "ilyasyoy.functions.core"
+local core = require "coredor"
 
 ---TODO: Consider adding cache here?
 local function active_lsp_names()

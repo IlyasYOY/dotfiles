@@ -1,12 +1,11 @@
-
 local Link = require "ilyasyoy.functions.obsidian.link"
 local Templater = require "ilyasyoy.functions.obsidian.templater"
-local File = require "ilyasyoy.functions.file"
+local File = require "coredor.file"
 local Journal = require "ilyasyoy.functions.obsidian.journal"
 local Path = require "plenary.path"
 
 local obsidian_telescope = require "ilyasyoy.functions.obsidian.telescope"
-local core = require "ilyasyoy.functions.core"
+local core = require "coredor"
 
 -- table with vault options
 ---@class ilyasyoy.obsidian.VaultOpts
@@ -115,11 +114,7 @@ end
 ---@return boolean
 function Vault:is_current_buffer_in_vault()
     local file_name = vim.api.nvim_buf_get_name(0)
-    return core.string_has_prefix(
-        file_name,
-        self._home_path:expand(),
-        true
-    )
+    return core.string_has_prefix(file_name, self._home_path:expand(), true)
 end
 
 ---checks if this buffer in the vault, usefull in autocommands.

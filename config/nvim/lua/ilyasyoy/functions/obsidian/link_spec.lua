@@ -1,5 +1,5 @@
 local Link = require "ilyasyoy.functions.obsidian.link"
-require "ilyasyoy.functions.spec_utils"
+require "coredor.spec"
 
 ---@param link ilyasyoy.obsidian.Link
 ---@param header string?

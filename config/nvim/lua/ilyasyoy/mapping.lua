@@ -1,4 +1,4 @@
-local core = require "ilyasyoy.functions.core"
+local core = require "coredor"
 
 vim.keymap.set("n", "<leader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
