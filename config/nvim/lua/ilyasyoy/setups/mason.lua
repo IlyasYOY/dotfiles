@@ -18,11 +18,10 @@ require("mason-lspconfig").setup {
         "sumneko_lua",
         "pyright",
         "rust_analyzer",
-        "tsserver"
+        "tsserver",
     },
     automatic_installation = true,
 }
-
 
 require("mason-nvim-dap").setup {
     ensure_installed = { "python" },

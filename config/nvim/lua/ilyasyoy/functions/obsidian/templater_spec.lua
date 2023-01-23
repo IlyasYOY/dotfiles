@@ -1,7 +1,6 @@
 local Templater = require "ilyasyoy.functions.obsidian.templater"
 local spec_utils = require "coredor.spec"
 
-
 describe("proccess files", function()
     local templater
     local temp_dir_data = spec_utils.temp_dir_fixture()

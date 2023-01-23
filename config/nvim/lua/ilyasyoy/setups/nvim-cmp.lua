@@ -17,7 +17,7 @@ cmp.setup {
             menu = {
                 nvim_lsp = "[LSP]",
                 luasnip = "[Snippet]",
-                obsidian = "[Notes]"
+                obsidian = "[Notes]",
             },
         },
     },

@@ -6,7 +6,7 @@ require("todo-comments").setup {
             "--with-filename",
             "--line-number",
             "--column",
-            "--hidden"
+            "--hidden",
         },
     },
 }
