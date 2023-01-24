@@ -14,5 +14,8 @@ null_ls.setup {
     sources = {
         with_root_file(null_ls.builtins.formatting.stylua, "stylua.toml"),
         with_root_file(null_ls.builtins.diagnostics.luacheck, ".luacheckrc"),
+        null_ls.builtins.diagnostics.jsonlint,
+        null_ls.builtins.diagnostics.markdownlint,
+        null_ls.builtins.diagnostics.yamllint,
     },
 }

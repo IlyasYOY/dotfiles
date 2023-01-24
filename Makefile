@@ -1,4 +1,4 @@
-.PHONY: test
+all: format_lua lint_lua test_lua 
 
 test_lua:
 	nvim --headless -c "PlenaryBustedDirectory config/nvim/lua {sequential=true}"

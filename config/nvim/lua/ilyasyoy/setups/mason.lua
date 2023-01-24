@@ -28,5 +28,11 @@ require("mason-nvim-dap").setup {
 }
 
 require("mason-null-ls").setup {
-    ensure_installed = { "stylua", "luacheck" },
+    ensure_installed = {
+        "stylua",
+        "luacheck",
+        "jsonlint",
+        "yamllint",
+        "markdownlint",
+    },
 }

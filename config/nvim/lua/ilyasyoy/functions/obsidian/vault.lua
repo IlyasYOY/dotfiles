@@ -118,6 +118,10 @@ function Vault:is_current_buffer_in_vault()
 end
 
 ---checks if this buffer in the vault, usefull in autocommands.
+---FIXME: fix links.
+---This functionality doesn't respect links.
+---home is link -> error.
+---
 ---@return boolean
 function Vault:is_current_buffer_a_note()
     return self:is_current_buffer_in_vault() and vim.bo.filetype == "markdown"

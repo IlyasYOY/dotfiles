@@ -11,6 +11,8 @@ ignore = {
 
 globals = {
     "_",
+    "G_P",
+    "G_R",
     "TelescopeGlobalState",
     "_TelescopeConfigurationValues",
     "_TelescopeConfigurationPickers",
@@ -27,7 +29,4 @@ read_globals = {
     "after_each",
     "pending",
     "clear",
-
-    "G_P",
-    "G_R",
 }
