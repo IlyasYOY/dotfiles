@@ -1,11 +1,10 @@
 import abc
-import json
 import logging
 import logging
 from pathlib import Path
 import shutil
 import subprocess
-from typing import Dict, List, Optional
+from typing import List, Optional
 from urllib import request
 
 
@@ -140,10 +139,14 @@ CWD = Path.cwd()
 
 ZSHRC_PATH = Path.home() / '.zshrc'
 
+# TODO: Create program installers. 
+# I want to be able to run these to install all applications.
 installers: List[Installer] = [
     LombokInstaller(),
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
+    LinkingInstaller(HOME / '.config/alacritty', CWD / 'config/alacritty'),
+    LinkingInstaller(HOME / '.tmux.conf', CWD / '.tmux.conf'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
