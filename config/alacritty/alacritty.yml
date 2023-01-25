@@ -25,3 +25,7 @@ key_bindings:
   - key: Return
     mods: Control|Shift
     action: SpawnNewInstance
+
+# Fixes nvim colors in tmux
+env:
+  TERM: xterm-256color
