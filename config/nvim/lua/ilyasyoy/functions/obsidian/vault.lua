@@ -61,6 +61,7 @@ function Vault:find_and_insert_template()
 end
 
 function Vault:find_note()
+    --FIXME: Currently it searches for hidden files, should remove it.
     obsidian_telescope.find_files("Find notes", self._home_path:expand())
 end
 
