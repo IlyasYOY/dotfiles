@@ -30,7 +30,7 @@ vim.keymap.set("n", "<leader>fg", function()
     })
 end)
 
-vim.keymap.set("n", "<leader>ft", function()
+vim.keymap.set("n", "<leader>fT", function()
     builtin.builtin(themes.get_ivy())
 end)
 
@@ -57,3 +57,5 @@ end)
 vim.keymap.set("n", "<leader>fc", function()
     builtin.commands(themes.get_ivy())
 end)
+
+vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>")
