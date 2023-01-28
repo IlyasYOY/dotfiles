@@ -7,9 +7,7 @@ local f = ls.function_node
 local c = ls.choice_node
 
 local function sanitize_for_lua(text)
-    -- FIXME: Implement better regex considering lua's stupid regexes
-    -- this is not entirely correct.
-    return string.gsub(text, "[%./-]", "_")
+    return string.gsub(text, "[^%a%d_]", "_")
 end
 
 local function rep_replacing(node_index, pattern, substitution)

@@ -1,5 +1,6 @@
 local Vault = require "ilyasyoy.functions.obsidian.vault"
 local spec = require "coredor.spec"
+local coredor = require "coredor"
 
 local function vault_fixture()
     local result = {}
@@ -12,6 +13,16 @@ local function vault_fixture()
         }
         result.home = vault_home.path
     end)
+
+    ---creates file in vault
+    ---@param name string file name
+    ---@return Path
+    function result.create_file(name)
+        ---@type Path
+        local file_path = (vault_home.path / name)
+        file_path:touch()
+        return file_path
+    end
 
     return result
 end
@@ -144,5 +155,26 @@ describe("list", function()
         local notes = state.vault:list_notes()
 
         assert.list_size(notes, 0)
+    end)
+end)
+
+describe("rename", function()
+    local state = vault_fixture()
+
+    it("file not exist", function()
+        local renamed_note = state.vault:rename("test", "new test")
+        assert.is_nil(renamed_note, "no note to rename should be found")
+    end)
+
+    it("file renamed", function()
+        state.create_file "test.md"
+        local renamed = state.vault:rename("test", "new test")
+
+        assert(renamed, "file should be found")
+        assert.file(renamed, "new test", (state.home / "new test.md"):expand())
+    end)
+
+    it("simple link renamed", function()
+        assert.not_nil(nil)
     end)
 end)

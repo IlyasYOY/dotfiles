@@ -1,3 +1,6 @@
+local _note_name_no_brackets = "(([^%]%[]+)[|#]?([^%]%[]+))"
+local _note_name_pattern = "%[%[" .. _note_name_no_brackets .. "%]%]"
+
 ---Simple link representation
 ---@class ilyasyoy.obsidian.Link
 ---@field public name string
@@ -20,15 +23,12 @@ function Link:new(name, alias, header)
 end
 
 ---extracts links from the text
---- FIXME: This implementation gives false positive links.
---- It's ok for now, but MUST be fixed in the future.
----
 ---@param text string
 ---@return ilyasyoy.obsidian.Link[]
 function Link.from_text(text)
     ---@type ilyasyoy.obsidian.Link[]
     local links = {}
-    for match in string.gmatch(text, "%[%[(.-)%]%]") do
+    for match in string.gmatch(text, _note_name_pattern) do
         local link = Link.from_string(match)
         table.insert(links, link)
     end
@@ -45,8 +45,9 @@ end
 ---@param str string
 ---@return ilyasyoy.obsidian.Link?
 function Link.from_string(str)
-    -- FIXME: add link validation
-    -- now it assumes that the link is correct.
+    if not string.match(str, "^" .. _note_name_no_brackets .. "$") then
+        return nil
+    end
     if #str == 0 then
         return nil
     end

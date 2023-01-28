@@ -55,6 +55,18 @@ describe("from text", function()
 end)
 
 describe("from string", function()
+    for _, wrong_link in ipairs {
+        "[[kek",
+        "cheburek]]",
+        "[[burek]]",
+        "]]che]]",
+    } do
+        it("'" .. wrong_link .. "' is wrong link", function()
+            local result = Link.from_string(wrong_link)
+            assert.is_nil(result, "link should not pass validation")
+        end)
+    end
+
     it("empty string", function()
         local result = Link.from_string ""
         assert.is_nil(result)

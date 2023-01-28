@@ -47,8 +47,6 @@ function VaultOpts:new(opts)
     return vault_opts
 end
 
---- TODO: Think of caching list methods. At least in-memory caching.
----
 ---@class ilyasyoy.obsidian.Vault
 ---@field protected _templates_path Path
 ---@field protected _home_path Path
@@ -61,7 +59,6 @@ function Vault:find_and_insert_template()
 end
 
 function Vault:find_note()
-    --FIXME: Currently it searches for hidden files, should remove it.
     obsidian_telescope.find_files("Find notes", self._home_path:expand())
 end
 
@@ -72,6 +69,26 @@ end
 
 function Vault:find_journal()
     self._journal:find_journal()
+end
+
+---renames the note
+---@param name string
+---@param new_name string
+---@return coredor.File?
+function Vault:rename(name, new_name)
+    local note = self:get_note(name)
+    if note == nil then
+        vim.notify("note '" .. name .. "' was not found")
+        return
+    end
+    -- NOTE: Maybe I should do something like string_ensure_prefix/string_ensure_suffix.
+    local new_name_with_extension = (new_name .. ".md")
+    local new_path = self._home_path / new_name_with_extension
+    -- TODO: Move into coredor.File
+    local status= note._plenary_path:rename {
+        new_name = new_path:expand()
+    }
+    return self:get_note(new_name)
 end
 
 function Vault:find_backlinks(name)
@@ -115,14 +132,10 @@ end
 ---@return boolean
 function Vault:is_current_buffer_in_vault()
     local file_name = vim.api.nvim_buf_get_name(0)
-    return core.string_has_prefix(file_name, self._home_path:expand(), true)
+    return core.string_has_prefix(file_name, self._home_path:absolute(), true)
 end
 
 ---checks if this buffer in the vault, usefull in autocommands.
----FIXME: fix links.
----This functionality doesn't respect links.
----home is link -> error.
----
 ---@return boolean
 function Vault:is_current_buffer_a_note()
     return self:is_current_buffer_in_vault() and vim.bo.filetype == "markdown"
@@ -151,7 +164,7 @@ end
 
 ---get note from vault using name of the file
 ---@param name string
----@return ilyasyoy.obsidian.File?
+---@return coredor.File?
 function Vault:get_note(name)
     local notes = self:list_notes()
 
@@ -168,21 +181,21 @@ function Vault:open_daily()
 end
 
 ---lists notes from vault
----@return ilyasyoy.obsidian.File[]
+---@return coredor.File[]
 function Vault:list_notes()
     return File.list(self._home_path:expand(), "**/*.md")
 end
 
 ---lists backlinks to a note using name
 ---@param name string
----@return ilyasyoy.obsidian.File[]
+---@return coredor.File[]
 function Vault:list_backlinks(name)
     local note_for_name = self:get_note(name)
     if note_for_name == nil then
         return {}
     end
 
-    ---@type ilyasyoy.obsidian.File[]
+    ---@type coredor.File[]
     local notes_with_backlinks = {}
     local notes = self:list_notes()
     for _, note in ipairs(notes) do

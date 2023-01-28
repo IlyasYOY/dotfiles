@@ -23,8 +23,9 @@ vim.keymap.set("n", "<leader><leader>t", "<Plug>PlenaryTestFile", {
 vim.keymap.set(
     "n",
     "<leader><leader>T",
-    -- TODO: Default is {sequential=false}.
+    -- NOTE: Default is {sequential=false}.
     -- I have helpers for test dirs which cause problems in concurrent env.
+    -- Should I fix it? 
     "<cmd>PlenaryBustedDirectory . {sequential=true}<CR>",
     {
         desc = "Runs Plenary [T]ests in cwd",

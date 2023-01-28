@@ -58,10 +58,15 @@ end
 ---find files using builtin telescope finder.
 ---@param title string
 ---@param path string to search files at
-function M.find_files(title, path)
+---@param hidden boolean? should search for hidden files (default: false)
+function M.find_files(title, path, hidden)
+    if hidden == nil then
+        hidden = false
+    end
     return builtin.find_files {
         cwd = path,
         prompt_title = title,
+        hidden = hidden,
     }
 end
 
