@@ -13,7 +13,9 @@ end
 local function rep_replacing(node_index, pattern, substitution)
     return f(function(arguments)
         local first_argument = arguments[1][1]
-        return sanitize_for_lua(string.gsub(first_argument, pattern, substitution))
+        return sanitize_for_lua(
+            string.gsub(first_argument, pattern, substitution)
+        )
     end, { node_index })
 end
 
@@ -55,6 +57,21 @@ return {
                 rep(1),
                 rep(1),
                 i(0),
+            }
+        )
+    ),
+    s(
+        "func",
+        fmt(
+            [[
+    function {}({})
+        {}
+    end
+    ]],
+            {
+                i(1),
+                i(2),
+                i(3, "return"),
             }
         )
     ),

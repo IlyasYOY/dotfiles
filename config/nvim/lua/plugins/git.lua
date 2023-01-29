@@ -1,6 +1,7 @@
 return {
     {
         "IlyasYOY/git-link.nvim",
+        dev = true,
         dependencies = {
             "IlyasYOY/coredor.nvim",
         },

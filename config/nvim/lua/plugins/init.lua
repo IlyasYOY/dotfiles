@@ -19,5 +19,5 @@ return {
             )
         end,
     },
-    "IlyasYOY/coredor.nvim",
+    { "IlyasYOY/coredor.nvim", dev = true },
 }

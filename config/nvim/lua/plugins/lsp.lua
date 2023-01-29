@@ -128,9 +128,7 @@ local function setup_lua()
     -- add runtime
     add "$VIMRUNTIME"
     -- add plugins
-    -- if you're not using packer, then you might need to change the paths below
-    add "~/.local/share/nvim/site/pack/packer/opt/*"
-    add "~/.local/share/nvim/site/pack/packer/start/*"
+    add "~/.local/share/nvim/lazy/*"
 
     lspconfig.sumneko_lua.setup {
         on_attach = lsp.on_attach,
