@@ -3,6 +3,7 @@ filetype plugin on
 set nocompatible
 
 let mapleader = " "
+let mapleaderlocal = " "
 
 " Allow me to use custom vimrc from the current folder
 set exrc 
@@ -42,9 +43,6 @@ set signcolumn=yes
 
 " Line length column 
 set colorcolumn=80
-
-" Shows currently running command
-set showcmd
 
 " heps me to find a current line
 set cursorline

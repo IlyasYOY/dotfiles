@@ -6,8 +6,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-config/nvim/plugin/packer_compiled.lua
-
 config/nvim/spell/
 
 NetrwTreeListing
