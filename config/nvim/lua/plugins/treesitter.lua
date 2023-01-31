@@ -21,6 +21,7 @@ return {
                     "markdown",
                     "markdown_inline",
                     "javascript",
+                    "vim",
                 },
                 sync_install = false,
                 auto_install = false,

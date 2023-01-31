@@ -13,3 +13,5 @@ NetrwTreeListing
 
 .DB_Store
 .DS_Store
+
+lazy-lock.json
