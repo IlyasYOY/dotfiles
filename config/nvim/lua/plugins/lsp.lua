@@ -129,6 +129,8 @@ local function setup_lua()
     add "$VIMRUNTIME"
     -- add plugins
     add "~/.local/share/nvim/lazy/*"
+    add "~/Projects/other/git-link.nvim"
+    add "~/Projects/other/coredor.nvim"
 
     lspconfig.sumneko_lua.setup {
         on_attach = lsp.on_attach,
