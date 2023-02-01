@@ -12,6 +12,7 @@ local core = require "coredor"
 ---@field public vault_home string?
 ---@field public templater ilyasyoy.obsidian.TemplaterOpts?
 ---@field public journal ilyasyoy.obsidian.JournalOpts?
+---@field public time_provider fun():number
 local VaultOpts = {}
 
 -- simple constructor for options
@@ -20,6 +21,8 @@ function VaultOpts:new(opts)
     opts = opts or {}
     self.__index = self
     local vault_opts = setmetatable({}, self)
+
+    vault_opts.time_provider = opts.time_provider or os.clock
 
     vault_opts.vault_home = opts.vault_home
         or (Path:new(Path.path.home) / "vimwiki"):expand()
@@ -52,7 +55,52 @@ end
 ---@field protected _home_path Path
 ---@field protected _templater ilyasyoy.obsidian.Templater
 ---@field protected _journal ilyasyoy.obsidian.Journal
+---@field protected _time_provider fun(): number
 local Vault = {}
+
+---creates Vault instance
+---@param opts ilyasyoy.obsidian.VaultOpts? table options to create a vault
+---@return ilyasyoy.obsidian.Vault
+function Vault:new(opts)
+    opts = opts or {}
+
+    self.__index = self
+    local vault = setmetatable({}, self)
+
+    opts = VaultOpts:new(opts)
+
+    ---@type Path
+    vault._home_path = Path:new(opts.vault_home)
+    ---@type ilyasyoy.obsidian.Templater
+    local templater = Templater:new(opts.templater)
+
+    vault._templater = templater
+    vault._journal = Journal:new(templater, opts.journal)
+    vault._time_provider = opts.time_provider
+
+    return vault
+end
+
+---create notes with defaults to name structure applied
+---@param name string?
+---@return coredor.File?
+function Vault:create_note(name)
+    local time = self._time_provider()
+    if not name or name == "" then
+        name = time
+    end
+
+    local name_prefix = os.date "%Y-%m-%d "
+    local fullname = name_prefix .. name
+    if self:get_note(fullname) then
+        return nil
+    end
+
+    ---@type Path
+    local new_path = self._home_path / (fullname .. ".md")
+    new_path:touch()
+    return File:new(new_path:expand())
+end
 
 function Vault:find_and_insert_template()
     self._templater:search_and_insert_template()
@@ -85,8 +133,8 @@ function Vault:rename(name, new_name)
     local new_name_with_extension = (new_name .. ".md")
     local new_path = self._home_path / new_name_with_extension
     -- TODO: Move into coredor.File
-    local status= note._plenary_path:rename {
-        new_name = new_path:expand()
+    local status = note._plenary_path:rename {
+        new_name = new_path:expand(),
     }
     return self:get_note(new_name)
 end
@@ -213,28 +261,6 @@ function Vault:list_backlinks(name)
     end
 
     return notes_with_backlinks
-end
-
--- creates Vault instance
----@param opts ilyasyoy.obsidian.VaultOpts? table options to create a vault
----@return ilyasyoy.obsidian.Vault
-function Vault:new(opts)
-    opts = opts or {}
-
-    self.__index = self
-    local vault = setmetatable({}, self)
-
-    opts = VaultOpts:new(opts)
-
-    ---@type Path
-    vault._home_path = Path:new(opts.vault_home)
-    ---@type ilyasyoy.obsidian.Templater
-    local templater = Templater:new(opts.templater)
-
-    vault._templater = templater
-    vault._journal = Journal:new(templater, opts.journal)
-
-    return vault
 end
 
 return Vault

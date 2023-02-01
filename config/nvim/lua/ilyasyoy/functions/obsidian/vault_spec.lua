@@ -1,6 +1,7 @@
 local Vault = require "ilyasyoy.functions.obsidian.vault"
 local spec = require "coredor.spec"
-local coredor = require "coredor"
+local mock = require "luassert.mock"
+local stub = require "luassert.stub"
 
 local function vault_fixture()
     local result = {}
@@ -10,6 +11,12 @@ local function vault_fixture()
     before_each(function()
         result.vault = Vault:new {
             vault_home = vault_home.path:expand(),
+            time_provider = function()
+                if result.time_mock then
+                    return result.time_mock
+                end
+                return os.clock()
+            end,
         }
         result.home = vault_home.path
     end)
@@ -26,6 +33,60 @@ local function vault_fixture()
 
     return result
 end
+
+describe("new note", function()
+    local state = vault_fixture()
+    local common_time = 165277868
+    local common_name = "2023-02-01 165277868"
+    local common_filename = common_name .. ".md"
+    ---@type fun(): Path
+    local common_filepath = function()
+        return state.home / common_filename
+    end
+
+    it("for correct note", function()
+        state.time_mock = common_time
+
+        local file = state.vault:create_note "cool note"
+
+        local expected_name = "2023-02-01 cool note"
+        local expected_filename = expected_name .. ".md"
+
+        assert(file)
+        assert.file(
+            file,
+            expected_name,
+            (state.home / expected_filename):expand()
+        )
+    end)
+
+    it("for existing note", function()
+        state.time_mock = common_time
+        common_filepath():touch()
+
+        local file = state.vault:create_note ""
+
+        assert(file == nil, "file should not be overriten")
+    end)
+
+    it("for nil name", function()
+        state.time_mock = common_time
+
+        local file = state.vault:create_note(nil)
+
+        assert(file)
+        assert.file(file, common_name, common_filepath():expand())
+    end)
+
+    it("for '' name", function()
+        state.time_mock = common_time
+
+        local file = state.vault:create_note ""
+
+        assert(file)
+        assert.file(file, common_name, common_filepath():expand())
+    end)
+end)
 
 describe("find backlinks", function()
     local state = vault_fixture()

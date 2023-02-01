@@ -18,6 +18,16 @@ vim.keymap.set("n", "<leader>nn", function()
     end)
 end)
 
+vim.keymap.set("n", "<leader>nN", function()
+    local input = vim.fn.input("New note name: ", "")
+    local file = obsidian.vault:create_note(input)
+    if file then
+        file:edit()
+    else
+        vim.notify("Note '" .. input .. "' already exists")
+    end
+end)
+
 vim.keymap.set("n", "<leader>nfj", function()
     obsidian.vault:find_journal()
 end, { desc = "[n]otes [f]ind [j]ournal" })
