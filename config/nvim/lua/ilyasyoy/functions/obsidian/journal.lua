@@ -48,7 +48,7 @@ function Journal:find_journal()
 end
 
 -- lists journal entries
----@return Array<ilyasyoy.obsidian.File>
+---@return Array<coredor.File>
 function Journal:list_dailies()
     local path = self._home_path:expand()
     local files = File.list(path, "????-??-??.md")
@@ -57,7 +57,7 @@ end
 
 -- get today note file
 ---@param create_if_missing boolean?
----@return ilyasyoy.obsidian.File
+---@return coredor.File
 function Journal:today(create_if_missing)
     local filename = self._date_provider()
     ---@type Path
