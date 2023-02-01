@@ -54,11 +54,6 @@ set wildmode=full
 " increase history size 
 set history=50
 
-" File explorer settings
-nmap <leader>e :Ex<CR>
-
-nnoremap <C-w>t :tabnew<CR>
-
 " noh - no highlight
 nnoremap <Esc> :noh <CR>
 

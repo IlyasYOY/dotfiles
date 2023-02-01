@@ -43,6 +43,7 @@ return {
                     "yamllint",
                     "markdownlint",
                 },
+                automatic_installation = true,
             }
         end,
     },
@@ -50,7 +51,12 @@ return {
         "jayp0521/mason-nvim-dap.nvim",
         config = function()
             require("mason-nvim-dap").setup {
-                ensure_installed = { "python" },
+                ensure_installed = {
+                    "python",
+                    "javadbg",
+                    "javatest",
+                },
+                automatic_installation = true,
             }
         end,
     },

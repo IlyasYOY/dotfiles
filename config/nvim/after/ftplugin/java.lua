@@ -1,4 +1,5 @@
 local Path = require "plenary.path"
+local coredor = require "coredor"
 local lsp = require "ilyasyoy.functions.lsp"
 local jdtls = require "jdtls"
 
@@ -53,6 +54,7 @@ local config = {
                     "java.util.Objects.*",
                     "org.junit.jupiter.api.Assertions.*",
                     "org.junit.jupiter.api.Assumptions.*",
+                    "org.mockito.Mockito.*",
                 },
                 guessMethodArguments = false,
             },
@@ -76,6 +78,7 @@ local config = {
     },
 
     on_attach = function(client, bufnr)
+        require("jdtls").setup_dap()
         vim.keymap.set("n", "<leader>oi", function()
             jdtls.organize_imports()
         end, {
@@ -96,17 +99,37 @@ local config = {
         end, {
             desc = "java [e]xtract [m]ethod",
         })
-        vim.cmd [[
-        command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>)
-        command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>)
-        command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config()
-        command! -buffer JdtJol lua require('jdtls').jol()
-        command! -buffer JdtBytecode lua require('jdtls').javap()
-        command! -buffer JdtJshell lua require('jdtls').jshell()
-        ]]
+        vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>) ]]
+        vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>) ]]
+        vim.cmd [[ command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config() ]]
+        vim.cmd [[ command! -buffer JdtBytecode lua require('jdtls').javap() ]]
+        -- They don't work:
+        -- vim.cmd [[ command! -buffer JdtJol lua require('jdtls').jol() ]]
+        -- vim.cmd [[ command! -buffer JdtJshell lua require('jdtls').jshell() ]]
         lsp.on_attach(client, bufnr)
     end,
     capabilities = lsp.get_capabilities(),
+
+    init_options = {
+        bundles = {
+            vim.fn.glob(
+                Path.path.home
+                    .. "/.local/share/nvim/mason/packages/"
+                    .. "java-debug-adapter/extension/"
+                    .. "server/com.microsoft.java.debug.plugin-*.jar",
+                1
+            ),
+            coredor.string_split(
+                vim.fn.glob(
+                    Path.path.home
+                        .. "/.local/share/nvim/mason/packages/"
+                        .. "java-test/extension/"
+                        .. "server/*.jar"
+                ),
+                "\n"
+            ),
+        },
+    },
 }
 
 jdtls.start_or_attach(config)
