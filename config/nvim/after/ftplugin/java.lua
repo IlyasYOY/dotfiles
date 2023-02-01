@@ -1,12 +1,14 @@
-local coredor = require "coredor"
 local Path = require "plenary.path"
 local lsp = require "ilyasyoy.functions.lsp"
+local jdtls = require "jdtls"
 
 -- loads jdks from sdkman.
 -- NOTE: This requires java to be installed using sdkman.
 --
 ---@param version string java version to search for
 local function get_java_dir(version)
+    local coredor = require "coredor"
+
     local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
         if coredor.string_has_prefix(file, version) then
@@ -23,8 +25,8 @@ local function get_java_dir(version)
 end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+--NOTE:This is base dir for Ecllipse project files.
 local workspace_dir = Path.path.home
-    --NOTE:This is base dir for Ecllipse project files.
     .. "/Projects/eclipse-java/"
     .. project_name
 
@@ -73,8 +75,38 @@ local config = {
         },
     },
 
-    on_attach = lsp.on_attach,
+    on_attach = function(client, bufnr)
+        vim.keymap.set("n", "<leader>oi", function()
+            jdtls.organize_imports()
+        end, {
+            desc = "[o]rganize [i]mports",
+        })
+        vim.keymap.set({ "n", "v" }, "<leader>jev", function()
+            jdtls.extract_variable()
+        end, {
+            desc = "java [e]xtract [v]ariable",
+        })
+        vim.keymap.set({ "n", "v" }, "<leader>jec", function()
+            jdtls.extract_constant()
+        end, {
+            desc = "java [e]xtract [c]onstant",
+        })
+        vim.keymap.set({ "n", "v", "s" }, "<leader>jem", function()
+            jdtls.extract_method()
+        end, {
+            desc = "java [e]xtract [m]ethod",
+        })
+        vim.cmd [[
+        command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>)
+        command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>)
+        command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config()
+        command! -buffer JdtJol lua require('jdtls').jol()
+        command! -buffer JdtBytecode lua require('jdtls').javap()
+        command! -buffer JdtJshell lua require('jdtls').jshell()
+        ]]
+        lsp.on_attach(client, bufnr)
+    end,
     capabilities = lsp.get_capabilities(),
 }
 
-require("jdtls").start_or_attach(config)
+jdtls.start_or_attach(config)
