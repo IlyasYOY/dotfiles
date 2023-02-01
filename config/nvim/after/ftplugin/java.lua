@@ -39,7 +39,7 @@ local config = {
         -- NOTE: Lombok JAR must be in home dir.
         "--jvm-arg=-javaagent:"
             .. Path.path.home
-            .. "/lombok.jar",
+            .. "/.local/share/nvim/mason/packages/jdtls/lombok.jar",
     },
 
     root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
@@ -119,15 +119,15 @@ local config = {
                     .. "server/com.microsoft.java.debug.plugin-*.jar",
                 1
             ),
-            coredor.string_split(
-                vim.fn.glob(
-                    Path.path.home
-                        .. "/.local/share/nvim/mason/packages/"
-                        .. "java-test/extension/"
-                        .. "server/*.jar"
-                ),
-                "\n"
-            ),
+            -- coredor.string_split(
+            --     vim.fn.glob(
+            --         Path.path.home
+            --             .. "/.local/share/nvim/mason/packages/"
+            --             .. "java-test/extension/"
+            --             .. "server/*.jar"
+            --     ),
+            --     "\n"
+            -- ),
         },
     },
 }

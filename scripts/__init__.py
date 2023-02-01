@@ -94,27 +94,6 @@ class GitAliasesInstaller(Installer):
         co_result = subprocess.call('git config --global alias.co "checkout" ', shell=True)
         return status_alias_result == 0 and lg_alias_result == 0 and c_result == 0 and co_result == 0
 
-
-class LombokInstaller(Installer):
-
-    _lombok_url = 'https://projectlombok.org/downloads/lombok.jar'
-    _lombok_download_path = Path.home() / 'lombok.jar'
-
-    def _download_lombok(self):
-        logger.info(f'Download lombok from {self._lombok_url}')
-        request.urlretrieve(self._lombok_url, self._lombok_download_path)
-        request.urlcleanup()
-        logger.info(f'Lombok downloaded to {self._lombok_download_path}')
-
-
-    def get_description(self) -> str:
-        return 'This scripts load lombok for coc-java, so be sure you have already install plugins & coc-java itself'
-
-    def __call__(self) -> bool:
-        self._download_lombok()
-        return True
-
-
 def backup_file(file: Path) -> Optional[Path]:
     if not file.exists():
         return None
@@ -142,7 +121,6 @@ ZSHRC_PATH = Path.home() / '.zshrc'
 # TODO: Create program installers. 
 # I want to be able to run these to install all applications.
 installers: List[Installer] = [
-    LombokInstaller(),
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
     LinkingInstaller(HOME / '.config/alacritty', CWD / 'config/alacritty'),
