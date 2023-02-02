@@ -3,10 +3,13 @@ local coredor = require "coredor"
 local lsp = require "ilyasyoy.functions.lsp"
 local jdtls = require "jdtls"
 
+local function get_install_path_for(package)
+    return require("mason-registry").get_package(package):get_install_path()
+end
+
 -- loads jdks from sdkman.
--- NOTE: This requires java to be installed using sdkman.
---
 ---@param version string java version to search for
+-- NOTE: This requires java to be installed using sdkman.
 local function get_java_dir(version)
     local coredor = require "coredor"
 
@@ -38,8 +41,8 @@ local config = {
         workspace_dir,
         -- NOTE: Lombok JAR must be in home dir.
         "--jvm-arg=-javaagent:"
-            .. Path.path.home
-            .. "/.local/share/nvim/mason/packages/jdtls/lombok.jar",
+            .. get_install_path_for "jdtls"
+            .. "/lombok.jar",
     },
 
     root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
@@ -113,21 +116,17 @@ local config = {
     init_options = {
         bundles = {
             vim.fn.glob(
-                Path.path.home
-                    .. "/.local/share/nvim/mason/packages/"
-                    .. "java-debug-adapter/extension/"
-                    .. "server/com.microsoft.java.debug.plugin-*.jar",
+                get_install_path_for "java-debug-adapter"
+                    .. "/extension/server/"
+                    .. "com.microsoft.java.debug.plugin-*.jar",
                 1
             ),
-            -- coredor.string_split(
-            --     vim.fn.glob(
-            --         Path.path.home
-            --             .. "/.local/share/nvim/mason/packages/"
-            --             .. "java-test/extension/"
-            --             .. "server/*.jar"
-            --     ),
-            --     "\n"
-            -- ),
+            vim.fn.glob(
+                get_install_path_for "java-test"
+                    .. "/extension/server/"
+                    .. "*.jar",
+                1
+            ),
         },
     },
 }
