@@ -78,6 +78,10 @@ return {
                 builtin.find_files()
             end)
 
+            vim.keymap.set("n", "<leader>fF", function()
+                builtin.find_files()
+            end)
+
             vim.keymap.set("n", "<leader>fg", function()
                 builtin.live_grep(themes.get_dropdown {
                     layout_config = {
