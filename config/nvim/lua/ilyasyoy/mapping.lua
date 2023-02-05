@@ -16,7 +16,7 @@ vim.keymap.set(
 
 vim.keymap.set("n", "<leader><leader>s", "<cmd>source %<CR>")
 
-vim.keymap.set("n", "<leader>gt", function()
+vim.keymap.set("n", "<leader>T", function()
     local filetype = vim.bo.filetype
     local cwf = core.current_working_file()
 
