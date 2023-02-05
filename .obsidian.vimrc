@@ -8,9 +8,6 @@ nmap <C-o> :back
 exmap forward obcommand app:go-forward
 nmap <C-i> :forward
 
-" Remap help key.
-imap jj <Esc>
-
 map й q
 map ц w
 map у e

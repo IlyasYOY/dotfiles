@@ -11,8 +11,6 @@ end
 ---@param version string java version to search for
 -- NOTE: This requires java to be installed using sdkman.
 local function get_java_dir(version)
-    local coredor = require "coredor"
-
     local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
         if coredor.string_has_prefix(file, version) then
@@ -28,8 +26,8 @@ local function get_java_dir(version)
     return sdkman_dir .. java_dir
 end
 
+--NOTE:This is base dir for Eclipse project files.
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
---NOTE:This is base dir for Ecllipse project files.
 local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
     .. project_name
@@ -81,6 +79,8 @@ local config = {
     },
 
     on_attach = function(client, bufnr)
+        --WARN: I don't know why, but this doesn't work.
+        -- see https://github.com/mfussenegger/nvim-jdtls/discussions/412#discussioncomment-4873025
         require("jdtls").setup_dap()
         vim.keymap.set("n", "<leader>oi", function()
             jdtls.organize_imports()
@@ -114,18 +114,24 @@ local config = {
     capabilities = lsp.get_capabilities(),
 
     init_options = {
-        bundles = {
-            vim.fn.glob(
-                get_install_path_for "java-debug-adapter"
-                    .. "/extension/server/"
-                    .. "com.microsoft.java.debug.plugin-*.jar",
-                1
+        bundles = vim.tbl_flatten {
+            coredor.string_split(
+                vim.fn.glob(
+                    get_install_path_for "java-debug-adapter"
+                        .. "/extension/server/"
+                        .. "com.microsoft.java.debug.plugin-*.jar",
+                    1
+                ),
+                "\n"
             ),
-            vim.fn.glob(
-                get_install_path_for "java-test"
-                    .. "/extension/server/"
-                    .. "*.jar",
-                1
+            coredor.string_split(
+                vim.fn.glob(
+                    get_install_path_for "java-test"
+                        .. "/extension/server/"
+                        .. "*.jar",
+                    1
+                ),
+                "\n"
             ),
         },
     },

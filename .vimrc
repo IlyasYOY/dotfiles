@@ -79,8 +79,6 @@ nnoremap <silent> ]l :lnext<cr>
 nnoremap <silent> [L :lfirst<cr> 
 nnoremap <silent> ]L :llast<cr>
 
-imap jj <Esc>
-
 " :h matchit  
 " Helps you to match syntax constuctions in Vim
 runtime macros/matchit.vim
