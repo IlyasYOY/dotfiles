@@ -90,7 +90,7 @@ function Vault:create_note(name)
         name = time
     end
 
-    local name_prefix = os.date "%Y-%m-%d "
+    local name_prefix = os.date("%Y-%m-%d ", time)
     local fullname = name_prefix .. name
     if self:get_note(fullname) then
         return nil
@@ -112,7 +112,7 @@ end
 
 function Vault:find_current_note_backlinks()
     local current_note = File:new(core.current_working_file())
-    self:find_backlinks(current_note.name)
+    self:find_backlinks(current_note:name())
 end
 
 function Vault:find_journal()
@@ -148,9 +148,9 @@ function Vault:find_backlinks(name)
         nil,
         function(entry)
             return {
-                value = entry.path,
-                display = entry.name,
-                ordinal = entry.name,
+                value = entry:path(),
+                display = entry:name(),
+                ordinal = entry:name(),
             }
         end
     )
@@ -169,7 +169,7 @@ function Vault:follow_link()
         local name = link.name
         local note = self:get_note(name)
         if note ~= nil then
-            vim.fn.execute("edit " .. note.path)
+            vim.fn.execute("edit " .. note:path())
             return
         end
     end
@@ -204,7 +204,7 @@ end
 function Vault:open_note(name)
     local note = self:get_note(name)
     if note ~= nil then
-        vim.fn.execute("edit " .. note.path)
+        vim.fn.execute("edit " .. note:path())
     else
         vim.notify("No note for name " .. name)
     end
@@ -217,7 +217,7 @@ function Vault:get_note(name)
     local notes = self:list_notes()
 
     for _, note in ipairs(notes) do
-        if note.name == name then
+        if note:name() == name then
             return note
         end
     end

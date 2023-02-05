@@ -48,9 +48,9 @@ describe("journal", function()
 
             local result = test_state.journal:today()
 
-            assert.are.equal("2022-12-12", result.name, "file name is wrong")
+            assert.are.equal("2022-12-12", result:name(), "file name is wrong")
             assert.is_true(
-                core.string_has_suffix(result.path, ".md"),
+                core.string_has_suffix(result:path(), ".md"),
                 "file type is wrong"
             )
         end)
@@ -65,7 +65,7 @@ describe("journal", function()
             local result = test_state.journal:today()
 
             ---@type Path
-            local path = Path:new(result.path)
+            local path = Path:new(result:path())
 
             assert.is_false(path:exists(), "file was created")
         end)
@@ -80,7 +80,7 @@ describe("journal", function()
             local result = test_state.journal:today(true)
 
             ---@type Path
-            local path = Path:new(result.path)
+            local path = Path:new(result:path())
 
             assert.is_true(path:exists(), "file was not created")
         end)
@@ -104,7 +104,7 @@ describe("journal", function()
             local result = test_state.journal:today(true)
 
             ---@type Path
-            local path = Path:new(result.path)
+            local path = Path:new(result:path())
             local resulting_text = path:read()
 
             assert.are.equal(

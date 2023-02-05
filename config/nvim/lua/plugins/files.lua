@@ -83,13 +83,7 @@ return {
             end)
 
             vim.keymap.set("n", "<leader>fg", function()
-                builtin.live_grep(themes.get_dropdown {
-                    layout_config = {
-                        width = function(_, max_columns, _)
-                            return math.min(max_columns, 100)
-                        end,
-                    },
-                })
+                builtin.live_grep()
             end)
 
             vim.keymap.set("n", "<leader>fT", function()

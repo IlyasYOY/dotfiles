@@ -55,6 +55,7 @@ local function setup_lua()
     table.insert(path, "lua/?/init.lua")
 
     local function add(lib)
+        local cwd = vim.fn.getcwd()
         for _, p in pairs(vim.fn.expand(lib, false, true)) do
             p = vim.loop.fs_realpath(p)
             if p then

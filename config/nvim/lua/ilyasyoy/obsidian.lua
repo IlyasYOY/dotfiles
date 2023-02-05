@@ -61,6 +61,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
             require("cmp").setup.buffer {
                 sources = {
                     { name = "obsidian" },
+                    { name = "luasnip" },
                 },
             }
         end

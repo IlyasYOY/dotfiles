@@ -1,7 +1,5 @@
 local Vault = require "ilyasyoy.functions.obsidian.vault"
 local spec = require "coredor.spec"
-local mock = require "luassert.mock"
-local stub = require "luassert.stub"
 
 local function vault_fixture()
     local result = {}
@@ -15,7 +13,8 @@ local function vault_fixture()
                 if result.time_mock then
                     return result.time_mock
                 end
-                return os.clock()
+                local time = os.clock()
+                return time
             end,
         }
         result.home = vault_home.path
@@ -36,8 +35,8 @@ end
 
 describe("new note", function()
     local state = vault_fixture()
-    local common_time = 165277868
-    local common_name = "2023-02-01 165277868"
+    local common_time = 1675255557
+    local common_name = "2023-02-01 " .. common_time
     local common_filename = common_name .. ".md"
     ---@type fun(): Path
     local common_filepath = function()

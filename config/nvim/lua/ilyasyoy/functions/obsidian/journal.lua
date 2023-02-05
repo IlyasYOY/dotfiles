@@ -39,7 +39,7 @@ end
 ---opens dauly notes to be edited
 function Journal:open_daily()
     local daily_note = self:today(true)
-    vim.fn.execute("edit " .. daily_note.path)
+    vim.fn.execute("edit " .. daily_note:path())
 end
 
 ---find in daily note files

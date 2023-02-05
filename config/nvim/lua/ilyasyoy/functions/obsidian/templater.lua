@@ -88,16 +88,16 @@ function Templater:search_and_insert_template()
         end,
         function(entry)
             return {
-                value = entry.path,
-                display = entry.name,
-                ordinal = entry.name,
+                value = entry:path(),
+                display = entry:name(),
+                ordinal = entry:name(),
             }
         end
     )
 end
 
 -- lists templates
----@return ilyasyoy.obsidian.File[]
+---@return coredor.File[]
 function Templater:list_templates()
     local home_path_string = self._home_path:expand()
     return File.list(home_path_string, "*.md")
@@ -159,8 +159,8 @@ end
 function Templater:_get_raw_template_content(name)
     local templates = self:list_templates()
     for _, template in ipairs(templates) do
-        if template.name == name then
-            return Path:new(template.path):read()
+        if template:name() == name then
+            return template:read()
         end
     end
     error(
@@ -168,7 +168,7 @@ function Templater:_get_raw_template_content(name)
             .. name
             .. " was not found in "
             .. vim.inspect(core.array_map(templates, function(x)
-                return x.name
+                return x:name()
             end))
     )
 end

@@ -41,9 +41,9 @@ function source:complete(params, callback)
         local completion_ending = self._get_completion_ending(params)
         ---@type lsp.CompletionItem
         local item = {
-            label = file.name,
+            label = file:name(),
             kind = 17,
-            insertText = file.name .. completion_ending,
+            insertText = file:name() .. completion_ending,
             data = file,
         }
         return item
