@@ -22,7 +22,7 @@ function VaultOpts:new(opts)
     self.__index = self
     local vault_opts = setmetatable({}, self)
 
-    vault_opts.time_provider = opts.time_provider or os.clock
+    vault_opts.time_provider = opts.time_provider or os.time
 
     vault_opts.vault_home = opts.vault_home
         or (Path:new(Path.path.home) / "vimwiki"):expand()

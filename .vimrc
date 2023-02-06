@@ -57,6 +57,8 @@ set history=50
 " noh - no highlight
 nnoremap <Esc> :noh <CR>
 
+inoremap jj <Esc>
+
 nnoremap <F3> :w<CR>
 " This allows me to save from inssert mode 
 inoremap <F3> <C-\><C-o>:w<CR>
