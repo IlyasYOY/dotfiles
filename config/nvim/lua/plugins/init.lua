@@ -1,6 +1,7 @@
 return {
     {
         "nvim-lua/plenary.nvim",
+        dev = true,
         config = function()
             vim.keymap.set("n", "<leader><leader>t", "<Plug>PlenaryTestFile", {
                 desc = "Runs Plenary [t]ests for file",
