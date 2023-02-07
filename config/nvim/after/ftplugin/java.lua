@@ -87,6 +87,12 @@ local config = {
         end, {
             desc = "[o]rganize [i]mports",
         })
+        vim.keymap.set("n", "<leader>oa", function()
+            jdtls.organize_imports()
+            vim.lsp.buf.format()
+        end, {
+            desc = "[o]rganize [a]ll",
+        })
         vim.keymap.set({ "n", "v" }, "<leader>jev", function()
             jdtls.extract_variable()
         end, {

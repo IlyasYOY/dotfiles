@@ -79,7 +79,7 @@ return {
             end)
 
             vim.keymap.set("n", "<leader>fF", function()
-                builtin.find_files()
+                builtin.git_files()
             end)
 
             vim.keymap.set("n", "<leader>fg", function()
