@@ -79,9 +79,9 @@ local config = {
     },
 
     on_attach = function(client, bufnr)
-        --WARN: I don't know why, but this doesn't work.
-        -- see https://github.com/mfussenegger/nvim-jdtls/discussions/412#discussioncomment-4873025
         require("jdtls").setup_dap()
+        require("jdtls.setup").add_commands()
+
         vim.keymap.set("n", "<leader>oi", function()
             jdtls.organize_imports()
         end, {
@@ -93,28 +93,54 @@ local config = {
         end, {
             desc = "[o]rganize [a]ll",
         })
-        vim.keymap.set({ "n", "v" }, "<leader>jev", function()
+
+        vim.keymap.set("v", "<leader>jev", function()
+            jdtls.extract_variable(true)
+        end, {
+            desc = "java [e]xtract selected to [v]ariable",
+        })
+        vim.keymap.set("n", "<leader>jev", function()
             jdtls.extract_variable()
         end, {
             desc = "java [e]xtract [v]ariable",
         })
-        vim.keymap.set({ "n", "v" }, "<leader>jec", function()
+
+        vim.keymap.set("n", "<leader>jec", function()
             jdtls.extract_constant()
         end, {
             desc = "java [e]xtract [c]onstant",
         })
-        vim.keymap.set({ "n", "v", "s" }, "<leader>jem", function()
+        vim.keymap.set("v", "<leader>jec", function()
+            jdtls.extract_constant(true)
+        end, {
+            desc = "java [e]xtract selected to [c]onstant",
+        })
+
+        vim.keymap.set("n", "<leader>jem", function()
             jdtls.extract_method()
         end, {
             desc = "java [e]xtract [m]ethod",
         })
+        vim.keymap.set("v", "<leader>jem", function()
+            jdtls.extract_method(true)
+        end, {
+            desc = "java [e]xtract selected to [m]ethod",
+        })
+
+        vim.keymap.set("n", "<leader>jdm", function()
+            jdtls.test_nearest_method()
+        end)
+        vim.keymap.set("n", "<leader>jdc", function()
+            jdtls.test_class()
+        end)
+
         vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>) ]]
         vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>) ]]
         vim.cmd [[ command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config() ]]
         vim.cmd [[ command! -buffer JdtBytecode lua require('jdtls').javap() ]]
-        -- They don't work:
-        -- vim.cmd [[ command! -buffer JdtJol lua require('jdtls').jol() ]]
-        -- vim.cmd [[ command! -buffer JdtJshell lua require('jdtls').jshell() ]]
+        vim.cmd [[ command! -buffer JdtJol lua require('jdtls').jol() ]]
+        vim.cmd [[ command! -buffer JdtJshell lua require('jdtls').jshell() ]]
+
         lsp.on_attach(client, bufnr)
     end,
     capabilities = lsp.get_capabilities(),

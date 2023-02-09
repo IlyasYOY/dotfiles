@@ -80,41 +80,46 @@ return {
 
             vim.keymap.set("n", "<leader>fF", function()
                 builtin.git_files()
-            end)
+            end, { desc = "find git files" })
 
             vim.keymap.set("n", "<leader>fg", function()
                 builtin.live_grep()
-            end)
+            end, { desc = "find grepping files" })
 
             vim.keymap.set("n", "<leader>fT", function()
                 builtin.builtin(themes.get_ivy())
-            end)
+            end, { desc = "find built in commands" })
 
             vim.keymap.set("n", "<leader>fs", function()
                 builtin.lsp_document_symbols(themes.get_ivy())
-            end)
+            end, { desc = "find document symbols" })
 
             vim.keymap.set("n", "<leader>fS", function()
                 builtin.lsp_dynamic_workspace_symbols(themes.get_ivy())
-            end)
+            end, { desc = "find worspace symbols" })
 
             vim.keymap.set("n", "<leader>fm", function()
                 builtin.man_pages()
-            end)
+            end, { desc = "find man pager" })
 
             vim.keymap.set("n", "<leader>fh", function()
                 builtin.help_tags(themes.get_ivy())
-            end)
+            end, { desc = "find help tags" })
 
             vim.keymap.set("n", "<leader>fb", function()
                 builtin.buffers(themes.get_ivy())
-            end)
+            end, { desc = "find buffers" })
 
             vim.keymap.set("n", "<leader>fc", function()
                 builtin.commands(themes.get_ivy())
-            end)
+            end, { desc = "find commands" })
 
-            vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>")
+            vim.keymap.set(
+                "n",
+                "<leader>ft",
+                ":TodoTelescope<CR>",
+                { desc = "find todos in project" }
+            )
         end,
     },
 }
