@@ -45,7 +45,7 @@ local function setup_lua()
     local lsp = require "ilyasyoy.functions.lsp"
     local lspconfig = require "lspconfig"
 
-    lspconfig.sumneko_lua.setup {
+    lspconfig.lua_ls.setup {
         on_attach = lsp.on_attach,
         capabilities = lsp.get_capabilities(),
         settings = {

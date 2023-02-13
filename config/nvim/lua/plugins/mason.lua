@@ -23,7 +23,7 @@ return {
                     "gopls",
                     "gradle_ls",
                     "jdtls",
-                    "sumneko_lua",
+                    "lua_ls",
                     "pyright",
                     "rust_analyzer",
                     "tsserver",
