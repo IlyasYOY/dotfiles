@@ -32,7 +32,7 @@ local function setup_generic()
     )
 
     local generic_servers =
-        { "gopls", "gradle_ls", "pyright", "rust_analyzer", "tsserver" }
+        { "gopls", "gradle_ls", "pyright", "rust_analyzer", "tsserver", "bashls" }
     for _, client in ipairs(generic_servers) do
         lspconfig[client].setup {
             on_attach = lsp.on_attach,

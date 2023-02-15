@@ -7,7 +7,7 @@ return {
 
         init = function()
             vim.cmd [[
-                let g:firenvim_config = { 
+                let g:firenvim_config = {
                     \ 'globalSettings': {
                         \ 'alt': 'all',
                     \  },
