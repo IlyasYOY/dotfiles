@@ -18,7 +18,7 @@ return {
                     \ }
                 \ }
                 if exists('g:started_by_firenvim')
-                    set guifont=Hack:h20
+                    set guifont=Hack:h14
 
                 else
                     set laststatus=2

@@ -16,7 +16,7 @@ vim.keymap.set("n", "<leader>nn", function()
     obsidian.vault:run_if_note(function()
         obsidian.vault:follow_link()
     end)
-end)
+end, { desc = "navigate to note" })
 
 vim.keymap.set("n", "<leader>nN", function()
     local input = vim.fn.input("New note name: ", "")
@@ -26,7 +26,7 @@ vim.keymap.set("n", "<leader>nN", function()
     else
         vim.notify("Note '" .. input .. "' already exists")
     end
-end)
+end, { desc = "craete new note" })
 
 vim.keymap.set("n", "<leader>nfj", function()
     obsidian.vault:find_journal()

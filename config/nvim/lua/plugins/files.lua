@@ -76,7 +76,7 @@ return {
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
-            end)
+            end, { desc = "find files" })
 
             vim.keymap.set("n", "<leader>fF", function()
                 builtin.git_files()

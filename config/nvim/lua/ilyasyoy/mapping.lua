@@ -14,9 +14,14 @@ vim.keymap.set(
 
 -- Dev things
 
-vim.keymap.set("n", "<leader><leader>s", "<cmd>source %<CR>")
+vim.keymap.set(
+    "n",
+    "<leader><leader>s",
+    "<cmd>source %<CR>",
+    { desc = "[s]ource current file" }
+)
 
-vim.keymap.set("n", "<leader>T", function()
+vim.keymap.set("n", "<leader>gt", function()
     local filetype = vim.bo.filetype
     local cwf = core.current_working_file()
 
@@ -50,4 +55,6 @@ vim.keymap.set("n", "<leader>T", function()
     end
 
     vim.notify "No test file was found to switch to"
-end)
+end, {
+    desc = "[g]o to [t]est",
+})
