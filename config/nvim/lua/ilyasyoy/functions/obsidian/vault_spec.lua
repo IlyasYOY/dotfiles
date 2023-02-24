@@ -1,5 +1,7 @@
 local Vault = require "ilyasyoy.functions.obsidian.vault"
 local spec = require "coredor.spec"
+local coredor = require "coredor"
+local File = require "coredor.file"
 
 local function vault_fixture()
     local result = {}
@@ -22,12 +24,12 @@ local function vault_fixture()
 
     ---creates file in vault
     ---@param name string file name
-    ---@return Path
+    ---@return coredor.File
     function result.create_file(name)
         ---@type Path
         local file_path = (vault_home.path / name)
         file_path:touch()
-        return file_path
+        return File:new(file_path:expand())
     end
 
     return result
@@ -228,6 +230,7 @@ describe("rename", function()
 
     it("file renamed", function()
         state.create_file "test.md"
+
         local renamed = state.vault:rename("test", "new test")
 
         assert(renamed, "file should be found")
@@ -235,6 +238,50 @@ describe("rename", function()
     end)
 
     it("simple link renamed", function()
-        assert.not_nil(nil)
+        state.create_file "test.md"
+        local note_with_link_path = state.create_file "note-with-link.md"
+        note_with_link_path
+            :as_plenary()
+            :write("This s a link to test.md [[test]].", "w")
+
+        state.vault:rename("test", "new test")
+
+        assert.is.equal(
+            "This s a link to test.md [[new test]].",
+            note_with_link_path:read(),
+            "index should not be null"
+        )
+    end)
+
+    it("alias link renamed", function()
+        state.create_file "test.md"
+        local note_with_link_path = state.create_file "note-with-link.md"
+        note_with_link_path
+            :as_plenary()
+            :write("This s a link to test.md [[test|alias]].", "w")
+
+        state.vault:rename("test", "new test")
+
+        assert.is.equal(
+            "This s a link to test.md [[new test|alias]].",
+            note_with_link_path:read(),
+            "index should not be null"
+        )
+    end)
+
+    it("header link renamed", function()
+        state.create_file "test.md"
+        local note_with_link_path = state.create_file "note-with-link.md"
+        note_with_link_path
+            :as_plenary()
+            :write("This s a link to test.md [[test#header]].", "w")
+
+        state.vault:rename("test", "new test")
+
+        assert.is.equal(
+            "This s a link to test.md [[new test#header]].",
+            note_with_link_path:read(),
+            "index should not be null"
+        )
     end)
 end)

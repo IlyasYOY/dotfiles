@@ -129,14 +129,61 @@ function Vault:rename(name, new_name)
         vim.notify("note '" .. name .. "' was not found")
         return
     end
-    -- NOTE: Maybe I should do something like string_ensure_prefix/string_ensure_suffix.
-    local new_name_with_extension = (new_name .. ".md")
-    local new_path = self._home_path / new_name_with_extension
-    -- TODO: Move into coredor.File
-    local status = note._plenary_path:rename {
-        new_name = new_path:expand(),
-    }
+    note:change_name(new_name .. ".md")
+    self:_update_links_in_notes(name, new_name)
+
     return self:get_note(new_name)
+end
+
+---this function is meant to be used from rename API. It goes throgh links in vault and upates them.
+---@param old_note_name string
+---@param new_note_name string
+function Vault:_update_links_in_notes(old_note_name, new_note_name)
+    local links_counter = 0
+    local files_counter = 0
+    for _, note in ipairs(self:list_notes()) do
+        local note_text = note:read()
+        -- FIXME: name treats like regex, I guess i might be wring in case of . in it.
+        -- I have to escape it or change the function to find.
+        local updated_count
+        local full_updated_counter = 0
+
+        note_text, updated_count = string.gsub(
+            note_text,
+            "%[%[" .. old_note_name .. "%]%]",
+            "[[" .. new_note_name .. "]]"
+        )
+        full_updated_counter = full_updated_counter + updated_count
+
+        note_text, updated_count = string.gsub(
+            note_text,
+            "%[%[" .. old_note_name .. "%|",
+            "[[" .. new_note_name .. "|"
+        )
+        full_updated_counter = full_updated_counter + updated_count
+
+        note_text, updated_count = string.gsub(
+            note_text,
+            "%[%[" .. old_note_name .. "#",
+            "[[" .. new_note_name .. "#"
+        )
+        full_updated_counter = full_updated_counter + updated_count
+
+        if full_updated_counter ~= 0 then
+            files_counter = files_counter + 1
+            links_counter = links_counter + full_updated_counter
+        end
+
+        note:as_plenary():write(note_text, "w")
+    end
+
+    vim.notify(
+        string.format(
+            "updated %d links and %d files",
+            links_counter,
+            files_counter
+        )
+    )
 end
 
 function Vault:find_backlinks(name)
