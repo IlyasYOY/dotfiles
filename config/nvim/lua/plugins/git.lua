@@ -36,15 +36,27 @@ return {
         end,
     },
     {
-        "TimUntersberger/neogit",
+        "tpope/vim-fugitive",
         config = function()
             vim.keymap.set(
                 "n",
-                "<leader>g",
-                ":Neogit<CR>",
-                { desc = "Open neo[g]it UI window", silent = true }
+                "<leader>G",
+                ":Git<CR>",
+                { desc = "Open neo[G]it UI window", silent = true }
             )
         end,
+    },
+    {
+        "tpope/vim-rhubarb",
+        dependencies = {
+            "tpope/vim-fugitive",
+        },
+    },
+    {
+        "shumphrey/fugitive-gitlab.vim",
+        dependencies = {
+            "tpope/vim-fugitive",
+        },
     },
     {
         "lewis6991/gitsigns.nvim",
