@@ -50,6 +50,19 @@ vim.keymap.set("n", "<leader>nfb", function()
     end)
 end, { desc = "[n]otes [f]ind [b]acklinks" })
 
+vim.keymap.set("n", "<leader>nrn", function()
+    obsidian.vault:run_if_note(function()
+        local old_name = vim.fn.expand "%:t:r"
+        obsidian.vault:rename(
+            old_name,
+            vim.fn.input {
+                promt = "New name: ",
+                default = old_name,
+            }
+        )
+    end)
+end, { desc = "[n]otes [f]ind [b]acklinks" })
+
 local group = vim.api.nvim_create_augroup("IlyasyoyObsidian", { clear = true })
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {

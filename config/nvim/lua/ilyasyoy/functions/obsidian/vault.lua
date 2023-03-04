@@ -135,16 +135,19 @@ function Vault:rename(name, new_name)
     return self:get_note(new_name)
 end
 
+local function escape_magic(s)
+    return (s:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%1"))
+end
+
 ---this function is meant to be used from rename API. It goes throgh links in vault and upates them.
 ---@param old_note_name string
 ---@param new_note_name string
 function Vault:_update_links_in_notes(old_note_name, new_note_name)
     local links_counter = 0
     local files_counter = 0
+    old_note_name = escape_magic(old_note_name)
     for _, note in ipairs(self:list_notes()) do
         local note_text = note:read()
-        -- FIXME: name treats like regex, I guess i might be wring in case of . in it.
-        -- I have to escape it or change the function to find.
         local updated_count
         local full_updated_counter = 0
 

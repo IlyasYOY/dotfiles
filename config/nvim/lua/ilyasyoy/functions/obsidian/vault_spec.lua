@@ -253,6 +253,22 @@ describe("rename", function()
         )
     end)
 
+    it("regex-like (with magic characters) link renamed", function()
+        state.create_file "2022-01-01 something.md"
+        local note_with_link_path = state.create_file "note-with-link.md"
+        note_with_link_path
+            :as_plenary()
+            :write("This s a link to test.md [[2022-01-01 something]].", "w")
+
+        state.vault:rename("2022-01-01 something", "new test")
+
+        assert.is.equal(
+            "This s a link to test.md [[new test]].",
+            note_with_link_path:read(),
+            "index should not be null"
+        )
+    end)
+
     it("alias link renamed", function()
         state.create_file "test.md"
         local note_with_link_path = state.create_file "note-with-link.md"
