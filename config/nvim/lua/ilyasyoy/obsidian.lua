@@ -51,17 +51,8 @@ vim.keymap.set("n", "<leader>nfb", function()
 end, { desc = "[n]otes [f]ind [b]acklinks" })
 
 vim.keymap.set("n", "<leader>nrn", function()
-    obsidian.vault:run_if_note(function()
-        local old_name = vim.fn.expand "%:t:r"
-        obsidian.vault:rename(
-            old_name,
-            vim.fn.input {
-                promt = "New name: ",
-                default = old_name,
-            }
-        )
-    end)
-end, { desc = "[n]otes [f]ind [b]acklinks" })
+    obsidian.vault:rename_current_note()
+end, { desc = "[n]otes [r]e[n]ame current" })
 
 local group = vim.api.nvim_create_augroup("IlyasyoyObsidian", { clear = true })
 

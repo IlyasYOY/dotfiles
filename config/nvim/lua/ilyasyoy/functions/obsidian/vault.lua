@@ -135,6 +135,20 @@ function Vault:rename(name, new_name)
     return self:get_note(new_name)
 end
 
+---Renames current working note (if it's note)
+function Vault:rename_current_note()
+    self:run_if_note(function()
+        local old_name = vim.fn.expand "%:t:r"
+        self:rename(
+            old_name,
+            vim.fn.input {
+                promt = "New name: ",
+                default = old_name,
+            }
+        )
+    end)
+end
+
 local function escape_magic(s)
     return (s:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%1"))
 end
