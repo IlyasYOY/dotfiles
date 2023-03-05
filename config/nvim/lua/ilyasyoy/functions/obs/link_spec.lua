@@ -1,25 +1,25 @@
-local Link = require "ilyasyoy.functions.obsidian.link"
+local Link = require "ilyasyoy.functions.obs.link"
 require "coredor.spec"
 
----@param link ilyasyoy.obsidian.Link
+---@param link ilyasyoy.obs.Link
 ---@param header string?
 local function assert_link_header(link, header)
     assert.are.equal(header, link.header, "wrong link header")
 end
 
----@param link ilyasyoy.obsidian.Link
+---@param link ilyasyoy.obs.Link
 ---@param alias string?
 local function assert_link_alias(link, alias)
     assert.are.equal(alias, link.alias, "wrong link alias")
 end
 
----@param link ilyasyoy.obsidian.Link
+---@param link ilyasyoy.obs.Link
 ---@param name string?
 local function assert_link_name(link, name)
     assert.are.equal(name, link.name, "wrong link name")
 end
 
----@param link ilyasyoy.obsidian.Link
+---@param link ilyasyoy.obs.Link
 ---@param name string?
 ---@param header string?
 ---@param alias string?

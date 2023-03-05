@@ -2,7 +2,7 @@ local _note_name_no_brackets = "(([^%]%[]+)[|#]?([^%]%[]+))"
 local _note_name_pattern = "%[%[" .. _note_name_no_brackets .. "%]%]"
 
 ---Simple link representation
----@class ilyasyoy.obsidian.Link
+---@class ilyasyoy.obs.Link
 ---@field public name string
 ---@field public alias string?
 ---@field public header string?
@@ -13,7 +13,7 @@ Link.__index = Link
 ---@param name string
 ---@param alias string?
 ---@param header string?
----@return ilyasyoy.obsidian.Link
+---@return ilyasyoy.obs.Link
 function Link:new(name, alias, header)
     return setmetatable({
         name = name,
@@ -24,9 +24,9 @@ end
 
 ---extracts links from the text
 ---@param text string
----@return ilyasyoy.obsidian.Link[]
+---@return ilyasyoy.obs.Link[]
 function Link.from_text(text)
-    ---@type ilyasyoy.obsidian.Link[]
+    ---@type ilyasyoy.obs.Link[]
     local links = {}
     for match in string.gmatch(text, _note_name_pattern) do
         local link = Link.from_string(match)
@@ -43,7 +43,7 @@ end
 
 --- creates link from string like name, name|alias, name#title
 ---@param str string
----@return ilyasyoy.obsidian.Link?
+---@return ilyasyoy.obs.Link?
 function Link.from_string(str)
     if not string.match(str, "^" .. _note_name_no_brackets .. "$") then
         return nil
@@ -70,7 +70,7 @@ end
 ---Searches for the link under the specified charater
 ---@param str string string to search in
 ---@param index number number of the cheracter to search the link around
----@return ilyasyoy.obsidian.Link? name of the link
+---@return ilyasyoy.obs.Link? name of the link
 function Link.find_link_at(str, index)
     if #str < 4 then
         return nil

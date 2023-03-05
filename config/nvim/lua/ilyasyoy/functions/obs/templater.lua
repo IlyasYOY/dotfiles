@@ -1,25 +1,25 @@
 local Path = require "plenary.path"
 local core = require "coredor"
 local File = require "coredor.file"
-local telescope = require "ilyasyoy.functions.obsidian.telescope"
+local telescope = require "ilyasyoy.functions.obs.telescope"
 
 -- options for VarProvider
----@class ilyasyoy.obsidian.VarProviderOpts
+---@class ilyasyoy.obs.VarProviderOpts
 ---@field filename string?
 
 -- simple table to provide values for template
----@class ilyasyoy.obsidian.VarProvider
+---@class ilyasyoy.obs.VarProvider
 ---@field public name string
 ---@field public func fun(VarProviderOpts?):string
 
 -- options to run tempalating
----@class ilyasyoy.obsidian.TemplaterProcessingOpts
+---@class ilyasyoy.obs.TemplaterProcessingOpts
 ---@field public template string?
 ---@field public template_name string?
 ---@field public filename string?
 
 -- options to create templater
----@class ilyasyoy.obsidian.TemplaterOpts
+---@class ilyasyoy.obs.TemplaterOpts
 ---@field public include_default_providers? boolean
 ---@field public home string
 local TemplaterOpts = {}
@@ -37,14 +37,14 @@ function TemplaterOpts:new(opts)
 end
 
 -- class to run templating
----@class ilyasyoy.obsidian.Templater
----@field private _var_providers ilyasyoy.obsidian.VarProvider[]
+---@class ilyasyoy.obs.Templater
+---@field private _var_providers ilyasyoy.obs.VarProvider[]
 ---@field private _home_path Path to the tamplates directory
 local Templater = {}
 
 -- create new Templater instance
----@param opts ilyasyoy.obsidian.TemplaterOpts
----@return ilyasyoy.obsidian.Templater instance
+---@param opts ilyasyoy.obs.TemplaterOpts
+---@return ilyasyoy.obs.Templater instance
 function Templater:new(opts)
     opts = opts or TemplaterOpts:new(opts)
 
@@ -118,7 +118,7 @@ function Templater:add_var_provider(name, func)
 end
 
 -- performs templating.
----@param opts ilyasyoy.obsidian.TemplaterProcessingOpts
+---@param opts ilyasyoy.obs.TemplaterProcessingOpts
 ---@return string templated string
 function Templater:process(opts)
     opts = opts or {}

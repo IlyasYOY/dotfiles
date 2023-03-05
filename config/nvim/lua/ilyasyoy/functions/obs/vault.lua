@@ -1,22 +1,22 @@
-local Link = require "ilyasyoy.functions.obsidian.link"
-local Templater = require "ilyasyoy.functions.obsidian.templater"
+local Link = require "ilyasyoy.functions.obs.link"
+local Templater = require "ilyasyoy.functions.obs.templater"
 local File = require "coredor.file"
-local Journal = require "ilyasyoy.functions.obsidian.journal"
+local Journal = require "ilyasyoy.functions.obs.journal"
 local Path = require "plenary.path"
 
-local obsidian_telescope = require "ilyasyoy.functions.obsidian.telescope"
+local obs_telescope = require "ilyasyoy.functions.obs.telescope"
 local core = require "coredor"
 
 -- table with vault options
----@class ilyasyoy.obsidian.VaultOpts
+---@class ilyasyoy.obs.VaultOpts
 ---@field public vault_home string?
----@field public templater ilyasyoy.obsidian.TemplaterOpts?
----@field public journal ilyasyoy.obsidian.JournalOpts?
+---@field public templater ilyasyoy.obs.TemplaterOpts?
+---@field public journal ilyasyoy.obs.JournalOpts?
 ---@field public time_provider fun():number
 local VaultOpts = {}
 
 -- simple constructor for options
----@param opts ilyasyoy.obsidian.VaultOpts?
+---@param opts ilyasyoy.obs.VaultOpts?
 function VaultOpts:new(opts)
     opts = opts or {}
     self.__index = self
@@ -50,17 +50,17 @@ function VaultOpts:new(opts)
     return vault_opts
 end
 
----@class ilyasyoy.obsidian.Vault
+---@class ilyasyoy.obs.Vault
 ---@field protected _templates_path Path
 ---@field protected _home_path Path
----@field protected _templater ilyasyoy.obsidian.Templater
----@field protected _journal ilyasyoy.obsidian.Journal
+---@field protected _templater ilyasyoy.obs.Templater
+---@field protected _journal ilyasyoy.obs.Journal
 ---@field protected _time_provider fun(): number
 local Vault = {}
 
 ---creates Vault instance
----@param opts ilyasyoy.obsidian.VaultOpts? table options to create a vault
----@return ilyasyoy.obsidian.Vault
+---@param opts ilyasyoy.obs.VaultOpts? table options to create a vault
+---@return ilyasyoy.obs.Vault
 function Vault:new(opts)
     opts = opts or {}
 
@@ -71,7 +71,7 @@ function Vault:new(opts)
 
     ---@type Path
     vault._home_path = Path:new(opts.vault_home)
-    ---@type ilyasyoy.obsidian.Templater
+    ---@type ilyasyoy.obs.Templater
     local templater = Templater:new(opts.templater)
 
     vault._templater = templater
@@ -107,7 +107,7 @@ function Vault:find_and_insert_template()
 end
 
 function Vault:find_note()
-    obsidian_telescope.find_files("Find notes", self._home_path:expand())
+    obs_telescope.find_files("Find notes", self._home_path:expand())
 end
 
 function Vault:find_current_note_backlinks()
@@ -206,7 +206,7 @@ end
 function Vault:find_backlinks(name)
     local notes = self:list_backlinks(name)
 
-    obsidian_telescope.find_through_items(
+    obs_telescope.find_through_items(
         "Backlinks",
         notes,
         nil,
@@ -221,7 +221,7 @@ function Vault:find_backlinks(name)
 end
 
 function Vault:grep_note()
-    obsidian_telescope.grep_files("Grep notes", self._home_path:expand())
+    obs_telescope.grep_files("Grep notes", self._home_path:expand())
 end
 
 ---follows a link under the cursor

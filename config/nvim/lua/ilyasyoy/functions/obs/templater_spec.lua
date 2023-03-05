@@ -1,4 +1,4 @@
-local Templater = require "ilyasyoy.functions.obsidian.templater"
+local Templater = require "ilyasyoy.functions.obs.templater"
 local spec_utils = require "coredor.spec"
 
 describe("proccess files", function()

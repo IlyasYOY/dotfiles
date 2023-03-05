@@ -4,14 +4,14 @@ local source = {}
 
 function source.new()
     local self = setmetatable({
-        obsidian = require "ilyasyoy.functions.obsidian",
+        obs = require "ilyasyoy.functions.obs",
     }, { __index = source })
     return self
 end
 
 ---@return boolean
 function source:is_available()
-    local vault_home_path = self.obsidian.vault._home_path:expand()
+    local vault_home_path = self.obs.vault._home_path:expand()
     local file_dir = vim.fn.expand "%:p"
     local is_in_vault = core.string_has_prefix(file_dir, vault_home_path, true)
     return vim.bo.filetype == "markdown" and is_in_vault
@@ -19,7 +19,7 @@ end
 
 ---@return string
 function source:get_debug_name()
-    return "obsidian"
+    return "obs"
 end
 
 ---find notes to perform completion.
@@ -35,7 +35,7 @@ function source:complete(params, callback)
         return
     end
 
-    local files = self.obsidian.vault:list_notes()
+    local files = self.obs.vault:list_notes()
 
     local items = core.array_map(files, function(file)
         local completion_ending = self._get_completion_ending(params)

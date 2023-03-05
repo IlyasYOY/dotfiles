@@ -1,6 +1,6 @@
 local Path = require "plenary.path"
-local Journal = require "ilyasyoy.functions.obsidian.journal"
-local Templater = require "ilyasyoy.functions.obsidian.templater"
+local Journal = require "ilyasyoy.functions.obs.journal"
+local Templater = require "ilyasyoy.functions.obs.templater"
 
 local spec_utils = require "coredor.spec"
 local core = require "coredor"

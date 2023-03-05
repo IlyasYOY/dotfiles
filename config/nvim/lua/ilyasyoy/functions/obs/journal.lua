@@ -1,24 +1,24 @@
 local Path = require "plenary.path"
 local File = require "coredor.file"
-local telescope = require "ilyasyoy.functions.obsidian.telescope"
+local telescope = require "ilyasyoy.functions.obs.telescope"
 
 ---journal opts
----@class ilyasyoy.obsidian.JournalOpts
+---@class ilyasyoy.obs.JournalOpts
 ---@field public home string
 ---@field public template_name string
 ---@field public date_provider? fun():string
 
 -- daily notes class
----@class ilyasyoy.obsidian.Journal
----@field private _templater ilyasyoy.obsidian.Templater templater generator
+---@class ilyasyoy.obs.Journal
+---@field private _templater ilyasyoy.obs.Templater templater generator
 ---@field private _date_provider fun(): string the result is used as a file name to the entry
 ---@field protected _home_path Path home location for daily notes
 ---@field protected _template_name string template name to be used in daily notes
 local Journal = {}
 
 -- create new Journal
----@param templater ilyasyoy.obsidian.Templater
----@param opts ilyasyoy.obsidian.JournalOpts?
+---@param templater ilyasyoy.obs.Templater
+---@param opts ilyasyoy.obs.JournalOpts?
 function Journal:new(templater, opts)
     opts = opts or {}
 

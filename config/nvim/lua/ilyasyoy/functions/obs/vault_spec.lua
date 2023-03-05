@@ -1,4 +1,4 @@
-local Vault = require "ilyasyoy.functions.obsidian.vault"
+local Vault = require "ilyasyoy.functions.obs.vault"
 local spec = require "coredor.spec"
 local coredor = require "coredor"
 local File = require "coredor.file"
