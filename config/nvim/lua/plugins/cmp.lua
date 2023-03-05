@@ -13,13 +13,14 @@ return {
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-nvim-lsp",
+            "IlyasYOY/obs.nvim",
             "saadparwaiz1/cmp_luasnip",
         },
         config = function()
             local luasnip = require "luasnip"
             local cmp = require "cmp"
             local lspkind = require "lspkind"
-            local cmp_source = require "ilyasyoy.functions.obs.cmp-source"
+            local cmp_source = require "obs.cmp-source"
 
             cmp.register_source("obs", cmp_source.new())
 
