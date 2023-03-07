@@ -5,7 +5,7 @@ return {
             "IlyasYOY/coredor.nvim",
             "nvim-lua/plenary.nvim",
         },
-        -- dev = true,
+        dev = true,
         config = function()
             local obs = require "obs"
 
