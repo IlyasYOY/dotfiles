@@ -29,7 +29,7 @@ return {
 
             vim.keymap.set("n", "<leader>nN", function()
                 local input = vim.fn.input {
-                    promt = "New note name: ",
+                    prompt = "New note name: ",
                     default = "",
                 }
                 local file = obs.vault:create_note(input)
