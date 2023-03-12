@@ -4,6 +4,7 @@ return {
         dependencies = {
             "IlyasYOY/coredor.nvim",
             "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim",
         },
         dev = true,
         config = function()
