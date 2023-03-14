@@ -3,6 +3,7 @@ return {
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-cmdline",
     "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-nvim-lsp-signature-help",
     "saadparwaiz1/cmp_luasnip",
     {
         "hrsh7th/nvim-cmp",
@@ -13,6 +14,7 @@ return {
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-nvim-lsp-signature-help",
             "IlyasYOY/obs.nvim",
             "saadparwaiz1/cmp_luasnip",
         },
@@ -35,6 +37,7 @@ return {
                         ellipsis_char = "...",
                         menu = {
                             nvim_lsp = "[LSP]",
+                            nvim_lsp_signature_help = "[Signature]",
                             luasnip = "[Snippet]",
                             obs = "[Notes]",
                         },
@@ -74,6 +77,7 @@ return {
                 },
                 sources = {
                     { name = "nvim_lsp" },
+                    { name = "nvim_lsp_signature_help" },
                     { name = "luasnip" },
                 },
             }
