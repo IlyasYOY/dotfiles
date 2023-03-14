@@ -40,6 +40,7 @@ set scrolloff=8
 
 " Column with extra info 
 set signcolumn=yes 
+set foldcolumn=1 
 
 " Line length column 
 set colorcolumn=80
