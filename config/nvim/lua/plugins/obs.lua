@@ -11,6 +11,7 @@ return {
             local obs = require "obs"
 
             obs.setup {
+                vault_home = "~/vimwiki",
                 journal = {
                     template_name = "daily",
                 },

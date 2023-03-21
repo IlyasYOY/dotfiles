@@ -20,6 +20,7 @@ return {
                     "python",
                     "markdown",
                     "markdown_inline",
+                    "mermaid",
                     "javascript",
                     "vim",
                 },
