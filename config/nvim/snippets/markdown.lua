@@ -21,10 +21,18 @@ local function yesterday_date()
     end)
 end
 
+local function tomorrow_date()
+    return f(function()
+        return os.date(date_format, os.time() + seconds_in_day)
+    end)
+end
+
 return {
     s("checkbox", fmt("- {} {}", { c(1, { t "[ ]", t "[x]" }), i(0, "Todo") })),
     s("today", fmt("{}", current_date())),
     s("todaylink", fmt("[[{}]]", current_date())),
+    s("tomorrow", fmt("{}", tomorrow_date())),
+    s("tomorrowlink", fmt("[[{}]]", tomorrow_date())),
     s("yesterday", fmt("{}", yesterday_date())),
     s("yesterdaylink", fmt("[[{}]]", yesterday_date())),
     s(
