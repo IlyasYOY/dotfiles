@@ -1,5 +1,4 @@
 return {
-    "nvim-treesitter/playground",
     {
         "nvim-treesitter/nvim-treesitter",
         build = function()
@@ -23,6 +22,7 @@ return {
                     "mermaid",
                     "javascript",
                     "vim",
+                    "json"
                 },
                 sync_install = false,
                 auto_install = false,
