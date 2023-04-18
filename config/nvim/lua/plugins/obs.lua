@@ -21,7 +21,7 @@ return {
                 obs.vault:run_if_note(function()
                     obs.vault:find_and_insert_template()
                 end)
-            end, { desc = "Inserts [n]otes [T]emplate" })
+            end, { desc = "Inserts notes Template" })
 
             vim.keymap.set("n", "<leader>nn", function()
                 obs.vault:run_if_note(function()
@@ -48,25 +48,25 @@ return {
 
             vim.keymap.set("n", "<leader>nd", function()
                 obs.vault:open_daily()
-            end, { desc = "[n]otes [d]aily" })
+            end, { desc = "notes daily" })
 
             vim.keymap.set("n", "<leader>nff", function()
                 obs.vault:find_note()
-            end, { desc = "[n]otes [f]iles [f]ind" })
+            end, { desc = "notes files find" })
 
             vim.keymap.set("n", "<leader>nfg", function()
                 obs.vault:grep_note()
-            end, { desc = "[n]otes [f]iles [g]rep" })
+            end, { desc = "notes files grep" })
 
             vim.keymap.set("n", "<leader>nfb", function()
                 obs.vault:run_if_note(function()
                     obs.vault:find_current_note_backlinks()
                 end)
-            end, { desc = "[n]otes [f]ind [b]acklinks" })
+            end, { desc = "notes find backlinks" })
 
             vim.keymap.set("n", "<leader>nrn", function()
                 obs.vault:rename_current_note()
-            end, { desc = "[n]otes [r]e[n]ame current" })
+            end, { desc = "notes rename current" })
 
             local group = vim.api.nvim_create_augroup(
                 "IlyasyoyObsidian",

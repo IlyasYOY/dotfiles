@@ -10,25 +10,25 @@ local function setup_generic()
         "n",
         "<leader>d",
         vim.diagnostic.open_float,
-        described(opts, "[d]iagnostics")
+        described(opts, "diagnostics")
     )
     vim.keymap.set(
         "n",
         "[d",
         vim.diagnostic.goto_prev,
-        described(opts, "Previous [d]iagostics")
+        described(opts, "Previous diagostics")
     )
     vim.keymap.set(
         "n",
         "]d",
         vim.diagnostic.goto_next,
-        described(opts, "Next [d]iagnostics")
+        described(opts, "Next diagnostics")
     )
     vim.keymap.set(
         "n",
         "<leader>dl",
         vim.diagnostic.setloclist,
-        described(opts, "Put [d]iagnostics to [q]uickfix list")
+        described(opts, "Put diagnostics to quickfix list")
     )
 
     local generic_servers =
@@ -138,7 +138,7 @@ return {
 
             vim.keymap.set("n", "<leader>O", function()
                 outline.toggle_outline()
-            end, { desc = "Opens [O]utline", silent = true })
+            end, { desc = "Opens Outline", silent = true })
         end,
     },
 }

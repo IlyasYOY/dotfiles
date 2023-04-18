@@ -14,7 +14,7 @@ return {
                 -- Should I fix it?
                 "<cmd>PlenaryBustedDirectory . {sequential=true}<CR>",
                 {
-                    desc = "Runs Plenary [T]ests in cwd",
+                    desc = "Runs Plenary Tests in cwd",
                 }
             )
         end,

@@ -10,9 +10,15 @@ return {
             dapui.setup()
 
             vim.keymap.set("n", "<leader>Du", function()
-                dapui.toggle {}
+                dapui.toggle { layout = 2 }
             end, {
-                desc = "Toggle [D]ebug [u]i",
+                desc = "Toggle Simple Debug ui, I mainly use it to run tests",
+            })
+
+            vim.keymap.set("n", "<leader>DU", function()
+                dapui.toggle { layout = 1 }
+            end, {
+                desc = "Toggle Full Debug ui",
             })
         end,
     },
@@ -46,14 +52,14 @@ return {
             vim.keymap.set("n", "<leader>Db", function()
                 dap.toggle_breakpoint()
             end, {
-                desc = "Toggle [D]ebug [b]reakpoint",
+                desc = "Toggle Debug breakpoint",
             })
 
             vim.keymap.set("n", "<leader>DB", function()
                 local condition = vim.fn.input "Breakpoint condition: "
                 dap.set_breakpoint(condition)
             end, {
-                desc = "Toggle [D]ebug conditional [B]reakpoint",
+                desc = "Toggle Debug conditional Breakpoint",
             })
 
             vim.keymap.set("n", "<F6>", function()
