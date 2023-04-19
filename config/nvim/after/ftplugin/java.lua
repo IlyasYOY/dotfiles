@@ -91,40 +91,40 @@ local config = {
             jdtls.organize_imports()
             vim.lsp.buf.format()
         end, {
-            desc = "[o]rganize [a]ll",
+            desc = "organize all",
         })
 
         vim.keymap.set("v", "<leader>jev", function()
             jdtls.extract_variable(true)
         end, {
-            desc = "java [e]xtract selected to [v]ariable",
+            desc = "java extract selected to variable",
         })
         vim.keymap.set("n", "<leader>jev", function()
             jdtls.extract_variable()
         end, {
-            desc = "java [e]xtract [v]ariable",
+            desc = "java extract variable",
         })
 
         vim.keymap.set("n", "<leader>jec", function()
             jdtls.extract_constant()
         end, {
-            desc = "java [e]xtract [c]onstant",
+            desc = "java extract constant",
         })
         vim.keymap.set("v", "<leader>jec", function()
             jdtls.extract_constant(true)
         end, {
-            desc = "java [e]xtract selected to [c]onstant",
+            desc = "java extract selected to constant",
         })
 
         vim.keymap.set("n", "<leader>jem", function()
             jdtls.extract_method()
         end, {
-            desc = "java [e]xtract [m]ethod",
+            desc = "java extract method",
         })
         vim.keymap.set("v", "<leader>jem", function()
             jdtls.extract_method(true)
         end, {
-            desc = "java [e]xtract selected to [m]ethod",
+            desc = "java extract selected to method",
         })
 
         vim.keymap.set("n", "<leader>jdm", function()
