@@ -1,0 +1,35 @@
+---
+
+# Use tall and fullscreen layouts
+layouts:
+    - tall
+    - tall-right
+    - fullscreen
+    - wide
+    - column
+    - row
+    - floating
+    - bsp
+
+# Add "command" to the default mods
+mod1:
+    - option
+    - shift
+
+toggle-focus-follows-mouse:
+    mod: mod1
+    key: x
+
+relaunch-amethyst:
+    mod: mod1
+    key: c
+
+float-small-windows: true
+
+# Enable focus-follows-mouse
+mouse-follows-focus: false
+focus-follows-mouse: true
+
+# Add 10px margin between windows
+window-margins: true
+window-margin-size: 5
