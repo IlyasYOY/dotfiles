@@ -61,7 +61,19 @@ return {
             local themes = require "telescope.themes"
 
             telescope.setup {
-                defaults = { file_ignore_patterns = { "node_modules", ".git/" } },
+                defaults = {
+                    file_ignore_patterns = { "node_modules", ".git/" },
+                    -- TODO: Think of the way to make 
+                    --  it work only for buffers dialog
+                    mappings = {
+                        n = {
+                            ["<c-d>"] = require("telescope.actions").delete_buffer,
+                        },
+                        i = {
+                            ["<c-d>"] = require("telescope.actions").delete_buffer,
+                        },
+                    },
+                },
                 pickers = {
                     find_files = {
                         hidden = true,

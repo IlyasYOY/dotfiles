@@ -16,7 +16,7 @@ return {
             })
 
             vim.keymap.set("n", "<leader>DU", function()
-                dapui.toggle { layout = 1 }
+                dapui.toggle()
             end, {
                 desc = "Toggle Full Debug ui",
             })
