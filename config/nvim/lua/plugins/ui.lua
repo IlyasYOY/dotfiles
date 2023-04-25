@@ -2,6 +2,7 @@ return {
     "mhinz/vim-startify",
     "nvim-tree/nvim-web-devicons",
     "tjdevries/colorbuddy.nvim",
+    "christoomey/vim-tmux-navigator",
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,
