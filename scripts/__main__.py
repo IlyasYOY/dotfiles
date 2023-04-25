@@ -2,7 +2,7 @@
 
 import logging
 
-from scripts import installers
+from . import installers
 
 logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(message)s')
 
