@@ -39,6 +39,20 @@ vim.keymap.set("n", "<leader>gt", function()
         end
     end
 
+    if filetype == "go" then
+        if string.find(cwf, "_test%.go$") then
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go")
+            )
+            return
+        elseif string.find(cwf, "%.go$") then
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go")
+            )
+            return
+        end
+    end
+
     if filetype == "java" then
         local change_to = cwf
         if string.find(cwf, "/main/java/") then
