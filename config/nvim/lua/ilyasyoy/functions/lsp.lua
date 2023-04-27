@@ -18,88 +18,131 @@ function M.on_attach(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
 
-    vim.keymap.set(
-        "n",
-        "gD",
-        vim.lsp.buf.declaration,
-        described(bufopts, "[g]o to [D]eclarations")
-    )
-    vim.keymap.set(
-        "n",
-        "gd",
-        vim.lsp.buf.definition,
-        described(bufopts, "[g]o to [d]efinitions")
-    )
-    vim.keymap.set(
-        "n",
-        "gr",
-        vim.lsp.buf.references,
-        described(bufopts, "[g]o to [r]eferences")
-    )
-    vim.keymap.set(
-        "n",
-        "gi",
-        vim.lsp.buf.implementation,
-        described(bufopts, "[g]o to [i]mplementations")
-    )
+    if pcall(require, "telescope") then
+        local telescope = require "telescope.builtin"
+        local themes = require "telescope.themes"
 
-    vim.keymap.set(
-        "n",
-        "<leader>S",
-        vim.lsp.buf.workspace_symbol,
-        described(bufopts, "Show [S]ymbols")
-    )
+        local function get_ivy(func)
+            return function(...)
+                return func(themes.get_ivy(), ...)
+            end
+        end
+
+        vim.keymap.set(
+            "n",
+            "gD",
+            get_ivy(telescope.lsp_type_definitions),
+            described(bufopts, "telescope go to Declarations")
+        )
+        vim.keymap.set(
+            "n",
+            "gd",
+            get_ivy(telescope.lsp_definitions),
+            described(bufopts, "telescope go to definitions")
+        )
+        vim.keymap.set(
+            "n",
+            "gr",
+            get_ivy(telescope.lsp_references),
+            described(bufopts, "telescope go to references")
+        )
+        vim.keymap.set(
+            "n",
+            "gi",
+            get_ivy(telescope.lsp_implementations),
+            described(bufopts, "telescope go to implementations")
+        )
+
+        vim.keymap.set(
+            "n",
+            "<leader>S",
+            get_ivy(telescope.lsp_document_symbols),
+            described(bufopts, "telescope Show Workspace Symbols")
+        )
+        vim.keymap.set(
+            "n",
+            "<leader>s",
+            get_ivy(telescope.lsp_document_symbols),
+            described(bufopts, "telescope Show Document Symbols")
+        )
+    else
+        vim.keymap.set(
+            "n",
+            "gD",
+            vim.lsp.buf.declaration,
+            described(bufopts, "go to Declarations")
+        )
+        vim.keymap.set(
+            "n",
+            "gd",
+            vim.lsp.buf.definition,
+            described(bufopts, "go to definitions")
+        )
+        vim.keymap.set(
+            "n",
+            "gr",
+            vim.lsp.buf.references,
+            described(bufopts, "go to references")
+        )
+        vim.keymap.set(
+            "n",
+            "gi",
+            vim.lsp.buf.implementation,
+            described(bufopts, "go to implementations")
+        )
+
+        vim.keymap.set(
+            "n",
+            "<leader>S",
+            vim.lsp.buf.workspace_symbol,
+            described(bufopts, "Show Workspace Symbols")
+        )
+    end
 
     vim.keymap.set(
         "n",
         "<leader>h",
         vim.lsp.buf.hover,
-        described(bufopts, "show [h]over")
+        described(bufopts, "show hover")
     )
     vim.keymap.set(
         { "n", "i" },
         "<C-s>",
         vim.lsp.buf.signature_help,
-        described(bufopts, "Help with [s]ignature")
+        described(bufopts, "Help with signature")
     )
 
     vim.keymap.set(
         "n",
         "<space>wa",
         vim.lsp.buf.add_workspace_folder,
-        described(bufopts, "[w]orkspace [a]dd folder")
+        described(bufopts, "workspace add folder")
     )
     vim.keymap.set(
         "n",
         "<space>wr",
         vim.lsp.buf.remove_workspace_folder,
-        described(bufopts, "[w]orkspace [r]emove folder")
+        described(bufopts, "workspace remove folder")
     )
     vim.keymap.set("n", "<space>wl", function()
         vim.notify(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, described(bufopts, "[w]orkspace [l]ist folders"))
+    end, described(bufopts, "workspace list folders"))
 
     vim.keymap.set(
         "n",
         "<space>rn",
         vim.lsp.buf.rename,
-        described(bufopts, "[r]ename symbol under the cursor")
+        described(bufopts, "rename symbol under the cursor")
     )
 
     vim.keymap.set({ "n", "v" }, "<space>oc", function()
         vim.lsp.buf.format { async = true }
-    end, described(bufopts, "[o]rganize [c]ode"))
+    end, described(bufopts, "organize code"))
     vim.keymap.set(
-        "n",
+        { "n", "v" },
         "<space>a",
         vim.lsp.buf.code_action,
-        described(bufopts, "Perform code [a]ction")
-    )
-    vim.keymap.set(
-        "v",
-        "<space>a",
-        vim.lsp.buf.code_action,
-        described(bufopts, "Perform code [a]ction")
+        described(bufopts, "Perform code action")
     )
 end
 

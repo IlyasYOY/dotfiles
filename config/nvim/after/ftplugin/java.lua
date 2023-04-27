@@ -85,7 +85,7 @@ local config = {
         vim.keymap.set("n", "<leader>oi", function()
             jdtls.organize_imports()
         end, {
-            desc = "[o]rganize [i]mports",
+            desc = "organize imports",
         })
         vim.keymap.set("n", "<leader>oa", function()
             jdtls.organize_imports()
