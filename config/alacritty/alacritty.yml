@@ -1,5 +1,8 @@
 ---
+# MacOS has poor OpenGL suport,
+# https://github.com/alacritty/alacritty/issues/4474 
 window.opacity: 1.0
+
 # This is the way to list available fonts:
 # $ fc-list : family style
 font:
