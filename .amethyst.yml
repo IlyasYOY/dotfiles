@@ -2,8 +2,6 @@
 
 # Use tall and fullscreen layouts
 layouts:
-    - tall
-    - tall-right
     - fullscreen
     - wide
     - column
