@@ -13,7 +13,7 @@ end
 local function get_java_dir(version)
     local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
-        if coredor.string_has_prefix(file, version) then
+        if coredor.string_has_prefix(file, version .. ".", true) then
             return 1
         end
     end)
