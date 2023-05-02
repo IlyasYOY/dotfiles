@@ -40,17 +40,11 @@ return {
         config = function()
             vim.keymap.set(
                 "n",
-                "<leader>G",
+                "<leader>GG",
                 ":Git<CR>",
-                { desc = "Open neo[G]it UI window", silent = true }
+                { desc = "Open fugitive UI window", silent = true }
             )
         end,
-    },
-    {
-        "tpope/vim-rhubarb",
-        dependencies = {
-            "tpope/vim-fugitive",
-        },
     },
     {
         "lewis6991/gitsigns.nvim",
@@ -90,5 +84,42 @@ return {
                 },
             }
         end,
+    },
+    {
+        "ThePrimeagen/git-worktree.nvim",
+        config = function()
+            require("git-worktree").setup {}
+            require("telescope").load_extension "git_worktree"
+
+            vim.keymap.set(
+                "n",
+                "<leader>Gw",
+                require("telescope").extensions.git_worktree.git_worktrees,
+                { desc = "find local git workspaces" }
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>GW",
+                require("telescope").extensions.git_worktree.create_git_worktree,
+                { desc = "find branch and create git workspaces" }
+            )
+
+            local worktree = require "git-worktree"
+            worktree.on_tree_change(function(op, metadata)
+                if op == worktree.Operations.Switch then
+                    local clients = vim.lsp.get_active_clients()
+                    for _, client in ipairs(clients) do
+                        if client.initialized then
+                            vim.notify("Restarting LSP cilent " .. client.name)
+                            vim.cmd [[:LspRestart]]
+                        end
+                    end
+                end
+            end)
+        end,
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+        },
     },
 }

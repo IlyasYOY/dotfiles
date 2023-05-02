@@ -27,7 +27,7 @@ local function get_java_dir(version)
 end
 
 --NOTE:This is base dir for Eclipse project files.
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":h:gs?/?-?:s?~-??")
 local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
     .. project_name
@@ -103,6 +103,17 @@ local config = {
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
+        })
+
+        vim.keymap.set("v", "<leader>jeV", function()
+            jdtls.extract_variable_all(true)
+        end, {
+            desc = "java extract all selected to variable",
+        })
+        vim.keymap.set("n", "<leader>jeV", function()
+            jdtls.extract_variable_all()
+        end, {
+            desc = "java extract all to variable",
         })
 
         vim.keymap.set("n", "<leader>jec", function()

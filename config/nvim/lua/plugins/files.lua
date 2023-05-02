@@ -48,7 +48,7 @@ return {
 
             vim.keymap.set("n", "<leader>e", function()
                 nvimtree.toggle()
-            end, { desc = "Open nvim tree to [e]xplore files" })
+            end, { desc = "Open nvim tree to explore files" })
         end,
     },
     {
