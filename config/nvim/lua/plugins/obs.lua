@@ -23,6 +23,12 @@ return {
                 end)
             end, { desc = "Inserts notes Template" })
 
+            vim.keymap.set("n", "<leader>nM", function()
+                obs.vault:run_if_note(function()
+                    obs.vault:find_directory_and_move_current_note()
+                end)
+            end, { desc = "move notes to directory" })
+
             vim.keymap.set("n", "<leader>nn", function()
                 obs.vault:run_if_note(function()
                     obs.vault:follow_link()
@@ -81,7 +87,7 @@ return {
                     if obs.vault:is_current_buffer_in_vault() then
                         require("cmp").setup.buffer {
                             sources = {
-                                { name = "obs" },
+                                { name = "obs", max_item_count = 5000 },
                                 { name = "luasnip" },
                             },
                         }

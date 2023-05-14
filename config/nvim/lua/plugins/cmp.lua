@@ -28,7 +28,7 @@ return {
 
             cmp.setup {
                 completion = {
-                    autocomplete = false,
+                    autocomplete = {},
                 },
                 formatting = {
                     format = lspkind.cmp_format {
