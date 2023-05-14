@@ -1,7 +1,24 @@
 return {
-    "mhinz/vim-startify",
     "nvim-tree/nvim-web-devicons",
     "tjdevries/colorbuddy.nvim",
+    {
+        "BooleanCube/keylab.nvim",
+        lazy = true,
+        keys = {
+            "<leader><leader>K"
+        },
+        config = function()
+            local keylab = require "keylab"
+            keylab.setup {}
+
+            vim.keymap.set(
+                "n",
+                "<leader><leader>K",
+                require("keylab").start,
+                { desc = "Start a keylab session" }
+            )
+        end,
+    },
     "christoomey/vim-tmux-navigator",
     {
         "ellisonleao/gruvbox.nvim",
