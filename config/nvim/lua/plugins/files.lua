@@ -49,6 +49,23 @@ return {
             vim.keymap.set("n", "<leader>e", function()
                 nvimtree.toggle()
             end, { desc = "Open nvim tree to explore files" })
+
+            local function open_nvim_tree(data)
+                local directory = vim.fn.isdirectory(data.file) == 1
+
+                if not directory then
+                    return
+                end
+
+                require("nvim-tree.api").tree.open {
+                    path = data.file
+                }
+            end
+
+            vim.api.nvim_create_autocmd(
+                { "VimEnter" },
+                { callback = open_nvim_tree }
+            )
         end,
     },
     {
@@ -63,7 +80,7 @@ return {
             telescope.setup {
                 defaults = {
                     file_ignore_patterns = { "node_modules", ".git/" },
-                    -- TODO: Think of the way to make 
+                    -- TODO: Think of the way to make
                     --  it work only for buffers dialog
                     mappings = {
                         n = {
