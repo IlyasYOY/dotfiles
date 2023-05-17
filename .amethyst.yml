@@ -5,6 +5,7 @@ layouts:
     - fullscreen
     - wide
     - column
+    - middle-wide
     - row
     - floating
     - bsp

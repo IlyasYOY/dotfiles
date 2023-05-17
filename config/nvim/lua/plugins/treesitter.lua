@@ -22,7 +22,8 @@ return {
                     "mermaid",
                     "javascript",
                     "vim",
-                    "json"
+                    "json",
+                    "query",
                 },
                 sync_install = false,
                 auto_install = false,
@@ -43,4 +44,5 @@ return {
             }
         end,
     },
+    { "nvim-treesitter/playground" },
 }
