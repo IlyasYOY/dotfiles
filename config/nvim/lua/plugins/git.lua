@@ -40,9 +40,15 @@ return {
         config = function()
             vim.keymap.set(
                 "n",
-                "<leader>GG",
+                "<leader>gg",
                 ":Git<CR>",
                 { desc = "Open fugitive UI window", silent = true }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>gP",
+                ":Git push",
+                { desc = "Pushes changes to remote" }
             )
         end,
     },
@@ -93,14 +99,14 @@ return {
 
             vim.keymap.set(
                 "n",
-                "<leader>Gw",
+                "<leader>gw",
                 require("telescope").extensions.git_worktree.git_worktrees,
                 { desc = "find local git workspaces" }
             )
 
             vim.keymap.set(
                 "n",
-                "<leader>GW",
+                "<leader>gW",
                 require("telescope").extensions.git_worktree.create_git_worktree,
                 { desc = "find branch and create git workspaces" }
             )

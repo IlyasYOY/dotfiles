@@ -98,44 +98,52 @@ local config = {
             jdtls.extract_variable(true)
         end, {
             desc = "java extract selected to variable",
+            noremap = true,
         })
         vim.keymap.set("n", "<leader>jev", function()
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
+            noremap = true,
         })
 
         vim.keymap.set("v", "<leader>jeV", function()
             jdtls.extract_variable_all(true)
         end, {
             desc = "java extract all selected to variable",
+            noremap = true,
         })
         vim.keymap.set("n", "<leader>jeV", function()
             jdtls.extract_variable_all()
         end, {
             desc = "java extract all to variable",
+            noremap = true,
         })
 
         vim.keymap.set("n", "<leader>jec", function()
             jdtls.extract_constant()
         end, {
             desc = "java extract constant",
+            noremap = true,
         })
         vim.keymap.set("v", "<leader>jec", function()
             jdtls.extract_constant(true)
         end, {
             desc = "java extract selected to constant",
+            noremap = true,
         })
 
         vim.keymap.set("n", "<leader>jem", function()
             jdtls.extract_method()
         end, {
             desc = "java extract method",
+            noremap = true,
         })
         vim.keymap.set("v", "<leader>jem", function()
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
+            noremap = true,
         })
 
         vim.keymap.set("n", "<leader>jdm", function()

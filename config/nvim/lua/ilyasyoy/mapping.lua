@@ -21,7 +21,7 @@ vim.keymap.set(
     { desc = "[s]ource current file" }
 )
 
-vim.keymap.set("n", "<leader>gt", function()
+vim.keymap.set("n", "<leader>ot", function()
     local filetype = vim.bo.filetype
     local cwf = core.current_working_file()
 
