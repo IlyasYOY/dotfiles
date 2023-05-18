@@ -128,7 +128,6 @@ installers: List[Installer] = [
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     LinkingInstaller(HOME / '.amethyst.yml', CWD / '.amethyst.yml'),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
-    AddLineInstaller('export JDTLS_JVM_ARGS="-javaagent:$HOME/lombok.jar"', ZSHRC_PATH),
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias tma="tmux attach -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
