@@ -6,7 +6,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-config/nvim/spell/
+config/nvim/spell/*.spl
+config/nvim/spell/*.sug
 
 NetrwTreeListing
 .vim/
@@ -14,4 +15,3 @@ NetrwTreeListing
 .DB_Store
 .DS_Store
 
-lazy-lock.json
