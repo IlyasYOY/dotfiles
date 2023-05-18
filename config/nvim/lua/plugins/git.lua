@@ -50,6 +50,12 @@ return {
                 ":Git push<CR>",
                 { desc = "Pushes changes to remote" }
             )
+            vim.keymap.set(
+                "n",
+                "<leader>gp",
+                ":Git pull<CR>",
+                { desc = "Pushes changes to remote" }
+            )
         end,
     },
     {
