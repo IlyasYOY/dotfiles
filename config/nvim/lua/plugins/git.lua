@@ -47,7 +47,7 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gP",
-                ":Git push",
+                ":Git push<CR>",
                 { desc = "Pushes changes to remote" }
             )
         end,
