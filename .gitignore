@@ -8,6 +8,7 @@ __pycache__/
 
 config/nvim/spell/*.spl
 config/nvim/spell/*.sug
+config/nvim/spell/*.add
 
 NetrwTreeListing
 .vim/
