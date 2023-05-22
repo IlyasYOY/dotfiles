@@ -123,6 +123,7 @@ installers: List[Installer] = [
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
     LinkingInstaller(HOME / '.config/alacritty', CWD / 'config/alacritty'),
+    LinkingInstaller(HOME / '.config/awesome', CWD / 'config/awesome'),
     LinkingInstaller(HOME / '.tmux.conf', CWD / '.tmux.conf'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
