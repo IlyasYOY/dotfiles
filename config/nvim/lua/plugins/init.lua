@@ -3,7 +3,7 @@ return {
         "nvim-lua/plenary.nvim",
         config = function()
             vim.keymap.set("n", "<leader><leader>t", "<Plug>PlenaryTestFile", {
-                desc = "Runs Plenary [t]ests for file",
+                desc = "Runs Plenary tests for file",
             })
 
             vim.keymap.set(

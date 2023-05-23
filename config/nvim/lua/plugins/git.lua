@@ -95,6 +95,13 @@ return {
                     },
                 },
             }
+
+            vim.keymap.set(
+                "n",
+                "<leader>gb",
+                "<cmd>Gitsigns blame_line<CR>",
+                { desc = "blame current line", noremap = true }
+            )
         end,
     },
     {

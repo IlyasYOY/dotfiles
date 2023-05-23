@@ -131,6 +131,7 @@ installers: List[Installer] = [
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias tma="tmux attach -t "', ZSHRC_PATH),
+    AddLineInstaller('alias nvims="nvim -S"', ZSHRC_PATH),
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),

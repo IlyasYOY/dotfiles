@@ -12,18 +12,32 @@ return {
 
             ts_config.setup {
                 ensure_installed = {
+                    "vim",
                     "lua",
                     "rust",
                     "java",
+                    "javascript",
                     "kotlin",
                     "python",
+                    "sql",
+                    "bash",
+
                     "markdown",
                     "markdown_inline",
+
                     "mermaid",
-                    "javascript",
-                    "vim",
-                    "json",
+
+                    "http",
                     "query",
+
+                    "json",
+                    "html",
+                    "yaml",
+                    "dot",
+                    "toml",
+                    "dockerfile",
+                    "gitignore",
+                    "gitcommit",
                 },
                 sync_install = false,
                 auto_install = false,
