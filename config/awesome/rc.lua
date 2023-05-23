@@ -53,13 +53,15 @@ do
 end
 -- }}}
 
+awful.util.shell = "zsh"
+
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
-editor = os.getenv "EDITOR" or "vim"
+editor = "vim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -73,13 +75,13 @@ modkey = "Mod4"
 awful.layout.layouts = {
     awful.layout.suit.floating,
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
+    -- awful.layout.suit.tile.top,
+    -- awful.layout.suit.fair,
+    -- awful.layout.suit.fair.horizontal,
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
+    -- awful.layout.suit.max.fullscreen,
     awful.layout.suit.magnifier,
     -- awful.layout.suit.spiral,
     -- awful.layout.suit.spiral.dwindle,
@@ -92,27 +94,29 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-myawesomemenu = {
-    {
-        "hotkeys",
-        function()
-            hotkeys_popup.show_help(nil, awful.screen.focused())
-        end,
-    },
-    { "manual", terminal .. " -e man awesome" },
-    { "edit config", editor_cmd .. " " .. awesome.conffile },
-    { "restart", awesome.restart },
-    {
-        "quit",
-        function()
-            awesome.quit()
-        end,
-    },
-}
-
 mymainmenu = awful.menu {
     items = {
-        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        {
+            "awesome",
+            {
+                {
+                    "hotkeys",
+                    function()
+                        hotkeys_popup.show_help(nil, awful.screen.focused())
+                    end,
+                },
+                { "manual", terminal .. " -e man awesome" },
+                { "edit config", editor_cmd .. " " .. awesome.conffile },
+                { "restart", awesome.restart },
+                {
+                    "quit",
+                    function()
+                        awesome.quit()
+                    end,
+                },
+            },
+            beautiful.awesome_icon,
+        },
         { "open terminal", terminal },
     },
 }
@@ -674,3 +678,5 @@ client.connect_signal("unfocus", function(c)
     c.border_color = beautiful.border_normal
 end)
 -- }}}
+
+-- Custom Stuff
