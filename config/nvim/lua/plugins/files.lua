@@ -50,6 +50,13 @@ return {
                 nvimtree.toggle()
             end, { desc = "Open nvim tree to explore files" })
 
+            vim.keymap.set(
+                "n",
+                "<leader>E",
+                "<cmd>NvimTreeFindFile<CR>",
+                { desc = "Open nvim tree to explore current file directory" }
+            )
+
             local function open_nvim_tree(data)
                 local directory = vim.fn.isdirectory(data.file) == 1
 
@@ -58,7 +65,7 @@ return {
                 end
 
                 require("nvim-tree.api").tree.open {
-                    path = data.file
+                    path = data.file,
                 }
             end
 
