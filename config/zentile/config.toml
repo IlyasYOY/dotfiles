@@ -38,7 +38,7 @@ next_window = "mod4-Shift-k"
 previous_window = "mod4-Shift-j"
 
 # Increases the size of the master windows.
-increment_master = "mod4-Shift-h"
+increment_master = "mod4-Shift-l"
 
 # Decreases the size of the master windows.
-decrement_master = "mod4-Shift-l"
+decrement_master = "mod4-Shift-h"
