@@ -27,7 +27,7 @@ local function get_java_dir(version)
 end
 
 --NOTE:This is base dir for Eclipse project files.
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":h:gs?/?-?:s?~-??")
+local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:gs?/?-?:s?~-??")
 local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
     .. project_name
