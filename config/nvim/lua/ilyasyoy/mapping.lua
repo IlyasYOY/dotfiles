@@ -3,7 +3,7 @@ local core = require "coredor"
 vim.keymap.set("n", "<leader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
     vim.notify("spell: " .. tostring(vim.o.spell))
-end, { desc = "Toggle [s]pell [c]heck" })
+end, { desc = "Toggle spell check" })
 
 vim.keymap.set(
     "t",
@@ -18,7 +18,7 @@ vim.keymap.set(
     "n",
     "<leader><leader>s",
     "<cmd>source %<CR>",
-    { desc = "[s]ource current file" }
+    { desc = "source current file" }
 )
 
 vim.keymap.set("n", "<leader>ot", function()
@@ -70,5 +70,5 @@ vim.keymap.set("n", "<leader>ot", function()
 
     vim.notify "No test file was found to switch to"
 end, {
-    desc = "[g]o to [t]est",
+    desc = "go to test",
 })

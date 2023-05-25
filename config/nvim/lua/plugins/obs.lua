@@ -44,7 +44,6 @@ return {
                 obs.vault:rename_current_note()
             end, { desc = "notes rename current" })
 
-
             vim.keymap.set("n", "<leader>nT", function()
                 obs.vault:run_if_note(function()
                     obs.vault:find_and_insert_template()
@@ -57,33 +56,11 @@ return {
                 end)
             end, { desc = "move notes to directory" })
 
-
             vim.keymap.set("n", "<leader>nb", function()
                 obs.vault:run_if_note(function()
                     obs.vault:find_current_note_backlinks()
                 end)
             end, { desc = "notes find backlinks" })
-
-            local group = vim.api.nvim_create_augroup(
-                "IlyasyoyObsidian",
-                { clear = true }
-            )
-
-            vim.api.nvim_create_autocmd({ "BufEnter" }, {
-                group = group,
-                pattern = "*.md",
-                desc = "Setup notes nvim-cmp source",
-                callback = function()
-                    if obs.vault:is_current_buffer_in_vault() then
-                        require("cmp").setup.buffer {
-                            sources = {
-                                { name = "obs", max_item_count = 5000 },
-                                { name = "luasnip" },
-                            },
-                        }
-                    end
-                end,
-            })
 
             -- Find stuff
 

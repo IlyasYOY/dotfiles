@@ -4,6 +4,11 @@ return {
         dependencies = {
             "mfussenegger/nvim-dap",
         },
+        lazy = true,
+        keys = {
+            "<leader>Du",
+            "<leader>DU"
+        },
         config = function()
             local dapui = require "dapui"
 

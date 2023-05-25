@@ -39,4 +39,4 @@ map <leader>O <Action>(FileStructurePopup)
 map <leader>S <Action>(GotoSymbol)
 
 map <leader>ot <Action>(GotoTest)
-map <leader><leader>t <Action>(RunClass)
+map <leader>T <Action>(RunClass)

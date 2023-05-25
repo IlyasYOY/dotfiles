@@ -2,6 +2,12 @@ return {
     {
         "IlyasYOY/git-link.nvim",
         dev = true,
+        lazy = true,
+        cmd = {
+            "GitRemoteCopyRepoLink",
+            "GitRemoteCopyRepoLinkToFile",
+            "GitRemoteCopyRepoLinkToLine",
+        },
         dependencies = {
             "IlyasYOY/coredor.nvim",
         },
@@ -37,6 +43,15 @@ return {
     },
     {
         "tpope/vim-fugitive",
+        lazy = true,
+        cmd = {
+            "Git",
+        },
+        keys = {
+            "<leader>gg",
+            "<leader>gP",
+            "<leader>gp",
+        },
         config = function()
             vim.keymap.set(
                 "n",
@@ -106,6 +121,11 @@ return {
     },
     {
         "ThePrimeagen/git-worktree.nvim",
+        lazy = true,
+        keys = {
+            "<leader>gw",
+            "<leader>gW",
+        },
         config = function()
             require("git-worktree").setup {}
             require("telescope").load_extension "git_worktree"

@@ -1,22 +1,28 @@
 return {
-    "hrsh7th/cmp-buffer",
-    "hrsh7th/cmp-path",
-    "hrsh7th/cmp-cmdline",
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-nvim-lsp-signature-help",
-    "saadparwaiz1/cmp_luasnip",
+    {
+        "petertriho/cmp-git",
+        config = function()
+            require("cmp_git").setup {}
+        end,
+    },
     {
         "hrsh7th/nvim-cmp",
         dependencies = {
-            "L3MON4D3/LuaSnip",
             "onsails/lspkind.nvim",
+
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-nvim-lsp-signature-help",
+
             "IlyasYOY/obs.nvim",
+
+            "L3MON4D3/LuaSnip",
             "saadparwaiz1/cmp_luasnip",
+
+            "davidsierradz/cmp-conventionalcommits",
+            "petertriho/cmp-git",
         },
         config = function()
             local luasnip = require "luasnip"
@@ -36,10 +42,14 @@ return {
                         maxwidth = 50,
                         ellipsis_char = "...",
                         menu = {
-                            nvim_lsp = "[LSP]",
-                            nvim_lsp_signature_help = "[Signature]",
-                            luasnip = "[Snippet]",
-                            obs = "[Notes]",
+                            nvim_lsp = "[lsp]",
+                            nvim_lsp_signature_help = "[signature]",
+                            luasnip = "[snippet]",
+                            buffer = "[buffer]",
+                            conventionalcommits = "[commit]",
+                            git = "[git]",
+                            path = "[path]",
+                            obs = "[notes]",
                         },
                     },
                 },
@@ -84,6 +94,7 @@ return {
                     { name = "nvim_lsp" },
                     { name = "nvim_lsp_signature_help" },
                     { name = "luasnip" },
+                    { name = "path" },
                 },
             }
         end,

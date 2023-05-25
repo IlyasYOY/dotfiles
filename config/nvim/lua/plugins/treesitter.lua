@@ -32,6 +32,7 @@ return {
 
                     "json",
                     "html",
+                    "css",
                     "yaml",
                     "dot",
                     "toml",
