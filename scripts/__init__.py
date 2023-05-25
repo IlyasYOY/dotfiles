@@ -129,6 +129,7 @@ installers: List[Installer] = [
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     LinkingInstaller(HOME / '.amethyst.yml', CWD / '.amethyst.yml'),
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
+    AddLineInstaller('export PATH="' + str(CWD.absolute()) + '/bin:$PATH"', ZSHRC_PATH),
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias tma="tmux attach -t "', ZSHRC_PATH),
     AddLineInstaller('alias nvims="nvim -S"', ZSHRC_PATH),
