@@ -26,7 +26,6 @@ local function get_java_dir(version)
     return sdkman_dir .. java_dir
 end
 
---NOTE:This is base dir for Eclipse project files.
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:gs?/?-?:s?~-??")
 local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
@@ -37,7 +36,6 @@ local config = {
         "jdtls",
         "-data",
         workspace_dir,
-        -- NOTE: Lombok JAR must be in home dir.
         "--jvm-arg=-javaagent:"
             .. get_install_path_for "jdtls"
             .. "/lombok.jar",
@@ -47,17 +45,50 @@ local config = {
 
     settings = {
         java = {
+            redhat = {
+                telemetry = {
+                    enabled = false,
+                },
+            },
+            jdts = {
+                ls = {
+                    vmargs = "-XX:+UseParallelGC "
+                        .. "-XX:GCTimeRatio=4 "
+                        .. "-XX:AdaptiveSizePolicyWeight=90 "
+                        .. "-Dsun.zip.disableMemoryMapping=true "
+                        .. "-Xmx2G -Xms100m "
+                        .. "-Xlog:disable",
+                },
+            },
+            maven = {
+                downloadSources = true,
+            },
+            format = {
+                settings = {
+                    url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+                    profile = "GoogleStyle",
+                },
+            },
+            compile = {
+                nullAnalysis = {
+                    nonnull = {
+                        "lombok.NonNull",
+                        "javax.annotation.Nonnull",
+                        "org.eclipse.jdt.annotation.NonNull",
+                        "org.springframework.lang.NonNull",
+                    },
+                },
+            },
             eclipse = {
                 downloadSources = true,
             },
             completion = {
                 favouriteStaticMembers = {
-                    "java.util.Objects.*",
                     "org.junit.jupiter.api.Assertions.*",
                     "org.junit.jupiter.api.Assumptions.*",
                     "org.mockito.Mockito.*",
+                    "java.util.Objects.*",
                 },
-                guessMethodArguments = false,
             },
             configuration = {
                 runtimes = {
