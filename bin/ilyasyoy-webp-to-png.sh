@@ -2,4 +2,4 @@
 
 echo converting "$"
 
-for FILE in *.webp; do ffmpeg -i "$FILE" "$FILE.png"; done
+for FILE in *.webp; do ffmpeg -n -i "$FILE" "$FILE.png"; done
