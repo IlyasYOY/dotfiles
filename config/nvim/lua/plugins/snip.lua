@@ -1,6 +1,7 @@
 return {
     {
         "L3MON4D3/LuaSnip",
+        dependencies = { "honza/vim-snippets" },
         config = function()
             local ls = require "luasnip"
 
@@ -31,6 +32,8 @@ return {
                     ls.change_choice(-1)
                 end
             end)
+
+            require("luasnip.loaders.from_snipmate").lazy_load()
 
             require("luasnip.loaders.from_lua").lazy_load {
                 paths = "~/.config/nvim/snippets/",

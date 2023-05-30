@@ -47,6 +47,7 @@
   "telescope.nvim": { "branch": "master", "commit": "c1a2af0af69e80e14e6b226d3957a064cd080805" },
   "todo-comments.nvim": { "branch": "main", "commit": "09b0b17d824d2d56f02ff15967e8a2499a89c731" },
   "vim-fugitive": { "branch": "master", "commit": "5f0d280b517cacb16f59316659966c7ca5e2bea2" },
+  "vim-snippets": { "branch": "master", "commit": "76e35f37aa9e47a8b7f2909de222844ae38c7007" },
   "vim-test": { "branch": "master", "commit": "08250c56f11cb3460c8a02c8fdb80c8d39c92173" },
   "vim-tmux-navigator": { "branch": "master", "commit": "cdd66d6a37d991bba7997d593586fc51a5b37aa8" }
 }
