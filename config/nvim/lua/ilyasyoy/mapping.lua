@@ -21,6 +21,13 @@ vim.keymap.set(
     { desc = "source current file" }
 )
 
+vim.keymap.set(
+    "n",
+    "<leader><leader>s",
+    "<cmd>mksession!<CR>",
+    { desc = "create session file" }
+)
+
 vim.keymap.set("n", "<leader>ot", function()
     local filetype = vim.bo.filetype
     local cwf = core.current_working_file()
