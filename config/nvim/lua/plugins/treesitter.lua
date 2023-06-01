@@ -1,4 +1,28 @@
 return {
+    { "nvim-treesitter/playground" },
+    {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        depencencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+        config = function()
+            require("nvim-treesitter.configs").setup {
+                textobjects = {
+                    select = {
+                        enable = true,
+                        keymaps = {
+                            ["af"] = "@function.outer",
+                            ["if"] = "@function.inner",
+                            ["ac"] = "@class.outer",
+                            ["ic"] = "@class.inner",
+                            ["an"] = "@block.outer",
+                            ["in"] = "@block.inner",
+                        },
+                    },
+                },
+            }
+        end,
+    },
     {
         "nvim-treesitter/nvim-treesitter",
         build = function()
@@ -59,5 +83,4 @@ return {
             }
         end,
     },
-    { "nvim-treesitter/playground" },
 }
