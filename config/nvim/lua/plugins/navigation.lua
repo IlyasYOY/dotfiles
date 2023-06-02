@@ -6,9 +6,9 @@ return {
         },
         lazy = true,
         keys = {
-            "<leader>hh",
-            "<leader>hg",
-            "<leader>ha",
+            "<leader>h",
+            "gh",
+            "gH",
             "[h",
             "]h",
         },
@@ -17,25 +17,25 @@ return {
 
             require("telescope").load_extension "harpoon"
 
-            vim.keymap.set("n", "<leader>hh", function()
+            vim.keymap.set("n", "<leader>h", function()
                 require("harpoon.ui").toggle_quick_menu()
-            end)
-            vim.keymap.set("n", "<leader>hg", function()
+            end, { desc = "toggle harpoon ui" })
+            vim.keymap.set("n", "gh", function()
                 local count = vim.v.count
                 if count == 0 then
                     count = 1
                 end
                 require("harpoon.ui").nav_file(count)
-            end)
-            vim.keymap.set("n", "<leader>ha", function()
+            end, { desc = "go to harpoon entry" })
+            vim.keymap.set("n", "gH", function()
                 require("harpoon.mark").add_file()
-            end)
+            end, { desc = "add buffer into the harpoon" })
             vim.keymap.set("n", "]h", function()
                 require("harpoon.ui").nav_next()
-            end)
+            end, { desc = "go to next harpoon buffer" })
             vim.keymap.set("n", "[h", function()
                 require("harpoon.ui").nav_prev()
-            end)
+            end, { desc = "go to prev harpoon buffer" })
         end,
     },
 }

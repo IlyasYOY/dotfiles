@@ -101,7 +101,7 @@ function M.on_attach(client, bufnr)
 
     vim.keymap.set(
         "n",
-        "<leader>h",
+        "<leader>k",
         vim.lsp.buf.hover,
         described(bufopts, "show hover")
     )

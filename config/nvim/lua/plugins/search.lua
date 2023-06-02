@@ -89,6 +89,10 @@ return {
                 builtin.lsp_dynamic_workspace_symbols(themes.get_ivy())
             end, { desc = "find worspace symbols" })
 
+            vim.keymap.set("n", "<leader>fd", function()
+                builtin.diagnostics(themes.get_ivy())
+            end, { desc = "find worspace diagnostics" })
+
             vim.keymap.set("n", "<leader>fm", function()
                 builtin.man_pages()
             end, { desc = "find man pager" })
