@@ -43,6 +43,7 @@ return {
                     "jsonlint",
                     "yamllint",
                     "markdownlint",
+                    "sonarlint-language-server",
                 },
                 automatic_installation = true,
             }

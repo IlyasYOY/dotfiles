@@ -128,14 +128,20 @@ installers: List[Installer] = [
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
     LinkingInstaller(HOME / '.amethyst.yml', CWD / '.amethyst.yml'),
+
     AddLineInstaller('export EDITOR=nvim', ZSHRC_PATH),
-    AddLineInstaller('export PATH="' + str(CWD.absolute()) + '/bin:$PATH"', ZSHRC_PATH),
+
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias tma="tmux attach -t "', ZSHRC_PATH),
-    AddLineInstaller('alias nvims="nvim -S"', ZSHRC_PATH),
+
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
+
+    AddLineInstaller('alias nvims="nvim -S"', ZSHRC_PATH),
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
-    AddLineInstaller(f'alias gdotfiles="cd {CWD}"', ZSHRC_PATH),
-    AddLineInstaller(f'alias gnotes="cd ~/vimwiki"', ZSHRC_PATH),
+
+    AddLineInstaller(f'export ILYASYOY_DOTFILES_DIR="{CWD}"', ZSHRC_PATH),
+    AddLineInstaller('export PATH="${ILYASYOY_DOTFILES_DIR}/bin:$PATH"', ZSHRC_PATH),
+    AddLineInstaller('alias ilyasyoy-dotfiles="cd ${ILYASYOY_DOTFILES_DIR}"', ZSHRC_PATH),
+    AddLineInstaller(f'alias ilyasyoy-notes="cd ~/vimwiki"', ZSHRC_PATH),
 ]

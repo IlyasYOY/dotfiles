@@ -2,6 +2,7 @@ local Path = require "plenary.path"
 local coredor = require "coredor"
 local lsp = require "ilyasyoy.functions.lsp"
 local jdtls = require "jdtls"
+local core = require "ilyasyoy.functions.core"
 
 local function get_install_path_for(package)
     return require("mason-registry").get_package(package):get_install_path()
@@ -56,7 +57,7 @@ local config = {
                         .. "-XX:GCTimeRatio=4 "
                         .. "-XX:AdaptiveSizePolicyWeight=90 "
                         .. "-Dsun.zip.disableMemoryMapping=true "
-                        .. "-Xmx2G -Xms100m "
+                        .. "-Xmx2G -Xms300m "
                         .. "-Xlog:disable",
                 },
             },
@@ -65,7 +66,7 @@ local config = {
             },
             format = {
                 settings = {
-                    url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+                    url = core.resolve_realative_to_dotfiles_dir "config/eclipse-java-google-style.xml",
                     profile = "GoogleStyle",
                 },
             },

@@ -138,6 +138,7 @@ function M.on_attach(client, bufnr)
     vim.keymap.set({ "n", "v" }, "<space>oc", function()
         vim.lsp.buf.format { async = true }
     end, described(bufopts, "organize code"))
+
     vim.keymap.set(
         { "n", "v" },
         "<space>a",

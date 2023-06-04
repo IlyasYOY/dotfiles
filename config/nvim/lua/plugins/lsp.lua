@@ -1,38 +1,45 @@
+local lsp = require "ilyasyoy.functions.lsp"
+
+local described = lsp.described
+
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap = true, silent = true }
+vim.keymap.set(
+    "n",
+    "<leader>d",
+    vim.diagnostic.open_float,
+    described(opts, "diagnostics")
+)
+vim.keymap.set(
+    "n",
+    "[d",
+    vim.diagnostic.goto_prev,
+    described(opts, "Previous diagostics")
+)
+vim.keymap.set(
+    "n",
+    "]d",
+    vim.diagnostic.goto_next,
+    described(opts, "Next diagnostics")
+)
+vim.keymap.set(
+    "n",
+    "<leader>ld",
+    vim.diagnostic.setloclist,
+    described(opts, "Put diagnostics to quickfix list")
+)
+
 local function setup_generic()
-    local lsp = require "ilyasyoy.functions.lsp"
     local lspconfig = require "lspconfig"
 
-    local described = lsp.described
-
-    -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-    local opts = { noremap = true, silent = true }
-    vim.keymap.set(
-        "n",
-        "<leader>d",
-        vim.diagnostic.open_float,
-        described(opts, "diagnostics")
-    )
-    vim.keymap.set(
-        "n",
-        "[d",
-        vim.diagnostic.goto_prev,
-        described(opts, "Previous diagostics")
-    )
-    vim.keymap.set(
-        "n",
-        "]d",
-        vim.diagnostic.goto_next,
-        described(opts, "Next diagnostics")
-    )
-    vim.keymap.set(
-        "n",
-        "<leader>dl",
-        vim.diagnostic.setloclist,
-        described(opts, "Put diagnostics to quickfix list")
-    )
-
-    local generic_servers =
-        { "gopls", "gradle_ls", "pyright", "rust_analyzer", "tsserver", "bashls" }
+    local generic_servers = {
+        "gopls",
+        "gradle_ls",
+        "pyright",
+        "rust_analyzer",
+        "tsserver",
+        "bashls",
+    }
     for _, client in ipairs(generic_servers) do
         lspconfig[client].setup {
             on_attach = lsp.on_attach,
@@ -99,9 +106,22 @@ return {
         end,
     },
     {
+        "simrat39/symbols-outline.nvim",
+        config = function()
+            local outline = require "symbols-outline"
+
+            outline.setup()
+
+            vim.keymap.set("n", "<leader>O", function()
+                outline.toggle_outline()
+            end, { desc = "Opens Outline", silent = true })
+        end,
+    },
+    {
         "jose-elias-alvarez/null-ls.nvim",
         config = function()
             local null_ls = require "null-ls"
+            local core = require "ilyasyoy.functions.core"
 
             local function with_root_file(builtin, file)
                 return builtin.with {
@@ -123,22 +143,29 @@ return {
                         null_ls.builtins.diagnostics.luacheck,
                         ".luacheckrc"
                     ),
+
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
+
+                    null_ls.builtins.diagnostics.markdownlint,
+
+                    null_ls.builtins.code_actions.gitsigns,
+
+                    null_ls.builtins.diagnostics.checkstyle.with {
+                        extra_args = {
+                            "-c",
+                            core.resolve_realative_to_dotfiles_dir "config/checkstyle.xml",
+                        },
+                    },
+                    null_ls.builtins.diagnostics.pmd.with {
+                        args = { "pmd", "--format", "json", "--dir", "$ROOT" },
+                        extra_args = {
+                            "-R",
+                            core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
+                        },
+                    },
                 },
             }
-        end,
-    },
-    {
-        "simrat39/symbols-outline.nvim",
-        config = function()
-            local outline = require "symbols-outline"
-
-            outline.setup()
-
-            vim.keymap.set("n", "<leader>O", function()
-                outline.toggle_outline()
-            end, { desc = "Opens Outline", silent = true })
         end,
     },
 }
