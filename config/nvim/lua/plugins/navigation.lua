@@ -1,5 +1,9 @@
 return {
     {
+        "chrisgrieser/nvim-various-textobjs",
+        opts = { useDefaultKeymaps = true },
+    },
+    {
         "ThePrimeagen/harpoon",
         dependencies = {
             "nvim-lua/plenary.nvim",

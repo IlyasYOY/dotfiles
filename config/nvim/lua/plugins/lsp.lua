@@ -147,8 +147,6 @@ return {
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
 
-                    null_ls.builtins.diagnostics.markdownlint,
-
                     null_ls.builtins.code_actions.gitsigns,
 
                     null_ls.builtins.diagnostics.checkstyle.with {
