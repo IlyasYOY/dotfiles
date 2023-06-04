@@ -26,7 +26,11 @@ return {
         },
         config = function()
             local luasnip = require "luasnip"
+
             local cmp = require "cmp"
+            local cmp_feedkeys = require "cmp.utils.feedkeys"
+            local cmp_keymap = require "cmp.utils.keymap"
+
             local lspkind = require "lspkind"
             local cmp_source = require "obs.cmp-source"
 
@@ -60,10 +64,24 @@ return {
                 },
                 mapping = cmp.mapping.preset.insert {
                     ["<C-Space>"] = cmp.mapping.complete(),
-                    ["<CR>"] = cmp.mapping.confirm {
-                        behavior = cmp.ConfirmBehavior.Replace,
-                        select = true,
-                    },
+                    -- https://github.com/hrsh7th/nvim-cmp/issues/1326#issuecomment-1497250292
+                    ["<CR>"] = function(fallback)
+                        if vim.fn.pumvisible() == 1 then
+                            if
+                                vim.fn.complete_info({ "selected" }).selected
+                                == -1
+                            then
+                                cmp_feedkeys.call(cmp_keymap.t "<CR>", "in")
+                            else
+                                cmp_feedkeys.call(
+                                    cmp_keymap.t "<C-X><C-Z>",
+                                    "in"
+                                )
+                            end
+                        else
+                            cmp.mapping.confirm { select = false }(fallback)
+                        end
+                    end,
 
                     ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item()),
                     ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item()),
