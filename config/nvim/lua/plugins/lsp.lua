@@ -162,6 +162,7 @@ return {
 
             null_ls.setup {
                 debounce = 150,
+                debug = true,
                 save_after_format = false,
                 sources = {
                     with_root_file(
@@ -185,12 +186,20 @@ return {
                         },
                     },
                     null_ls.builtins.diagnostics.pmd.with {
-                        args = { "pmd", "--format", "json", "--dir", "$ROOT" },
+                        args = {
+                            "check",
+                            "--format",
+                            "json",
+                            "--no-cache",
+                            "--no-progress",
+                            "--dir",
+                            "$ROOT",
+                        },
                         extra_args = {
                             "-R",
                             core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
-                            "--no-cache",
                         },
+                        timeout = 10000,
                     },
                 },
             }
