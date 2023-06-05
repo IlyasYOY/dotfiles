@@ -100,12 +100,6 @@ function M.on_attach(client, bufnr)
     end
 
     vim.keymap.set(
-        "n",
-        "<leader>k",
-        vim.lsp.buf.hover,
-        described(bufopts, "show hover")
-    )
-    vim.keymap.set(
         { "n", "i" },
         "<C-s>",
         vim.lsp.buf.signature_help,
@@ -133,17 +127,6 @@ function M.on_attach(client, bufnr)
         "<space>rn",
         vim.lsp.buf.rename,
         described(bufopts, "rename symbol under the cursor")
-    )
-
-    vim.keymap.set({ "n", "v" }, "<space>oc", function()
-        vim.lsp.buf.format { async = true }
-    end, described(bufopts, "organize code"))
-
-    vim.keymap.set(
-        { "n", "v" },
-        "<space>a",
-        vim.lsp.buf.code_action,
-        described(bufopts, "Perform code action")
     )
 end
 

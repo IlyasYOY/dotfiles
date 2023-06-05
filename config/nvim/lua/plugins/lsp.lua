@@ -103,6 +103,27 @@ return {
             }
             setup_generic()
             setup_lua()
+
+            -- NOTE: This mapping may be used by null-ls in any given file.
+            local bufopts = { noremap = true, silent = true }
+
+            vim.keymap.set({ "n", "v" }, "<space>oc", function()
+                vim.lsp.buf.format { async = true }
+            end, described(bufopts, "organize code"))
+
+            vim.keymap.set(
+                { "n", "v" },
+                "<space>a",
+                vim.lsp.buf.code_action,
+                described(bufopts, "Perform code action")
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>k",
+                vim.lsp.buf.hover,
+                described(bufopts, "show hover")
+            )
         end,
     },
     {
@@ -160,6 +181,7 @@ return {
                         extra_args = {
                             "-R",
                             core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
+                            "--no-cache",
                         },
                     },
                 },

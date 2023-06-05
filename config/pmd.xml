@@ -34,15 +34,24 @@
     <exclude-pattern>.*/net/sourceforge/pmd/lang/java/ast/jdkversiontests/java19p/ExhaustiveSwitch.java</exclude-pattern>
 
     <rule ref="category/java/bestpractices.xml">
+        <exclude name="JUnitTestsShouldIncludeAssert" />
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="MethodArgumentCouldBeFinal" />
+        <exclude name="LocalVariableCouldBeFinal" />
+
+        <exclude name="CommentDefaultAccessModifier" />
+
         <exclude name="AtLeastOneConstructor" />
+        <exclude name="OnlyOneReturn" />
     </rule>
     <rule ref="category/java/design.xml">
+        <exclude name="LoosePackageCoupling" />
+        <exclude name="LawOfDemeter" />
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired" />
+        <exclude name="CommentSize" />
     </rule>
     <rule ref="category/java/errorprone.xml">
     </rule>
