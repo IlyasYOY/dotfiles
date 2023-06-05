@@ -162,7 +162,6 @@ return {
 
             null_ls.setup {
                 debounce = 150,
-                debug = true,
                 save_after_format = false,
                 sources = {
                     with_root_file(
@@ -193,13 +192,12 @@ return {
                             "--no-cache",
                             "--no-progress",
                             "--dir",
-                            "$ROOT",
+                            "$FILENAME",
                         },
                         extra_args = {
                             "-R",
                             core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
                         },
-                        timeout = 10000,
                     },
                 },
             }
