@@ -1,5 +1,11 @@
 return {
-    { "nvim-treesitter/playground" },
+    {
+        "nvim-treesitter/playground",
+        lazy = true,
+        cmd = {
+            "TSPlaygroundToggle",
+        },
+    },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
         depencencies = {

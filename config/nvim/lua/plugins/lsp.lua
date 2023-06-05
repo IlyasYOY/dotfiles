@@ -82,9 +82,13 @@ local function setup_lua()
 end
 
 return {
-    { "mfussenegger/nvim-jdtls" },
     { "onsails/lspkind.nvim" },
     { "folke/neodev.nvim" },
+    {
+        "mfussenegger/nvim-jdtls",
+        lazy = true,
+        ft = { "java" },
+    },
     {
         "neovim/nvim-lspconfig",
         dependencies = {
@@ -128,6 +132,10 @@ return {
     },
     {
         "simrat39/symbols-outline.nvim",
+        lazy = true,
+        keys = {
+            "<leader>O",
+        },
         config = function()
             local outline = require "symbols-outline"
 
