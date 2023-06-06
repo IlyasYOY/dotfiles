@@ -39,6 +39,7 @@
     <rule ref="category/java/codestyle.xml">
         <exclude name="MethodArgumentCouldBeFinal" />
         <exclude name="LocalVariableCouldBeFinal" />
+        <exclude name="LongVariable" />
 
         <exclude name="CommentDefaultAccessModifier" />
 
@@ -48,6 +49,7 @@
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling" />
         <exclude name="LawOfDemeter" />
+        <exclude name="ExcessiveImports" />
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired" />
