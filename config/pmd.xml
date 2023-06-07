@@ -39,15 +39,22 @@
     <rule ref="category/java/codestyle.xml">
         <exclude name="MethodArgumentCouldBeFinal" />
         <exclude name="LocalVariableCouldBeFinal" />
+        <!-- Spring usually requires devs to use long names -->
         <exclude name="LongVariable" />
+        <!-- False positive on "id" -->
+        <exclude name="ShortVariable" />
 
         <exclude name="CommentDefaultAccessModifier" />
 
         <exclude name="AtLeastOneConstructor" />
+        <!-- I personally prefer guard expression golang-like style. -->
         <exclude name="OnlyOneReturn" />
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling" />
+        <!-- bothers in tests -->
+        <exclude name="TooManyMethods" />
+        <!-- A low of false positive with common chaining API -->
         <exclude name="LawOfDemeter" />
         <exclude name="ExcessiveImports" />
     </rule>
