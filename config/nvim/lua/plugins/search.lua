@@ -79,7 +79,15 @@ return {
 
             vim.keymap.set("n", "<leader>fT", function()
                 builtin.builtin(themes.get_ivy())
-            end, { desc = "find built in commands" })
+            end, { desc = "find in commands" })
+
+            vim.keymap.set("n", "<leader>fq", function()
+                builtin.quickfix(themes.get_ivy())
+            end, { desc = "find in quickfix" })
+
+            vim.keymap.set("n", "<leader>fl", function()
+                builtin.loclist(themes.get_ivy())
+            end, { desc = "find in loc list" })
 
             vim.keymap.set("n", "<leader>fS", function()
                 builtin.lsp_document_symbols(themes.get_ivy())

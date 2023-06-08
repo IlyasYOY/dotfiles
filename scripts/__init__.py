@@ -137,7 +137,6 @@ installers: List[Installer] = [
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
 
-    AddLineInstaller('alias nvims="nvim -S"', ZSHRC_PATH),
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
 
     AddLineInstaller(f'export ILYASYOY_DOTFILES_DIR="{CWD}"', ZSHRC_PATH),

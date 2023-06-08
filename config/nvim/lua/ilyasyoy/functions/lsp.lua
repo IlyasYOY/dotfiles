@@ -30,82 +30,55 @@ function M.on_attach(client, bufnr)
 
         vim.keymap.set(
             "n",
-            "gD",
-            get_ivy(telescope.lsp_type_definitions),
-            described(bufopts, "telescope go to Declarations")
-        )
-        vim.keymap.set(
-            "n",
-            "gd",
-            get_ivy(telescope.lsp_definitions),
-            described(bufopts, "telescope go to definitions")
-        )
-        vim.keymap.set(
-            "n",
-            "gr",
-            get_ivy(telescope.lsp_references),
-            described(bufopts, "telescope go to references")
-        )
-        vim.keymap.set(
-            "n",
-            "gi",
-            get_ivy(telescope.lsp_implementations),
-            described(bufopts, "telescope go to implementations")
-        )
-
-        vim.keymap.set(
-            "n",
             "<leader>S",
             get_ivy(telescope.lsp_document_symbols),
-            described(bufopts, "telescope Show Workspace Symbols")
+            described(bufopts, "telescope Show Document Symbols")
         )
         vim.keymap.set(
             "n",
             "<leader>s",
-            get_ivy(telescope.lsp_document_symbols),
-            described(bufopts, "telescope Show Document Symbols")
+            get_ivy(telescope.lsp_dynamic_workspace_symbols),
+            described(bufopts, "telescope Show Workspace Symbols")
         )
     else
         vim.keymap.set(
             "n",
-            "gD",
-            vim.lsp.buf.declaration,
-            described(bufopts, "go to Declarations")
-        )
-        vim.keymap.set(
-            "n",
-            "gd",
-            vim.lsp.buf.definition,
-            described(bufopts, "go to definitions")
-        )
-        vim.keymap.set(
-            "n",
-            "gr",
-            vim.lsp.buf.references,
-            described(bufopts, "go to references")
-        )
-        vim.keymap.set(
-            "n",
-            "gi",
-            vim.lsp.buf.implementation,
-            described(bufopts, "go to implementations")
-        )
-
-        vim.keymap.set(
-            "n",
-            "<leader>S",
+            "<leader>s",
             vim.lsp.buf.workspace_symbol,
             described(bufopts, "Show Workspace Symbols")
         )
     end
 
     vim.keymap.set(
+        "n",
+        "gD",
+        vim.lsp.buf.declaration,
+        described(bufopts, "go to Declarations")
+    )
+    vim.keymap.set(
+        "n",
+        "gd",
+        vim.lsp.buf.definition,
+        described(bufopts, "go to definitions")
+    )
+    vim.keymap.set(
+        "n",
+        "gr",
+        vim.lsp.buf.references,
+        described(bufopts, "go to references")
+    )
+    vim.keymap.set(
+        "n",
+        "gi",
+        vim.lsp.buf.implementation,
+        described(bufopts, "go to implementations")
+    )
+    vim.keymap.set(
         { "n", "i" },
         "<C-s>",
         vim.lsp.buf.signature_help,
         described(bufopts, "Help with signature")
     )
-
     vim.keymap.set(
         "n",
         "<space>wa",
