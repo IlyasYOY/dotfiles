@@ -12,6 +12,7 @@ config/nvim/spell/*.add
 
 NetrwTreeListing
 .vim/
+Session.vim
 
 .DB_Store
 .DS_Store

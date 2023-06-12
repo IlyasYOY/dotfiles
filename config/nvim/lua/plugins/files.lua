@@ -3,8 +3,6 @@ return {
         "nvim-tree/nvim-tree.lua",
         tag = "nightly",
         config = function()
-            vim.opt.termguicolors = true
-
             local nvimtree = require "nvim-tree"
 
             nvimtree.setup {

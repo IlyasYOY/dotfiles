@@ -16,6 +16,7 @@ set relativenumber
 set noerrorbells 
 set belloff=all
 
+set termguicolors
 set hidden 
 
 " Tabs and indent settings
