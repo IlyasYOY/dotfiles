@@ -42,6 +42,9 @@ return {
                     "luacheck",
                     "jsonlint",
                     "yamllint",
+                    "prettier",
+                    "stylelint",
+                    "eslint_d",
                 },
                 automatic_installation = true,
             }

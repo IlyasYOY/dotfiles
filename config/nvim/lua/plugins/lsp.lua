@@ -37,7 +37,6 @@ local function setup_generic()
         "gradle_ls",
         "pyright",
         "rust_analyzer",
-        "tsserver",
         "bashls",
     }
     for _, client in ipairs(generic_servers) do
@@ -48,8 +47,19 @@ local function setup_generic()
     end
 end
 
+local function setup_tsserver()
+    local lspconfig = require "lspconfig"
+
+    lspconfig.tsserver.setup {
+        on_attach = function(client, bufnr)
+            client.server_capabilities.documentFormattingProvider = false
+            lsp.on_attach(client, bufnr)
+        end,
+        capabilities = lsp.get_capabilities(),
+    }
+end
+
 local function setup_lua()
-    local lsp = require "ilyasyoy.functions.lsp"
     local lspconfig = require "lspconfig"
 
     lspconfig.lua_ls.setup {
@@ -106,6 +116,7 @@ return {
                 end,
             }
             setup_generic()
+            setup_tsserver()
             setup_lua()
 
             -- NOTE: This mapping may be used by null-ls in any given file.
@@ -175,6 +186,19 @@ return {
 
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
+
+                    with_root_file(
+                        null_ls.builtins.formatting.prettier,
+                        ".prettierrc.js"
+                    ),
+                    with_root_file(
+                        null_ls.builtins.formatting.stylelint,
+                        ".stylelintrc.js"
+                    ),
+                    with_root_file(
+                        null_ls.builtins.code_actions.eslint_d,
+                        ".eslintrc.js"
+                    ),
 
                     null_ls.builtins.diagnostics.checkstyle.with {
                         extra_args = {
