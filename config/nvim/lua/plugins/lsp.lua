@@ -161,6 +161,7 @@ return {
         "jose-elias-alvarez/null-ls.nvim",
         config = function()
             local null_ls = require "null-ls"
+            local pmd_cpd_source = require "ilyasyoy.null-ls.pmd-cpd"
             local core = require "ilyasyoy.functions.core"
 
             local function with_root_file(builtin, file)
@@ -221,6 +222,13 @@ return {
                             core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
                         },
                     },
+                    -- TODO: check this from time to time.
+                    -- for now it's almost unusable.
+                    -- pmd_cpd_source.with {
+                    --     extra_args = {
+                    --         "--minimum-tokens=60",
+                    --     },
+                    -- },
                 },
             }
         end,

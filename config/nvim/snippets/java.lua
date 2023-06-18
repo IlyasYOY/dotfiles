@@ -30,4 +30,79 @@ return {
             create_package(),
         })
     ),
+    s(
+        "mockret",
+        fmt("Mockito.doReturn({}).when({}).{};", {
+            i(0, "value"),
+            i(1, "mock"),
+            i(2, "method"),
+        })
+    ),
+    s(
+        "mockthrow",
+        fmt("Mockito.doThrow({}).when({}).{};", {
+            i(0, "exception"),
+            i(1, "mock"),
+            i(2, "method"),
+        })
+    ),
+    s(
+        "mockver",
+        fmt("Mockito.verify({}).{};", {
+            i(1, "mock"),
+            i(0, "method"),
+        })
+    ),
+    s(
+        "assa",
+        fmt('Assertions.assertAll("{}", () -> {});', {
+            i(1, "header"),
+            i(0, "assertion"),
+        })
+    ),
+    s(
+        "assf",
+        fmt('Assertions.assertFalse({}, "{}");', {
+            i(1, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "asst",
+        fmt('Assertions.assertTrue({}, "{}");', {
+            i(1, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "asse",
+        fmt('Assertions.assertEquals({}, {}, "{}");', {
+            i(1, "expected"),
+            i(2, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "asss",
+        fmt('Assertions.assertSame({}, {}, "{}");', {
+            i(1, "expected"),
+            i(2, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "assthr",
+        fmt('Assertions.assertThrows({}, () -> {}, "{}");', {
+            i(1, "exception"),
+            i(2, "throwing"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "assnthr",
+        fmt('Assertions.assertDoesNotThrow(() -> {}, "{}");', {
+            i(1, "not throwing"),
+            i(0, "message"),
+        })
+    ),
 }
