@@ -1,4 +1,5 @@
 local ls = require "luasnip"
+local ilyasyoy_snippets = require "ilyasyoy.snippets"
 
 local fmt = require("luasnip.extras.fmt").fmt
 local rep = require("luasnip.extras").rep
@@ -24,10 +25,23 @@ local function create_package()
 end
 
 return {
+    s("today", ilyasyoy_snippets.current_date()),
     s(
         "package",
         fmt("package {};", {
             create_package(),
+        })
+    ),
+    s(
+        "mockvernmi",
+        fmt("Mockito.verifyNoMoreInteractions({});", {
+            i(0, "mock"),
+        })
+    ),
+    s(
+        "mockverni",
+        fmt("Mockito.verifyNoInteractions({});", {
+            i(0, "mock"),
         })
     ),
     s(
@@ -39,11 +53,18 @@ return {
         })
     ),
     s(
-        "mockthrow",
+        "mockthr",
         fmt("Mockito.doThrow({}).when({}).{};", {
             i(0, "exception"),
             i(1, "mock"),
             i(2, "method"),
+        })
+    ),
+    s(
+        "mockvero",
+        fmt("Mockito.verify({}, Mockito.only()).{};", {
+            i(1, "mock"),
+            i(0, "method"),
         })
     ),
     s(

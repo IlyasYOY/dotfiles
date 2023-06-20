@@ -35,6 +35,7 @@
 
     <rule ref="category/java/bestpractices.xml">
         <exclude name="JUnitTestsShouldIncludeAssert" />
+        <exclude name="JUnitTestContainsTooManyAsserts" />
     </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="MethodArgumentCouldBeFinal" />

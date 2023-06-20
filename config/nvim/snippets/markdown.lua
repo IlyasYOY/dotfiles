@@ -1,3 +1,4 @@
+local ilyasyoy_snippets = require "ilyasyoy.snippets"
 local ls = require "luasnip"
 local fmt = require("luasnip.extras.fmt").fmt
 local s = ls.snippet
@@ -6,35 +7,14 @@ local i = ls.insert_node
 local c = ls.choice_node
 local f = ls.function_node
 
-local date_format = "%Y-%m-%d"
-local seconds_in_day = 60 * 60 * 24
-
-local function current_date()
-    return f(function()
-        return os.date(date_format)
-    end)
-end
-
-local function yesterday_date()
-    return f(function()
-        return os.date(date_format, os.time() - seconds_in_day)
-    end)
-end
-
-local function tomorrow_date()
-    return f(function()
-        return os.date(date_format, os.time() + seconds_in_day)
-    end)
-end
-
 return {
     s("checkbox", fmt("- {} {}", { c(1, { t "[ ]", t "[x]" }), i(0, "Todo") })),
-    s("today", fmt("{}", current_date())),
-    s("todaylink", fmt("[[{}]]", current_date())),
-    s("tomorrow", fmt("{}", tomorrow_date())),
-    s("tomorrowlink", fmt("[[{}]]", tomorrow_date())),
-    s("yesterday", fmt("{}", yesterday_date())),
-    s("yesterdaylink", fmt("[[{}]]", yesterday_date())),
+    s("today", fmt("{}", ilyasyoy_snippets.current_date())),
+    s("todaylink", fmt("[[{}]]", ilyasyoy_snippets.current_date())),
+    s("tomorrow", fmt("{}", ilyasyoy_snippets.tomorrow_date())),
+    s("tomorrowlink", fmt("[[{}]]", ilyasyoy_snippets.tomorrow_date())),
+    s("yesterday", fmt("{}", ilyasyoy_snippets.yesterday_date())),
+    s("yesterdaylink", fmt("[[{}]]", ilyasyoy_snippets.yesterday_date())),
     s(
         "callout",
         fmt("> [!{}] {}\n> {}", {
