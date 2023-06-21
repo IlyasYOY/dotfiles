@@ -40,6 +40,9 @@ return {
                 completion = {
                     autocomplete = {},
                 },
+                confirmation = {
+                    default_behavior = "replace",
+                },
                 formatting = {
                     format = lspkind.cmp_format {
                         mode = "text",
