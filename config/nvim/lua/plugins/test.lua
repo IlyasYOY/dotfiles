@@ -28,13 +28,13 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>t",
-                "<cmd>TestNearest<cr>",
+                "<cmd>TestFile<cr>",
                 { silent = true }
             )
             vim.keymap.set(
                 "n",
                 "<leader>T",
-                "<cmd>TestFile<cr>",
+                "<cmd>TestSuite<cr>",
                 { silent = true }
             )
             -- nmap <silent> <leader>t :TestNearest<CR>

@@ -82,6 +82,20 @@ return {
         })
     ),
     s(
+        "assnn",
+        fmt('Assertions.assertNotNull({}, "{}");', {
+            i(1, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
+        "assn",
+        fmt('Assertions.assertNull({}, "{}");', {
+            i(1, "actual"),
+            i(0, "message"),
+        })
+    ),
+    s(
         "assf",
         fmt('Assertions.assertFalse({}, "{}");', {
             i(1, "actual"),
