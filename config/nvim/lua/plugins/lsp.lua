@@ -161,7 +161,7 @@ return {
         "jose-elias-alvarez/null-ls.nvim",
         config = function()
             local null_ls = require "null-ls"
-            local pmd_cpd_source = require "ilyasyoy.null-ls.pmd-cpd"
+            -- local pmd_cpd_source = require "ilyasyoy.null-ls.pmd-cpd"
             local core = require "ilyasyoy.functions.core"
 
             local function with_root_file(builtin, file)
