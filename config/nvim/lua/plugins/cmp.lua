@@ -28,6 +28,7 @@ return {
             local luasnip = require "luasnip"
 
             local cmp = require "cmp"
+            local types = require "cmp.types"
             local cmp_feedkeys = require "cmp.utils.feedkeys"
             local cmp_keymap = require "cmp.utils.keymap"
 
@@ -41,7 +42,7 @@ return {
                     autocomplete = {},
                 },
                 confirmation = {
-                    default_behavior = "replace",
+                    default_behavior = types.cmp.ConfirmBehavior.Replace,
                 },
                 formatting = {
                     format = lspkind.cmp_format {
