@@ -75,6 +75,33 @@ return {
         })
     ),
     s(
+        "assjc",
+        fmt("AssertionsForClassTypes.assertThat({}).isNotNull();", {
+            i(0, "actual"),
+        })
+    ),
+    s(
+        "assji",
+        fmt("AssertionsForInterfaceTypes.assertThat({}).isNotNull();", {
+            i(0, "actual"),
+        })
+    ),
+    s(
+        "assjnthr",
+        fmt(
+            "AssertionsForClassTypes.assertThatNoException().isThrownBy(() -> {});",
+            {
+                i(0, "callable"),
+            }
+        )
+    ),
+    s(
+        "assjthr",
+        fmt("AssertionsForClassTypes.assertThatThrownBy(() -> {});", {
+            i(0, "callable"),
+        })
+    ),
+    s(
         "assa",
         fmt('Assertions.assertAll("{}", () -> {});', {
             i(1, "header"),
