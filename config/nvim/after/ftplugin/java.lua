@@ -84,6 +84,7 @@ local config = {
                 downloadSources = true,
             },
             completion = {
+                guessMethodArguments = false,
                 favouriteStaticMembers = {
                     "org.junit.jupiter.api.Assertions.*",
                     "org.junit.jupiter.api.Assumptions.*",
