@@ -44,8 +44,8 @@
         <exclude name="LongVariable" />
         <!-- False positive on "id" -->
         <exclude name="ShortVariable" />
-
-        <exclude name="CommentDefaultAccessModifier" />
+        <!-- False positive on static imports and is duplicated by LSP/IDE -->
+        <exclude name="UnnecessaryImport" />
 
         <exclude name="AtLeastOneConstructor" />
         <!-- I personally prefer guard expression golang-like style. -->

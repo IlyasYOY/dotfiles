@@ -56,7 +56,7 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gg",
-                ":Git<CR>",
+                ":vertical Git<CR>",
                 { desc = "Open fugitive UI window", silent = true }
             )
             vim.keymap.set(
