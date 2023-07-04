@@ -94,6 +94,7 @@ end
 return {
     { "onsails/lspkind.nvim" },
     { "folke/neodev.nvim" },
+    { "RRethy/vim-illuminate" },
     {
         "mfussenegger/nvim-jdtls",
         lazy = true,

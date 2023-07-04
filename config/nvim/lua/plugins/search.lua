@@ -117,6 +117,18 @@ return {
                 builtin.current_buffer_fuzzy_find()
             end, { desc = "find current buffer" })
 
+            vim.keymap.set("n", "<leader>fGb", function()
+                builtin.git_branches(themes.get_ivy())
+            end, { desc = "find git branches" })
+
+            vim.keymap.set("n", "<leader>fGc", function()
+                builtin.git_commits(themes.get_ivy())
+            end, { desc = "find git commits" })
+
+            vim.keymap.set("n", "<leader>fGf", function()
+                builtin.git_files(themes.get_ivy())
+            end, { desc = "find git files" })
+
             vim.keymap.set("n", "<leader>fc", function()
                 builtin.commands(themes.get_ivy())
             end, { desc = "find commands" })
