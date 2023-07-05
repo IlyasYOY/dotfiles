@@ -11,32 +11,56 @@ Plug 'preservim/nerdtree'
 
 " Mappings
 
+" Search 
 map <leader>fc <Action>(FindInPath)
 map <leader>ff <Action>(GotoFile)
+map <leader>fd <Action>(HelpDiagnosticTools)
+map <leader>fg <Action>(FindInPath)
+map <leader>ft <Action>(ActivateTODOToolWindow)
 
+" Git 
+map <leader>gg <Action>(CheckinProject)
+map <leader>gp <Action>(Vcs.UpdateProject)
+map <leader>gP <Action>(Vcs.Push)
+map <leader>gb <Action>(Annotate)
+
+" Debug
+map <leader>Db <Action>(ToggleLineBreakpoint)
+map <leader>DB <Action>(ToggleLineBreakpoint)
+map <F5> <Action>(Debug)
+map <F6> <Action>(EvaluateExpression)
+map <F10> <Action>(StepOver)
+map <F11> <Action>(StepInto)
+map <F12> <Action>(StepOut)
+
+" Test
+map <leader>ot <Action>(GotoTest)
+map <leader>T <Action>(RunClass)
+
+" Completion 
 imap <C-space> <Action>(CodeCompletion)
+
+" LSP
 
 map gD <Action>(GotoTypeDeclaration)
 map gd <Action>(GotoDeclaration)
 map gi <Action>(GotoImplementation)
 map gr <Action>(GotoDeclaration)
-
-map <leader>h <Action>(QuickJavaDoc)
-
 map <leader>rn <Action>(RenameElement)
-map <leader>h <Action>(QuickJavaDoc)
-imap <C-s> <Action>(ParameterInfo)
 
 map <leader>oc <Action>(ReformatCode)
 map <leader>oi <Action>(OptimizeImports)
 map <leader>oa <Action>(ReformatCode)<Action>(OptimizeImports)
 
-map <leader>a <Action>(ShowIntentionActions)
-
-map <C-s> <Action>(EditorSelectWord)
-
-map <leader>O <Action>(FileStructurePopup)
+map <leader>k <Action>(QuickJavaDoc)
+imap <C-s> <Action>(ParameterInfo)
+map <C-s> <Action>(ParameterInfo)
+map <leader>s <Action>(GotoSymbol)
 map <leader>S <Action>(GotoSymbol)
 
-map <leader>ot <Action>(GotoTest)
-map <leader>T <Action>(RunClass)
+map <leader>a <Action>(ShowIntentionActions)
+
+" Outline
+map <leader>O <Action>(FileStructurePopup)
+
+map <leader><leader>T <Action>(VimFindActionIdAction)

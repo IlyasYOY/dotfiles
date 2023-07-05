@@ -22,7 +22,7 @@ font:
     family: Hack Nerd Font
     style: Bold Italic
 
-  size: 13
+  size: 15
 
 key_bindings:
   - key: Return
