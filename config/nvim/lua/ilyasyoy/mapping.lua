@@ -16,7 +16,7 @@ vim.keymap.set(
 
 vim.keymap.set(
     "n",
-    "<leader><leader>s",
+    "<leader><leader>S",
     "<cmd>source %<CR>",
     { desc = "source current file" }
 )
