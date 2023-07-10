@@ -1,4 +1,4 @@
-"" Source your .vimrc
+" Source your .vimrc
 source ~/.vimrc
 
 " IDEA stuff
@@ -11,7 +11,9 @@ Plug 'preservim/nerdtree'
 
 " Mappings
 
-" Search 
+map <leader>e <Action>(ActivateProjectToolWindow)
+
+" Search
 map <leader>fc <Action>(FindInPath)
 map <leader>ff <Action>(GotoFile)
 map <leader>fd <Action>(HelpDiagnosticTools)
