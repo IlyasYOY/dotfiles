@@ -57,7 +57,7 @@ local config = {
                         .. "-XX:GCTimeRatio=4 "
                         .. "-XX:AdaptiveSizePolicyWeight=90 "
                         .. "-Dsun.zip.disableMemoryMapping=true "
-                        .. "-Xmx2G -Xms300m "
+                        .. "-Xmx1G -Xms500m "
                         .. "-Xlog:disable",
                 },
             },
@@ -84,7 +84,11 @@ local config = {
                 downloadSources = true,
             },
             completion = {
-                guessMethodArguments = false,
+                -- doesn't seem to work now with cmp.
+                chain = {
+                    enabled = false
+                },
+                guessMethodArguments = "off",
                 favouriteStaticMembers = {
                     "org.junit.jupiter.api.Assertions.*",
                     "org.junit.jupiter.api.Assumptions.*",
@@ -176,6 +180,20 @@ local config = {
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
+            noremap = true,
+        })
+        vim.keymap.set("n", "<leader>ot", function()
+            local plugin = require "jdtls.tests"
+            plugin.goto_subjects()
+        end, {
+            desc = "java open test",
+            noremap = true,
+        })
+        vim.keymap.set("n", "<leader>ct", function()
+            local plugin = require "jdtls.tests"
+            plugin.generate()
+        end, {
+            desc = "java create test",
             noremap = true,
         })
 
