@@ -39,17 +39,8 @@ return {
                     },
                 },
                 defaults = {
+                    path_display = { "smart" },
                     file_ignore_patterns = { "node_modules", ".git/" },
-                    -- TODO: Think of the way to make
-                    --  it work only for buffers dialog
-                    mappings = {
-                        n = {
-                            ["<c-d>"] = require("telescope.actions").delete_buffer,
-                        },
-                        i = {
-                            ["<c-d>"] = require("telescope.actions").delete_buffer,
-                        },
-                    },
                 },
                 pickers = {
                     find_files = {

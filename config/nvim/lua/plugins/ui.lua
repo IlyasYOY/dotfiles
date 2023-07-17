@@ -1,6 +1,4 @@
 return {
-    "nvim-tree/nvim-web-devicons",
-    "tjdevries/colorbuddy.nvim",
     {
         "BooleanCube/keylab.nvim",
         lazy = true,
@@ -19,7 +17,8 @@ return {
             )
         end,
     },
-    "christoomey/vim-tmux-navigator",
+    "nvim-tree/nvim-web-devicons",
+    "tjdevries/colorbuddy.nvim",
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,
@@ -63,23 +62,6 @@ return {
                     lualine_x = { "fileformat", "filetype", active_lsp_names },
                     lualine_y = { "progress" },
                     lualine_z = { "location" },
-                },
-            }
-        end,
-    },
-    {
-        "akinsho/bufferline.nvim",
-        version = "v3.*",
-        dependencies = "nvim-tree/nvim-web-devicons",
-        config = function()
-            require("bufferline").setup {
-                options = {
-                    offsets = {
-                        {
-                            filetype = "NvimTree",
-                            text = "File Explorer",
-                        },
-                    },
                 },
             }
         end,

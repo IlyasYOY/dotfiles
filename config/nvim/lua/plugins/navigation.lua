@@ -1,4 +1,5 @@
 return {
+    "christoomey/vim-tmux-navigator",
     {
         "ThePrimeagen/harpoon",
         dependencies = {

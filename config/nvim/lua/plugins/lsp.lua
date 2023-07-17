@@ -158,22 +158,6 @@ return {
         end,
     },
     {
-        "simrat39/symbols-outline.nvim",
-        lazy = true,
-        keys = {
-            "<leader>O",
-        },
-        config = function()
-            local outline = require "symbols-outline"
-
-            outline.setup()
-
-            vim.keymap.set("n", "<leader>O", function()
-                outline.toggle_outline()
-            end, { desc = "Opens Outline", silent = true })
-        end,
-    },
-    {
         "jose-elias-alvarez/null-ls.nvim",
         config = function()
             local null_ls = require "null-ls"
