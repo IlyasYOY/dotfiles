@@ -39,12 +39,12 @@ return {
                 },
             }
 
-            vim.keymap.set("n", "<leader>ee", "<cmd>Neotree float<CR>")
+            vim.keymap.set("n", "<leader>ee", "<cmd>Neotree float toggle<CR>")
             vim.keymap.set("n", "<leader>ef", "<cmd>Neotree float source=filesystem<CR>")
             vim.keymap.set("n", "<leader>eb", "<cmd>Neotree float source=buffers<CR>")
             vim.keymap.set("n", "<leader>es", "<cmd>Neotree float source=document_symbols<CR>")
             vim.keymap.set("n", "<leader>eg", "<cmd>Neotree float source=git_status<CR>")
-            vim.keymap.set("n", "<leader>E", "<cmd>Neotree toggle<CR>")
+            vim.keymap.set("n", "<leader>E", "<cmd>Neotree left toggle<CR>")
 
             local group =
                 vim.api.nvim_create_augroup("neotree-netrw", { clear = true })
