@@ -11,7 +11,11 @@ Plug 'preservim/nerdtree'
 
 " Mappings
 
-map <leader>e <Action>(ActivateProjectToolWindow)
+map <leader>ee <Action>(ActivateProjectToolWindow)
+map <leader>ef <Action>(ActivateProjectToolWindow)
+map <leader>eg <Action>(CheckinProject)
+map <leader>es <Action>(FileStructurePopup)
+map <leader>E <Action>(ActivateProjectToolWindow)
 
 " Search
 map <leader>fc <Action>(FindInPath)
@@ -61,8 +65,5 @@ map <leader>s <Action>(GotoSymbol)
 map <leader>S <Action>(GotoSymbol)
 
 map <leader>a <Action>(ShowIntentionActions)
-
-" Outline
-map <leader>O <Action>(FileStructurePopup)
 
 map <leader><leader>T <Action>(VimFindActionIdAction)
