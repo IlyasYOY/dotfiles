@@ -19,6 +19,19 @@ return {
         end,
     },
     {
+        "aaronhallaert/advanced-git-search.nvim",
+        config = function()
+            require("telescope").load_extension "advanced_git_search"
+            vim.keymap.set("n", "<leader>fG", "<cmd>AdvancedGitSearch<cr>")
+        end,
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "tpope/vim-fugitive",
+            "tpope/vim-rhubarb",
+            "sindrets/diffview.nvim",
+        },
+    },
+    {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
         dependencies = { "nvim-lua/plenary.nvim" },
@@ -28,6 +41,7 @@ return {
             local themes = require "telescope.themes"
             telescope.setup {
                 extensions = {
+                    advanced_git_search = {},
                     fzf = {
                         fuzzy = true,
                         override_generic_sorter = true,
@@ -123,13 +137,6 @@ return {
             vim.keymap.set("n", "<leader>fc", function()
                 builtin.commands(themes.get_ivy())
             end, { desc = "find commands" })
-
-            vim.keymap.set(
-                "n",
-                "<leader>ft",
-                ":TodoTelescope<CR>",
-                { desc = "find todos in project" }
-            )
         end,
     },
 }
