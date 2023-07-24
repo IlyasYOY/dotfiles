@@ -28,6 +28,12 @@ key_bindings:
   - key: Return
     mods: Control|Shift
     action: SpawnNewInstance
+  - key: Equals
+    mods: Control
+    action: IncreaseFontSize
+  - key: Minus
+    mods: Control
+    action: DecreaseFontSize
 
 # Fixes nvim colors in tmux
 env:
