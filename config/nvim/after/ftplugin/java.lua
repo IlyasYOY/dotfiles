@@ -86,7 +86,7 @@ local config = {
             completion = {
                 -- doesn't seem to work now with cmp.
                 chain = {
-                    enabled = false
+                    enabled = false,
                 },
                 guessMethodArguments = "off",
                 favouriteStaticMembers = {

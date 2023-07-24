@@ -7,19 +7,19 @@ window.opacity: 1.0
 # $ fc-list : family style
 font:
   normal:
-    family: Hack Nerd Font
+    family: Iosevka Nerd Font
     style: Regular
 
   bold:
-    family: Hack Nerd Font
+    family: Iosevka Nerd Font
     style: Bold
 
   italic:
-    family: Hack Nerd Font
+    family: Iosevka Nerd Font
     style: Italic
 
   bold_italic:
-    family: Hack Nerd Font
+    family: Iosevka Nerd Font
     style: Bold Italic
 
   size: 18
