@@ -7,19 +7,19 @@ window.opacity: 1.0
 # $ fc-list : family style
 font:
   normal:
-    family: Iosevka Nerd Font
+    family: Iosevka Term Nerd Font
     style: Regular
 
   bold:
-    family: Iosevka Nerd Font
+    family: Iosevka Term Nerd Font
     style: Bold
 
   italic:
-    family: Iosevka Nerd Font
+    family: Iosevka Term Nerd Font
     style: Italic
 
   bold_italic:
-    family: Iosevka Nerd Font
+    family: Iosevka Term Nerd Font
     style: Bold Italic
 
   size: 18
