@@ -41,7 +41,7 @@ map <F12> <Action>(StepOut)
 
 " Test
 map <leader>ot <Action>(GotoTest)
-map <leader>T <Action>(RunClass)
+map <leader>t <Action>(RunClass)
 
 " Completion 
 imap <C-space> <Action>(CodeCompletion)

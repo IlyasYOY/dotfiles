@@ -37,6 +37,13 @@ local config = {
         "jdtls",
         "-data",
         workspace_dir,
+        "--jvm-arg=-XX:+UseParallelGC",
+        "--jvm-arg=-XX:GCTimeRatio=4",
+        "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90",
+        "--jvm-arg=-Dsun.zip.disableMemoryMapping=true",
+        "--jvm-arg=-Xmx1G",
+        "--jvm-arg=-Xms500m",
+        "--jvm-arg=-Xlog:disable",
         "--jvm-arg=-javaagent:"
             .. get_install_path_for "jdtls"
             .. "/lombok.jar",
@@ -49,16 +56,6 @@ local config = {
             redhat = {
                 telemetry = {
                     enabled = false,
-                },
-            },
-            jdts = {
-                ls = {
-                    vmargs = "-XX:+UseParallelGC "
-                        .. "-XX:GCTimeRatio=4 "
-                        .. "-XX:AdaptiveSizePolicyWeight=90 "
-                        .. "-Dsun.zip.disableMemoryMapping=true "
-                        .. "-Xmx1G -Xms500m "
-                        .. "-Xlog:disable",
                 },
             },
             maven = {
