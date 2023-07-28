@@ -93,12 +93,17 @@ end
 
 return {
     { "onsails/lspkind.nvim" },
-    { "folke/neodev.nvim" },
+    {
+        "j-hui/fidget.nvim",
+        tag = "legacy",
+        event = "LspAttach",
+        opts = {},
+    },
     {
         "RRethy/vim-illuminate",
         config = function()
             require("illuminate").configure {
-                modes_allowlist = {"n"}
+                modes_allowlist = { "n" },
             }
             vim.cmd [[
                 augroup illuminate_augroup

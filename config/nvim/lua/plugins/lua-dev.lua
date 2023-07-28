@@ -1,4 +1,5 @@
 return {
+    { "folke/neodev.nvim" },
     {
         "rafcamlet/nvim-luapad",
         config = function()

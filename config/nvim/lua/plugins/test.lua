@@ -1,22 +1,4 @@
 return {
-    -- TODO: MAKE IT WORK!!!
-    -- {
-    --     "nvim-neotest/neotest",
-    --     dependencies = {
-    --         "nvim-neotest/neotest-vim-test",
-    --         "nvim-neotest/neotest-plenary",
-    --     },
-    --     config = function()
-    --         require("neotest").setup {
-    --             adapters = {
-    --                 require "neotest-plenary",
-    --                 require "neotest-vim-test" {
-    --                     ignore_file_types = { "lua" },
-    --                 },
-    --             },
-    --         }
-    --     end,
-    -- },
     {
         "vim-test/vim-test",
         lazy = true,

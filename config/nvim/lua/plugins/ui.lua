@@ -3,7 +3,7 @@ return {
         "BooleanCube/keylab.nvim",
         lazy = true,
         keys = {
-            "<leader><leader>K"
+            "<leader><leader>K",
         },
         config = function()
             local keylab = require "keylab"
