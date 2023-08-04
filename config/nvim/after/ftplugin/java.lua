@@ -54,13 +54,16 @@ local config = {
     settings = {
         java = {
             redhat = {
-                telemetry = {
-                    enabled = false,
+                telemetry = { enabled = false },
+            },
+            extendedClientCapabilities = jdtls.extendedClientCapabilities,
+            sources = {
+                organizeImports = {
+                    starThreshold = 9999,
+                    staticStarThreshold = 9999,
                 },
             },
-            maven = {
-                downloadSources = true,
-            },
+            maven = { downloadSources = true },
             format = {
                 settings = {
                     url = core.resolve_realative_to_dotfiles_dir "config/eclipse-java-google-style.xml",
@@ -77,14 +80,10 @@ local config = {
                     },
                 },
             },
-            eclipse = {
-                downloadSources = true,
-            },
+            eclipse = { downloadSources = true },
             completion = {
                 -- doesn't seem to work now with cmp.
-                chain = {
-                    enabled = false,
-                },
+                chain = { enabled = false },
                 guessMethodArguments = "off",
                 favouriteStaticMembers = {
                     "org.junit.jupiter.api.Assertions.*",
