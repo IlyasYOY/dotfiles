@@ -115,11 +115,7 @@ return {
             ]]
         end,
     },
-    {
-        "mfussenegger/nvim-jdtls",
-        lazy = true,
-        ft = { "java" },
-    },
+    { "mfussenegger/nvim-jdtls" },
     {
         "neovim/nvim-lspconfig",
         dependencies = {
