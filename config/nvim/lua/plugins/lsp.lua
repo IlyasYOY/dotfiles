@@ -140,7 +140,7 @@ return {
             local bufopts = { noremap = true, silent = true }
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
-                vim.lsp.buf.format { async = true }
+                vim.lsp.buf.format { async = false }
             end, described(bufopts, "organize code"))
 
             vim.keymap.set(
