@@ -167,4 +167,11 @@ return {
             i(0, "message"),
         })
     ),
+    s(
+        "svrc",
+        fmt('StepVerifier.create({}){}.verifyComplete();', {
+            i(1, "actual"),
+            i(0, ""),
+        })
+    ),
 }
