@@ -65,6 +65,8 @@ nnoremap <F3> :w<CR>
 " This allows me to save from inssert mode 
 inoremap <F3> <C-\><C-o>:w<CR>
 
+set wrap
+
 " map <leader>s :Sex!<CR>
 
 " Switch buffers using keys
