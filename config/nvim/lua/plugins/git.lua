@@ -56,7 +56,7 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gg",
-                ":vertical Git<CR>",
+                ":Gedit :<CR>",
                 { desc = "Open fugitive UI window", silent = true }
             )
             vim.keymap.set(
@@ -92,13 +92,13 @@ return {
                     },
                     delete = {
                         hl = "GitSignsDelete",
-                        text = "-",
+                        text = "x",
                         numhl = "GitSignsDeleteNr",
                         linehl = "GitSignsDeleteLn",
                     },
                     topdelete = {
                         hl = "GitSignsDelete",
-                        text = "‾",
+                        text = "x",
                         numhl = "GitSignsDeleteNr",
                         linehl = "GitSignsDeleteLn",
                     },
