@@ -216,7 +216,7 @@ return {
                             "--no-cache",
                             "--no-progress",
                             "--dir",
-                            "$ROOT",
+                            "$FILENAME",
                         },
                         extra_args = {
                             "-R",
