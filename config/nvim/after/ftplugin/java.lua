@@ -178,7 +178,7 @@ local config = {
             desc = "java extract selected to method",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader>ot", function()
+        vim.keymap.set("n", "<leader>oT", function()
             local plugin = require "jdtls.tests"
             plugin.goto_subjects()
         end, {
