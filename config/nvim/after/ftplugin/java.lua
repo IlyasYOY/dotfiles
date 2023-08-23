@@ -41,8 +41,8 @@ local config = {
         "--jvm-arg=-XX:GCTimeRatio=4",
         "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90",
         "--jvm-arg=-Dsun.zip.disableMemoryMapping=true",
-        "--jvm-arg=-Xmx1G",
-        "--jvm-arg=-Xms500m",
+        "--jvm-arg=-Xmx1500m",
+        "--jvm-arg=-Xms700m",
         "--jvm-arg=-Xlog:disable",
         "--jvm-arg=-javaagent:"
             .. get_install_path_for "jdtls"

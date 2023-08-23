@@ -21,7 +21,6 @@ return {
             require("mason-lspconfig").setup {
                 ensure_installed = {
                     "gopls",
-                    "gradle_ls",
                     "jdtls",
                     "lua_ls",
                     "pyright",

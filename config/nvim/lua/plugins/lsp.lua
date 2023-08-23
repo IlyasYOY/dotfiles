@@ -34,7 +34,6 @@ local function setup_generic()
 
     local generic_servers = {
         "gopls",
-        "gradle_ls",
         "pyright",
         "rust_analyzer",
         "bashls",
