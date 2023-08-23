@@ -1,5 +1,29 @@
 return {
     {
+        "stevearc/oil.nvim",
+        config = function()
+            require("oil").setup {
+                keymaps = {
+                    ["g?"] = "actions.show_help",
+                    ["<CR>"] = "actions.select",
+                    ["<C-v>"] = "actions.select_vsplit",
+                    ["<C-s>"] = "actions.select_split",
+                    ["<C-t>"] = "actions.select_tab",
+                    ["<C-p>"] = "actions.preview",
+                    ["<C-c>"] = "actions.close",
+                    ["<C-l>"] = "actions.refresh",
+                    ["-"] = "actions.parent",
+                    ["_"] = "actions.open_cwd",
+                    ["`"] = "actions.cd",
+                    ["~"] = "actions.tcd",
+                    ["g."] = "actions.toggle_hidden",
+                },
+                use_default_keymaps = false,
+            }
+            vim.keymap.set("n", "<leader>e", "<cmd>Oil<CR>")
+        end,
+    },
+    {
         "BooleanCube/keylab.nvim",
         lazy = true,
         keys = {
@@ -57,9 +81,9 @@ return {
                 },
                 sections = {
                     lualine_a = { "mode" },
-                    lualine_b = { "branch", "diagnostics" },
+                    lualine_b = { "branch" },
                     lualine_c = { "filename", get_cwd },
-                    lualine_x = { "fileformat", "filetype", active_lsp_names },
+                    lualine_x = { "fileformat", "filetype" },
                     lualine_y = { "progress" },
                     lualine_z = { "location" },
                 },
