@@ -91,7 +91,6 @@ local function setup_lua()
 end
 
 return {
-    { "onsails/lspkind.nvim" },
     {
         "j-hui/fidget.nvim",
         tag = "legacy",
@@ -222,13 +221,6 @@ return {
                             core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
                         },
                     },
-                    -- TODO: check this from time to time.
-                    -- for now it's almost unusable.
-                    -- pmd_cpd_source.with {
-                    --     extra_args = {
-                    --         "--minimum-tokens=60",
-                    --     },
-                    -- },
                 },
             }
         end,
