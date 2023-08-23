@@ -20,7 +20,7 @@ return {
                 },
                 use_default_keymaps = false,
             }
-            vim.keymap.set("n", "<leader>e", "<cmd>Oil<CR>")
+            vim.keymap.set("n", "-", "<cmd>Oil<CR>")
         end,
     },
     {
