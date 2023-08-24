@@ -17,3 +17,4 @@ Session.vim
 .DB_Store
 .DS_Store
 
+config/nvim/lua/ilyasyoy/hidden.lua
