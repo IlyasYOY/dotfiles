@@ -137,6 +137,7 @@ installers: List[Installer] = [
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
     AddLineInstaller('alias cdfzf=\'cd "$(find . -type d | fzf )"\'', ZSHRC_PATH),
+    AddLineInstaller('alias cdfzf=\'cd "$(find . -name .git -type d -prune | fzf)/.."\'', ZSHRC_PATH),
 
     AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
 
