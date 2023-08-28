@@ -5,6 +5,8 @@ set nocompatible
 let mapleader = " "
 let mapleaderlocal = " "
 
+autocmd VimEnter * :clearjumps
+
 " Allow me to use custom vimrc from the current folder
 set exrc 
 
