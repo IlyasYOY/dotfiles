@@ -83,22 +83,9 @@ return {
         },
         config = function()
             local lualine = require "lualine"
-            local core = require "coredor"
-
-            ---TODO: Consider adding cache here?
-            local function active_lsp_names()
-                local result = {}
-                local clients = vim.lsp.get_active_clients()
-                for _, client in ipairs(clients) do
-                    if client.initialized then
-                        table.insert(result, client.name)
-                    end
-                end
-                return core.string_merge(result, ", ")
-            end
 
             local function get_cwd()
-                return vim.fn.pathshorten(vim.fn.getcwd())
+                return vim.fn.getcwd()
             end
 
             lualine.setup {
@@ -108,7 +95,7 @@ return {
                 sections = {
                     lualine_a = { "mode" },
                     lualine_b = { "branch" },
-                    lualine_c = { "filename", get_cwd },
+                    lualine_c = { get_cwd, "filename" },
                     lualine_x = { "fileformat", "filetype" },
                     lualine_y = { "progress" },
                     lualine_z = { "location" },
