@@ -2,6 +2,8 @@ syntax on
 filetype plugin on
 set nocompatible
 
+set list listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<
+
 let mapleader = " "
 let mapleaderlocal = " "
 
@@ -68,8 +70,6 @@ nnoremap <F3> :w<CR>
 inoremap <F3> <C-\><C-o>:w<CR>
 
 set wrap
-
-" map <leader>s :Sex!<CR>
 
 " Switch buffers using keys
 nnoremap <silent> [b :bprevious<cr>
