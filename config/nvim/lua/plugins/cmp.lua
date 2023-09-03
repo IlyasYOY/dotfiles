@@ -67,7 +67,7 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert {
-                    ["<C-Space>"] = cmp.mapping.complete(),
+                    ["<C-f>"] = cmp.mapping.complete(),
                     -- https://github.com/hrsh7th/nvim-cmp/issues/1326#issuecomment-1497250292
                     ["<CR>"] = function(fallback)
                         if vim.fn.pumvisible() == 1 then
@@ -109,8 +109,8 @@ return {
                         end
                     end, { "i", "s" }),
 
-                    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+                    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-d>"] = cmp.mapping.scroll_docs(4),
                 },
                 sources = {
                     { name = "nvim_lsp" },
