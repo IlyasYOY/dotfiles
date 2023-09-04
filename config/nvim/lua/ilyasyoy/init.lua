@@ -9,5 +9,3 @@ vim.cmd "highlight WinSeparator guibg=None"
 
 vim.opt.spelllang = "ru_ru,en_us"
 vim.opt.spellfile = vim.fn.expand "~/.config/nvim/spell/custom.utf-8.add"
-
-vim.opt.list = true
