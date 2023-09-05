@@ -58,11 +58,15 @@ return {
                 pickers = {
                     find_files = {
                         hidden = true,
+                        opts = {
+                            "--smart-case",
+                        },
                     },
                     live_grep = {
                         additional_args = function(opts)
                             return {
                                 "--hidden",
+                                "--smart-case",
                             }
                         end,
                     },
