@@ -18,6 +18,7 @@ return {
             }
 
             vim.keymap.set("n", "<leader>nn", "<cmd>ObsNvimFollowLink<cr>")
+            vim.keymap.set("n", "<leader>nr", "<cmd>ObsNvimRandomNote<cr>")
             vim.keymap.set("n", "<leader>nN", "<cmd>ObsNvimNewNote<cr>")
             vim.keymap.set("n", "<leader>nd", "<cmd>ObsNvimDailyNote<cr>")
             vim.keymap.set("n", "<leader>nrn", "<cmd>ObsNvimRename<cr>")
