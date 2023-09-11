@@ -7,28 +7,26 @@ vim.g.netrw_bufsettings = "nu nobl"
 vim.opt.laststatus = 3
 vim.cmd "highlight WinSeparator guibg=None"
 
-if vim.fn.has "mac" == 1 then
-    vim.keymap.set(
-        "n",
-        "gx",
-        '<cmd>call jobstart(["open", expand("<cfile>")], {"detach": v:true})<cr>',
-        { silent = true }
-    )
-elseif vim.fn.has "unix" == 1 then
-    vim.keymap.set(
-        "n",
-        "gx",
-        '<cmd>call jobstart(["xdg-open", expand("<cfile>")], {"detach": v:true})<cr>',
-        { silent = true }
-    )
-else
-    vim.keymap.set(
-        "n",
-        "gx",
-        '<cmd>lua print("Error: gx is not supported on this OS!")<cr>',
-        { silent = true }
-    )
-end
-
 vim.opt.spelllang = "ru_ru,en_us"
 vim.opt.spellfile = vim.fn.expand "~/.config/nvim/spell/custom.utf-8.add"
+
+local function replace_browse()
+    local command
+
+    if vim.fn.has "mac" == 1 then
+        command = 'call jobstart(["open", "<args>"], {"detach": v:true})'
+    elseif vim.fn.has "unix" == 1 then
+        command = 'call jobstart(["xdg-open", "<args>"], {"detach": v:true})'
+    else
+        command = 'lua print("Error: gx is not supported on this OS!")'
+    end
+
+    vim.api.nvim_create_user_command("Browse", command, { nargs = 1 })
+
+    vim.keymap.set("n", "gx", function()
+        local link = vim.fn.expand "<cfile>"
+        vim.cmd.Browse(link)
+    end)
+end
+
+replace_browse()
