@@ -187,6 +187,10 @@ return {
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
 
+                    null_ls.builtins.diagnostics.pylint,
+                    null_ls.builtins.formatting.isort,
+                    null_ls.builtins.formatting.autopep8,
+
                     with_root_file(
                         null_ls.builtins.formatting.prettier,
                         ".prettierrc.js"

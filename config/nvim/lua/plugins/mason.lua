@@ -28,7 +28,7 @@ return {
                     "tsserver",
                     "bashls",
                 },
-                automatic_installation = true,
+                automatic_installation = false,
             }
         end,
     },
@@ -44,8 +44,9 @@ return {
                     "prettier",
                     "stylelint",
                     "eslint_d",
+                    "checkstyle",
                 },
-                automatic_installation = true,
+                automatic_installation = false,
             }
         end,
     },
@@ -58,7 +59,7 @@ return {
                     "javadbg",
                     "javatest",
                 },
-                automatic_installation = true,
+                automatic_installation = false,
             }
         end,
     },
