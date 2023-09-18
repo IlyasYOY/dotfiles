@@ -25,7 +25,7 @@ vim.keymap.set(
 vim.keymap.set(
     "n",
     "<leader>ld",
-    vim.diagnostic.setloclist,
+    vim.diagnostic.setqflist,
     described(opts, "Put diagnostics to quickfix list")
 )
 

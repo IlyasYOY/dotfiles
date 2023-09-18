@@ -85,7 +85,7 @@ return {
                 builtin.live_grep()
             end, { desc = "find grep through files" })
 
-            vim.keymap.set("n", "<leader>fT", function()
+            vim.keymap.set("n", "<leader>fa", function()
                 builtin.builtin(themes.get_ivy())
             end, { desc = "find in commands" })
 
