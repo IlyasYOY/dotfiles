@@ -24,6 +24,7 @@ return {
                     "gopls",
                     "jdtls",
                     "lua_ls",
+                    "clojure_lsp",
                     "pyright",
                     "rust_analyzer",
                     "tsserver",

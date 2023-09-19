@@ -35,6 +35,7 @@ local function setup_generic()
     local generic_servers = {
         "gopls",
         "pyright",
+        "clojure_lsp",
         "rust_analyzer",
         "bashls",
     }

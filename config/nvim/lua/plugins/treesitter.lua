@@ -52,6 +52,8 @@ return {
                     "python",
                     "sql",
                     "bash",
+                    "clojure",
+                    "fennel",
 
                     "markdown",
                     "markdown_inline",
