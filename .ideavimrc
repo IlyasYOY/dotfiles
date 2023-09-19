@@ -28,7 +28,8 @@ map <leader>fb <Action>(RecentFiles)
 map <leader>fd <Action>(HelpDiagnosticTools)
 map <leader>ft <Action>(ActivateTODOToolWindow)
 
-" Git 
+" Git
+
 map <leader>gg <Action>(CheckinProject)
 map <leader>gp <Action>(Vcs.UpdateProject)
 map <leader>gP <Action>(Vcs.Push)
@@ -43,7 +44,10 @@ map <F10> <Action>(StepOver)
 map <F11> <Action>(StepInto)
 map <F12> <Action>(StepOut)
 
+xmap gc <Action>(CommentByLineComment)
+
 " Test
+
 map <leader>ot <Action>(GotoTest)
 map <leader>ct <Action>(GenerateTestMethod)
 map <leader>C <Action>(Generate)
