@@ -1,15 +1,12 @@
 import abc
 import logging
-import logging
-from pathlib import Path
 import shutil
 import subprocess
+from pathlib import Path
 from typing import List, Optional
-
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__file__)
-
 
 class Installer(abc.ABC):
     @abc.abstractmethod
@@ -43,7 +40,8 @@ class AddLineInstaller(Installer):
             self._file.write_text(file_content)
             return True
         else:
-            logger.warn(f'File {self._file} already contains this line "{self._line}"')
+            logger.warn(
+                f'File {self._file} already contains this line "{self._line}"')
             return False
 
     def get_description(self) -> str:
@@ -89,9 +87,12 @@ class GitAliasesInstaller(Installer):
         # git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
         lg_alias_result = subprocess.call(
             'git config --global alias.lg "log --color --graph --pretty=format:\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit" ', shell=True)
-        c_result = subprocess.call('git config --global alias.c "commit" ', shell=True)
-        co_result = subprocess.call('git config --global alias.co "checkout" ', shell=True)
+        c_result = subprocess.call(
+            'git config --global alias.c "commit" ', shell=True)
+        co_result = subprocess.call(
+            'git config --global alias.co "checkout" ', shell=True)
         return status_alias_result == 0 and lg_alias_result == 0 and c_result == 0 and co_result == 0
+
 
 def backup_file(file: Path) -> Optional[Path]:
     if not file.exists():
@@ -112,12 +113,13 @@ def backup_file(file: Path) -> Optional[Path]:
         backup_file.write_bytes(file.read_bytes())
         return backup_file
 
+
 HOME = Path.home()
 CWD = Path.cwd()
 
 ZSHRC_PATH = Path.home() / '.zshrc'
 
-# TODO: Create program installers. 
+# TODO: Create program installers.
 # I want to be able to run these to install all applications.
 installers: List[Installer] = [
     GitAliasesInstaller(),
@@ -136,13 +138,18 @@ installers: List[Installer] = [
 
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
-    AddLineInstaller('alias cdfzf=\'cd "$(find . -type d | fzf )"\'', ZSHRC_PATH),
-    AddLineInstaller('alias cdfzf=\'cd "$(find . -name .git -type d -prune | fzf)/.."\'', ZSHRC_PATH),
+    AddLineInstaller(
+        'alias cdfzf=\'cd "$(find . -type d | fzf )"\'', ZSHRC_PATH),
+    AddLineInstaller(
+        'alias cdfzf=\'cd "$(find . -name .git -type d -prune | fzf)/.."\'', ZSHRC_PATH),
 
-    AddLineInstaller('alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
+    AddLineInstaller(
+        'alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
 
     AddLineInstaller(f'export ILYASYOY_DOTFILES_DIR="{CWD}"', ZSHRC_PATH),
-    AddLineInstaller('export PATH="${ILYASYOY_DOTFILES_DIR}/bin:$PATH"', ZSHRC_PATH),
-    AddLineInstaller('alias ilyasyoy-dotfiles="cd ${ILYASYOY_DOTFILES_DIR}"', ZSHRC_PATH),
-    AddLineInstaller(f'alias ilyasyoy-notes="cd ~/vimwiki"', ZSHRC_PATH),
+    AddLineInstaller(
+        'export PATH="${ILYASYOY_DOTFILES_DIR}/bin:$PATH"', ZSHRC_PATH),
+    AddLineInstaller(
+        'alias ilyasyoy-dotfiles="cd ${ILYASYOY_DOTFILES_DIR}"', ZSHRC_PATH),
+    AddLineInstaller('alias ilyasyoy-notes="cd ~/vimwiki"', ZSHRC_PATH),
 ]

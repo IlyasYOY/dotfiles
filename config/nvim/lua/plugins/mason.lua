@@ -5,6 +5,7 @@ return {
             local mason = require "mason"
 
             mason.setup {
+                PATH = "append",
                 ui = {
                     icons = {
                         package_installed = "✓",
@@ -41,6 +42,9 @@ return {
                     "luacheck",
                     "jsonlint",
                     "yamllint",
+                    "pylint",
+                    "autopep8",
+                    "isort",
                     "prettier",
                     "stylelint",
                     "eslint_d",
