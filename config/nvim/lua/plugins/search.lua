@@ -23,7 +23,10 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+        },
         config = function()
             local telescope = require "telescope"
             local builtin = require "telescope.builtin"
@@ -72,6 +75,7 @@ return {
                     },
                 },
             }
+            require("telescope").load_extension "fzf"
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
