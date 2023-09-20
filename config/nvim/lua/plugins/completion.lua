@@ -51,6 +51,7 @@ return {
                         ellipsis_char = "...",
                         menu = {
                             nvim_lsp = "[lsp]",
+                            ["vim-dadbod-completion"] = "[db]",
                             nvim_lsp_signature_help = "[signature]",
                             luasnip = "[snippet]",
                             buffer = "[buffer]",
