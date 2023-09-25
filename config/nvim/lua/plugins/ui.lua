@@ -32,12 +32,13 @@ return {
         end,
     },
     {
-        "NStefan002/speedtyper.nvim", 
+        "NStefan002/speedtyper.nvim",
         lazy = true,
-        cmd = { "Speedtyper" }
+        cmd = "Speedtyper",
+        opts = {},
     },
-    "nvim-tree/nvim-web-devicons",
-    "tjdevries/colorbuddy.nvim",
+    { "nvim-tree/nvim-web-devicons" },
+    { "tjdevries/colorbuddy.nvim" },
     {
         "ellisonleao/gruvbox.nvim",
         config = function()
@@ -72,7 +73,7 @@ return {
             local core = require "coredor"
             local lualine = require "lualine"
 
-            local is_jdtls_buffer = function()
+            local function is_jdtls_buffer()
                 local buf_path = vim.fn.expand "%"
                 return core.string_has_prefix(buf_path, "jdt", true)
             end
