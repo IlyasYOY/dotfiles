@@ -38,20 +38,24 @@ return {
         opts = {},
     },
     { "nvim-tree/nvim-web-devicons" },
-    { "tjdevries/colorbuddy.nvim" },
+    { "ellisonleao/gruvbox.nvim" },
     {
-        "ellisonleao/gruvbox.nvim",
+        "tjdevries/colorbuddy.nvim",
         config = function()
-            vim.api.nvim_set_option("background", "dark")
             vim.cmd "colorscheme gruvbox"
+            local Color, colors, Group, groups, styles =
+                require("colorbuddy").setup()
+
+            Color.new("red", "#cc3333")
+            Color.new("green", "#33cc33")
+
+            Group.new("@text.todo.unchecked", colors.red, nil, styles.bold)
+            Group.new("@text.todo.checked", colors.green, nil, styles.bold)
         end,
     },
     {
         "f-person/auto-dark-mode.nvim",
         cond = false,
-        dependencies = {
-            "ellisonleao/gruvbox.nvim",
-        },
         config = {
             update_interval = 1000,
             set_dark_mode = function()
