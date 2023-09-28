@@ -25,6 +25,31 @@ return {
                 ":Git pull<CR>",
                 { desc = "Pushes changes to remote" }
             )
+            vim.keymap.set(
+                "n",
+                "<leader>gy",
+                ":.GBrowse!<cr>",
+                { desc = "Copy link to current line" }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>gY",
+                ":.GBrowse<CR>",
+                { desc = "Open link to current line" }
+            )
+
+            vim.keymap.set(
+                "x",
+                "<leader>gy",
+                ":'<'>GBrowse!<cr>",
+                { desc = "Copy link to current line" }
+            )
+            vim.keymap.set(
+                "x",
+                "<leader>gY",
+                ":'<'>GBrowse<CR>",
+                { desc = "Open link to current line" }
+            )
         end,
     },
     {
