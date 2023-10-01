@@ -1,17 +1,15 @@
 # dotfiles
 
-Это простой репозиторий, где я храню свои *dot* файлы.
+Simple repo with my dotfiles.
 
-## Настройка
+## Settings
 
-Чтобы установить не все (что мне было не лень описывать) настройки, надо сделать:
+Please run this command:
 
 ```bash
 python3 -m scripts
 ```
 
-Для работы с *telescope* требуется *ripgrep*.
-
 ## DISCLAIMER
 
-Код может меняться, я постоянно колбашу настройки.  
+Code is constantly changing.  
