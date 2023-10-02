@@ -10,17 +10,15 @@ return {
         dependencies = {
             {
                 "tpope/vim-dadbod",
-                depndencies = {
-                    {
-                        "kristijanhusak/vim-dadbod-completion",
-                        config = function()
-                            vim.cmd [[
+            },
+            {
+                "kristijanhusak/vim-dadbod-completion",
+                config = function()
+                    vim.cmd [[
                             autocmd FileType sql setlocal omnifunc=vim_dadbod_completion#omni
                             autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'vim-dadbod-completion' }} })
                             ]]
-                        end,
-                    },
-                },
+                end,
             },
         },
     },
