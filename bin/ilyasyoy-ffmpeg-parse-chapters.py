@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from optparse import OptionParser, Values
 import re
 import subprocess
 import tkinter as tk
+from optparse import OptionParser, Values
 from tkinter import filedialog as fd
 from typing import List, NamedTuple
 
@@ -64,7 +64,14 @@ def run_ui():
 def find_chapters_in_file(filename: str) -> List[ChapterInfo]:
     output = _execute_ffmpeg(filename)
     matches = re.findall(
-        r'.*Chapter #(\d+:\d+): start (\d+\.\d+), end (\d+\.\d+)\s*\n\s*Metadata:\n\s*title\s*:\s*(.*)\n', output)
+        r'.*Chapter '
+        r'#(\d+:\d+)'
+        r': start '
+        r'(\d+\.\d+)'
+        r', end '
+        r'(\d+\.\d+)\s*\n\s*'
+        r'Metadata:'
+        r'\n\s*title\s*:\s*(.*)\n', output)
     return _convert_ffmpeg_response(matches)
 
 
@@ -79,7 +86,8 @@ def _display_result(chapters_text):
 
 def _parse_command_line_options() -> Values:
     parser = OptionParser(
-        usage="usage: ffmpeg-chapters-parser [options] filename", version="ffmpeg-chapters-parser 1.0")
+        usage="usage: ffmpeg-chapters-parser [options] filename",
+        version="ffmpeg-chapters-parser 1.0")
 
     parser.add_option('-f', '--file', dest='infile',
                       help='Input File', metavar='FILE')
@@ -108,8 +116,9 @@ def _execute_ffmpeg(filename: str) -> str:
         command = ['ffmpeg', '-i', filename]
         return subprocess.check_output(
             command, stderr=subprocess.STDOUT, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        return e.output
+    except subprocess.CalledProcessError as error:
+        return error.output
+
 
 if __name__ == '__main__':
     main()

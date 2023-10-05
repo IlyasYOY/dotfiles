@@ -8,6 +8,7 @@ from typing import List, Optional
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__file__)
 
+
 class Installer(abc.ABC):
     @abc.abstractmethod
     def get_description(self) -> str:
@@ -39,10 +40,9 @@ class AddLineInstaller(Installer):
             backup_file(self._file)
             self._file.write_text(file_content)
             return True
-        else:
-            logger.warn(
-                f'File {self._file} already contains this line "{self._line}"')
-            return False
+        logger.warning(
+            f'File {self._file} already contains this line "{self._line}"')
+        return False
 
     def get_description(self) -> str:
         return f'Adding line {self._line} to {self._file}'
@@ -60,7 +60,7 @@ class LinkingInstaller(Installer):
         if self._target_path.exists():
             if self._target_path.is_symlink():
                 if self._target_path.readlink() == self._source_path:
-                    logger.warn(
+                    logger.warning(
                         f'Symlink to {self._source_path} was already created')
                 else:
                     self._target_path.unlink()
@@ -81,37 +81,37 @@ class GitAliasesInstaller(Installer):
         return 'Configures git aliases that I use everyday'
 
     def __call__(self) -> bool:
-        # git config --global alias.st "status --short"
         status_alias_result = subprocess.call(
             'git config --global alias.st "status --short"', shell=True)
-        # git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
         lg_alias_result = subprocess.call(
-            'git config --global alias.lg "log --color --graph --pretty=format:\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit" ', shell=True)
+            'git config --global alias.lg "log --color --graph --pretty=format:'
+            '\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) '
+            '%C(bold blue)<%an>%Creset\' --abbrev-commit" ', shell=True)
         c_result = subprocess.call(
             'git config --global alias.c "commit" ', shell=True)
         co_result = subprocess.call(
             'git config --global alias.co "checkout" ', shell=True)
-        return status_alias_result == 0 and lg_alias_result == 0 and c_result == 0 and co_result == 0
+        return (status_alias_result == 0 and
+                lg_alias_result == 0 and
+                c_result == 0 and
+                co_result == 0)
 
 
 def backup_file(file: Path) -> Optional[Path]:
     if not file.exists():
         return None
-
-    backup_file = file.with_name(file.name + '.bak')
-
+    file_to_backup_to = file.with_name(file.name + '.bak')
     if file.is_dir():
-        logger.warn(f'Backing up {file} (directory) to {backup_file}')
+        logger.warning(f'Backing up {file} (directory) to {file_to_backup_to}')
         archive_in_current_dir = Path(
-            shutil.make_archive(backup_file.name, 'gztar', file))
-        resulting_backup_file = backup_file.with_name(
+            shutil.make_archive(file_to_backup_to.name, 'gztar', file))
+        resulting_backup_file = file_to_backup_to.with_name(
             archive_in_current_dir.name)
         shutil.move(archive_in_current_dir, resulting_backup_file)
         return resulting_backup_file
-    else:
-        logger.warn(f'Backing up {file} to {backup_file}')
-        backup_file.write_bytes(file.read_bytes())
-        return backup_file
+    logger.warning(f'Backing up {file} to {file_to_backup_to}')
+    file_to_backup_to.write_bytes(file.read_bytes())
+    return file_to_backup_to
 
 
 HOME = Path.home()
@@ -119,8 +119,6 @@ CWD = Path.cwd()
 
 ZSHRC_PATH = Path.home() / '.zshrc'
 
-# TODO: Create program installers.
-# I want to be able to run these to install all applications.
 installers: List[Installer] = [
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
