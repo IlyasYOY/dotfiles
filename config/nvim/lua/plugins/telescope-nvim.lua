@@ -1,26 +1,5 @@
 return {
     {
-        "nvim-telescope/telescope-ui-select.nvim",
-        dependencies = {
-            "nvim-telescope/telescope.nvim",
-        },
-        config = function()
-            require("telescope").load_extension "ui-select"
-        end,
-    },
-    {
-        "aaronhallaert/advanced-git-search.nvim",
-        config = function()
-            require("telescope").load_extension "advanced_git_search"
-            vim.keymap.set("n", "<leader>fG", "<cmd>AdvancedGitSearch<cr>")
-        end,
-        dependencies = {
-            "nvim-telescope/telescope.nvim",
-            "tpope/vim-fugitive",
-            "sindrets/diffview.nvim",
-        },
-    },
-    {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
         dependencies = {

@@ -1,11 +1,5 @@
 return {
     {
-        "petertriho/cmp-git",
-        config = function()
-            require("cmp_git").setup {}
-        end,
-    },
-    {
         "hrsh7th/nvim-cmp",
         dependencies = {
             "onsails/lspkind.nvim",

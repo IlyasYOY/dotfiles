@@ -1,5 +1,6 @@
 return {
     "Olical/conjure",
+    lazy = true,
     ft = { "clojure", "fennel", "python", "lua" },
     dependencies = {
         "clojure-vim/vim-jack-in",
