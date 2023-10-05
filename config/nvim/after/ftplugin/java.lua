@@ -53,6 +53,7 @@ local config = {
 
     settings = {
         java = {
+            home = get_java_dir "17",
             redhat = {
                 telemetry = { enabled = false },
             },
@@ -62,6 +63,15 @@ local config = {
                     starThreshold = 9999,
                     staticStarThreshold = 9999,
                 },
+            },
+            codeGeneration = {
+                toString = {
+                    template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+                },
+                hashCodeEquals = {
+                    useJava7Objects = true,
+                },
+                useBlocks = true,
             },
             maven = { downloadSources = true },
             format = {
