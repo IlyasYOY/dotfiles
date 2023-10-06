@@ -28,6 +28,7 @@ return {
                     "sql",
                     "bash",
                     "clojure",
+                    "scheme",
                     "fennel",
 
                     "markdown",
@@ -40,6 +41,7 @@ return {
 
                     "json",
                     "html",
+                    "xml",
                     "css",
                     "yaml",
                     "dot",
