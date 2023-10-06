@@ -48,6 +48,7 @@ return {
                     ),
 
                     null_ls.builtins.diagnostics.checkstyle.with {
+                        args = { "-f", "sarif", "$FILENAME" },
                         extra_args = {
                             "-c",
                             core.resolve_realative_to_dotfiles_dir "config/checkstyle.xml",
