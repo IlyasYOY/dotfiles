@@ -9,8 +9,17 @@
                (string_literal
                  (multiline_string_fragment) @injection.content))
 
-  (#eq? @_object "databaseClient")
-  (#eq? @_method "sql")
+  (#any-of? @_object 
+   "databaseClient"
+   "statement"
+   "connection"
+   "conn"
+   "client")
+  (#any-of? @_method 
+   "sql"
+   "executeQuery"
+   "createStatement"
+   "execute")
   (#set! injection.language "sql"))
 
 (method_invocation
@@ -20,7 +29,16 @@
                (string_literal
                  (string_fragment) @injection.content))
 
-  (#eq? @_object "databaseClient")
-  (#eq? @_method "sql")
+  (#any-of? @_object 
+   "databaseClient"
+   "statement"
+   "connection"
+   "conn"
+   "client")
+  (#any-of? @_method 
+   "sql"
+   "executeQuery"
+   "createStatement"
+   "execute")
   (#set! injection.language "sql"))
 
