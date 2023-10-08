@@ -139,7 +139,7 @@ installers: List[Installer] = [
     AddLineInstaller(
         'alias cdfzf=\'cd "$(find . -type d | fzf )"\'', ZSHRC_PATH),
     AddLineInstaller(
-        'alias cdfzf=\'cd "$(find . -name .git -type d -prune | fzf)/.."\'', ZSHRC_PATH),
+        'alias cdfzfgit=\'cd "$(find . -name .git -type d -prune | fzf)/.."\'', ZSHRC_PATH),
 
     AddLineInstaller(
         'alias nvimconfig="nvim ~/.config/nvim/init.lua"', ZSHRC_PATH),
