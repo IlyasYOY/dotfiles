@@ -10,11 +10,11 @@ end
 
 -- loads jdks from sdkman.
 ---@param version string java version to search for
--- NOTE: This requires java to be installed using sdkman.
+-- This requires java to be installed using sdkman.
 local function get_java_dir(version)
     local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
-        if coredor.string_has_prefix(file, version .. ".", true) then
+        if coredor.string_has_prefix(file, version, true) then
             return 1
         end
     end)
