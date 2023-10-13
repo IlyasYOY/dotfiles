@@ -1,6 +1,6 @@
 return {
     {
-        "jose-elias-alvarez/null-ls.nvim",
+        "nvimtools/none-ls.nvim",
         config = function()
             local null_ls = require "null-ls"
             -- local pmd_cpd_source = require "ilyasyoy.null-ls.pmd-cpd"
