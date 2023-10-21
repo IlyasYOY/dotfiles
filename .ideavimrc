@@ -51,7 +51,7 @@ xmap gc <Action>(CommentByLineComment)
 map <leader>ot <Action>(GotoTest)
 map <leader>ct <Action>(GenerateTestMethod)
 map <leader>C <Action>(Generate)
-map <leader>t <Action>(RunClass)
+map <leader>tt <Action>(RunClass)
 
 " Completion 
 imap <C-f> <Action>(CodeCompletion)
