@@ -32,6 +32,12 @@ local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
     .. project_name
 
+local eclipse_format_path = vim.g.custom_eclipse_formatter_path
+if not eclipse_format_path then
+    eclipse_format_path =
+        core.resolve_realative_to_dotfiles_dir "config/eclipse-java-google-style.xml"
+end
+
 local config = {
     cmd = {
         "jdtls",
@@ -76,7 +82,7 @@ local config = {
             maven = { downloadSources = true },
             format = {
                 settings = {
-                    url = core.resolve_realative_to_dotfiles_dir "config/eclipse-java-google-style.xml",
+                    url = eclipse_format_path,
                     profile = "GoogleStyle",
                 },
             },
