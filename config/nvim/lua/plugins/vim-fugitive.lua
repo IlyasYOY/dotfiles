@@ -15,16 +15,24 @@ return {
             )
             vim.keymap.set(
                 "n",
-                "<leader>gP",
+                "<leader>gl",
+                ":Git log<cr>",
+                { desc = "Copy link to current line" }
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>gps",
                 ":Git push<CR>",
                 { desc = "Pushes changes to remote" }
             )
             vim.keymap.set(
                 "n",
-                "<leader>gp",
+                "<leader>gpl",
                 ":Git pull<CR>",
                 { desc = "Pushes changes to remote" }
             )
+
             vim.keymap.set(
                 "n",
                 "<leader>gy",
@@ -34,21 +42,14 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gY",
-                ":.GBrowse<CR>",
+                ":GBrowse!<CR>",
                 { desc = "Open link to current line" }
             )
-
             vim.keymap.set(
                 "x",
                 "<leader>gy",
                 ":'<'>GBrowse!<cr>",
                 { desc = "Copy link to current line" }
-            )
-            vim.keymap.set(
-                "x",
-                "<leader>gY",
-                ":'<'>GBrowse<CR>",
-                { desc = "Open link to current line" }
             )
         end,
     },
