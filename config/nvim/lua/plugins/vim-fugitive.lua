@@ -17,7 +17,7 @@ return {
                 "n",
                 "<leader>gl",
                 ":Git log<cr>",
-                { desc = "Copy link to current line" }
+                { desc = "Open log" }
             )
 
             vim.keymap.set(
@@ -30,7 +30,7 @@ return {
                 "n",
                 "<leader>gpl",
                 ":Git pull<CR>",
-                { desc = "Pushes changes to remote" }
+                { desc = "Pulls changes from remote" }
             )
 
             vim.keymap.set(
@@ -43,13 +43,13 @@ return {
                 "n",
                 "<leader>gY",
                 ":GBrowse!<CR>",
-                { desc = "Open link to current line" }
+                { desc = "Copy link to file" }
             )
             vim.keymap.set(
                 "x",
                 "<leader>gy",
                 ":'<'>GBrowse!<cr>",
-                { desc = "Copy link to current line" }
+                { desc = "Copy link to current lines" }
             )
         end,
     },
