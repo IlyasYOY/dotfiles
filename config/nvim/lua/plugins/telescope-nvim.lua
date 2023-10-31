@@ -1,15 +1,17 @@
 return {
+    { "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
     {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+            "nvim-telescope/telescope-fzf-native.nvim",
         },
         config = function()
             local telescope = require "telescope"
             local builtin = require "telescope.builtin"
             local themes = require "telescope.themes"
+
             telescope.setup {
                 extensions = {
                     advanced_git_search = {},
