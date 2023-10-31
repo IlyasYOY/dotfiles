@@ -55,11 +55,9 @@ return {
                     },
                     null_ls.builtins.diagnostics.pmd.with {
                         args = {
-                            "check",
                             "--format",
                             "json",
                             "--no-cache",
-                            "--no-progress",
                             "--dir",
                             "$FILENAME",
                         },
