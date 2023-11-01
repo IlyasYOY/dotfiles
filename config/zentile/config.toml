@@ -1,6 +1,11 @@
 # Window decorations will be removed if set to true
 remove_decorations = false
 
+# Zentile will ignore windows added to this list.
+# You'll have to add WM_CLASS property of the window you want ignored.
+# You can get WM_CLASS property of a window, by running "xprop WM_CLASS" and clicking on the window.
+# ignore = ['ulauncher', 'gnome-screenshot']
+
 # Adds spacing between windows
 gap = 5
 
