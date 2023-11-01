@@ -15,6 +15,7 @@
   "coredor.nvim": { "branch": "main", "commit": "7e9b4f63fc8b48af35eb7b86e50fc27a1232e313" },
   "diffview.nvim": { "branch": "main", "commit": "d38c1b5266850f77f75e006bcc26213684e1e141" },
   "fidget.nvim": { "branch": "main", "commit": "0ba1e16d07627532b6cae915cc992ecac249fb97" },
+  "firenvim": { "branch": "master", "commit": "138424db463e6c0e862a05166a4ccc781cd7c19d" },
   "fugitive-gitlab.vim": { "branch": "master", "commit": "55fed481c0309b3405dd3d72921d687bf36873a8" },
   "gitsigns.nvim": { "branch": "main", "commit": "af0f583cd35286dd6f0e3ed52622728703237e50" },
   "gruvbox.nvim": { "branch": "main", "commit": "477c62493c82684ed510c4f70eaf83802e398898" },
