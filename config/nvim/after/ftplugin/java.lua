@@ -35,7 +35,7 @@ local workspace_dir = Path.path.home
 local eclipse_format_path = vim.g.custom_eclipse_formatter_path
 if not eclipse_format_path then
     eclipse_format_path =
-        core.resolve_realative_to_dotfiles_dir "config/eclipse-java-google-style.xml"
+        core.resolve_realative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
 end
 
 local config = {
@@ -129,7 +129,6 @@ local config = {
 
     on_attach = function(client, bufnr)
         require("jdtls").setup_dap()
-        require("jdtls.setup").add_commands()
 
         vim.keymap.set("n", "<leader>oi", function()
             jdtls.organize_imports()
@@ -251,4 +250,7 @@ local config = {
     },
 }
 
+vim.opt_local.tabstop = vim.g.tabs_for_java or 4
+vim.opt_local.softtabstop = vim.g.tabs_for_java or 4
+vim.opt_local.shiftwidth = vim.g.tabs_for_java or 4
 jdtls.start_or_attach(config)

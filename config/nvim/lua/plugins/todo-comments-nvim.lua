@@ -7,6 +7,11 @@ return {
         },
         config = function()
             require("todo-comments").setup {
+                keywords = {
+                    TODO = {
+                        alt = { "todo" },
+                    },
+                },
                 search = {
                     args = {
                         "--color=never",
