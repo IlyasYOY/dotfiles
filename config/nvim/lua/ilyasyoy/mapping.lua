@@ -61,6 +61,18 @@ local function process_java()
     return false
 end
 
+local function process_python()
+    local cwf = core.current_working_file()
+    if string.find(cwf, "_test%.py$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.py$", "%1.py"))
+        return true
+    elseif string.find(cwf, "%.py$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.py$", "%1_test.py"))
+        return true
+    end
+    return false
+end
+
 local function process_go()
     local cwf = core.current_working_file()
     if string.find(cwf, "_test%.go$") then
@@ -88,6 +100,11 @@ vim.keymap.set("n", "<leader>ot", function()
     end
     if filetype == "java" then
         if process_java() then
+            return
+        end
+    end
+    if filetype == "python" then
+        if process_python() then
             return
         end
     end
