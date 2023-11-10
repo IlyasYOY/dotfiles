@@ -214,6 +214,7 @@ local config = {
         vim.keymap.set("n", "<leader>jdc", function()
             jdtls.test_class()
         end, { desc = "java debug nearest test class" })
+        vim.keymap.set("n", "<leader>jr", "<cmd>JdtWipeDataAndRestart<CR>", { desc = "restart jdtls" })
 
         vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>) ]]
         vim.cmd [[ command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>) ]]
