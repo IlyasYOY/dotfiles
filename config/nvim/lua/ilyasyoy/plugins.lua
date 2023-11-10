@@ -18,7 +18,7 @@ require("lazy").setup("plugins", {
         notify = false, -- get a notification when changes are found
     },
     dev = {
-        path = "~/Projects/other",
+        path = "~/Projects/IlyasYOY",
         patterns = { "IlyasYOY" },
         fallback = true,
     },
