@@ -55,6 +55,7 @@ return {
                     },
                     null_ls.builtins.diagnostics.pmd.with {
                         args = {
+                            "pmd",
                             "--format",
                             "json",
                             "--no-cache",
