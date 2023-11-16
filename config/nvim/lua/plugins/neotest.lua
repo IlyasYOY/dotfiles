@@ -5,13 +5,15 @@ return {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
             "nvim-neotest/neotest-plenary",
+            "nvim-neotest/neotest-python",
         },
         lazy = true,
-        ft = { "lua" },
+        ft = { "lua", "python" },
         config = function()
             require("neotest").setup {
                 adapters = {
                     require "neotest-plenary",
+                    require "neotest-python",
                 },
             }
 
