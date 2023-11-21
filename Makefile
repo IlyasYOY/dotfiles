@@ -13,4 +13,5 @@ lint_lua:
 format_lua:
 	stylua config/nvim/lua
 
-
+commit_lazy_update:
+	git add ./config/nvim/lazy-lock.json && git commit -m "chore: update lazy"
