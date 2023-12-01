@@ -41,6 +41,7 @@
         <exclude name="MethodArgumentCouldBeFinal" />
         <exclude name="MethodNamingConventions" />
         <exclude name="LocalVariableCouldBeFinal" />
+
         <!-- Spring usually requires devs to use long names -->
         <exclude name="LongVariable" />
         <!-- False positive on "id" -->
@@ -53,12 +54,8 @@
         <exclude name="OnlyOneReturn" />
     </rule>
     <rule ref="category/java/design.xml">
-        <exclude name="LoosePackageCoupling" />
-        <!-- bothers in tests -->
-        <exclude name="TooManyMethods" />
         <!-- A low of false positive with common chaining API -->
         <exclude name="LawOfDemeter" />
-        <exclude name="ExcessiveImports" />
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired" />
