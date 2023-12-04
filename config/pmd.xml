@@ -54,6 +54,7 @@
         <exclude name="OnlyOneReturn" />
     </rule>
     <rule ref="category/java/design.xml">
+        <exclude name="LoosePackageCoupling" />
         <!-- A low of false positive with common chaining API -->
         <exclude name="LawOfDemeter" />
     </rule>

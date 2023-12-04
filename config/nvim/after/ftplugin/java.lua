@@ -122,6 +122,11 @@ local config = {
                         name = "JavaSE-17",
                         path = get_java_dir "17",
                     },
+                    -- NOTE: https://github.com/redhat-developer/vscode-java/issues/3177
+                    -- {
+                    --     name = "JavaSE-21",
+                    --     path = get_java_dir "21",
+                    -- },
                 },
             },
         },
