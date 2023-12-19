@@ -38,12 +38,6 @@ return {
             vim.keymap.set("n", "<leader>tO", function()
                 require("neotest").output_panel.toggle()
             end)
-            vim.keymap.set("n", "[c", function()
-                require("neotest").jump.prev()
-            end)
-            vim.keymap.set("n", "]c", function()
-                require("neotest").jump.next()
-            end)
         end,
     },
 }

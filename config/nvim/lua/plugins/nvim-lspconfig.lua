@@ -59,6 +59,19 @@ local function setup_tsserver()
     }
 end
 
+local function setup_sg()
+    local lspconfig = require "lspconfig"
+    local configs = require "lspconfig.configs"
+
+    configs.ast_grep = {
+        default_config = {
+            cmd = { "sg", "lsp" },
+            single_file_support = true,
+            root_dir = lspconfig.util.root_pattern(".git", "sgconfig.yml"),
+        },
+    }
+end
+
 local function setup_lua()
     local lspconfig = require "lspconfig"
 
@@ -110,6 +123,7 @@ return {
             setup_generic()
             setup_tsserver()
             setup_lua()
+            setup_sg()
 
             local bufopts = { noremap = true, silent = true }
 

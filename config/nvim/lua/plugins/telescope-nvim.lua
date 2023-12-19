@@ -6,6 +6,7 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
+            "Marskey/telescope-sg",
         },
         config = function()
             local telescope = require "telescope"
@@ -15,6 +16,14 @@ return {
             telescope.setup {
                 extensions = {
                     advanced_git_search = {},
+                    ast_grep = {
+                        command = {
+                            "sg",
+                            "--json=stream",
+                        },
+                        grep_open_files = false,
+                        lang = nil,
+                    },
                     fzf = {
                         fuzzy = true,
                         override_generic_sorter = true,
@@ -70,6 +79,10 @@ return {
                 builtin.live_grep()
             end, { desc = "find grep through files" })
 
+            vim.keymap.set("n", "<leader>fc", function()
+                vim.cmd [[Telescope ast_grep]]
+            end, { desc = "find in source code" })
+
             vim.keymap.set("n", "<leader>fa", function()
                 builtin.builtin(themes.get_ivy())
             end, { desc = "find in commands" })
@@ -122,9 +135,6 @@ return {
                 builtin.git_files(themes.get_ivy())
             end, { desc = "find git files" })
 
-            vim.keymap.set("n", "<leader>fc", function()
-                builtin.commands(themes.get_ivy())
-            end, { desc = "find commands" })
         end,
     },
 }
