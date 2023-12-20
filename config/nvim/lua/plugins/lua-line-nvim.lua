@@ -3,7 +3,6 @@ return {
         "nvim-lualine/lualine.nvim",
         dependencies = {
             "IlyasYOY/coredor.nvim",
-            "ellisonleao/gruvbox.nvim",
         },
         config = function()
             local core = require "coredor"
@@ -15,9 +14,6 @@ return {
             end
 
             lualine.setup {
-                options = {
-                    theme = "gruvbox",
-                },
                 sections = {
                     lualine_a = { "mode" },
                     lualine_b = { "branch" },
