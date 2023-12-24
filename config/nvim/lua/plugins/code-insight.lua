@@ -1,5 +1,82 @@
 return {
     {
+        "kevinhwang91/nvim-ufo",
+        dependencies = {
+            "kevinhwang91/promise-async",
+            "nvim-treesitter/nvim-treesitter",
+        },
+        lazy = true,
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            local handler = function(virtText, lnum, endLnum, width, truncate)
+                local newVirtText = {}
+                local suffix = (" 󰁂 %d "):format(endLnum - lnum)
+                local sufWidth = vim.fn.strdisplaywidth(suffix)
+                local targetWidth = width - sufWidth
+                local curWidth = 0
+                for _, chunk in ipairs(virtText) do
+                    local chunkText = chunk[1]
+                    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                    if targetWidth > curWidth + chunkWidth then
+                        table.insert(newVirtText, chunk)
+                    else
+                        chunkText = truncate(chunkText, targetWidth - curWidth)
+                        local hlGroup = chunk[2]
+                        table.insert(newVirtText, { chunkText, hlGroup })
+                        chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                        if curWidth + chunkWidth < targetWidth then
+                            suffix = suffix
+                                .. (" "):rep(
+                                    targetWidth - curWidth - chunkWidth
+                                )
+                        end
+                        break
+                    end
+                    curWidth = curWidth + chunkWidth
+                end
+                table.insert(newVirtText, { suffix, "MoreMsg" })
+                return newVirtText
+            end
+
+            require("ufo").setup {
+                fold_virt_text_handler = handler,
+                provider_selector = function(bufnr, filetype, buftype)
+                    return { "treesitter", "indent" }
+                end,
+            }
+
+            vim.o.foldcolumn = "1"
+            vim.o.foldlevel = 99
+            vim.o.foldlevelstart = 99
+            vim.o.foldenable = true
+
+            vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+            vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
+            vim.keymap.set("n", "<leader>k", function()
+                local winid = require("ufo").peekFoldedLinesUnderCursor()
+                if not winid then
+                    vim.lsp.buf.hover()
+                end
+            end)
+        end,
+    },
+    {
+        "RRethy/vim-illuminate",
+        config = function()
+            require("illuminate").configure {
+                modes_allowlist = { "n" },
+            }
+            vim.cmd [[
+                augroup illuminate_augroup
+                    autocmd!
+                    autocmd VimEnter * hi illuminatedWordRead cterm=none gui=none guibg=#526252
+                    autocmd VimEnter * hi illuminatedWordText cterm=none gui=none guibg=#525252
+                    autocmd VimEnter * hi illuminatedWordWrite cterm=none gui=none guibg=#625252
+                augroup END
+            ]]
+        end,
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         lazy = true,
         event = { "BufReadPre", "BufNewFile" },
@@ -154,7 +231,7 @@ return {
                     },
                     move = {
                         enable = true,
-                        set_jumps = true, 
+                        set_jumps = true,
                         goto_next_start = {
                             ["]m"] = "@function.outer",
                             ["]c"] = "@class.outer",
@@ -192,6 +269,66 @@ return {
                 require("nvim-treesitter.parsers").get_parser_configs()
             parser_config.tsx.filetype_to_parsername =
                 { "javascript", "typescript.tsx" }
+        end,
+    },
+    {
+        "nvim-treesitter/playground",
+        lazy = true,
+        cmd = {
+            "TSPlaygroundToggle",
+        },
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+    },
+    {
+        "numToStr/Comment.nvim",
+        config = function()
+            require("Comment").setup()
+        end,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+    },
+    {
+        "folke/todo-comments.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim",
+        },
+        config = function()
+            require("todo-comments").setup {
+                keywords = {
+                    TODO = {
+                        alt = { "todo" },
+                    },
+                },
+                search = {
+                    args = {
+                        "--color=never",
+                        "--no-heading",
+                        "--with-filename",
+                        "--line-number",
+                        "--column",
+                        "--hidden",
+                    },
+                },
+            }
+
+            vim.keymap.set("n", "]t", function()
+                require("todo-comments").jump_next()
+            end, { desc = "Next todo comment" })
+
+            vim.keymap.set("n", "[t", function()
+                require("todo-comments").jump_prev()
+            end, { desc = "Previous todo comment" })
+
+            vim.keymap.set(
+                "n",
+                "<leader>ft",
+                ":TodoTelescope<CR>",
+                { desc = "find todos in project" }
+            )
         end,
     },
 }

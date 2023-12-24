@@ -13,7 +13,6 @@ return {
             "hrsh7th/cmp-nvim-lsp-signature-help",
             "saadparwaiz1/cmp_luasnip",
             "davidsierradz/cmp-conventionalcommits",
-            "petertriho/cmp-git",
         },
         config = function()
             local luasnip = require "luasnip"

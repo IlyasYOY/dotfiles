@@ -1,5 +1,59 @@
 return {
     {
+        "tpope/vim-fugitive",
+        dependencies = {
+            "shumphrey/fugitive-gitlab.vim",
+            "tommcdo/vim-fubitive",
+            "tpope/vim-rhubarb",
+        },
+        config = function()
+            vim.keymap.set(
+                "n",
+                "<leader>gg",
+                ":Gedit :<CR>",
+                { desc = "Open fugitive UI window", silent = true }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>gl",
+                ":Git log<cr>",
+                { desc = "Open log" }
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>gps",
+                ":Git push<CR>",
+                { desc = "Pushes changes to remote" }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>gpl",
+                ":Git pull<CR>",
+                { desc = "Pulls changes from remote" }
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>gy",
+                ":.GBrowse!<cr>",
+                { desc = "Copy link to current line" }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>gY",
+                ":GBrowse!<CR>",
+                { desc = "Copy link to file" }
+            )
+            vim.keymap.set(
+                "x",
+                "<leader>gy",
+                ":'<'>GBrowse!<cr>",
+                { desc = "Copy link to current lines" }
+            )
+        end,
+    },
+    {
         "lewis6991/gitsigns.nvim",
         config = function()
             require("gitsigns").setup {
@@ -86,5 +140,38 @@ return {
                 { desc = "go to next hunk" }
             )
         end,
+    },
+    {
+        "sindrets/diffview.nvim",
+        lazy = true,
+        cmd = {
+            "DiffviewOpen",
+        },
+        keys = {
+            "<leader>gdo",
+            "<leader>gdO",
+            "<leader>gdc",
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>gdo", ":DiffviewOpen origin<CR>")
+            vim.keymap.set("n", "<leader>gdO", ":DiffviewOpen<CR>")
+            vim.keymap.set("n", "<leader>gdc", ":DiffviewClose<CR>")
+        end,
+    },
+    {
+        "aaronhallaert/advanced-git-search.nvim",
+        lazy = true,
+        keys = {
+            "<leader>fG",
+        },
+        config = function()
+            require("telescope").load_extension "advanced_git_search"
+            vim.keymap.set("n", "<leader>fG", "<cmd>AdvancedGitSearch<cr>")
+        end,
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "tpope/vim-fugitive",
+            "sindrets/diffview.nvim",
+        },
     },
 }

@@ -1,7 +1,9 @@
 return {
     {
         "L3MON4D3/LuaSnip",
-        dependencies = { "honza/vim-snippets" },
+        dependencies = {
+            "honza/vim-snippets",
+        },
         config = function()
             local ls = require "luasnip"
 
