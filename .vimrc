@@ -67,7 +67,7 @@ nnoremap <F3> :w<CR>
 " This allows me to save from inssert mode 
 inoremap <F3> <C-\><C-o>:w<CR>
 
-set wrap
+set nowrap
 
 " Switch buffers using keys
 nnoremap <silent> [b :bprevious<cr>
