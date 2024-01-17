@@ -8,6 +8,7 @@ return {
             require("mason-nvim-dap").setup {
                 ensure_installed = {
                     "python",
+                    "delve",
                     "javadbg",
                     "javatest",
                 },
@@ -27,7 +28,7 @@ return {
                     "jdtls",
                     "lua_ls",
                     "clojure_lsp",
-                    "pyright",
+                    "pylsp",
                     "rust_analyzer",
                     "tsserver",
                     "bashls",
@@ -47,6 +48,10 @@ return {
                     "stylua",
                     "luacheck",
                     "jsonlint",
+                    "goimports",
+                    "golines",
+                    "gomodifytags",
+                    "impl",
                     "yamllint",
                     "pylint",
                     "autopep8",
@@ -75,6 +80,40 @@ return {
                     },
                 },
             }
+
+            local pylsp =
+                require("mason-registry").get_package "python-lsp-server"
+            pylsp:on("install:success", function()
+                local function mason_package_path(package)
+                    local path = vim.fn.resolve(
+                        vim.fn.stdpath "data" .. "/mason/packages/" .. package
+                    )
+                    return path
+                end
+
+                local path = mason_package_path "python-lsp-server"
+                local command = path .. "/venv/bin/pip"
+                local args = {
+                    "install",
+                    "rope",
+                    "pylsp-rope",
+                    "pylsp-mypy",
+                    "pyls-isort",
+                    -- "python-lsp-black",
+                    -- "pyflakes",
+                    -- "python-lsp-ruff",
+                    -- "pyls-flake8",
+                    "sqlalchemy-stubs",
+                }
+
+                require("plenary.job")
+                    :new({
+                        command = command,
+                        args = args,
+                        cwd = path,
+                    })
+                    :start()
+            end)
         end,
     },
 }

@@ -26,14 +26,16 @@ return {
             "nvim-treesitter/nvim-treesitter",
             "nvim-neotest/neotest-plenary",
             "nvim-neotest/neotest-python",
+            "nvim-neotest/neotest-go",
         },
         lazy = true,
-        ft = { "lua", "python" },
+        ft = { "lua", "python", "go" },
         config = function()
             require("neotest").setup {
                 adapters = {
                     require "neotest-plenary",
                     require "neotest-python",
+                    require "neotest-go",
                 },
             }
 

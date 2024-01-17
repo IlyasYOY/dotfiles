@@ -4,12 +4,12 @@ return {
         dependencies = {
             "mfussenegger/nvim-dap",
         },
-        lazy = true,
         keys = {
             "<leader>Du",
             "<leader>DU",
         },
         config = function()
+            print "dap"
             local dapui = require "dapui"
 
             dapui.setup()
@@ -30,9 +30,6 @@ return {
     {
         "mfussenegger/nvim-dap",
         lazy = true,
-        dependencies = {
-            "mfussenegger/nvim-dap-python",
-        },
         config = function()
             local dap = require "dap"
 
@@ -72,9 +69,26 @@ return {
     },
     {
         "mfussenegger/nvim-dap-python",
-        lazy = true,
+        dependencies = {
+            "mfussenegger/nvim-dap",
+        },
+        ft = "python",
         config = function()
             require("dap-python").setup()
+        end,
+    },
+    {
+        "leoluz/nvim-dap-go",
+        dependencies = {
+            "mfussenegger/nvim-dap",
+        },
+        ft = "go",
+        config = function()
+            require("dap-go").setup()
+
+            vim.keymap.set("n", "<leader>gdm", function()
+                require("dap-go").debug_test()
+            end)
         end,
     },
 }

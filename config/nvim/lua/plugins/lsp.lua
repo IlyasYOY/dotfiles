@@ -8,8 +8,6 @@ local function setup_generic()
     local lspconfig = require "lspconfig"
 
     local generic_servers = {
-        "gopls",
-        "pyright",
         "clojure_lsp",
         "rust_analyzer",
         "bashls",
@@ -65,6 +63,55 @@ local function setup_lua()
     }
 end
 
+local function setup_go()
+    local lspconfig = require "lspconfig"
+    local util = require "lspconfig.util"
+
+    lspconfig.gopls.setup {
+        on_attach = lsp.on_attach,
+        capabilities = lsp.get_capabilities(),
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+        settings = {
+            gopls = {
+                completeUnimported = true,
+                usePlaceholders = true,
+                analyses = {
+                    unusedparams = true,
+                },
+            },
+        },
+    }
+end
+
+local function setup_python()
+    local lspconfig = require "lspconfig"
+
+    lspconfig.pylsp.setup {
+        on_attach = lsp.on_attach,
+        capabilities = lsp.get_capabilities(),
+        settings = {
+            settings = {
+                pylsp = {
+                    plugins = {
+                        black = { enabled = false },
+                        autopep8 = { enabled = false },
+                        yapf = { enabled = false },
+                        pylint = { enabled = false },
+                        pyflakes = { enabled = false },
+                        pycodestyle = { enabled = false },
+
+                        pylsp_mypy = { enabled = true },
+                        jedi_completion = { fuzzy = true },
+                        pyls_isort = { enabled = true },
+                        sort = { enabled = true },
+                    },
+                },
+            },
+        },
+    }
+end
+
 return {
     {
         "j-hui/fidget.nvim",
@@ -113,6 +160,12 @@ return {
 
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
+
+                    null_ls.builtins.formatting.gofmt,
+                    null_ls.builtins.formatting.goimports,
+                    null_ls.builtins.formatting.golines,
+                    null_ls.builtins.code_actions.impl,
+                    null_ls.builtins.code_actions.gomodifytags,
 
                     null_ls.builtins.diagnostics.pylint,
                     null_ls.builtins.formatting.isort,
@@ -174,6 +227,8 @@ return {
             setup_generic()
             setup_tsserver()
             setup_lua()
+            setup_python()
+            setup_go()
 
             local bufopts = { noremap = true, silent = true }
 

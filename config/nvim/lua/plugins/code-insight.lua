@@ -97,6 +97,7 @@ return {
                     "vim",
                     "lua",
                     "rust",
+                    "go",
                     "java",
                     "javascript",
                     "tsx",
