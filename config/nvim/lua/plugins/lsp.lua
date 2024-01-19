@@ -250,12 +250,6 @@ return {
                 vim.diagnostic.goto_next,
                 described(opts, "Next diagnostics")
             )
-            vim.keymap.set(
-                "n",
-                "<leader>ld",
-                vim.diagnostic.setqflist,
-                described(opts, "Put diagnostics to quickfix list")
-            )
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
                 vim.lsp.buf.format { async = false }
