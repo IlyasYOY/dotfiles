@@ -1,6 +1,9 @@
 [env]
 TERM = "xterm-256color"
 
+[window]
+opacity = 0.99
+
 [font]
 size = 18
 

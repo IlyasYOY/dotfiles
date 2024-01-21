@@ -4,6 +4,7 @@ return {
         config = function()
             local gen = require "gen"
             gen.setup {
+                model = "mistral",
                 display_mode = "spit",
                 show_prompt = true,
                 show_model = true,
@@ -16,6 +17,9 @@ return {
                 { prompt = "Create commit message for this diff:\n$text" }
 
             vim.keymap.set({ "n", "v" }, "<leader>ll", ":Gen<CR>")
+            vim.keymap.set({ "n" }, "<leader>lL", function()
+               gen.select_model()
+            end)
             vim.keymap.set({ "n", "v" }, "<leader>lc", function()
                 gen.exec(gen.prompts.Chat)
             end)
