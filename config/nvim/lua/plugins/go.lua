@@ -7,6 +7,7 @@ return {
         },
         config = function()
             require("go").setup()
+            vim.keymap.set("n", "<leader>gtf", "<CMD>GoTestFile<CR>")
         end,
         event = { "CmdlineEnter" },
         ft = { "go", "gomod" },
