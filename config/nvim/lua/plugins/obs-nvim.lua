@@ -13,7 +13,8 @@ return {
             obs.setup {
                 vault_home = "~/vimwiki",
                 journal = {
-                    template_name = "daily",
+                    daily_template_name = "daily",
+                    weekly_template_name = "weekly",
                 },
             }
 
@@ -21,6 +22,7 @@ return {
             vim.keymap.set("n", "<leader>nr", "<cmd>ObsNvimRandomNote<cr>")
             vim.keymap.set("n", "<leader>nN", "<cmd>ObsNvimNewNote<cr>")
             vim.keymap.set("n", "<leader>nd", "<cmd>ObsNvimDailyNote<cr>")
+            vim.keymap.set("n", "<leader>nw", "<cmd>ObsNvimWeeklyNote<cr>")
             vim.keymap.set("n", "<leader>nrn", "<cmd>ObsNvimRename<cr>")
             vim.keymap.set("n", "<leader>nT", "<cmd>ObsNvimTemplate<cr>")
             vim.keymap.set("n", "<leader>nM", "<cmd>ObsNvimMove<cr>")
