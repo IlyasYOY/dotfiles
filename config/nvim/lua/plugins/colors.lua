@@ -12,8 +12,9 @@ return {
             Color.new("red", "#cc3333")
             Color.new("green", "#33cc33")
 
-            Group.new("@text.todo.unchecked", colors.red, colors.none, styles.none)
-            Group.new("@text.todo.checked", colors.green, colors.none, styles.none)
+            Group.new("@markup.list.unchecked.markdown", colors.red, colors.none, styles.none)
+            Group.new("@markup.list.checked.markdown", colors.green, colors.none, styles.none)
+            Group.new("@markup.link.label.markdown_inline", colors.none, colors.none, styles.underline)
         end,
     },
 }
