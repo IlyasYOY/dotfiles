@@ -33,9 +33,21 @@ return {
         config = function()
             local dap = require "dap"
 
+            vim.keymap.set("n", "<F2>", function()
+                dap.close()
+            end, { desc = "Stop debugging" })
+
             vim.keymap.set("n", "<F5>", function()
                 dap.continue()
             end, { desc = "Continue debugging" })
+
+            vim.keymap.set("n", "<F6>", function()
+                dap.repl.open()
+            end, { desc = "Open REPL" })
+
+            vim.keymap.set("n", "<F7>", function()
+                dap.run_to_cursor()
+            end, { desc = "Run debugging to cursor" })
 
             vim.keymap.set("n", "<F10>", function()
                 dap.step_over()
@@ -62,9 +74,6 @@ return {
                 desc = "Toggle Debug conditional Breakpoint",
             })
 
-            vim.keymap.set("n", "<F6>", function()
-                dap.repl.open()
-            end, { desc = "Open REPL" })
         end,
     },
     {

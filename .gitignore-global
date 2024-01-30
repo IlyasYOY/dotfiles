@@ -1,0 +1,15 @@
+# vim
+NetrwTreeListing
+.vim/
+Session.vim
+
+# macos
+.DB_Store
+.DS_Store
+
+# python 
+
+## byte-compiled 
+__pycache__/
+*.py[cod]
+*$py.class
