@@ -163,6 +163,7 @@ return {
 
                     null_ls.builtins.formatting.gofmt,
                     null_ls.builtins.formatting.goimports,
+                    null_ls.builtins.diagnostics.golangci_lint,
                     null_ls.builtins.formatting.golines,
                     null_ls.builtins.code_actions.impl,
                     null_ls.builtins.code_actions.gomodifytags,
