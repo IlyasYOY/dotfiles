@@ -82,6 +82,7 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
+            "nvim-treesitter/nvim-treesitter-context",
         },
         build = function()
             local ts_update = require("nvim-treesitter.install").update {
@@ -91,6 +92,9 @@ return {
         end,
         config = function()
             local ts_config = require "nvim-treesitter.configs"
+            require("treesitter-context").setup {
+                max_lines = 1, -- How many lines the window should span. Values <= 0 mean no limit.
+            }
 
             ts_config.setup {
                 ensure_installed = {
@@ -274,6 +278,9 @@ return {
                 },
             }
 
+            vim.keymap.set("n", "[c", function()
+                require("treesitter-context").go_to_context(vim.v.count1)
+            end, { silent = true })
             local parser_config =
                 require("nvim-treesitter.parsers").get_parser_configs()
             parser_config.tsx.filetype_to_parsername =

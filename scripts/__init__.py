@@ -87,6 +87,8 @@ class GitAliasesInstaller(Installer):
             'git config --global alias.lg "log --color --graph --pretty=format:'
             '\'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) '
             '%C(bold blue)<%an>%Creset\' --abbrev-commit" ', shell=True)
+        lg_alias_result = subprocess.call(
+            "git config --global diff.algorithm histogram", shell=True)
         c_result = subprocess.call(
             'git config --global alias.c "commit" ', shell=True)
         co_result = subprocess.call(
