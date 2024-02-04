@@ -93,7 +93,7 @@ return {
         config = function()
             local ts_config = require "nvim-treesitter.configs"
             require("treesitter-context").setup {
-                max_lines = 1, -- How many lines the window should span. Values <= 0 mean no limit.
+                max_lines = 1,
             }
 
             ts_config.setup {
@@ -144,8 +144,6 @@ return {
                     "http",
                     "query",
                 },
-                sync_install = false,
-                auto_install = false,
                 highlight = {
                     enable = true,
                     disable = function(lang, buf)
