@@ -124,6 +124,7 @@ ZSHRC_PATH = Path.home() / '.zshrc'
 installers: List[Installer] = [
     GitAliasesInstaller(),
     LinkingInstaller(HOME / '.config/nvim', CWD / 'config/nvim'),
+    LinkingInstaller(HOME / '.config/nvim-minimal', CWD / 'config/nvim-minimal'),
     LinkingInstaller(HOME / '.config/zentile', CWD / 'config/zentile'),
     LinkingInstaller(HOME / '.config/git/ignore', CWD / '.gitignore-global'),
     LinkingInstaller(HOME / '.config/alacritty', CWD / 'config/alacritty'),
@@ -136,6 +137,7 @@ installers: List[Installer] = [
 
     AddLineInstaller('alias vimconfig="vim ~/.vimrc"', ZSHRC_PATH),
     AddLineInstaller('alias tma="tmux attach -t "', ZSHRC_PATH),
+    AddLineInstaller('alias mnvim="NVIM_APPNAME=nvim-minimal nvim"', ZSHRC_PATH),
 
     AddLineInstaller('alias tmk="tmux kill-session -t "', ZSHRC_PATH),
     AddLineInstaller('alias tmn="tmux new -t "', ZSHRC_PATH),
