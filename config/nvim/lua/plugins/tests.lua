@@ -31,11 +31,27 @@ return {
         lazy = true,
         ft = { "lua", "python", "go" },
         config = function()
+            local neotest_ns = vim.api.nvim_create_namespace "neotest"
+            vim.diagnostic.config({
+                virtual_text = {
+                    format = function(diagnostic)
+                        local message = diagnostic.message
+                            :gsub("\n", " ")
+                            :gsub("\t", " ")
+                            :gsub("%s+", " ")
+                            :gsub("^%s+", "")
+                        return message
+                    end,
+                },
+            }, neotest_ns)
+
             require("neotest").setup {
                 adapters = {
                     require "neotest-plenary",
                     require "neotest-python",
-                    require "neotest-go",
+                    require "neotest-go" {
+                        recursive_run = true,
+                    },
                 },
             }
 
@@ -46,7 +62,7 @@ return {
                 require("neotest").run.run(vim.fn.expand "%")
             end)
             vim.keymap.set("n", "<leader>ta", function()
-                require("neotest").run.run "."
+                require("neotest").run.run(vim.fn.getcwd())
             end)
             vim.keymap.set("n", "<leader>ts", function()
                 require("neotest").run.stop()

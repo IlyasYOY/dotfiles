@@ -4,6 +4,7 @@ return {
         dependencies = {
             "neovim/nvim-lspconfig",
             "nvim-treesitter/nvim-treesitter",
+            "ray-x/guihua.lua",
         },
         config = function()
             require("go").setup()
