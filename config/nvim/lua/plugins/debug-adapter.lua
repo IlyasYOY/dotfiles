@@ -29,12 +29,16 @@ return {
     },
     {
         "mfussenegger/nvim-dap",
+        dependencies = {
+            "theHamsta/nvim-dap-virtual-text",
+        },
         lazy = true,
         config = function()
             local dap = require "dap"
+            require("nvim-dap-virtual-text").setup()
 
             vim.keymap.set("n", "<F2>", function()
-                dap.close()
+                dap.terminate()
             end, { desc = "Stop debugging" })
 
             vim.keymap.set("n", "<F5>", function()
@@ -73,7 +77,6 @@ return {
             end, {
                 desc = "Toggle Debug conditional Breakpoint",
             })
-
         end,
     },
     {

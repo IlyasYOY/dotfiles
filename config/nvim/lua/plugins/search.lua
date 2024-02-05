@@ -88,6 +88,10 @@ return {
                 builtin.live_grep()
             end, { desc = "find grep through files" })
 
+            vim.keymap.set("n", "<leader>fC", function()
+                builtin.commands()
+            end, { desc = "find commands" })
+
             vim.keymap.set("n", "<leader>fc", function()
                 vim.cmd [[Telescope ast_grep]]
             end, { desc = "find in source code" })

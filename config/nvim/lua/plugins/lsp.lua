@@ -74,10 +74,21 @@ local function setup_go()
         root_dir = util.root_pattern("go.work", "go.mod", ".git"),
         settings = {
             gopls = {
+                gofumpt = true,
+                codelenses = {
+                    gc_details = true,
+                    test = true,
+                    generate = true,
+                },
                 completeUnimported = true,
-                usePlaceholders = true,
+                usePlaceholders = false,
+                staticcheck = true,
                 analyses = {
                     unusedparams = true,
+                    unreachable = true,
+                    unusedwrite = true,
+                    unusedvariable = true,
+                    useany = true,
                 },
             },
         },
@@ -161,7 +172,7 @@ return {
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
 
-                    null_ls.builtins.formatting.gofmt,
+                    null_ls.builtins.formatting.gofumpt,
                     null_ls.builtins.formatting.goimports,
                     null_ls.builtins.diagnostics.golangci_lint,
                     null_ls.builtins.code_actions.impl,

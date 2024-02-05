@@ -51,6 +51,7 @@ return {
                     "goimports",
                     "golangci-lint",
                     "golines",
+                    "gofumpt",
                     "gomodifytags",
                     "impl",
                     "isort",
