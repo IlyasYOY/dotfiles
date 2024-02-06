@@ -12,6 +12,9 @@ return {
                 test_runner = "gotestsum",
                 icons = false,
                 dap_debug_gui = false,
+                lsp_inlay_hints = {
+                    enable = false
+                }
             }
 
             vim.keymap.set("n", "<leader>gtf", "<cmd>GoTestFile<cr>")
