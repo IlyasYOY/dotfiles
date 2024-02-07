@@ -146,6 +146,8 @@ return {
         lazy = true,
         cmd = {
             "DiffviewOpen",
+            "DiffviewLog",
+            "DiffviewFileHistory",
         },
         keys = {
             "<leader>gdo",

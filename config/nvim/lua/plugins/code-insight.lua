@@ -116,6 +116,7 @@ return {
                     "sql",
                     "tsx",
                     "vim",
+                    "vimdoc",
                     -- markup
                     "css",
                     "html",
