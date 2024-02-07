@@ -10,6 +10,7 @@ local function setup_generic()
     local generic_servers = {
         "clojure_lsp",
         "rust_analyzer",
+        "clangd",
         "bashls",
     }
     for _, client in ipairs(generic_servers) do

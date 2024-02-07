@@ -100,6 +100,7 @@ return {
                 ensure_installed = {
                     -- languages
                     "bash",
+                    "c",
                     "clojure",
                     "fennel",
                     "go",
