@@ -13,3 +13,6 @@ Session.vim
 __pycache__/
 *.py[cod]
 *$py.class
+
+# neovim
+.nvim.lua

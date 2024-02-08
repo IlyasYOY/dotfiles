@@ -161,6 +161,7 @@ return {
                 debounce = 150,
                 save_after_format = false,
                 sources = {
+                    -- lua
                     with_root_file(
                         null_ls.builtins.formatting.stylua,
                         "stylua.toml"
@@ -170,19 +171,28 @@ return {
                         ".luacheckrc"
                     ),
 
+                    -- configs
                     null_ls.builtins.diagnostics.jsonlint,
                     null_ls.builtins.diagnostics.yamllint,
 
+                    -- sql
+                    null_ls.builtins.formatting.sqlfluff.with {
+                        extra_args = { "--dialect", "postgres" },
+                    },
+
+                    -- go
                     null_ls.builtins.formatting.gofumpt,
                     null_ls.builtins.formatting.goimports,
                     null_ls.builtins.diagnostics.golangci_lint,
                     null_ls.builtins.code_actions.impl,
                     null_ls.builtins.code_actions.gomodifytags,
 
+                    -- python
                     null_ls.builtins.diagnostics.pylint,
                     null_ls.builtins.formatting.isort,
                     null_ls.builtins.formatting.autopep8,
 
+                    -- front
                     with_root_file(
                         null_ls.builtins.formatting.prettier,
                         ".prettierrc.js"
@@ -196,6 +206,7 @@ return {
                         ".eslintrc.js"
                     ),
 
+                    -- java
                     null_ls.builtins.diagnostics.checkstyle.with {
                         args = { "-f", "sarif", "$FILENAME" },
                         extra_args = {
@@ -264,7 +275,7 @@ return {
             )
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
-                vim.lsp.buf.format { async = false }
+                vim.lsp.buf.format { async = false, timeout = 10000 }
             end, described(bufopts, "organize code"))
 
             vim.keymap.set(

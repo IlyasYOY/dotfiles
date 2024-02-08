@@ -32,11 +32,8 @@ local workspace_dir = Path.path.home
     .. "/Projects/eclipse-java/"
     .. project_name
 
-local eclipse_format_path = vim.g.custom_eclipse_formatter_path
-if not eclipse_format_path then
-    eclipse_format_path =
-        core.resolve_realative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
-end
+local eclipse_format_path =
+    core.resolve_realative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
 
 local config = {
     cmd = {
@@ -219,7 +216,12 @@ local config = {
         vim.keymap.set("n", "<leader>jdc", function()
             jdtls.test_class()
         end, { desc = "java debug nearest test class" })
-        vim.keymap.set("n", "<leader>jr", "<cmd>JdtWipeDataAndRestart<CR>", { desc = "restart jdtls" })
+        vim.keymap.set(
+            "n",
+            "<leader>jr",
+            "<cmd>JdtWipeDataAndRestart<CR>",
+            { desc = "restart jdtls" }
+        )
 
         lsp.on_attach(client, bufnr)
     end,
@@ -249,7 +251,4 @@ local config = {
     },
 }
 
-vim.opt_local.tabstop = vim.g.tabs_for_java or 4
-vim.opt_local.softtabstop = vim.g.tabs_for_java or 4
-vim.opt_local.shiftwidth = vim.g.tabs_for_java or 4
 jdtls.start_or_attach(config)

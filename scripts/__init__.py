@@ -128,6 +128,7 @@ installers: List[Installer] = [
     LinkingInstaller(HOME / '.config/zentile', CWD / 'config/zentile'),
     LinkingInstaller(HOME / '.config/git/ignore', CWD / '.gitignore-global'),
     LinkingInstaller(HOME / '.config/alacritty', CWD / 'config/alacritty'),
+    LinkingInstaller(HOME / '.golangci.yml', CWD / 'config/.golangci.yml'),
     LinkingInstaller(HOME / '.tmux.conf', CWD / '.tmux.conf'),
     LinkingInstaller(HOME / '.ideavimrc', CWD / '.ideavimrc'),
     LinkingInstaller(HOME / '.vimrc', CWD / '.vimrc'),
