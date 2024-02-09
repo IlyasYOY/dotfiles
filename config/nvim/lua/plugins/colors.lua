@@ -14,7 +14,6 @@ return {
 
             Group.new("@markup.list.unchecked.markdown", colors.red, colors.none, styles.none)
             Group.new("@markup.list.checked.markdown", colors.green, colors.none, styles.none)
-            Group.new("@markup.link.label.markdown_inline", colors.none, colors.none, styles.underline)
         end,
     },
 }

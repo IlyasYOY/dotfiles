@@ -183,7 +183,9 @@ return {
                     -- go
                     null_ls.builtins.formatting.gofumpt,
                     null_ls.builtins.formatting.goimports,
-                    null_ls.builtins.diagnostics.golangci_lint,
+                    null_ls.builtins.diagnostics.golangci_lint.with {
+                        extra_args = { "--config=~/golangci.yml" }
+                    },
                     null_ls.builtins.code_actions.impl,
                     null_ls.builtins.code_actions.gomodifytags,
 
