@@ -13,10 +13,20 @@ return {
         "errp",
         fmt([[
         if err != nil {{
-            return {}, err
+            panic({})
         }}
         ]], {
-            i(0, "nil"),
+            i(0, "err"),
+        })
+    ),
+    s(
+        "errr",
+        fmt([[
+        if err != nil {{
+            return nil, {}
+        }}
+        ]], {
+            i(0, "err"),
         })
     ),
 }

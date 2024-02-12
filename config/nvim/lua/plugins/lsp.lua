@@ -184,7 +184,7 @@ return {
                     null_ls.builtins.formatting.gofumpt,
                     null_ls.builtins.formatting.goimports,
                     null_ls.builtins.diagnostics.golangci_lint.with {
-                        extra_args = { "--config=~/golangci.yml" }
+                        extra_args = { "--config=~/golangci.yml" },
                     },
                     null_ls.builtins.code_actions.impl,
                     null_ls.builtins.code_actions.gomodifytags,
@@ -277,7 +277,7 @@ return {
             )
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
-                vim.lsp.buf.format { async = false, timeout = 10000 }
+                vim.lsp.buf.format { async = false, timeout_ms = 5000 }
             end, described(bufopts, "organize code"))
 
             vim.keymap.set(
