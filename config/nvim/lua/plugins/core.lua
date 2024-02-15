@@ -2,6 +2,19 @@ return {
     { "IlyasYOY/coredor.nvim", dev = true },
     "nvim-tree/nvim-web-devicons",
     "nvim-lua/plenary.nvim",
+    {
+        "mbbill/undotree",
+        lazy = true,
+        keys = {
+            "<leader>ut",
+        },
+        cmd = {
+            "UndotreeToggle",
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>ut", ":UndotreeToggle<CR>")
+        end,
+    },
     "christoomey/vim-tmux-navigator",
     {
         "stevearc/oil.nvim",

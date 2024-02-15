@@ -132,77 +132,77 @@ local config = {
     on_attach = function(client, bufnr)
         require("jdtls").setup_dap()
 
-        vim.keymap.set("n", "<leader>oi", function()
+        vim.keymap.set("n", "<leader><leader>joi", function()
             jdtls.organize_imports()
         end, {
             desc = "organize imports",
         })
-        vim.keymap.set("n", "<leader>oa", function()
+        vim.keymap.set("n", "<leader><leader>joa", function()
             jdtls.organize_imports()
             vim.lsp.buf.format()
         end, {
             desc = "organize all",
         })
 
-        vim.keymap.set("v", "<leader>jev", function()
+        vim.keymap.set("v", "<leader><leader>jev", function()
             jdtls.extract_variable(true)
         end, {
             desc = "java extract selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader>jev", function()
+        vim.keymap.set("n", "<leader><leader>jev", function()
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
             noremap = true,
         })
 
-        vim.keymap.set("v", "<leader>jeV", function()
+        vim.keymap.set("v", "<leader><leader>jeV", function()
             jdtls.extract_variable_all(true)
         end, {
             desc = "java extract all selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader>jeV", function()
+        vim.keymap.set("n", "<leader><leader>jeV", function()
             jdtls.extract_variable_all()
         end, {
             desc = "java extract all to variable",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader>jec", function()
+        vim.keymap.set("n", "<leader><leader>jec", function()
             jdtls.extract_constant()
         end, {
             desc = "java extract constant",
             noremap = true,
         })
-        vim.keymap.set("v", "<leader>jec", function()
+        vim.keymap.set("v", "<leader><leader>jec", function()
             jdtls.extract_constant(true)
         end, {
             desc = "java extract selected to constant",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader>jem", function()
+        vim.keymap.set("n", "<leader><leader>jem", function()
             jdtls.extract_method()
         end, {
             desc = "java extract method",
             noremap = true,
         })
-        vim.keymap.set("v", "<leader>jem", function()
+        vim.keymap.set("v", "<leader><leader>jem", function()
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader>oT", function()
+        vim.keymap.set("n", "<leader><leader>joT", function()
             local plugin = require "jdtls.tests"
             plugin.goto_subjects()
         end, {
             desc = "java open test",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader>ct", function()
+        vim.keymap.set("n", "<leader><leader>jct", function()
             local plugin = require "jdtls.tests"
             plugin.generate()
         end, {
@@ -210,15 +210,15 @@ local config = {
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader>jdm", function()
+        vim.keymap.set("n", "<leader><leader>jdm", function()
             jdtls.test_nearest_method()
         end, { desc = "java debug nearest test method" })
-        vim.keymap.set("n", "<leader>jdc", function()
+        vim.keymap.set("n", "<leader><leader>jdc", function()
             jdtls.test_class()
         end, { desc = "java debug nearest test class" })
         vim.keymap.set(
             "n",
-            "<leader>jr",
+            "<leader><leader>jr",
             "<cmd>JdtWipeDataAndRestart<CR>",
             { desc = "restart jdtls" }
         )

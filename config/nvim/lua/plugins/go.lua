@@ -17,13 +17,12 @@ return {
                 }
             }
 
-            vim.keymap.set("n", "<leader>gtf", "<cmd>GoTestFile<cr>")
-            vim.keymap.set("n", "<leader>gtt", "<cmd>GoTestFunc<cr>")
-            vim.keymap.set("n", "<leader>gtt", "<cmd>GoTestFunc<cr>")
-            vim.keymap.set("n", "<leader>gta", "<cmd>GoTest ./...<cr>")
+            vim.keymap.set("n", "<leader><leader>gtf", "<cmd>GoTestFile<cr>")
+            vim.keymap.set("n", "<leader><leader>gtt", "<cmd>GoTestFunc<cr>")
+            vim.keymap.set("n", "<leader><leader>gta", "<cmd>GoTest ./...<cr>")
 
-            vim.keymap.set("n", "<leader>gts", "<cmd>GoTestSum<cr>")
-            vim.keymap.set("n", "<leader>go", "<cmd>GoCodeLenAct<cr>")
+            vim.keymap.set("n", "<leader><leader>gts", "<cmd>GoTestSum<cr>")
+            vim.keymap.set("n", "<leader><leader>ga", "<cmd>GoCodeLenAct<cr>")
         end,
         event = { "CmdlineEnter" },
         ft = { "go", "gomod" },
