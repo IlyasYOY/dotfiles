@@ -10,7 +10,6 @@ local function setup_generic()
     local generic_servers = {
         "clojure_lsp",
         "rust_analyzer",
-        "clangd",
         "bashls",
     }
     for _, client in ipairs(generic_servers) do
@@ -29,6 +28,16 @@ local function setup_tsserver()
             client.server_capabilities.documentFormattingProvider = false
             lsp.on_attach(client, bufnr)
         end,
+        capabilities = lsp.get_capabilities(),
+    }
+end
+
+local function setup_clangd()
+    local lspconfig = require "lspconfig"
+
+    lspconfig.clangd.setup {
+        on_attach = lsp.on_attach,
+        filetypes = { 'c', 'cpp' },
         capabilities = lsp.get_capabilities(),
     }
 end
@@ -255,6 +264,7 @@ return {
             setup_lua()
             setup_python()
             setup_go()
+            setup_clangd()
 
             local bufopts = { noremap = true, silent = true }
 
