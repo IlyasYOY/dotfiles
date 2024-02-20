@@ -1,14 +1,9 @@
 return {
     {
         "rest-nvim/rest.nvim",
+        ft = "http",
         dependencies = {
             "nvim-lua/plenary.nvim",
-        },
-        lazy = true,
-        keys = {
-            "<leader><leader>R",
-            "<leader><leader>r",
-            "<leader><leader>Rr",
         },
         config = function()
             require("rest-nvim").setup()

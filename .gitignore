@@ -18,3 +18,6 @@ Session.vim
 .DS_Store
 
 config/nvim/lua/ilyasyoy/hidden.lua
+
+config/nvim/lazy-lock.json
+config/nvim-minimal/lazy-lock.json
