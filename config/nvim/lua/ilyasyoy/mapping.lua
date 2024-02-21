@@ -28,6 +28,20 @@ vim.keymap.set(
     { desc = "create session file" }
 )
 
+vim.keymap.set(
+    "n",
+    "<leader>dt",
+    "<cmd>diffthis<CR>",
+    { desc = "diff this file" }
+)
+
+vim.keymap.set(
+    "n",
+    "<leader>do",
+    "<cmd>diffoff<CR>",
+    { desc = "diff off file" }
+)
+
 local function process_lua()
     local cwf = core.current_working_file()
     if string.find(cwf, "_spec%.lua$") then
