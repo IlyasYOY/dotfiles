@@ -1,6 +1,5 @@
 vim.opt_local.spell = true
 vim.opt_local.wrap = true
-vim.opt_local.expandtab = false
 
 local obs = require "obs"
 if obs.vault:is_current_buffer_in_vault() then

@@ -57,6 +57,7 @@ return {
                     "isort",
                     "jsonlint",
                     "luacheck",
+                    "markdownlint",
                     "prettier",
                     "pylint",
                     "sqlfluff",

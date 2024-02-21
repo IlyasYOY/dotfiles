@@ -37,7 +37,7 @@ local function setup_clangd()
 
     lspconfig.clangd.setup {
         on_attach = lsp.on_attach,
-        filetypes = { 'c', 'cpp' },
+        filetypes = { "c", "cpp" },
         capabilities = lsp.get_capabilities(),
     }
 end
@@ -170,6 +170,10 @@ return {
                 debounce = 150,
                 save_after_format = false,
                 sources = {
+                    -- markdown
+                    null_ls.builtins.diagnostics.markdownlint,
+                    null_ls.builtins.formatting.markdownlint,
+
                     -- lua
                     with_root_file(
                         null_ls.builtins.formatting.stylua,
