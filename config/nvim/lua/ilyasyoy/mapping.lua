@@ -30,14 +30,14 @@ vim.keymap.set(
 
 vim.keymap.set(
     "n",
-    "<leader>dt",
+    "<leader>Dt",
     "<cmd>diffthis<CR>",
     { desc = "diff this file" }
 )
 
 vim.keymap.set(
     "n",
-    "<leader>do",
+    "<leader>Do",
     "<cmd>diffoff<CR>",
     { desc = "diff off file" }
 )
