@@ -45,7 +45,7 @@ return {
         config = function()
             require("mason-null-ls").setup {
                 ensure_installed = {
-                    "autopep8",
+                    "ruff",
                     "checkstyle",
                     "eslint_d",
                     "gofumpt",
