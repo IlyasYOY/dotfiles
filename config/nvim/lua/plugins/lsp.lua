@@ -87,7 +87,7 @@ local function setup_go()
                 gofumpt = true,
                 codelenses = {
                     gc_details = true,
-                    test = true,
+                    test = false,
                     generate = true,
                 },
                 completeUnimported = true,
