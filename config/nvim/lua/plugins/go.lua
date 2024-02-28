@@ -12,12 +12,14 @@ return {
                 test_runner = "gotestsum",
                 icons = false,
                 dap_debug_gui = false,
+                lsp_keymaps = false,
                 lsp_inlay_hints = {
-                    enable = false
-                }
+                    enable = false,
+                },
             }
 
             vim.keymap.set("n", "<leader><leader>gtf", "<cmd>GoTestFile<cr>")
+            vim.keymap.set("n", "<leader><leader>gtp", "<cmd>GoTestPackage<cr>")
             vim.keymap.set("n", "<leader><leader>gtt", "<cmd>GoTestFunc<cr>")
             vim.keymap.set("n", "<leader><leader>gta", "<cmd>GoTest ./...<cr>")
 

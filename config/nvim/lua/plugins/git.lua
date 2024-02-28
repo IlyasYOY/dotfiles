@@ -51,6 +51,12 @@ return {
                 ":'<'>GBrowse!<cr>",
                 { desc = "Copy link to current lines" }
             )
+            vim.keymap.set(
+                "n",
+                "<leader>gB",
+                ":Git blame<cr>",
+                { desc = "Open blame" }
+            )
         end,
     },
     {

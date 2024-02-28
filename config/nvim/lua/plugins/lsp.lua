@@ -78,7 +78,10 @@ local function setup_go()
     local util = require "lspconfig.util"
 
     lspconfig.gopls.setup {
-        on_attach = lsp.on_attach,
+        on_attach = function(client, bufnr)
+            lsp.on_attach(client, bufnr)
+            vim.lsp.codelens.refresh()
+        end,
         capabilities = lsp.get_capabilities(),
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
         root_dir = util.root_pattern("go.work", "go.mod", ".git"),
@@ -99,6 +102,7 @@ local function setup_go()
                     unusedwrite = true,
                     unusedvariable = true,
                     useany = true,
+                    nilness = true,
                 },
             },
         },
