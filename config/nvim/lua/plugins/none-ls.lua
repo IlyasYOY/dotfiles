@@ -26,6 +26,7 @@ return {
             none_ls.setup {
                 debounce = 150,
                 save_after_format = false,
+                -- debug = true,
                 sources = {
                     -- markdown
                     none_ls.builtins.diagnostics.markdownlint,
