@@ -1,74 +1,49 @@
 return {
     {
-        "jayp0521/mason-nvim-dap.nvim",
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
         dependencies = {
             "williamboman/mason.nvim",
         },
         config = function()
-            require("mason-nvim-dap").setup {
+            require("mason-tool-installer").setup {
                 ensure_installed = {
-                    "python",
-                    "delve",
-                    "javadbg",
-                    "javatest",
-                },
-                automatic_installation = false,
-            }
-        end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        dependencies = {
-            "williamboman/mason.nvim",
-        },
-        config = function()
-            require("mason-lspconfig").setup {
-                ensure_installed = {
-                    "gopls",
-                    "clangd",
-                    "jdtls",
-                    "lua_ls",
-                    "clojure_lsp",
-                    "rust_analyzer",
-                    "tsserver",
-                    "bashls",
-                },
-                automatic_installation = false,
-            }
-        end,
-    },
-    {
-        "jayp0521/mason-null-ls.nvim",
-        dependencies = {
-            "williamboman/mason.nvim",
-        },
-        config = function()
-            require("mason-null-ls").setup {
-                ensure_installed = {
-                    "ruff",
+                    "autopep8",
+                    "bash-language-server",
                     "checkstyle",
+                    "clangd",
+                    "clojure-lsp",
+                    "debugpy",
+                    "delve",
                     "eslint_d",
                     "gofumpt",
                     "goimports",
                     "golangci-lint",
                     "golines",
                     "gomodifytags",
-                    "impl",
+                    "gopls",
                     "gotests",
                     "gotestsum",
-                    "json-to-struct",
+                    "impl",
                     "isort",
+                    "java-debug-adapter",
+                    "java-test",
+                    "jdtls",
+                    "json-to-struct",
                     "jsonlint",
+                    "lua-language-server",
                     "luacheck",
                     "markdownlint",
                     "prettier",
                     "pylint",
+                    "ruff",
+                    "rust-analyzer",
                     "sqlfluff",
                     "stylelint",
                     "stylua",
+                    "typescript-language-server",
                     "yamllint",
                 },
-                automatic_installation = false,
+                start_delay = 0,
             }
         end,
     },
