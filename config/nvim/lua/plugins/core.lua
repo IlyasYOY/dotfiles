@@ -59,9 +59,9 @@ return {
         -- Lazy load firenvim
         -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
         -- run this without cond: nvim --headless "+call firenvim#install(0) | q"
-        cond = not not vim.g.started_by_firenvim,
+        lazy = not vim.g.started_by_firenvim,
+        module = false,
         build = function()
-            require("lazy").load { plugins = "firenvim", wait = true }
             vim.fn["firenvim#install"](0)
         end,
         init = function()
