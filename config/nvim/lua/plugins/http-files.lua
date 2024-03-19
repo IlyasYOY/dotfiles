@@ -1,13 +1,17 @@
 return {
     {
+        "vhyrro/luarocks.nvim",
+        lazy = true,
+        config = function()
+            require("luarocks").setup {}
+        end,
+    },
+    {
         "rest-nvim/rest.nvim",
         ft = "http",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
+        dependencies = { "luarocks.nvim" },
         config = function()
             require("rest-nvim").setup()
-
             vim.keymap.set("n", "<leader><leader>R", "<Plug>RestNvim", {
                 desc = "runs http request",
             })
