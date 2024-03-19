@@ -1,3 +1,24 @@
+local function get_git_ignored_files_in(dir)
+    local cmd = string.format(
+        'git -C %s ls-files --ignored --exclude-standard --others --directory | grep -v "/.*\\/"',
+        dir
+    )
+
+    local handle = io.popen(cmd)
+    if handle == nil then
+        return
+    end
+
+    local ignored_files = {}
+    for line in handle:lines "*l" do
+        line = line:gsub("/$", "")
+        table.insert(ignored_files, line)
+    end
+    handle:close()
+
+    return ignored_files
+end
+
 return {
     { "IlyasYOY/coredor.nvim", dev = true },
     "nvim-tree/nvim-web-devicons",
@@ -19,7 +40,8 @@ return {
     {
         "stevearc/oil.nvim",
         config = function()
-            require("oil").setup {
+            local oil = require "oil"
+            oil.setup {
                 keymaps = {
                     ["g?"] = "actions.show_help",
                     ["<CR>"] = "actions.select",
@@ -39,6 +61,15 @@ return {
                     ["g\\"] = "actions.toggle_trash",
                 },
                 use_default_keymaps = false,
+                view_options = {
+                    show_hidden = true,
+                    is_hidden_file = function(name, bufnr)
+                        local ignored_files =
+                            get_git_ignored_files_in(oil.get_current_dir())
+                        return vim.tbl_contains(ignored_files, name)
+                            or vim.startswith(name, ".")
+                    end,
+                },
             }
             vim.keymap.set("n", "-", "<cmd>Oil<CR>")
             vim.keymap.set("n", "<leader>e", "<cmd>Oil<CR>")
