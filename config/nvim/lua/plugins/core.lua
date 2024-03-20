@@ -1,4 +1,12 @@
 local function get_git_ignored_files_in(dir)
+    local found = vim.fs.find(".git", {
+        upward = true,
+        path = dir,
+    })
+    if #found == 0 then
+        return {}
+    end
+
     local cmd = string.format(
         'git -C %s ls-files --ignored --exclude-standard --others --directory | grep -v "/.*\\/"',
         dir
