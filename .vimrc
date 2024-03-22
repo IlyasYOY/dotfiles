@@ -58,7 +58,7 @@ set wildmenu
 set wildmode=full
 
 " increase history size 
-set history=50
+set history=300
 
 " noh - no highlight
 nnoremap <Esc> :noh <CR>
