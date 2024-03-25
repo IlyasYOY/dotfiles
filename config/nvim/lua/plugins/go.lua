@@ -1,6 +1,6 @@
 return {
     {
-        "IlyasYOY/go.nvim",
+        "ray-x/go.nvim",
         dependencies = {
             "neovim/nvim-lspconfig",
             "nvim-treesitter/nvim-treesitter",
@@ -11,6 +11,7 @@ return {
                 dap_debug_keymap = false,
                 test_runner = "gotestsum",
                 icons = false,
+                luasnip = true,
                 dap_debug_gui = false,
                 lsp_keymaps = false,
                 lsp_document_formatting = false,
