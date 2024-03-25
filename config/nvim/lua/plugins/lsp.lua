@@ -73,42 +73,6 @@ local function setup_lua()
     }
 end
 
-local function setup_go()
-    local lspconfig = require "lspconfig"
-    local util = require "lspconfig.util"
-
-    lspconfig.gopls.setup {
-        on_attach = function(client, bufnr)
-            lsp.on_attach(client, bufnr)
-            vim.lsp.codelens.refresh()
-        end,
-        capabilities = lsp.get_capabilities(),
-        filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        root_dir = util.root_pattern("go.work", "go.mod", ".git"),
-        settings = {
-            gopls = {
-                gofumpt = true,
-                codelenses = {
-                    gc_details = true,
-                    test = false,
-                    generate = true,
-                },
-                completeUnimported = true,
-                usePlaceholders = false,
-                staticcheck = true,
-                analyses = {
-                    unusedparams = true,
-                    unreachable = true,
-                    unusedwrite = true,
-                    unusedvariable = true,
-                    useany = true,
-                    nilness = true,
-                },
-            },
-        },
-    }
-end
-
 local function setup_python()
     local lspconfig = require "lspconfig"
 
@@ -176,7 +140,6 @@ return {
             setup_tsserver()
             setup_lua()
             setup_python()
-            setup_go()
             setup_clangd()
 
             local bufopts = { noremap = true, silent = true }

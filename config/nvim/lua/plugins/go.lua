@@ -1,6 +1,6 @@
 return {
     {
-        "ray-x/go.nvim",
+        "IlyasYOY/go.nvim",
         dependencies = {
             "neovim/nvim-lspconfig",
             "nvim-treesitter/nvim-treesitter",
@@ -13,6 +13,33 @@ return {
                 icons = false,
                 dap_debug_gui = false,
                 lsp_keymaps = false,
+                lsp_document_formatting = false,
+                lsp_on_attach = require("ilyasyoy.functions.lsp").on_attach,
+                lsp_codelens = true,
+                -- lsp_cfg = true,
+                lsp_cfg = {
+                    settings = {
+                        gopls = {
+                            gofumpt = true,
+                            codelenses = {
+                                gc_details = true,
+                                test = false,
+                                generate = true,
+                            },
+                            completeUnimported = true,
+                            usePlaceholders = false,
+                            staticcheck = true,
+                            analyses = {
+                                unusedparams = true,
+                                unreachable = true,
+                                unusedwrite = true,
+                                unusedvariable = true,
+                                useany = true,
+                                nilness = true,
+                            },
+                        },
+                    },
+                },
                 lsp_inlay_hints = {
                     enable = false,
                 },
