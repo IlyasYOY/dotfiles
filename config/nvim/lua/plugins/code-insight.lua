@@ -125,6 +125,7 @@ return {
                     "markdown_inline",
                     "mermaid",
                     "xml",
+                    "asm",
                     -- config
                     "dot",
                     "toml",
