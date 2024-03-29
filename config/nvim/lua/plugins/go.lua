@@ -9,7 +9,6 @@ return {
         config = function()
             require("go").setup {
                 dap_debug_keymap = false,
-                test_runner = "gotestsum",
                 icons = false,
                 luasnip = true,
                 dap_debug_gui = false,
@@ -41,6 +40,7 @@ return {
                         },
                     },
                 },
+                textobjects = false,
                 lsp_inlay_hints = {
                     enable = false,
                 },
