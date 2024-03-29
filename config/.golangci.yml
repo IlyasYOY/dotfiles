@@ -48,7 +48,6 @@ linters:
     - godot # checks if comments end in a period
     - goimports # in addition to fixing imports, goimports also formats your code in the same style as gofmt
     - gomnd # detects magic numbers
-    - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod
     - gomodguard # allow and block lists linter for direct Go module dependencies. This is different from depguard where there are different block types for example version constraints and module recommendations
     - goprintffuncname # checks that printf-like functions are named with f at the end
     - gosec # inspects source code for security problems
@@ -87,6 +86,8 @@ linters:
     - whitespace # detects leading and trailing whitespace
     - prealloc # [premature optimization, but can be used in some cases] finds slice declarations that could potentially be preallocated
     - tagalign # checks that struct tags are well aligned
+    # bothers me
+    # - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod
 
     ## you may want to enable
     #- decorder # checks declaration order and count of types, constants, variables and functions
