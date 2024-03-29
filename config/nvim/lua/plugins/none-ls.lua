@@ -52,6 +52,7 @@ return {
                     none_ls.builtins.formatting.goimports,
                     none_ls.builtins.diagnostics.golangci_lint.with {
                         extra_args = { "--config=~/.golangci.yml" },
+                        timeout = 60 * 1000,
                     },
                     none_ls.builtins.code_actions.impl,
                     none_ls.builtins.code_actions.gomodifytags,
