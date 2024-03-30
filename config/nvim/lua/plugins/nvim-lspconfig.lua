@@ -103,24 +103,6 @@ end
 
 return {
     {
-        "j-hui/fidget.nvim",
-        tag = "legacy",
-        lazy = true,
-        event = "LspAttach",
-        opts = {},
-    },
-    {
-        "folke/neodev.nvim",
-        lazy = true,
-    },
-    {
-        "mfussenegger/nvim-jdtls",
-        lazy = true,
-        ft = {
-            "java",
-        },
-    },
-    {
         "neovim/nvim-lspconfig",
         dependencies = {
             "IlyasYOY/coredor.nvim",

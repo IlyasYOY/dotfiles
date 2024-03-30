@@ -1,14 +1,4 @@
 return {
-    { "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
-    {
-        "nvim-telescope/telescope-ui-select.nvim",
-        dependencies = {
-            "nvim-telescope/telescope.nvim",
-        },
-        config = function()
-            require("telescope").load_extension "ui-select"
-        end,
-    },
     {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
