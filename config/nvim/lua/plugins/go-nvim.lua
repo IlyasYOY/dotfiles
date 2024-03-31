@@ -14,7 +14,10 @@ return {
                 dap_debug_gui = false,
                 lsp_keymaps = false,
                 lsp_document_formatting = false,
-                lsp_on_attach = require("ilyasyoy.functions.lsp").on_attach,
+                lsp_on_attach = function(client, bufnr)
+                    client.server_capabilities.semanticTokensProvider = nil
+                    require("ilyasyoy.functions.lsp").on_attach(client, bufnr)
+                end,
                 lsp_codelens = true,
                 -- lsp_cfg = true,
                 lsp_cfg = {
