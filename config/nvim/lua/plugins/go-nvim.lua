@@ -15,8 +15,14 @@ return {
                 lsp_keymaps = false,
                 lsp_document_formatting = false,
                 lsp_on_attach = function(client, bufnr)
-                    client.server_capabilities.semanticTokensProvider = nil
-                    require("ilyasyoy.functions.lsp").on_attach(client, bufnr)
+                    -- NOTE: somehow this happens to be nil when I open a new file.
+                    if client then
+                        client.server_capabilities.semanticTokensProvider = nil
+                        require("ilyasyoy.functions.lsp").on_attach(
+                            client,
+                            bufnr
+                        )
+                    end
                 end,
                 lsp_codelens = true,
                 -- lsp_cfg = true,
