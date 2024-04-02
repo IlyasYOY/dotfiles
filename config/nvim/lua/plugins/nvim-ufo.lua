@@ -42,7 +42,7 @@ return {
                 },
                 fold_virt_text_handler = handler,
                 provider_selector = function(bufnr, filetype, buftype)
-                    if filetype == "go" or filetype == "java" then
+                    if filetype == "java" then
                         return { "lsp", "treesitter" }
                     end
                     return { "treesitter", "indent" }
