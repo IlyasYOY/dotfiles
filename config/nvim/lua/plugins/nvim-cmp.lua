@@ -4,7 +4,6 @@ return {
         dependencies = {
             "onsails/lspkind.nvim",
             "L3MON4D3/LuaSnip",
-            "IlyasYOY/obs.nvim",
 
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
@@ -23,9 +22,6 @@ return {
             local cmp_keymap = require "cmp.utils.keymap"
 
             local lspkind = require "lspkind"
-            local cmp_source = require "obs.cmp-source"
-
-            cmp.register_source("obs", cmp_source.new())
 
             cmp.setup {
                 completion = {

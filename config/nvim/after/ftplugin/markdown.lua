@@ -1,7 +1,11 @@
 vim.opt_local.spell = true
 vim.opt_local.wrap = true
 
-local obs = require "obs"
+local status, obs = pcall(require, "obs")
+if not status then
+    return
+end
+
 if obs.vault:is_current_buffer_in_vault() then
     require("cmp").setup.buffer {
         sources = require("cmp").config.sources(
