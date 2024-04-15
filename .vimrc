@@ -85,6 +85,9 @@ nnoremap <silent> ]l :lnext<cr>
 nnoremap <silent> [L :lfirst<cr> 
 nnoremap <silent> ]L :llast<cr>
 
+nnoremap <silent> <leader>co :copen<cr>
+nnoremap <silent> <leader>cc :cclose<cr>
+
 " :h matchit  
 " Helps you to match syntax constuctions in Vim
 runtime macros/matchit.vim

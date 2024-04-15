@@ -6,6 +6,10 @@ return {
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
             "Marskey/telescope-sg",
+            {
+                "nvim-telescope/telescope-live-grep-args.nvim",
+                version = "^1.0.0",
+            },
         },
         config = function()
             local telescope = require "telescope"
@@ -65,6 +69,7 @@ return {
                 },
             }
             require("telescope").load_extension "fzf"
+            require("telescope").load_extension "live_grep_args"
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
@@ -77,6 +82,10 @@ return {
             vim.keymap.set("n", "<leader>fg", function()
                 builtin.live_grep()
             end, { desc = "find grep through files" })
+
+            vim.keymap.set("n", "<leader>fG", function()
+                telescope.extensions.live_grep_args.live_grep_args()
+            end, { desc = "find grep through files with args" })
 
             vim.keymap.set("n", "<leader>fC", function()
                 builtin.commands()
