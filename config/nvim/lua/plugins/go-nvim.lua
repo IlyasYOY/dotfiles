@@ -9,6 +9,7 @@ return {
         config = function()
             require("go").setup {
                 dap_debug_keymap = false,
+                run_in_floaterm = true,
                 icons = false,
                 luasnip = true,
                 dap_debug_gui = false,
