@@ -23,10 +23,10 @@ return {
                 )
             )
 
+            local methods = require "null-ls.methods"
             none_ls.setup {
                 debounce = 150,
                 save_after_format = false,
-                -- debug = true,
                 sources = {
                     -- markdown
                     none_ls.builtins.diagnostics.markdownlint,
@@ -53,6 +53,7 @@ return {
                     none_ls.builtins.diagnostics.golangci_lint.with {
                         extra_args = { "--config=~/.golangci.yml" },
                         timeout = 60 * 1000,
+                        method = methods.DIAGNOSTICS,
                     },
                     none_ls.builtins.code_actions.impl,
                     none_ls.builtins.code_actions.gomodifytags,
