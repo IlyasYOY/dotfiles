@@ -9,7 +9,6 @@ return {
         config = function()
             require("go").setup {
                 dap_debug_keymap = false,
-                run_in_floaterm = true,
                 icons = false,
                 luasnip = true,
                 dap_debug_gui = false,
@@ -56,10 +55,30 @@ return {
                 },
             }
 
-            vim.keymap.set("n", "<leader><leader>gtf", "<cmd>GoTestFile<cr>")
-            vim.keymap.set("n", "<leader><leader>gtp", "<cmd>GoTestPackage<cr>")
-            vim.keymap.set("n", "<leader><leader>gtt", "<cmd>GoTestFunc<cr>")
-            vim.keymap.set("n", "<leader><leader>gta", "<cmd>GoTest ./...<cr>")
+            -- vim.keymap.set("n", "<leader><leader>gtf", "<cmd>GoTestFile<cr>")
+            vim.keymap.set("n", "<leader><leader>gtf", function()
+                local makeprg = vim.opt_local.makeprg
+                vim.cmd.GoTestFile()
+                vim.opt_local.makeprg = makeprg
+            end)
+            -- vim.keymap.set("n", "<leader><leader>gtp", "<cmd>GoTestPackage<cr>")
+            vim.keymap.set("n", "<leader><leader>gtp", function()
+                local makeprg = vim.opt_local.makeprg
+                vim.cmd.GoTestPackage()
+                vim.opt_local.makeprg = makeprg
+            end)
+            -- vim.keymap.set("n", "<leader><leader>gtt", "<cmd>GoTestFunc<cr>")
+            vim.keymap.set("n", "<leader><leader>gtt", function()
+                local makeprg = vim.opt_local.makeprg
+                vim.cmd.GoTestFunc()
+                vim.opt_local.makeprg = makeprg
+            end)
+            -- vim.keymap.set("n", "<leader><leader>gta", "<cmd>GoTest ./...<cr>")
+            vim.keymap.set("n", "<leader><leader>gta", function()
+                local makeprg = vim.opt_local.makeprg
+                vim.cmd.GoTest "./..."
+                vim.opt_local.makeprg = makeprg
+            end)
 
             vim.keymap.set("n", "<leader><leader>gts", "<cmd>GoTestSum<cr>")
             vim.keymap.set("n", "<leader><leader>ga", "<cmd>GoCodeLenAct<cr>")
