@@ -10,23 +10,43 @@ local ilyasyoy_snippets = require "ilyasyoy.snippets"
 return {
     s("today", ilyasyoy_snippets.current_date()),
     s(
+        "trun",
+        fmt(
+            [[
+        t.Run("{}", func(t *testing.T) {{
+            {}
+        }})
+        ]],
+            {
+                i(1, "test case"),
+                i(0, ""),
+            }
+        )
+    ),
+    s(
         "errp",
-        fmt([[
+        fmt(
+            [[
         if err != nil {{
             panic({})
         }}
-        ]], {
-            i(0, "err"),
-        })
+        ]],
+            {
+                i(0, "err"),
+            }
+        )
     ),
     s(
         "errr",
-        fmt([[
+        fmt(
+            [[
         if err != nil {{
             return nil, {}
         }}
-        ]], {
-            i(0, "err"),
-        })
+        ]],
+            {
+                i(0, "err"),
+            }
+        )
     ),
 }
