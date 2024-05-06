@@ -34,25 +34,22 @@ linters-settings:
 linters:
   disable-all: true
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - typecheck
-    - unused
     - asasalint
     - asciicheck
     - bidichk
     - bodyclose
+    - canonicalheader
     - cyclop
     - dupl
     - durationcheck
+    - err113
+    - errcheck
     - errname
     - errorlint
     - execinquery
     - exhaustive
     - exportloopref
+    - fatcontext
     - forbidigo
     - funlen
     - gocheckcompilerdirectives
@@ -64,15 +61,20 @@ linters:
     - gocritic
     - gocyclo
     - godot
+    - goerr113  # TODO: duplicate err113
     - goimports
-    - gomnd
+    - gomnd  # TODO: duplicate mnd
     - gomodguard
     - goprintffuncname
     - gosec
+    - gosimple
+    - govet
+    - ineffassign
     - lll
     - loggercheck
     - makezero
     - mirror
+    - mnd
     - musttag
     - nakedret
     - nestif
@@ -92,6 +94,7 @@ linters:
     - rowserrcheck
     - sloglint
     - sqlclosecheck
+    - staticcheck
     - stylecheck
     - tagalign
     - tenv
@@ -100,8 +103,10 @@ linters:
     - testpackage
     - thelper
     - tparallel
+    - typecheck
     - unconvert
     - unparam
+    - unused
     - usestdlibvars
     - wastedassign
     - whitespace
