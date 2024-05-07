@@ -1,5 +1,3 @@
-
-
 ---
 
 linters-settings:
@@ -42,7 +40,7 @@ linters:
     - cyclop
     - dupl
     - durationcheck
-    - err113
+    # - err113
     - errcheck
     - errname
     - errorlint
@@ -74,7 +72,7 @@ linters:
     - loggercheck
     - makezero
     - mirror
-    - mnd
+    # - mnd
     - musttag
     - nakedret
     - nestif
