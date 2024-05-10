@@ -27,6 +27,19 @@ local function get_git_ignored_files_in(dir)
     return ignored_files
 end
 
+local cache = {}
+
+local function cached_get_git_ignored_files_in(dir)
+    local val
+    val = cache[dir]
+    if val then
+        return val
+    end
+    val = get_git_ignored_files_in(dir)
+    cache[dir] = val
+    return val
+end
+
 return {
     {
         "stevearc/oil.nvim",
@@ -56,7 +69,7 @@ return {
                     show_hidden = true,
                     is_hidden_file = function(name, bufnr)
                         local ignored_files =
-                            get_git_ignored_files_in(oil.get_current_dir())
+                            cached_get_git_ignored_files_in(oil.get_current_dir())
                         return vim.tbl_contains(ignored_files, name)
                             or vim.startswith(name, ".")
                     end,
