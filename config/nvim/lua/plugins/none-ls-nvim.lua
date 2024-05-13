@@ -29,7 +29,9 @@ return {
                 save_after_format = false,
                 sources = {
                     -- markdown
-                    none_ls.builtins.diagnostics.markdownlint,
+                    none_ls.builtins.diagnostics.markdownlint.with {
+                        method = none_ls.methods.DIAGNOSTICS_ON_SAVE,
+                    },
                     none_ls.builtins.formatting.markdownlint,
 
                     -- lua

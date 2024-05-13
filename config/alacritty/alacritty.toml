@@ -8,19 +8,19 @@ opacity = 0.99
 size = 18
 
 [font.bold]
-family = "IosevkaTerm Nerd Font"
+family = "GoMono Nerd Font"
 style = "Bold"
 
 [font.bold_italic]
-family = "IosevkaTerm Nerd Font"
+family = "GoMono Nerd Font"
 style = "Bold Italic"
 
 [font.italic]
-family = "IosevkaTerm Nerd Font"
+family = "GoMono Nerd Font"
 style = "Italic"
 
 [font.normal]
-family = "IosevkaTerm Nerd Font"
+family = "GoMono Nerd Font"
 style = "Regular"
 
 [[keyboard.bindings]]
