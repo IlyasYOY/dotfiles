@@ -146,7 +146,7 @@ return {
             )
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
-                vim.lsp.buf.format { async = false, timeout_ms = 5000 }
+                vim.lsp.buf.format { async = false, timeout_ms = 10000 }
             end, described(bufopts, "organize code"))
 
             vim.keymap.set(
