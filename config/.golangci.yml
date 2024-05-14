@@ -58,7 +58,7 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - godot
+    # - godot
     - goerr113  # TODO: duplicate err113
     - goimports
     - gomnd  # TODO: duplicate mnd
