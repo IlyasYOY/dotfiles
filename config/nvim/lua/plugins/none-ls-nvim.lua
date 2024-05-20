@@ -84,6 +84,7 @@ return {
                     },
                     none_ls.builtins.diagnostics.pmd.with {
                         args = {
+                            "check",
                             "--format",
                             "json",
                             "--no-cache",

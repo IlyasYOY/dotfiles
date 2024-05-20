@@ -55,6 +55,12 @@ function M.on_attach(client, bufnr)
         vim.lsp.buf.declaration,
         described(bufopts, "go to Declarations")
     )
+    vim.keymap.set("n", "gs", function()
+        vim.lsp.buf.typehierarchy "subtypes"
+    end, described(bufopts, "go to subtypes"))
+    vim.keymap.set("n", "gS", function()
+        vim.lsp.buf.typehierarchy "supertypes"
+    end, described(bufopts, "go to supertypes"))
     vim.keymap.set(
         "n",
         "gd",

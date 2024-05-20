@@ -132,18 +132,6 @@ return {
                 vim.diagnostic.open_float,
                 described(opts, "diagnostics")
             )
-            vim.keymap.set(
-                "n",
-                "[d",
-                vim.diagnostic.goto_prev,
-                described(opts, "Previous diagostics")
-            )
-            vim.keymap.set(
-                "n",
-                "]d",
-                vim.diagnostic.goto_next,
-                described(opts, "Next diagnostics")
-            )
 
             vim.keymap.set({ "n", "v" }, "<space>oc", function()
                 vim.lsp.buf.format { async = false, timeout_ms = 10000 }
@@ -154,13 +142,6 @@ return {
                 "<space>a",
                 vim.lsp.buf.code_action,
                 described(bufopts, "Perform code action")
-            )
-
-            vim.keymap.set(
-                "n",
-                "<leader>k",
-                vim.lsp.buf.hover,
-                described(bufopts, "show hover")
             )
         end,
     },

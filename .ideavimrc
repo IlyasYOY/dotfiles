@@ -72,7 +72,7 @@ map <leader>jec <Action>(IntroduceConstant)
 map <leader>jem <Action>(ExtractMethod)
 
 
-map <leader>k <Action>(QuickJavaDoc)
+map K <Action>(QuickJavaDoc)
 imap <C-s> <Action>(ParameterInfo)
 map <C-s> <Action>(ParameterInfo)
 map <leader>s <Action>(GotoSymbol)
