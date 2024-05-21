@@ -83,7 +83,7 @@ return {
                 builtin.live_grep()
             end, { desc = "find grep through files" })
 
-            vim.keymap.set("n", "<leader>fG", function()
+            vim.keymap.set("n", "<leader>Fg", function()
                 telescope.extensions.live_grep_args.live_grep_args()
             end, { desc = "find grep through files with args" })
 
