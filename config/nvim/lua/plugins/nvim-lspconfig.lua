@@ -133,9 +133,11 @@ return {
                 described(opts, "diagnostics")
             )
 
-            vim.keymap.set({ "n", "v" }, "<space>oc", function()
+            vim.keymap.set({ "n", "v" }, "<leader>oc", function()
                 vim.lsp.buf.format { async = false, timeout_ms = 10000 }
             end, described(bufopts, "organize code"))
+
+            vim.keymap.set("n", "<leader>lr", "<cmd>LspRestart<cr>")
 
             vim.keymap.set(
                 { "n", "v" },
