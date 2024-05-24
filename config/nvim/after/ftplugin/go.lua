@@ -15,3 +15,19 @@ vim.api.nvim_create_user_command(
         desc = "replace all mockery api with a new one",
     }
 )
+
+vim.api.nvim_create_user_command(
+    "GoReplaceRequireWithSuiteRequire",
+    [[%s/require\.\(\w*\)(\(\w*\).T(), /\2.Require().\1(/gc]],
+    {
+        desc = "replace require with suite require",
+    }
+)
+
+vim.api.nvim_create_user_command(
+    "GoReplaceAssertWithSuiteAssert",
+    [[%s/assert\.\(\w*\)(\(\w*\).T(), /\2.\1(/gc]],
+    {
+        desc = "replace assert with suite assert",
+    }
+)
