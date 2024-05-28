@@ -30,11 +30,7 @@ return {
                     settings = {
                         gopls = {
                             gofumpt = true,
-                            codelenses = {
-                                gc_details = true,
-                                test = false,
-                                generate = true,
-                            },
+                            codelenses = {},
                             completeUnimported = true,
                             usePlaceholders = false,
                             staticcheck = true,
