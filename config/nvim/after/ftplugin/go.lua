@@ -9,6 +9,14 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
+    "GoRenameMockeryRawMockWithNew",
+    [[%s/&mocks\.\(\w*\){}/mocks.New\1(t)/gc]],
+    {
+        desc = "replace all mockery &mocks.Some with mocks.NewSome(t)",
+    }
+)
+
+vim.api.nvim_create_user_command(
     "GoRenameMockeryOnWithExpect",
     [[%s/On("\(\w*\)", /EXPECT().\1(/gc]],
     {
