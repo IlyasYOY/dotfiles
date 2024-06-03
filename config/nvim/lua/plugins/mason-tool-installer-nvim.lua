@@ -9,6 +9,7 @@ return {
                 ensure_installed = {
                     "autopep8",
                     "bash-language-server",
+                    "buf",
                     "checkstyle",
                     "clangd",
                     "clojure-lsp",
@@ -17,7 +18,10 @@ return {
                     "eslint_d",
                     "gofumpt",
                     "goimports",
-                    "golangci-lint",
+                    {
+                        "golangci-lint",
+                        version = "v1.55.2",
+                    },
                     "golines",
                     "gomodifytags",
                     "gopls",
@@ -34,6 +38,7 @@ return {
                     "luacheck",
                     "markdownlint",
                     "prettier",
+                    "protolint",
                     "pylint",
                     "ruff",
                     "rust-analyzer",

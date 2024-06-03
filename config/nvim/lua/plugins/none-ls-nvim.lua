@@ -48,6 +48,11 @@ return {
                         extra_args = { "--dialect", "postgres" },
                     },
 
+                    -- proto
+                    none_ls.builtins.diagnostics.protolint,
+                    none_ls.builtins.formatting.buf,
+                    none_ls.builtins.diagnostics.buf,
+
                     -- go
                     none_ls.builtins.formatting.gofumpt,
                     none_ls.builtins.formatting.golines,
