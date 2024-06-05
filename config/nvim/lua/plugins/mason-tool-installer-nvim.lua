@@ -18,10 +18,7 @@ return {
                     "eslint_d",
                     "gofumpt",
                     "goimports",
-                    {
-                        "golangci-lint",
-                        version = "v1.55.2",
-                    },
+                    "golangci-lint",
                     "golines",
                     "gomodifytags",
                     "gopls",
