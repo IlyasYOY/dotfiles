@@ -15,7 +15,38 @@ run:
     - _mock\.go$
     - \.pb\.go$
 
+issues:
+  exclude:
+    # errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
+    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv|.*Rollback). is not checked
+    - should check returned error before deferring
+  exclude-rules:
+    - source: "//noinspection"
+      linters:
+        - gocritic
+    - path: "_test\\.go"
+      linters:
+        - bodyclose
+        - dupl
+        - funlen
+        - goconst
+        - gochecknoglobals
+        - gosec
+        - noctx
+        - wrapcheck
+  max-same-issues: 50
+  exclude-use-default: false
+
+
 linters-settings:
+  revive:
+    confidence: 0.1
+    rules:
+      - name: exported
+        disabled: true
+  stylecheck:
+    # I like ST1003, but many people may disagree.
+    checks: ["all", "-ST1021", "-ST1000", "-ST1003"]
   interfacebloat:
     max: 3
   errcheck:
@@ -171,26 +202,3 @@ linters:
     #- scopelint # [deprecated, replaced by exportloopref] checks for unpinned variables in go programs
     #- structcheck # [deprecated, replaced by unused] finds unused struct fields
     #- varcheck # [deprecated, replaced by unused] finds unused global variables and constants
-
-
-issues:
-  exclude: 
-    # errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
-    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv|.*Rollback). is not checked
-    - should check returned error before deferring
-  exclude-rules:
-    - source: "//noinspection"
-      linters:
-        - gocritic
-    - path: "_test\\.go"
-      linters:
-        - bodyclose
-        - dupl
-        - funlen
-        - goconst
-        - gochecknoglobals
-        - gosec
-        - noctx
-        - wrapcheck
-  max-same-issues: 50
-  exclude-use-default: false

@@ -79,6 +79,8 @@ nnoremap <silent> [q :cprevious<cr>
 nnoremap <silent> ]q :cnext<cr> 
 nnoremap <silent> [Q :cfirst<cr> 
 nnoremap <silent> ]Q :clast<cr>
+nnoremap <silent> ]u :cnewer<cr>
+nnoremap <silent> [u :colder<cr>
 
 nnoremap <silent> [l :lprevious<cr>
 nnoremap <silent> ]l :lnext<cr> 
