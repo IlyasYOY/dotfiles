@@ -46,7 +46,7 @@ linters-settings:
         disabled: true
   stylecheck:
     # I like ST1003, but many people may disagree.
-    checks: ["all", "-ST1021", "-ST1000", "-ST1003"]
+    checks: ["all", "-ST1020", "-ST1021", "-ST1000", "-ST1003"]
   interfacebloat:
     max: 3
   errcheck:
