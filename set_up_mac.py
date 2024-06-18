@@ -1,4 +1,3 @@
-
 from pyinfra.operations import brew, files, git, server
 
 from common import (cwd_path, home_path_str, notes_path_str,
@@ -226,6 +225,8 @@ def setup_git_config():
                value='log --all --decorate --graph --oneline')
     git.config(key='diff.algorithm',
                value='histogram')
+    git.config(key='core.quotePath',
+               value='false')
 
 
 def setup_tmux_plugin_manger():
