@@ -170,6 +170,8 @@ def setup_zshrc():
                line='alias ilyasyoy-dotfiles="cd ${ILYASYOY_DOTFILES_DIR}"')
     files.line(path=zshrc_path_str,
                line='alias ilyasyoy-notes="cd ~/vimwiki"')
+    files.line(path=zshrc_path_str,
+               line='export PATH="$HOME/go/bin:$PATH"')
 
 
 def setup_sdkman():
