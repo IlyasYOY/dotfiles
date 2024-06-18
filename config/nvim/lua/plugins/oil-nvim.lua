@@ -68,8 +68,9 @@ return {
                 view_options = {
                     show_hidden = true,
                     is_hidden_file = function(name, bufnr)
-                        local ignored_files =
-                            cached_get_git_ignored_files_in(oil.get_current_dir())
+                        local ignored_files = cached_get_git_ignored_files_in(
+                            oil.get_current_dir()
+                        )
                         return vim.tbl_contains(ignored_files, name)
                             or vim.startswith(name, ".")
                     end,

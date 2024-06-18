@@ -7,7 +7,7 @@ Simple repo with my dotfiles.
 Please run this command:
 
 ```bash
-python3 -m scripts
+make install
 ```
 
 ## DISCLAIMER
