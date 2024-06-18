@@ -1,6 +1,4 @@
 
-from pyinfra import host
-from pyinfra.facts.server import Home
 from pyinfra.operations import brew, files, git, server
 
 from common import (cwd_path, home_path_str, notes_path_str,
@@ -17,6 +15,7 @@ def setup_mac_using_brew():
         packages=[
             "ast-grep",
             "bat",
+            "bison",
             "cmake",
             "curl",
             "ffmpeg",
@@ -195,12 +194,20 @@ def setup_node_version_manager():
     server.shell(commands=[nvm_source_script + '&& nvm install --lts'])
 
 
+def setup_go_version_manager():
+    """
+    Install GVM to manage go.
+    """
+    server.shell(commands=[
+        'sh -c "$(curl -fsSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)" | grep -e "Already installed" -e "Installed"'])
+
+
 def setup_ohmyzsh():
     """
     No comments here, everybody knows this.
     """
     server.shell(commands=[
-                 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" | grep "already exists"'])
+                 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" | grep -e "already exists" -e "is now installed"'])
 
 
 def setup_git_config():
@@ -219,12 +226,22 @@ def setup_git_config():
                value='histogram')
 
 
+def setup_tmux_plugin_manger():
+    git.repo(src="https://github.com/tmux-plugins/tpm",
+             dest=f'{home_path_str}/.tmux/plugins/tpm')
+    server.shell(commands=[
+        f'{home_path_str}/.tmux/plugins/tpm/bin/install_plugins',
+    ])
+
+
 setup_mac_using_brew()
 setup_basic_directories()
 setup_notes()
 setup_links_to_config_files()
 setup_zshrc()
+setup_git_config()
 setup_sdkman()
+setup_go_version_manager()
 setup_node_version_manager()
 setup_ohmyzsh()
-setup_git_config()
+setup_tmux_plugin_manger()

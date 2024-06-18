@@ -1,6 +1,6 @@
 from pyinfra.operations import brew, git, server
 
-from common import notes_path_str, personal_projects_path_str
+from common import home_path_str, notes_path_str, personal_projects_path_str
 
 
 def update_mac_using_brew():
@@ -56,6 +56,13 @@ def update_local_repos():
     )
 
 
+def update_tmux_plugins():
+    server.shell(commands=[
+        f'{home_path_str}/.tmux/plugins/tpm/bin/update_plugins all',
+    ])
+
+
 update_mac_using_brew()
 update_local_repos()
+update_tmux_plugins()
 update_nvim()
