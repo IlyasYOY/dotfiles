@@ -6,6 +6,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.venv
+
 config/nvim/spell/*.spl
 config/nvim/spell/*.sug
 config/nvim/spell/*.add

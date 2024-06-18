@@ -27,7 +27,10 @@ set hidden
 set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab 
-set smartindent 
+
+if !has('nvim')
+    set smartindent 
+endif
 
 " Swap files 
 set noswapfile 
