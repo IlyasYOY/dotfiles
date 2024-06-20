@@ -22,9 +22,9 @@ install-dev-requirements: .venv
 # installs dependencies using pyinfra
 .PHONY: install
 install: install-requirements
-	.venv/bin/pyinfra inventory.py set_up_mac.py
+	.venv/bin/pyinfra inventory.py set_up_mac.py -v
 
 # updates dependencies using pyinfra
 .PHONY: update
 update: install-requirements
-	.venv/bin/pyinfra inventory.py update_mac.py
+	.venv/bin/pyinfra inventory.py update_mac.py -v

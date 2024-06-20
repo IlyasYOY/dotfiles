@@ -11,6 +11,9 @@ return {
                     TODO = {
                         alt = { "todo", "ToDo" },
                     },
+                    FIXME = {
+                        alt = { "fixme", "FixMe" },
+                    },
                 },
                 search = {
                     args = {
