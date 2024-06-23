@@ -59,7 +59,11 @@ return {
                     -- go
                     none_ls.builtins.formatting.gofumpt,
                     none_ls.builtins.formatting.golines,
-                    none_ls.builtins.formatting.goimports,
+                    none_ls.builtins.formatting.goimports.with {
+                        extra_args = {
+                            "-format-only=true",
+                        },
+                    },
                     none_ls.builtins.diagnostics.golangci_lint.with {
                         extra_args = { "--config=~/.golangci.yml" },
                         timeout = 60 * 1000,
