@@ -58,7 +58,12 @@ return {
 
                     -- go
                     none_ls.builtins.formatting.gofumpt,
-                    none_ls.builtins.formatting.golines,
+                    -- TODO: fix this, seems like we don't have shell during execution so command cannot be found.
+                    -- none_ls.builtins.formatting.golines.with {
+                    --     extra_args = {
+                    --         "--base-formatter='goimports -format-only=true'",
+                    --     },
+                    -- },
                     none_ls.builtins.formatting.goimports.with {
                         extra_args = {
                             "-format-only=true",
