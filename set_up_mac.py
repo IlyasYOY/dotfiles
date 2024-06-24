@@ -52,7 +52,6 @@ def setup_mac_using_brew():
             "netnewswire",
             "obsidian",
             "telegram",
-            "transmission",
             "vial",
         ],
     )
