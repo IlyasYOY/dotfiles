@@ -25,6 +25,7 @@ return {
 
             local methods = require "null-ls.methods"
             none_ls.setup {
+                debug = true,
                 debounce = 150,
                 save_after_format = false,
                 sources = {
@@ -58,12 +59,11 @@ return {
 
                     -- go
                     none_ls.builtins.formatting.gofumpt,
-                    -- TODO: fix this, seems like we don't have shell during execution so command cannot be found.
-                    -- none_ls.builtins.formatting.golines.with {
-                    --     extra_args = {
-                    --         "--base-formatter='goimports -format-only=true'",
-                    --     },
-                    -- },
+                    none_ls.builtins.formatting.golines.with {
+                        extra_args = {
+                            "--base-formatter=goimports -format-only=true",
+                        },
+                    },
                     none_ls.builtins.formatting.goimports.with {
                         extra_args = {
                             "-format-only=true",
