@@ -97,7 +97,7 @@ function M.on_attach(client, bufnr)
         vim.lsp.buf.remove_workspace_folder,
         described(bufopts, "workspace remove folder")
     )
-    vim.keymap.set("n", "<space>wl", function()
+    vim.keymap.set("n", "<space>lw", function()
         vim.notify(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, described(bufopts, "workspace list folders"))
 
@@ -107,6 +107,16 @@ function M.on_attach(client, bufnr)
         vim.lsp.buf.rename,
         described(bufopts, "rename symbol under the cursor")
     )
+
+    if
+        client
+        and client.server_capabilities.inlayHintProvider
+        and vim.lsp.inlay_hint
+    then
+        vim.keymap.set("n", "<leader>lih", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end, described(bufopts, "Toggle Inlay Hints"))
+    end
 end
 
 function M.get_capabilities()
