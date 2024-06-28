@@ -25,7 +25,6 @@ return {
                     end
                 end,
                 lsp_codelens = true,
-                -- lsp_cfg = true,
                 lsp_cfg = {
                     settings = {
                         gopls = {
@@ -37,6 +36,7 @@ return {
                             analyses = {
                                 unusedparams = true,
                                 unreachable = true,
+                                stdversion = true,
                                 unusedwrite = true,
                                 unusedvariable = true,
                                 useany = true,
