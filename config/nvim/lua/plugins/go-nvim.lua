@@ -35,6 +35,8 @@ return {
                             staticcheck = true,
                             analyses = {
                                 unusedparams = true,
+                                framepointer = true,
+                                sigchanyzer = true,
                                 unreachable = true,
                                 stdversion = true,
                                 unusedwrite = true,
