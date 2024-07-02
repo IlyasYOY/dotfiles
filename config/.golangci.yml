@@ -37,7 +37,6 @@ issues:
   max-same-issues: 50
   exclude-use-default: false
 
-
 linters-settings:
   revive:
     confidence: 0.1

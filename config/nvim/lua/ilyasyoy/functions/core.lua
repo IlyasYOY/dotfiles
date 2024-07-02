@@ -11,7 +11,7 @@ function M.get_dotfiles_dir()
     return resolve_dotfiles_plenary_path():expand()
 end
 
-function M.resolve_realative_to_dotfiles_dir(path)
+function M.resolve_relative_to_dotfiles_dir(path)
     local plenary_path = resolve_dotfiles_plenary_path()
     return (plenary_path / path):expand()
 end

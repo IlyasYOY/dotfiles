@@ -33,7 +33,7 @@ local workspace_dir = Path.path.home
     .. project_name
 
 local eclipse_format_path =
-    core.resolve_realative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
+    core.resolve_relative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
 
 local config = {
     cmd = {

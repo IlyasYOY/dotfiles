@@ -72,7 +72,6 @@ return {
                     none_ls.builtins.diagnostics.golangci_lint.with {
                         extra_args = { "--config=~/.golangci.yml" },
                         timeout = 60 * 1000,
-                        method = methods.DIAGNOSTICS,
                     },
                     none_ls.builtins.code_actions.impl,
                     none_ls.builtins.code_actions.gomodifytags,
@@ -96,7 +95,7 @@ return {
                         args = { "-f", "sarif", "$FILENAME" },
                         extra_args = {
                             "-c",
-                            core.resolve_realative_to_dotfiles_dir "config/checkstyle.xml",
+                            core.resolve_relative_to_dotfiles_dir "config/checkstyle.xml",
                         },
                     },
                     none_ls.builtins.diagnostics.pmd.with {
@@ -110,7 +109,7 @@ return {
                         },
                         extra_args = {
                             "-R",
-                            core.resolve_realative_to_dotfiles_dir "config/pmd.xml",
+                            core.resolve_relative_to_dotfiles_dir "config/pmd.xml",
                         },
                     },
                 },
