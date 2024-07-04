@@ -7,6 +7,10 @@ return {
             "nvim-telescope/telescope-fzf-native.nvim",
             "Marskey/telescope-sg",
             {
+                "isak102/telescope-git-file-history.nvim",
+                dependencies = { "tpope/vim-fugitive" },
+            },
+            {
                 "nvim-telescope/telescope-live-grep-args.nvim",
                 version = "^1.0.0",
             },
@@ -70,6 +74,7 @@ return {
             }
             require("telescope").load_extension "fzf"
             require("telescope").load_extension "live_grep_args"
+            require("telescope").load_extension "git_file_history"
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
