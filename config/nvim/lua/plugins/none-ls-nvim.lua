@@ -25,7 +25,6 @@ return {
 
             local methods = require "null-ls.methods"
             none_ls.setup {
-                debug = true,
                 debounce = 150,
                 save_after_format = false,
                 sources = {

@@ -10,14 +10,11 @@ return {
                 "isak102/telescope-git-file-history.nvim",
                 dependencies = { "tpope/vim-fugitive" },
             },
-            {
-                "nvim-telescope/telescope-live-grep-args.nvim",
-                version = "^1.0.0",
-            },
         },
         config = function()
             local telescope = require "telescope"
             local builtin = require "telescope.builtin"
+            local utils = require "telescope.utils"
             local themes = require "telescope.themes"
 
             telescope.setup {
@@ -62,18 +59,10 @@ return {
                             "--smart-case",
                         },
                     },
-                    live_grep = {
-                        additional_args = function(opts)
-                            return {
-                                "--hidden",
-                                "--smart-case",
-                            }
-                        end,
-                    },
                 },
             }
+
             require("telescope").load_extension "fzf"
-            require("telescope").load_extension "live_grep_args"
             require("telescope").load_extension "git_file_history"
 
             vim.keymap.set("n", "<leader>ff", function()
@@ -81,20 +70,16 @@ return {
             end, { desc = "find files" })
 
             vim.keymap.set("n", "<leader>fF", function()
-                builtin.git_files()
-            end, { desc = "find git files" })
+                builtin.find_files { cwd = utils.buffer_dir() }
+            end, { desc = "find files in current dir" })
 
             vim.keymap.set("n", "<leader>fg", function()
                 builtin.live_grep()
             end, { desc = "find grep through files" })
 
-            vim.keymap.set("n", "<leader>Fg", function()
-                telescope.extensions.live_grep_args.live_grep_args()
-            end, { desc = "find grep through files with args" })
-
-            vim.keymap.set("n", "<leader>fC", function()
-                builtin.commands()
-            end, { desc = "find commands" })
+            vim.keymap.set("n", "<leader>fG", function()
+                builtin.live_grep { cwd = utils.buffer_dir() }
+            end, { desc = "find files in current dir" })
 
             vim.keymap.set("n", "<leader>fc", function()
                 vim.cmd [[Telescope ast_grep]]
@@ -139,18 +124,6 @@ return {
             vim.keymap.set("n", "<leader>fB", function()
                 builtin.current_buffer_fuzzy_find()
             end, { desc = "find current buffer" })
-
-            vim.keymap.set("n", "<leader>fGb", function()
-                builtin.git_branches(themes.get_ivy())
-            end, { desc = "find git branches" })
-
-            vim.keymap.set("n", "<leader>fGc", function()
-                builtin.git_commits(themes.get_ivy())
-            end, { desc = "find git commits" })
-
-            vim.keymap.set("n", "<leader>fGf", function()
-                builtin.git_files(themes.get_ivy())
-            end, { desc = "find git files" })
         end,
     },
 }
