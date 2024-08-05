@@ -1,4 +1,5 @@
 vim.opt_local.expandtab = false
+vim.opt_local.spell = true
 
 vim.api.nvim_create_user_command(
     "GoRemoveUselessComments",

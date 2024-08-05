@@ -57,12 +57,15 @@ return {
                     none_ls.builtins.diagnostics.buf,
 
                     -- go
+
+                    -- NOTE: wanna try working without them for now.
+                    --
+                    -- none_ls.builtins.formatting.golines.with {
+                    --     extra_args = {
+                    --         "--base-formatter=goimports -format-only=true",
+                    --     },
+                    -- },
                     none_ls.builtins.formatting.gofumpt,
-                    none_ls.builtins.formatting.golines.with {
-                        extra_args = {
-                            "--base-formatter=goimports -format-only=true",
-                        },
-                    },
                     none_ls.builtins.formatting.goimports.with {
                         extra_args = {
                             "-format-only=true",
