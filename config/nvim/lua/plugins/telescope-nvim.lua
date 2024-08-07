@@ -3,6 +3,7 @@ return {
         "nvim-telescope/telescope.nvim",
         version = "0.1.x",
         dependencies = {
+            "IlyasYOY/coredor.nvim",
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
             "Marskey/telescope-sg",
@@ -70,7 +71,13 @@ return {
             end, { desc = "find files" })
 
             vim.keymap.set("n", "<leader>fF", function()
-                builtin.find_files { cwd = utils.buffer_dir() }
+                local core = require "coredor"
+                builtin.find_files {
+                    cwd = core.string_strip_prefix(
+                        utils.buffer_dir(),
+                        "oil://"
+                    ),
+                }
             end, { desc = "find files in current dir" })
 
             vim.keymap.set("n", "<leader>fg", function()
@@ -78,7 +85,13 @@ return {
             end, { desc = "find grep through files" })
 
             vim.keymap.set("n", "<leader>fG", function()
-                builtin.live_grep { cwd = utils.buffer_dir() }
+                local core = require "coredor"
+                builtin.live_grep {
+                    cwd = core.string_strip_prefix(
+                        utils.buffer_dir(),
+                        "oil://"
+                    ),
+                }
             end, { desc = "find files in current dir" })
 
             vim.keymap.set("n", "<leader>fc", function()

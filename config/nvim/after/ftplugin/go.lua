@@ -2,7 +2,7 @@ vim.opt_local.expandtab = false
 vim.opt_local.spell = true
 
 vim.api.nvim_create_user_command(
-    "GoRemoveUselessComments",
+    "GoReplaceUselessComments",
     [[%s/\/\/ \w* \.*$//gc]],
     {
         desc = "remove all comments repeating name of the struct",
@@ -10,7 +10,7 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
-    "GoRenameMockeryRawMockWithNew",
+    "GoReplaceMockeryRawMockWithNew",
     [[%s/&mocks\.\(\w*\){}/mocks.New\1(t)/gc]],
     {
         desc = "replace all mockery &mocks.Some with mocks.NewSome(t)",
@@ -18,7 +18,7 @@ vim.api.nvim_create_user_command(
 )
 
 vim.api.nvim_create_user_command(
-    "GoRenameMockeryOnWithExpect",
+    "GoReplaceMockeryOnWithExpect",
     [[%s/On("\(\w*\)", /EXPECT().\1(/gc]],
     {
         desc = "replace all mockery api with a new one",
