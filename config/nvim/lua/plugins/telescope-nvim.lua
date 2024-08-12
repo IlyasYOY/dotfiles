@@ -54,6 +54,11 @@ return {
                     },
                 },
                 pickers = {
+                    live_grep = {
+                        additional_args = {
+                            "--hidden",
+                        },
+                    },
                     find_files = {
                         hidden = true,
                         opts = {
