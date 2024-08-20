@@ -4,7 +4,7 @@ return {
         config = function()
             local gen = require "gen"
             gen.setup {
-                model = "llama3",
+                model = "llama3.1",
                 display_mode = "spit",
                 show_prompt = true,
                 show_model = true,
