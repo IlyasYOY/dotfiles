@@ -33,6 +33,17 @@ return {
                             completeUnimported = true,
                             usePlaceholders = false,
                             staticcheck = true,
+                            hints = vim.json.decode [[
+                                {
+                                  "assignVariableTypes": true,
+                                  "compositeLiteralFields": true,
+                                  "compositeLiteralTypes": true,
+                                  "constantValues": true,
+                                  "functionTypeParameters": true,
+                                  "parameterNames": true,
+                                  "rangeVariableTypes": true
+                                }
+                            ]],
                             analyses = {
                                 unusedparams = true,
                                 framepointer = true,
