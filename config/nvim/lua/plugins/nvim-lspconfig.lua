@@ -23,7 +23,7 @@ end
 local function setup_tsserver()
     local lspconfig = require "lspconfig"
 
-    lspconfig.tsserver.setup {
+    lspconfig.ts_ls.setup {
         on_attach = function(client, bufnr)
             client.server_capabilities.documentFormattingProvider = false
             lsp.on_attach(client, bufnr)
