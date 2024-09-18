@@ -20,6 +20,71 @@ local function setup_generic()
     end
 end
 
+local function setup_go()
+    local lspconfig = require "lspconfig"
+
+    local hints = vim.empty_dict()
+    hints.assignVariableTypes = true
+    hints.compositeLiteralFields = true
+    hints.compositeLiteralTypes = true
+    hints.constantValues = true
+    hints.functionTypeParameters = true
+    hints.parameterNames = true
+    hints.rangeVariableTypes = true
+
+    lspconfig.gopls.setup {
+        on_attach = function(client, bufnr)
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.semanticTokensProvider = nil
+            vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+                group = vim.api.nvim_create_augroup("GoCodelenses", {}),
+                pattern = { "*.go", "*.mod" },
+                callback = function()
+                    vim.lsp.codelens.refresh { bufnr = 0 }
+                end,
+            })
+            vim.api.nvim_buf_set_keymap(
+                bufnr,
+                "n",
+                "<leader>lcl",
+                "<Cmd>lua vim.lsp.codelens.run()<CR>",
+                { silent = true }
+            )
+            lsp.on_attach(client, bufnr)
+        end,
+        settings = {
+            gopls = {
+                codelenses = {
+                    test = true,
+                    gc_details = true,
+                    generate = true,
+                    run_govulncheck = true,
+                    tidy = true,
+                    upgrade_dependency = true,
+                    vendor = true,
+                },
+                gofumpt = true,
+                completeUnimported = true,
+                usePlaceholders = false,
+                staticcheck = true,
+                hints = hints,
+                analyses = {
+                    unusedparams = true,
+                    framepointer = true,
+                    sigchanyzer = true,
+                    unreachable = true,
+                    stdversion = true,
+                    unusedwrite = true,
+                    unusedvariable = true,
+                    useany = true,
+                    nilness = true,
+                },
+            },
+        },
+        capabilities = lsp.get_capabilities(),
+    }
+end
+
 local function setup_tsserver()
     local lspconfig = require "lspconfig"
 
@@ -123,6 +188,7 @@ return {
             setup_lua()
             setup_python()
             setup_clangd()
+            setup_go()
 
             local bufopts = { noremap = true, silent = true }
 
