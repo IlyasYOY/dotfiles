@@ -35,21 +35,6 @@ local function setup_go()
     lspconfig.gopls.setup {
         on_attach = function(client, bufnr)
             client.server_capabilities.documentFormattingProvider = false
-            client.server_capabilities.semanticTokensProvider = nil
-            vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
-                group = vim.api.nvim_create_augroup("GoCodelenses", {}),
-                pattern = { "*.go", "*.mod" },
-                callback = function()
-                    vim.lsp.codelens.refresh { bufnr = 0 }
-                end,
-            })
-            vim.api.nvim_buf_set_keymap(
-                bufnr,
-                "n",
-                "<leader>lcl",
-                "<Cmd>lua vim.lsp.codelens.run()<CR>",
-                { silent = true }
-            )
             lsp.on_attach(client, bufnr)
         end,
         settings = {

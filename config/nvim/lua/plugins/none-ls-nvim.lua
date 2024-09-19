@@ -24,6 +24,7 @@ return {
             )
 
             none_ls.setup {
+                debug = true,
                 debounce = 150,
                 save_after_format = false,
                 sources = {
@@ -100,6 +101,7 @@ return {
                         },
                     },
                     none_ls.builtins.diagnostics.pmd.with {
+                        ignore_stderr = true,
                         args = {
                             "check",
                             "--format",
