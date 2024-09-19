@@ -1,6 +1,6 @@
 local core = require "coredor"
 
-vim.keymap.set("n", "<leader>sc", function()
+vim.keymap.set("n", "<leader><leader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
     vim.notify("spell: " .. tostring(vim.o.spell))
 end, { desc = "Toggle spell check" })
@@ -17,13 +17,6 @@ vim.keymap.set(
 vim.keymap.set(
     "n",
     "<leader><leader>S",
-    "<cmd>source %<CR>",
-    { desc = "source current file" }
-)
-
-vim.keymap.set(
-    "n",
-    "<leader><leader>s",
     "<cmd>mksession!<CR>",
     { desc = "create session file" }
 )

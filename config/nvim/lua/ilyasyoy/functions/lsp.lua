@@ -108,14 +108,46 @@ function M.on_attach(client, bufnr)
         described(bufopts, "rename symbol under the cursor")
     )
 
-    if
-        client
-        and client.server_capabilities.inlayHintProvider
-        and vim.lsp.inlay_hint
-    then
-        vim.keymap.set("n", "<leader>lih", function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-        end, described(bufopts, "Toggle Inlay Hints"))
+    if client then
+        if client.server_capabilities.codeLensProvider then
+            vim.print("hello")
+            vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+                group = vim.api.nvim_create_augroup("CodeLenses", {}),
+                pattern = {
+                    -- NOTE: Here I list filetype that I wanna use with codelens.
+                    -- commented lines seem to do nothing, but hav lens enabled
+                    "*.go",
+                    "*.mod",
+                    "*.java",
+                    -- "*.py",
+                    -- "*.lua",
+                },
+                callback = function()
+                    vim.lsp.codelens.refresh { bufnr = 0 }
+                end,
+            })
+            vim.api.nvim_buf_set_keymap(
+                bufnr,
+                "n",
+                "<leader>lclR",
+                "<Cmd>lua vim.lsp.codelens.refresh { bufnr = 0 }<CR>",
+                { silent = true }
+            )
+            vim.api.nvim_buf_set_keymap(
+                bufnr,
+                "n",
+                "<leader>lclr",
+                "<Cmd>lua vim.lsp.codelens.run()<CR>",
+                { silent = true }
+            )
+        end
+        if
+            client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint
+        then
+            vim.keymap.set("n", "<leader>lih", function()
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+            end, described(bufopts, "Toggle Inlay Hints"))
+        end
     end
 end
 
