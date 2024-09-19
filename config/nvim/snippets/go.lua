@@ -16,7 +16,59 @@ local function rep_capitalize(node_index)
     end, { node_index })
 end
 
+local function in_func()
+    local ok, ts_utils = pcall(require, "nvim-treesitter.ts_utils")
+    if not ok then
+        return false
+    end
+    local current_node = ts_utils.get_node_at_cursor()
+    if not current_node then
+        return false
+    end
+    local expr = current_node
+
+    while expr do
+        if
+            expr:type() == "function_declaration"
+            or expr:type() == "method_declaration"
+        then
+            return true
+        end
+        expr = expr:parent()
+    end
+    return false
+end
+
+local function is_in_test_file()
+    local filename = vim.fn.expand "%:p"
+    return vim.endswith(filename, "_test.go")
+end
+
+local function is_in_test_function()
+    return is_in_test_file() and in_func()
+end
+
+local in_test_fn = {
+    show_condition = is_in_test_function,
+    condition = is_in_test_function,
+}
+
 return {
+    s(
+        { trig = "gocmp", dscr = "Create an if block comparing with cmp.Diff" },
+        fmt(
+            [[
+        if diff := cmp.Diff({}, {}); diff != "" {{
+        	t.Errorf("(-want +got):\\n%s", diff)
+        }}
+      ]],
+            {
+                i(1, "want"),
+                i(2, "got"),
+            }
+        ),
+        in_test_fn
+    ),
     s("today", ilyasyoy_snippets.current_date()),
     s(
         "withfopts",
@@ -75,6 +127,7 @@ return {
                 i(1, "test case"),
                 i(0, ""),
             }
-        )
+        ),
+        in_test_fn
     ),
 }

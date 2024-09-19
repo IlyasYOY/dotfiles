@@ -66,6 +66,7 @@ local function setup_go()
                 gofumpt = true,
                 completeUnimported = true,
                 usePlaceholders = false,
+                diagnosticsDelay = "250ms",
                 staticcheck = true,
                 hints = hints,
                 analyses = {
