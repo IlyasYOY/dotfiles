@@ -110,7 +110,6 @@ function M.on_attach(client, bufnr)
 
     if client then
         if client.server_capabilities.codeLensProvider then
-            vim.print("hello")
             vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
                 group = vim.api.nvim_create_augroup("CodeLenses", {}),
                 pattern = {
