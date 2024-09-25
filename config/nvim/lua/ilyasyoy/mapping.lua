@@ -35,6 +35,13 @@ vim.keymap.set(
     { desc = "diff off file" }
 )
 
+vim.keymap.set(
+    "n",
+    "<leader><leader>mt",
+    "<cmd>make! test<CR>",
+    { desc = "run make test" }
+)
+
 local function process_lua()
     local cwf = core.current_working_file()
     if string.find(cwf, "_spec%.lua$") then
