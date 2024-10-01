@@ -42,6 +42,13 @@ vim.keymap.set(
     { desc = "run make test" }
 )
 
+vim.keymap.set("n", "<leader>tt", function()
+    local cwf = core.current_working_file()
+    if string.find(cwf, "_test%.go$") then
+        vim.cmd("!go test " .. cwf)
+    end
+end, { desc = "run test for a file" })
+
 local function process_lua()
     local cwf = core.current_working_file()
     if string.find(cwf, "_spec%.lua$") then
