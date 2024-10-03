@@ -1,6 +1,9 @@
 return {
     {
         "RRethy/vim-illuminate",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
         config = function()
             require("illuminate").configure {
                 modes_allowlist = { "n" },
