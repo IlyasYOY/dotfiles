@@ -1,6 +1,7 @@
 local ls = require "luasnip"
 local fmt = require("luasnip.extras.fmt").fmt
 local rep = require("luasnip.extras").rep
+local t = ls.text_node
 local s = ls.snippet
 local i = ls.insert_node
 local f = ls.function_node
@@ -54,6 +55,7 @@ local in_test_fn = {
 }
 
 return {
+    s("ctxb", t "ctx := context.Background()"),
     s(
         { trig = "gocmp", dscr = "Create an if block comparing with cmp.Diff" },
         fmt(
