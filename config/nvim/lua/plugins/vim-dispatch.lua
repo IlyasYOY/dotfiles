@@ -7,7 +7,7 @@ return {
                 if string.find(cwf, ".go$") then
                     vim.cmd.Dispatch { "go test ./..." }
                 end
-            end, { desc = "run test for a package" })
+            end, { desc = "run test for all packages" })
 
             vim.keymap.set("n", "<leader>tp", function()
                 local cwf = vim.fn.expand "%:."
@@ -56,7 +56,7 @@ return {
                         vim.notify "function is not a test"
                     end
                 end
-            end, { desc = "run test for a file" })
+            end, { desc = "run test for a function" })
         end,
     },
 }
