@@ -93,11 +93,10 @@ local setup_colors = function()
     Group.new("SpellRare", c.blue, c.none, s.undercurl)
 
     -- LINKS
-
+    Group.new("Constant", g.Normal, g.Normal, g.Normal + s.italic)
     Group.link("Boolean", g.Number)
     Group.link("Character", g.Number)
     Group.link("Conditional", g.Normal)
-    Group.link("Constant", g.Normal)
     Group.link("Debug", g.Todo)
     Group.link("Delimiter", g.Normal)
     Group.link("Directory", g.String)
