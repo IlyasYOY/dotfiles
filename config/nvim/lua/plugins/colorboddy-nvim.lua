@@ -10,86 +10,92 @@ local setup_colors = function()
 
     -- setup colors
     local palette = {
-        white = { gui = "#bcbcbc", cterm = 250 },
-        grey = { gui = "#949494", cterm = 246 },
-        dark = { gui = "#767676", cterm = 243 },
-        darker = { gui = "#585858", cterm = 240 },
-        darkest = { gui = "#444444", cterm = 238 },
-        base = { gui = "#262626", cterm = 235 },
-        black = { gui = "#1c1c1c", cterm = 234 },
-        backgnd = { gui = "#121212", cterm = 233 },
+        { keys = { "red_light" }, gui = "#722529" },
+        { keys = { "red" }, gui = "#d75f5f" },
 
-        cactus = { gui = "#5f875f", cterm = 065 }, -- darkgreen
-        grass = { gui = "#87af87", cterm = 108 }, -- limegreen
-        fruit = { gui = "#d787af", cterm = 175 }, -- coralpink
-        brick = { gui = "#875f5f", cterm = 095 }, -- brickpink
-        purple = { gui = "#8787af", cterm = 103 },
-        cyan = { gui = "#87afd7", cterm = 110 },
-        red = { gui = "#d75f5f", cterm = 167 },
-        orange = { gui = "#d7875f", cterm = 173 },
-        brown = { gui = "#af875f", cterm = 137 },
-        blue = { gui = "#5f87af", cterm = 067 },
+        { keys = { "orange" }, gui = "#d7875f" },
+        { keys = { "brown" }, gui = "#af875f" },
+
+        { keys = { "green_deep" }, gui = "#5f875f" },
+        { keys = { "green" }, gui = "#49503b" },
+        { keys = { "green_light" }, gui = "#87af87" },
+
+        { keys = { "blue_toxic" }, gui = "#87afd7" },
+        { keys = { "blue" }, gui = "#5f87af" },
+        { keys = { "blue_dark" }, gui = "#3b4050" },
+
+        { keys = { "pink" }, gui = "#d787af" },
+        { keys = { "pink_deep" }, gui = "#875f5f" },
+        { keys = { "purple" }, gui = "#8787af" },
+
+        -- Grayscale
+        { keys = { "white" }, gui = "#bcbcbc" },
+        { keys = { "grey" }, gui = "#949494" },
+        { keys = { "dark" }, gui = "#767676" },
+        { keys = { "darker" }, gui = "#585858" },
+        { keys = { "darkest" }, gui = "#444444" },
+        { keys = { "base" }, gui = "#262626" },
+        { keys = { "black" }, gui = "#1c1c1c" },
     }
 
-    for key, value in pairs(palette) do
-        Color.new(key, value.gui)
+    for _, value in ipairs(palette) do
+        for _, key in ipairs(value.keys) do
+            Color.new(key, value.gui)
+        end
     end
 
     -- EDITOR BASICS
     -- https://neovim.io/doc/user/syntax.html#group-name
 
-    --  Custom groups
+    -- Custom groups
     Group.new("Noise", c.dark, c.none, s.none)
 
     -- Basic groups
-    Group.new("Comment", c.darker, c.none, s.none)
+    Group.new("Comment", c.dark, c.none, s.none)
     Group.new("Normal", c.white, c.none, s.none)
     Group.new("NonText", c.darkest, c.none, s.none)
 
     Group.new("Error", c.red, c.none, s.none)
-    Group.new("Number", c.grass, c.none, s.none)
+    Group.new("Number", c.green_light, c.none, s.none)
     Group.new("Special", c.purple, c.none, s.none)
-    Group.new("String", c.cactus, c.none, s.none)
-    Group.new("Title", c.cyan, c.none, s.none)
-    Group.new("Todo", c.fruit, c.none, s.none)
+    Group.new("String", c.green_deep, c.none, s.none)
+    Group.new("Title", c.blue_toxic, c.none, s.none)
+    Group.new("Todo", c.pink, c.none, s.none)
     Group.new("Warning", c.orange, c.none, s.none)
 
     -- https://neovim.io/doc/user/syntax.html#hl-User1
     Group.new("User1", c.brown, c.none, s.none)
     Group.new("User2", c.blue, c.none, s.none)
-    Group.new("User3", c.brick, c.none, s.none)
+    Group.new("User3", c.pink_deep, c.none, s.none)
 
     -- diff
-    Group.new("Added", c.cactus, c.none, s.none)
+    Group.new("Added", c.green_deep, c.none, s.none)
     Group.new("Changed", c.brown, c.none, s.none)
-    Group.new("Removed", c.brick, c.none, s.none)
-    Group.new("DiffAdd", c.cactus, c.none, s.none)
-    Group.new("DiffChange", c.brown, c.none, s.none)
-    Group.new("DiffDelete", c.brick, c.none, s.none)
-    Group.new("DiffLine", c.darker, c.none, s.underline)
-    Group.new("DiffText", c.brown, c.none, s.none)
+    Group.new("Removed", c.pink_deep, c.none, s.none)
+    Group.new("DiffAdd", c.none, c.green, s.none)
+    Group.new("DiffChange", c.none, c.blue_dark, s.none)
+    Group.new("DiffDelete", c.none, c.red_light, s.none)
+    Group.new("DiffLine", c.none, c.none, s.underline)
+    Group.new("DiffText", c.none, c.green, s.none)
 
     -- search and highlight stuff
-    Group.new("CurSearch", c.fruit, c.none, s.underline)
-    Group.new("IncSearch", c.fruit, c.none, s.underline)
-    Group.new("MatchParen", c.cyan, c.none, s.none)
+    Group.new("CurSearch", c.pink, c.none, s.underline)
+    Group.new("IncSearch", c.pink, c.none, s.underline)
+    Group.new("MatchParen", c.blue_toxic, c.none, s.none)
     Group.new("Pmenu", c.darker, c.black, s.none)
     Group.new("PmenuSel", c.grey, c.black, s.none)
     Group.new("PmenuThumb", c.brown, c.black, s.none) -- not sure what this is
-    Group.new("Search", c.fruit, c.none, s.underline)
+    Group.new("Search", c.pink, c.none, s.underline)
     Group.new("StatusLine", c.none, c.black, s.none)
     Group.new("StatusLineNC", c.black, c.black, s.none)
     Group.new("Visual", c.blue, c.base, s.none)
     Group.new("VisualNOS", c.blue, c.base, s.none)
-    Group.new("WildMenu", c.fruit, c.base, s.none)
+    Group.new("WildMenu", c.pink, c.base, s.none)
 
     -- spelling problesm are shown!
     Group.new("SpellBad", c.red, c.none, s.undercurl)
-    -- https://neovim.io/doc/user/syntax.html#hl-SpellCap
     Group.new("SpellCap", c.orange, c.none, s.undercurl)
-    -- https://neovim.io/doc/user/syntax.html#hl-SpellLocal
     Group.new("SpellLocal", c.brown, c.none, s.undercurl)
-    -- https://neovim.io/doc/user/syntax.html#hl-SpellRare
     Group.new("SpellRare", c.blue, c.none, s.undercurl)
 
     -- LINKS
@@ -160,27 +166,28 @@ local setup_colors = function()
     Group.link("NvimInternalError", g.Error)
     Group.link("FloatBorder", g.NonText)
 
-    -- PLUGIN SPECIFIC
+    -- Diagnostics
     Group.new("DiagnosticUnderlineError", c.none, c.none, s.underline, c.red)
     Group.new("DiagnosticUnderlineWarn", c.none, c.none, s.underline, c.orange)
     Group.new("DiagnosticUnderlineHint", c.none, c.none, s.underline)
     Group.new("DiagnosticUnderlineInfo", c.none, c.none, s.underline)
-
     Group.link("DiagnosticError", g.Error)
     Group.link("DiagnosticWarn", g.Warning)
     Group.link("DiagnosticHint", g.Comment)
     Group.link("DiagnosticInfo", g.Comment)
     Group.link("DiagnosticOk", g.String)
 
-    Group.link("GitSignsAdd", g.NonText)
-    Group.link("GitSignsChange", g.NonText)
-    Group.link("GitSignsDelete", g.NonText)
+    -- GitSigns
+    Group.new("GitSignsAdd", c.green_light, c.none, s.none)
+    Group.new("GitSignsChange", c.orange, c.none, s.none)
+    Group.new("GitSignsDelete", c.red, c.none, s.none)
 
+    -- Telescope
     Group.link("TelescopeBorder", g.Noise)
     Group.link("TelescopeMatching", g.User1)
     Group.link("TelescopePromptCounter", g.Noise)
 
-    -- custom markdown
+    -- Markdown
     Group.link("@markup.list.unchecked.markdown", g.Error)
     Group.link("@markup.list.checked.markdown", g.Number)
     Group.link("@markup.link.label.markdown_inline", g.Special)
@@ -191,8 +198,6 @@ return {
     {
         "tjdevries/colorbuddy.nvim",
         config = function()
-            local colorbuddy = require "colorbuddy"
-
             setup_colors()
         end,
     },
