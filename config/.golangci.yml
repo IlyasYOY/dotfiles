@@ -89,7 +89,6 @@ linters:
     - errcheck
     - errname
     - errorlint
-    - execinquery
     - exhaustive
     - exportloopref
     - fatcontext
@@ -106,7 +105,6 @@ linters:
     # - godot
     - goerr113  # TODO: duplicate err113
     - goimports
-    - gomnd  # TODO: duplicate mnd
     - gomodguard
     - goprintffuncname
     - gosec
@@ -117,7 +115,7 @@ linters:
     - loggercheck
     - makezero
     - mirror
-    # - mnd
+    - mnd
     - musttag
     - nakedret
     - nestif
