@@ -89,7 +89,7 @@ return {
             Group.new("PmenuSel", c.grey, c.black, s.none)
             Group.new("PmenuThumb", c.brown, c.black, s.none) -- not sure what this is
             Group.new("Search", c.pink, c.none, s.underline)
-            Group.new("StatusLine", c.none, c.black, s.none)
+            Group.new("StatusLine", c.none, c.base, s.none)
             Group.new("StatusLineNC", c.black, c.black, s.none)
             Group.new("Visual", c.blue, c.base, s.none)
             Group.new("VisualNOS", c.blue, c.base, s.none)
@@ -114,7 +114,7 @@ return {
             Group.link("Identifier", g.Normal)
             Group.link("Include", g.Normal)
             Group.link("Keyword", g.Noise)
-            Group.link("Label", g.Normal)
+            Group.new("Label", g.Normal, g.Normal, g.Normal + s.bold)
             Group.link("Macro", g.User2)
             Group.link("Operator", g.Noise)
             Group.link("PreProc", g.Normal)
@@ -207,6 +207,10 @@ return {
             Group.link("@markup.list.checked.markdown", g.Number)
             Group.link("@markup.link.label.markdown_inline", g.Special)
             Group.link("@markup.link.url.markdown_inline", g.Noise)
+
+            -- Fugitive
+            Group.link("fugitiveUnstagedModifier", g.TypeDef)
+            Group.link("fugitiveStagedHeading", g.Warning)
         end,
     },
 }
