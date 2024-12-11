@@ -211,6 +211,9 @@ return {
             -- Fugitive
             Group.link("fugitiveUnstagedModifier", g.TypeDef)
             Group.link("fugitiveStagedHeading", g.Warning)
+            Group.link("fugitiveUntrackedHeading", g.Macro)
+            Group.link("fugitiveUntrackedSection", g.Noise)
+            Group.link("fugitiveUntrackedModifier", g.Noise)
         end,
     },
 }
