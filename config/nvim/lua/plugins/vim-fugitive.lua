@@ -5,6 +5,7 @@ return {
             "shumphrey/fugitive-gitlab.vim",
             "tommcdo/vim-fubitive",
             "tpope/vim-rhubarb",
+            "tpope/vim-dispatch",
         },
         config = function()
             vim.keymap.set(
