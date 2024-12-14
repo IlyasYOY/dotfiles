@@ -3,7 +3,6 @@ return {
         "IlyasYOY/obs.nvim",
         dependencies = {
             "hrsh7th/nvim-cmp",
-            "IlyasYOY/coredor.nvim",
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope.nvim",
         },

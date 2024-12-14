@@ -1,5 +1,3 @@
-all: format_lua lint_lua test_lua 
-
 # I got tired of commiting this manually
 .PHONY: commit_lazy_update
 commit_lazy_update:

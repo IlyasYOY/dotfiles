@@ -7,14 +7,12 @@ local rep = require("luasnip.extras").rep
 local s = ls.snippet
 local i = ls.insert_node
 local f = ls.function_node
-local c = ls.choice_node
 
 local function create_package()
     return f(function()
-        local core = require "coredor"
-
-        local file_dir = core.current_working_file_dir()
-        local splitted = core.string_split(file_dir, "/java/")
+        local file_dir = vim.fn.expand "%:p:h"
+        local splitted =
+            vim.split(file_dir, "/java/", { plain = true, trimempty = true })
         local package_dir = splitted[#splitted]
         if not package_dir then
             return ""
@@ -169,7 +167,7 @@ return {
     ),
     s(
         "svrc",
-        fmt('StepVerifier.create({}){}.verifyComplete();', {
+        fmt("StepVerifier.create({}){}.verifyComplete();", {
             i(1, "actual"),
             i(0, ""),
         })

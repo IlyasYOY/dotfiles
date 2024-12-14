@@ -1,5 +1,4 @@
 local Path = require "plenary.path"
-local coredor = require "coredor"
 local lsp = require "ilyasyoy.functions.lsp"
 local jdtls = require "jdtls"
 local core = require "ilyasyoy.functions.core"
@@ -14,7 +13,7 @@ end
 local function get_java_dir(version)
     local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
     local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
-        if coredor.string_has_prefix(file, version, true) then
+        if core.string_has_prefix(file, version, true) then
             return 1
         end
     end)
@@ -224,7 +223,7 @@ local config = {
 
     init_options = {
         bundles = vim.tbl_flatten {
-            coredor.string_split(
+            core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-debug-adapter"
                         .. "/extension/server/"
@@ -233,7 +232,7 @@ local config = {
                 ),
                 "\n"
             ),
-            coredor.string_split(
+            core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-test"
                         .. "/extension/server/"

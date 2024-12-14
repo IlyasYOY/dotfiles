@@ -1,16 +1,12 @@
 return {
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = {
-            "IlyasYOY/coredor.nvim",
-        },
         config = function()
-            local core = require "coredor"
             local lualine = require "lualine"
 
             local function is_jdtls_buffer()
                 local buf_path = vim.fn.expand "%"
-                return core.string_has_prefix(buf_path, "jdt", true)
+                return 1 == string.find(buf_path, "jdt", 1, true)
             end
 
             lualine.setup {

@@ -156,7 +156,6 @@ return {
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            "IlyasYOY/coredor.nvim",
             "folke/neodev.nvim",
         },
         config = function()

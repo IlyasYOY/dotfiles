@@ -1,5 +1,3 @@
-local core = require "coredor"
-
 vim.keymap.set("n", "<leader><leader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
     vim.notify("spell: " .. tostring(vim.o.spell))
@@ -42,9 +40,8 @@ vim.keymap.set(
     { desc = "run make test" }
 )
 
-
 local function process_lua()
-    local cwf = core.current_working_file()
+    local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_spec%.lua$") then
         vim.fn.execute(
             "edit " .. string.gsub(cwf, "(%w+)_spec%.lua$", "%1.lua")
@@ -60,7 +57,7 @@ local function process_lua()
 end
 
 local function process_java()
-    local cwf = core.current_working_file()
+    local cwf = vim.fn.expand "%:."
     local change_to = cwf
     if string.find(cwf, "/main/java/") then
         change_to = string.gsub(change_to, "/main/java/", "/test/java/")
@@ -77,7 +74,7 @@ local function process_java()
 end
 
 local function process_python()
-    local cwf = core.current_working_file()
+    local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_test%.py$") then
         vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.py$", "%1.py"))
         return true
@@ -89,7 +86,7 @@ local function process_python()
 end
 
 local function process_go()
-    local cwf = core.current_working_file()
+    local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_test%.go$") then
         vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go"))
         return true
