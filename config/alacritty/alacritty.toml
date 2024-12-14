@@ -3,6 +3,7 @@ TERM = "xterm-256color"
 
 [window]
 opacity = 0.99
+decorations = "None" 
 
 [font]
 size = 18
