@@ -8,10 +8,6 @@ return {
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
             "Marskey/telescope-sg",
-            {
-                "isak102/telescope-git-file-history.nvim",
-                dependencies = { "tpope/vim-fugitive" },
-            },
         },
         config = function()
             local telescope = require "telescope"
@@ -21,7 +17,6 @@ return {
 
             telescope.setup {
                 extensions = {
-                    advanced_git_search = {},
                     ast_grep = {
                         command = {
                             "sg",
@@ -70,7 +65,6 @@ return {
             }
 
             require("telescope").load_extension "fzf"
-            require("telescope").load_extension "git_file_history"
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
@@ -78,7 +72,10 @@ return {
 
             vim.keymap.set("n", "<leader>fF", function()
                 builtin.find_files {
-                    cwd = core.string_strip_prefix(utils.buffer_dir(), "oil://"),
+                    cwd = core.string_strip_prefix(
+                        utils.buffer_dir(),
+                        "oil://"
+                    ),
                 }
             end, { desc = "find files in current dir" })
 
@@ -88,7 +85,10 @@ return {
 
             vim.keymap.set("n", "<leader>fG", function()
                 builtin.live_grep {
-                    cwd = core.string_strip_prefix(utils.buffer_dir(), "oil://"),
+                    cwd = core.string_strip_prefix(
+                        utils.buffer_dir(),
+                        "oil://"
+                    ),
                 }
             end, { desc = "find files in current dir" })
 
