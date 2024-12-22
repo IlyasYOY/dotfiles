@@ -4,7 +4,7 @@ return {
         config = function()
             local gen = require "gen"
             gen.setup {
-                model = "gemma2",
+                model = "qwen2.5-coder",
                 display_mode = "spit",
                 show_prompt = true,
                 show_model = true,
