@@ -57,6 +57,13 @@ local in_test_fn = {
 return {
     s("ctxb", t "ctx := context.Background()"),
     s(
+        "ctxb",
+        t [[
+            ctx, cancel := context.WithCancel(context.Background())
+            cancel()
+        ]]
+    ),
+    s(
         { trig = "gocmp", dscr = "Create an if block comparing with cmp.Diff" },
         fmt(
             [[
