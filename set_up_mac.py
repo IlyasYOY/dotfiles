@@ -47,6 +47,7 @@ def setup_mac_using_brew():
             "amethyst",
             "betterdisplay",
             "discord",
+            "ghostty",
             "google-chrome",
             "iina",
             "intellij-idea-ce",
@@ -127,6 +128,8 @@ def setup_links_to_config_files():
                target=cwd_path / '.gitignore-global')
     files.link(path=f"{dot_config_path_str}/alacritty",
                target=cwd_path / 'config/alacritty')
+    files.link(path=f"{dot_config_path_str}/ghostty",
+               target=cwd_path / 'config/ghostty')
     files.link(path=f"{home_path_str}/.golangci.yml",
                target=cwd_path / "config/.golangci.yml")
     files.link(path=f"{home_path_str}/.tmux.conf",
