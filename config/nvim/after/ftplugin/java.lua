@@ -55,7 +55,7 @@ local config = {
 
     settings = {
         java = {
-            home = get_java_dir "17",
+            home = get_java_dir "21",
             redhat = {
                 telemetry = { enabled = false },
             },
@@ -117,6 +117,10 @@ local config = {
                     {
                         name = "JavaSE-17",
                         path = get_java_dir "17",
+                    },
+                    {
+                        name = "JavaSE-21",
+                        path = get_java_dir "21",
                     },
                 },
             },
