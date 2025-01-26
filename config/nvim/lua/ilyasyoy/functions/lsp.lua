@@ -140,6 +140,7 @@ function M.on_attach(client, bufnr)
                 { silent = true }
             )
         end
+        client.server_capabilities.semanticTokensProvider = nil
         if
             client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint
         then
