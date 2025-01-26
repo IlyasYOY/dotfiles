@@ -196,6 +196,11 @@ return {
                 vim.lsp.buf.code_action,
                 described(bufopts, "Perform code action")
             )
+
+            vim.lsp.handlers["textDocument/hover"] =
+                vim.lsp.with(vim.lsp.handlers.hover, {
+                    border = "single",
+                })
         end,
     },
 }
