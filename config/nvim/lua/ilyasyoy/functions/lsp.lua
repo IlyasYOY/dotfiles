@@ -114,10 +114,10 @@ function M.on_attach(client, bufnr)
                 group = vim.api.nvim_create_augroup("CodeLenses", {}),
                 pattern = {
                     -- NOTE: Here I list filetype that I wanna use with codelens.
-                    -- commented lines seem to do nothing, but hav lens enabled
+                    -- commented lines seem to do nothing, but have lens enabled
                     "*.go",
                     "*.mod",
-                    "*.java",
+                    -- "*.java",
                     -- "*.py",
                     -- "*.lua",
                 },
