@@ -40,6 +40,10 @@ vim.keymap.set(
     { desc = "run make test" }
 )
 
+vim.keymap.set("n", "<leader>D", function()
+    vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostic virtual_lines" })
+
 local function process_lua()
     local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_spec%.lua$") then
