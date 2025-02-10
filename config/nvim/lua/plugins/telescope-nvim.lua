@@ -8,6 +8,8 @@ return {
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
             "Marskey/telescope-sg",
+            "jmacadie/telescope-hierarchy.nvim",
+            "nvim-telescope/telescope-ui-select.nvim",
         },
         config = function()
             local telescope = require "telescope"
@@ -17,6 +19,7 @@ return {
 
             telescope.setup {
                 extensions = {
+                    hierarchy = {},
                     ast_grep = {
                         command = {
                             "sg",
@@ -65,6 +68,8 @@ return {
             }
 
             require("telescope").load_extension "fzf"
+            require("telescope").load_extension "ui-select"
+            require("telescope").load_extension "hierarchy"
 
             vim.keymap.set("n", "<leader>ff", function()
                 builtin.find_files()
