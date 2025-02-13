@@ -77,6 +77,8 @@ linters-settings:
 linters:
   disable-all: true
   enable:
+    # - err113
+    # - godot
     - asasalint
     - asciicheck
     - bidichk
@@ -85,11 +87,11 @@ linters:
     - cyclop
     - dupl
     - durationcheck
-    # - err113
     - errcheck
     - errname
     - errorlint
     - exhaustive
+    - exhaustruct
     - exportloopref
     - fatcontext
     - forbidigo
@@ -102,7 +104,6 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    # - godot
     - goerr113  # TODO: duplicate err113
     - goimports
     - gomodguard
