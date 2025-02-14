@@ -41,6 +41,7 @@ return {
                     "tsx",
                     "vim",
                     "vimdoc",
+                    "typescript",
                     -- markup
                     "css",
                     "html",
