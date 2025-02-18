@@ -9,10 +9,10 @@ return {
             require("todo-comments").setup {
                 keywords = {
                     TODO = {
-                        alt = { "todo", "ToDo" },
+                        alt = { "TODO", "todo", "ToDo" },
                     },
                     FIXME = {
-                        alt = { "fixme", "FixMe" },
+                        alt = { "FIXME", "fix", "fixme", "FixMe" },
                     },
                 },
                 search = {
