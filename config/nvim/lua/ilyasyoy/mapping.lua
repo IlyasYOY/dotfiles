@@ -79,11 +79,11 @@ end
 
 local function process_python()
     local cwf = vim.fn.expand "%:."
-    if string.find(cwf, "_test%.py$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.py$", "%1.py"))
+    if string.find(cwf, "test_.*%.py$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "test_(%w+)%.py$", "%1.py"))
         return true
     elseif string.find(cwf, "%.py$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.py$", "%1_test.py"))
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.py$", "test_%1.py"))
         return true
     end
     return false
