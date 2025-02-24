@@ -12,7 +12,7 @@ return {
                         alt = { "TODO", "todo", "ToDo" },
                     },
                     FIXME = {
-                        alt = { "FIXME", "fix", "fixme", "FixMe" },
+                        alt = { "FIX", "FIXME", "fix", "fixme", "FixMe" },
                     },
                 },
                 search = {
