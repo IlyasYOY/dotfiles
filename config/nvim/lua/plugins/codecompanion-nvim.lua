@@ -35,27 +35,19 @@ return {
                             }
                         )
                     end,
-                    ["ollama-deepseek-r1"] = function()
-                        return require("codecompanion.adapters").extend(
-                            "ollama",
-                            {
-                                name = "ollama-deepseek-r1",
-                                schema = {
-                                    model = {
-                                        default = "deepseek-r1:latest",
-                                    },
-                                    num_ctx = {
-                                        default = 16384,
-                                    },
-                                    num_predict = {
-                                        default = -1,
-                                    },
-                                },
-                            }
-                        )
-                    end,
                 },
             }
+
+            vim.keymap.set(
+                "n",
+                "<leader>Cc",
+                "<cmd>CodeCompanionChat Toggle<CR>"
+            )
+            vim.keymap.set(
+                { "n", "v", "s" },
+                "<leader>Ca",
+                "<cmd>CodeCompanionActions<CR>"
+            )
         end,
     },
 }
