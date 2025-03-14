@@ -18,9 +18,6 @@ return {
 
             local cmp = require "cmp"
             local types = require "cmp.types"
-            local cmp_feedkeys = require "cmp.utils.feedkeys"
-            local cmp_keymap = require "cmp.utils.keymap"
-
             local lspkind = require "lspkind"
 
             cmp.setup {
@@ -59,26 +56,40 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert {
-                    ["<C-f>"] = cmp.mapping.complete(),
-                    -- https://github.com/hrsh7th/nvim-cmp/issues/1326#issuecomment-1497250292
-                    ["<CR>"] = function(fallback)
-                        if vim.fn.pumvisible() == 1 then
-                            if
-                                vim.fn.complete_info({ "selected" }).selected
-                                == -1
-                            then
-                                cmp_feedkeys.call(cmp_keymap.t "<CR>", "in")
+                    ["<CR>"] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            if luasnip.expandable() then
+                                luasnip.expand()
                             else
-                                cmp_feedkeys.call(
-                                    cmp_keymap.t "<C-X><C-Z>",
-                                    "in"
-                                )
+                                cmp.confirm {
+                                    select = true,
+                                }
                             end
                         else
-                            cmp.mapping.confirm { select = false }(fallback)
+                            fallback()
                         end
-                    end,
+                    end),
 
+                    ["<Tab>"] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<S-Tab>"] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                        elseif luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+
+                    ["<C-f>"] = cmp.mapping.complete(),
                     ["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item()),
                     ["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item()),
 
@@ -100,7 +111,6 @@ return {
                             fallback()
                         end
                     end, { "i", "s" }),
-
                     ["<C-u>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-d>"] = cmp.mapping.scroll_docs(4),
                 },
