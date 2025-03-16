@@ -40,3 +40,10 @@ vim.api.nvim_create_user_command(
         desc = "replace assert with suite assert",
     }
 )
+
+vim.keymap.set("n", "<leader><leader>gfm", function()
+    local builtin = require "telescope.builtin"
+    builtin.live_grep {
+        cwd = "~/go/pkg/mod",
+    }
+end, { desc = "find files in go mod" })
