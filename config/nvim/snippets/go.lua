@@ -139,4 +139,81 @@ return {
         ),
         in_test_fn
     ),
+    s(
+        "reqne",
+        fmt(
+            [[
+        require.NoError(t, {})
+        ]],
+            {
+                i(0, "error"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "reqei",
+        fmt(
+            [[
+        require.ErrorIs(t, {}, {})
+        ]],
+            {
+                i(1, "expected"),
+                i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "req",
+        fmt(
+            [[
+        require.Equal(t, {}, {})
+        ]],
+            {
+                i(1, "expected"),
+                i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "reqv",
+        fmt(
+            [[
+        require.EqualValues(t, {}, {})
+        ]],
+            {
+                i(1, "expected"),
+                i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "aeq",
+        fmt(
+            [[
+        assert.Equal(t, {}, {})
+        ]],
+            {
+                i(1, "expected"),
+                i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "aeqv",
+        fmt(
+            [[
+        assert.EqualValues(t, {}, {})
+        ]],
+            {
+                i(1, "expected"),
+                i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
 }
