@@ -18,7 +18,7 @@ return {
                 "n",
                 "<leader>gl",
                 ":Git log<cr>",
-                { desc = "Open log" }
+                { desc = "Open log", silent = true }
             )
 
             vim.keymap.set(
