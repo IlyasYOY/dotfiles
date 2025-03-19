@@ -26,6 +26,13 @@ local handler = function(virtText, lnum, endLnum, width, truncate)
     return newVirtText
 end
 
+local provider_settings = {
+    java = { "lsp", "treesitter" },
+    python = { "treesitter" },
+    git = "",
+    fugitive = "",
+}
+
 return {
     {
         "kevinhwang91/nvim-ufo",
@@ -42,8 +49,9 @@ return {
                 },
                 fold_virt_text_handler = handler,
                 provider_selector = function(bufnr, filetype, buftype)
-                    if filetype == "java" then
-                        return { "lsp", "treesitter" }
+                    local setting = provider_settings[filetype]
+                    if setting ~= nil then
+                        return setting
                     end
                     return { "treesitter", "indent" }
                 end,
