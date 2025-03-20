@@ -20,6 +20,10 @@ return {
             }
 
             ts_config.setup {
+                modules = {},
+                sync_install = false,
+                ignore_install = {},
+                auto_install = false,
                 ensure_installed = {
                     -- languages
                     "bash",
@@ -75,7 +79,7 @@ return {
                 highlight = {
                     enable = true,
                     disable = function(lang, buf)
-                        local max_filesize = 300 * 1024 -- 100 KB
+                        local max_filesize = 500 * 1024 -- 100 KB
                         local ok, stats = pcall(
                             vim.loop.fs_stat,
                             vim.api.nvim_buf_get_name(buf)
@@ -207,10 +211,9 @@ return {
             vim.keymap.set("n", "[c", function()
                 require("treesitter-context").go_to_context(vim.v.count1)
             end, { silent = true })
-            local parser_config =
-                require("nvim-treesitter.parsers").get_parser_configs()
-            parser_config.tsx.filetype_to_parsername =
-                { "javascript", "typescript.tsx" }
+
+            vim.treesitter.language.register("javascript", "tsx")
+            vim.treesitter.language.register("typescript.tsc", "tsx")
         end,
     },
 }
