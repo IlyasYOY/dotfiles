@@ -18,72 +18,23 @@ function M.on_attach(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
 
-    if pcall(require, "telescope") then
-        local telescope = require "telescope.builtin"
-        local themes = require "telescope.themes"
-
-        local function get_ivy(func)
-            return function(...)
-                return func(themes.get_ivy(), ...)
-            end
-        end
-
-        vim.keymap.set(
-            "n",
-            "<leader>S",
-            get_ivy(telescope.lsp_document_symbols),
-            described(bufopts, "telescope Show Document Symbols")
-        )
-        vim.keymap.set(
-            "n",
-            "<leader>s",
-            get_ivy(telescope.lsp_dynamic_workspace_symbols),
-            described(bufopts, "telescope Show Workspace Symbols")
-        )
-    else
-        vim.keymap.set(
-            "n",
-            "<leader>s",
-            vim.lsp.buf.workspace_symbol,
-            described(bufopts, "Show Workspace Symbols")
-        )
-    end
-
     vim.keymap.set(
         "n",
-        "gD",
+        "grD",
         vim.lsp.buf.declaration,
         described(bufopts, "go to Declarations")
     )
-    vim.keymap.set("n", "gs", function()
+    vim.keymap.set("n", "grs", function()
         vim.lsp.buf.typehierarchy "subtypes"
     end, described(bufopts, "go to subtypes"))
-    vim.keymap.set("n", "gS", function()
+    vim.keymap.set("n", "grS", function()
         vim.lsp.buf.typehierarchy "supertypes"
     end, described(bufopts, "go to supertypes"))
     vim.keymap.set(
         "n",
-        "gd",
+        "grd",
         vim.lsp.buf.definition,
         described(bufopts, "go to definitions")
-    )
-    vim.keymap.set(
-        "n",
-        "gr",
-        vim.lsp.buf.references,
-        described(bufopts, "go to references")
-    )
-    vim.keymap.set(
-        "n",
-        "gi",
-        vim.lsp.buf.implementation,
-        described(bufopts, "go to implementations")
-    )
-    vim.keymap.set(
-        { "n", "i" },
-        "<C-s>",
-        vim.lsp.buf.signature_help,
-        described(bufopts, "Help with signature")
     )
     vim.keymap.set(
         "n",
@@ -100,13 +51,6 @@ function M.on_attach(client, bufnr)
     vim.keymap.set("n", "<space>lw", function()
         vim.notify(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, described(bufopts, "workspace list folders"))
-
-    vim.keymap.set(
-        "n",
-        "<space>rn",
-        vim.lsp.buf.rename,
-        described(bufopts, "rename symbol under the cursor")
-    )
 
     if client then
         if client.server_capabilities.codeLensProvider then

@@ -64,31 +64,16 @@ set wildmode=full
 set history=300
 
 " noh - no highlight
-nnoremap <Esc> :noh <CR>
-
-nnoremap <F3> :w<CR>
-" This allows me to save from inssert mode 
-inoremap <F3> <C-\><C-o>:w<CR>
+nnoremap <Esc> :noh<CR>
 
 set nowrap
 
 " Switch buffers using keys
-nnoremap <silent> [b :bprevious<cr>
-nnoremap <silent> ]b :bnext<cr> 
-nnoremap <silent> [B :bfirst<cr> 
-nnoremap <silent> ]B :blast<cr>
+nnoremap <silent> ]<C-q> :cnewer<cr>
+nnoremap <silent> [<C-q> :colder<cr>
 
-nnoremap <silent> [q :cprevious<cr>
-nnoremap <silent> ]q :cnext<cr> 
-nnoremap <silent> [Q :cfirst<cr> 
-nnoremap <silent> ]Q :clast<cr>
-nnoremap <silent> ]u :cnewer<cr>
-nnoremap <silent> [u :colder<cr>
-
-nnoremap <silent> [l :lprevious<cr>
-nnoremap <silent> ]l :lnext<cr> 
-nnoremap <silent> [L :lfirst<cr> 
-nnoremap <silent> ]L :llast<cr>
+nnoremap <silent> ]<C-l> :lnewer<cr>
+nnoremap <silent> [<C-l> :lolder<cr>
 
 nnoremap <silent> <leader>co :copen<cr>
 nnoremap <silent> <leader>cc :cclose<cr>
