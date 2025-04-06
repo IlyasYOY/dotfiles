@@ -5,7 +5,6 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
-            "nvim-treesitter/nvim-treesitter-context",
         },
         build = function()
             local ts_update = require("nvim-treesitter.install").update {
@@ -15,9 +14,6 @@ return {
         end,
         config = function()
             local ts_config = require "nvim-treesitter.configs"
-            require("treesitter-context").setup {
-                max_lines = 1,
-            }
 
             ts_config.setup {
                 modules = {},
@@ -135,11 +131,11 @@ return {
                                 desc = "Select inner part of a loop",
                             },
 
-                            ["am"] = {
+                            ["ac"] = {
                                 query = "@call.outer",
                                 desc = "Select outer part of a function call",
                             },
-                            ["im"] = {
+                            ["ic"] = {
                                 query = "@call.inner",
                                 desc = "Select inner part of a function call",
                             },
@@ -153,13 +149,13 @@ return {
                                 desc = "Select inner part of a method/function definition",
                             },
 
-                            ["ac"] = {
+                            ["at"] = {
                                 query = "@class.outer",
-                                desc = "Select outer part of a class",
+                                desc = "Select outer part of a type",
                             },
-                            ["ic"] = {
+                            ["it"] = {
                                 query = "@class.inner",
-                                desc = "Select inner part of a class",
+                                desc = "Select inner part of a type",
                             },
 
                             ["an"] = {
@@ -207,10 +203,6 @@ return {
                     },
                 },
             }
-
-            vim.keymap.set("n", "[c", function()
-                require("treesitter-context").go_to_context(vim.v.count1)
-            end, { silent = true })
 
             vim.treesitter.language.register("javascript", "tsx")
             vim.treesitter.language.register("typescript.tsc", "tsx")
