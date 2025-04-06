@@ -1,99 +1,33 @@
 ---
 
+version: "2"
+
 run:
+  relative-path-mode: gomod
   concurrency: 8
-  timeout: 10m
   issues-exit-code: 1
   tests: true
-  skip-dirs:
-    - bin
-    - vendor
-    - var
-    - tmp
-    - .cache
-  skip-files:
-    - _mock\.go$
-    - \.pb\.go$
-
-issues:
-  exclude:
-    # errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
-    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv|.*Rollback). is not checked
-    - should check returned error before deferring
-  exclude-rules:
-    - source: "//noinspection"
-      linters:
-        - gocritic
-    - path: "_test\\.go"
-      linters:
-        - bodyclose
-        - dupl
-        - funlen
-        - goconst
-        - gochecknoglobals
-        - gosec
-        - noctx
-        - wrapcheck
-  max-same-issues: 50
-  exclude-use-default: false
-
-linters-settings:
-  revive:
-    confidence: 0.1
-    rules:
-      - name: exported
-        disabled: true
-  stylecheck:
-    # I like ST1003, but many people may disagree.
-    checks: ["all", "-ST1020", "-ST1021", "-ST1000", "-ST1003"]
-  interfacebloat:
-    max: 3
-  errcheck:
-    check-type-assertions: true
-    check-blank: true
-  testifylint:
-    enable-all: true
-  govet:
-    enable-all: true
-  funlen:
-    ignore-comments: true
-  nolintlint:
-    allow-unused: false
-    allow-no-explanation: []
-    require-explanation: true
-    require-specific: true
-  gocognit:
-    min-complexity: 20
-  gocyclo:
-    min-complexity: 20
-  gocritic:
-    enable-all: true
-  nakedret:
-    max-func-lines: 0
-  rowserrcheck:
-    packages:
-      - github.com/jmoiron/sqlx
 
 linters:
-  disable-all: true
+  default: none
   enable:
-    # - err113
-    # - godot
     - asasalint
     - asciicheck
     - bidichk
     - bodyclose
     - canonicalheader
+    - copyloopvar
     - cyclop
+    - decorder
     - dupl
     - durationcheck
+    - err113
     - errcheck
     - errname
     - errorlint
     - exhaustive
     - exhaustruct
     - fatcontext
-    - copyloopvar
     - forbidigo
     - funlen
     - gocheckcompilerdirectives
@@ -104,14 +38,13 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - goerr113  # TODO: duplicate err113
-    - goimports
     - gomodguard
     - goprintffuncname
     - gosec
-    - gosimple
     - govet
+    - inamedparam
     - ineffassign
+    - interfacebloat
     - lll
     - loggercheck
     - makezero
@@ -137,66 +70,103 @@ linters:
     - sloglint
     - sqlclosecheck
     - staticcheck
-    - stylecheck
     - tagalign
-    - tenv
     - testableexamples
     - testifylint
     - testpackage
     - thelper
     - tparallel
-    - typecheck
     - unconvert
     - unparam
     - unused
     - usestdlibvars
     - wastedassign
     - whitespace
-    # - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod
+    - wrapcheck
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    funlen:
+      ignore-comments: true
+    gocognit:
+      min-complexity: 20
+    gocritic:
+      enable-all: true
+    gocyclo:
+      min-complexity: 20
+    govet:
+      enable-all: true
+    interfacebloat:
+      max: 3
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+      allow-unused: false
+    revive:
+      confidence: 0.1
+      rules:
+        - name: exported
+          disabled: true
+    rowserrcheck:
+      packages:
+        - github.com/jmoiron/sqlx
+    staticcheck:
+      checks:
+        - -ST1000
+        - -ST1003
+        - -ST1020
+        - -ST1021
+        - all
+    testifylint:
+      enable-all: true
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - gocritic
+        source: //noinspection
+      - linters:
+          - bodyclose
+          - dupl
+          - funlen
+          - gochecknoglobals
+          - goconst
+          - gosec
+          - noctx
+          - wrapcheck
+        path: _test\.go
+      - path: (.+)\.go$
+        text: Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv|.*Rollback). is not checked
+      - path: (.+)\.go$
+        text: should check returned error before deferring
+    paths:
+      - .cache
+      - \.pb\.go$
+      - _mock\.go$
+      - bin
+      - builtin$
+      - examples$
+      - third_party$
+      - tmp
+      - var
+      - vendor
+  issues:
+  max-same-issues: 50
 
-    ## you may want to enable
-    - decorder
-    - inamedparam
-    - interfacebloat
-    - wrapcheck # checks that errors returned from external packages are wrapped
-    #- exhaustruct # [highly recommend to enable] checks if all structure fields are initialized
-    #- gci # controls golang package import order and makes it always deterministic
-    #- ginkgolinter # [if you use ginkgo/gomega] enforces standards of using ginkgo and gomega
-    #- godox # detects FIXME, TODO and other comment keywords
-    #- goheader # checks is file header matches to pattern
-    #- ireturn # accept interfaces, return concrete types
-    #- varnamelen # [great idea, but too many false positives] checks that the length of a variable's name matches its scope
-    #- zerologlint # detects the wrong usage of zerolog that a user forgets to dispatch zerolog.Event
-
-    ## disabled
-    #- containedctx # detects struct contained context.Context field
-    #- contextcheck # [too many false positives] checks the function whether use a non-inherited context
-    #- depguard # [replaced by gomodguard] checks if package imports are in a list of acceptable packages
-    #- dogsled # checks assignments with too many blank identifiers (e.g. x, _, _, _, := f())
-    #- dupword # [useless without config] checks for duplicate words in the source code
-    #- errchkjson # [don't see profit + I'm against of omitting errors like in the first example https://github.com/breml/errchkjson] checks types passed to the json encoding functions. Reports unsupported types and optionally reports occasions, where the check for the returned error can be omitted
-    #- forcetypeassert # [replaced by errcheck] finds forced type assertions
-    #- goerr113 # [too strict] checks the errors handling expressions
-    #- gofmt # [replaced by goimports] checks whether code was gofmt-ed
-    #- gofumpt # [replaced by goimports, gofumports is not available yet] checks whether code was gofumpt-ed
-    #- gosmopolitan # reports certain i18n/l10n anti-patterns in your Go codebase
-    #- grouper # analyzes expression groups
-    #- importas # enforces consistent import aliases
-    #- maintidx # measures the maintainability index of each function
-    #- misspell # [useless] finds commonly misspelled English words in comments
-    #- nlreturn # [too strict and mostly code is not more readable] checks for a new line before return and branch statements to increase code clarity
-    #- paralleltest # [too many false positives] detects missing usage of t.Parallel() method in your Go test
-    #- tagliatelle # checks the struct tags
-    #- wsl # [too strict and mostly code is not more readable] whitespace linter forces you to use empty lines
-
-    ## deprecated
-    #- deadcode # [deprecated, replaced by unused] finds unused code
-    #- exhaustivestruct # [deprecated, replaced by exhaustruct] checks if all struct's fields are initialized
-    #- golint # [deprecated, replaced by revive] golint differs from gofmt. Gofmt reformats Go source code, whereas golint prints out style mistakes
-    #- ifshort # [deprecated] checks that your code uses short syntax for if-statements whenever possible
-    #- interfacer # [deprecated] suggests narrower interface types
-    #- maligned # [deprecated, replaced by govet fieldalignment] detects Go structs that would take less memory if their fields were sorted
-    #- nosnakecase # [deprecated, replaced by revive var-naming] detects snake case of variable naming and function name
-    #- scopelint # [deprecated, replaced by exportloopref] checks for unpinned variables in go programs
-    #- structcheck # [deprecated, replaced by unused] finds unused struct fields
-    #- varcheck # [deprecated, replaced by unused] finds unused global variables and constants
+formatters:
+  enable:
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - .cache
+      - \.pb\.go$
+      - _mock\.go$
+      - bin
+      - builtin$
+      - examples$
+      - third_party$
+      - tmp
+      - var
+      - vendor

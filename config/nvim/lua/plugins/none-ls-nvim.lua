@@ -72,6 +72,11 @@ return {
                         },
                     },
                     none_ls.builtins.diagnostics.golangci_lint.with {
+                        args = {
+                            "run",
+                            "--output.json.path=stdout",
+                            "--show-stats=false",
+                        },
                         extra_args = { "--config=~/.golangci.yml" },
                         timeout = 60 * 1000,
                     },
