@@ -50,7 +50,6 @@ def setup_mac_using_brew():
             "ghostty",
             "google-chrome",
             "iina",
-            "intellij-idea-ce",
             "karabiner-elements",
             "libreoffice",
             "netnewswire",
@@ -134,8 +133,6 @@ def setup_links_to_config_files():
                target=cwd_path / "config/.golangci.yml")
     files.link(path=f"{home_path_str}/.tmux.conf",
                target=cwd_path / ".tmux.conf")
-    files.link(path=f"{home_path_str}/.ideavimrc",
-               target=cwd_path / ".ideavimrc")
     files.link(path=f"{home_path_str}/.vimrc",
                target=cwd_path / ".vimrc")
     files.link(path=f"{home_path_str}/.amethyst.yml",
