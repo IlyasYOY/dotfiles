@@ -2,7 +2,7 @@ vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 
 vim.api.nvim_create_user_command(
-    "GoReplaceUselessComments",
+    "GoRemoveUselessComments",
     [[%s/\/\/ \w* \.*$//gc]],
     {
         desc = "remove all comments repeating name of the struct",
@@ -42,8 +42,8 @@ vim.api.nvim_create_user_command(
 )
 
 vim.keymap.set("n", "<leader><leader>gfm", function()
-    local builtin = require "telescope.builtin"
-    builtin.live_grep {
+    local fzf = require "fzf-lua"
+    fzf.live_grep {
         cwd = "~/go/pkg/mod",
     }
 end, { desc = "find files in go mod" })
