@@ -30,6 +30,7 @@ function M.on_attach(client, bufnr)
     vim.keymap.set("n", "grS", function()
         vim.lsp.buf.typehierarchy "supertypes"
     end, described(bufopts, "go to supertypes"))
+    vim.keymap.set("n", "<C-s>", vim.lsp.buf.signature_help)
     vim.keymap.set(
         "n",
         "grd",

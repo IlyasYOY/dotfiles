@@ -131,28 +131,9 @@ end
 local function setup_python()
     local lspconfig = require "lspconfig"
 
-    lspconfig.pylsp.setup {
+    lspconfig.pyright.setup {
         on_attach = lsp.on_attach,
         capabilities = lsp.get_capabilities(),
-        settings = {
-            settings = {
-                pylsp = {
-                    plugins = {
-                        black = { enabled = false },
-                        autopep8 = { enabled = false },
-                        yapf = { enabled = false },
-                        pylint = { enabled = false },
-                        pyflakes = { enabled = false },
-                        pycodestyle = { enabled = false },
-
-                        pylsp_mypy = { enabled = true },
-                        jedi_completion = { fuzzy = true },
-                        pyls_isort = { enabled = true },
-                        sort = { enabled = true },
-                    },
-                },
-            },
-        },
     }
 end
 
