@@ -9,6 +9,10 @@ return {
         fzf.setup {}
         fzf.register_ui_select()
 
+        vim.keymap.set("n", "<leader>fr", function()
+            fzf.resume()
+        end, { desc = "find resume" })
+
         vim.keymap.set("n", "<leader>ff", function()
             fzf.files()
         end, { desc = "find files" })

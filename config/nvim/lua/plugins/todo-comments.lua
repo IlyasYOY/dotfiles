@@ -3,7 +3,7 @@ return {
         "folke/todo-comments.nvim",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "nvim-telescope/telescope.nvim",
+            "ibhagwan/fzf-lua",
         },
         config = function()
             require("todo-comments").setup {
@@ -38,7 +38,7 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>ft",
-                ":TodoTelescope<CR>",
+                ":TodoFzfLua<CR>",
                 { desc = "find todos in project" }
             )
         end,

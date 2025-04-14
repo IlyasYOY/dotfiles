@@ -4,6 +4,7 @@ TERM = "xterm-256color"
 [window]
 opacity = 0.99
 decorations = "None" 
+option_as_alt = "Both"
 
 [font]
 size = 18
