@@ -58,7 +58,7 @@ return {
         end, { desc = "find document symbols" })
 
         vim.keymap.set("n", "<leader>fS", function()
-            fzf.lsp_workspace_symbols()
+            fzf.lsp_live_workspace_symbols()
         end, { desc = "find workspace symbols" })
 
         vim.keymap.set("n", "<leader>fd", function()
