@@ -9,7 +9,7 @@ end
 
 return {
     {
-        "nvimtools/none-ls.nvim",
+        "IlyasYOY/none-ls.nvim",
         dependencies = {
             "gbprod/none-ls-luacheck.nvim",
         },
@@ -34,7 +34,6 @@ return {
             )
 
             none_ls.setup {
-                debug = true,
                 debounce = 150,
                 save_after_format = false,
                 sources = {
@@ -86,35 +85,10 @@ return {
                             "--config="
                                 .. find_first_present_file {
                                     "./.golangci.pipeline.yaml",
+                                    "./.golangci.yml",
                                     core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
                                 },
                         },
-                        args = h.cache.by_bufnr(function(params)
-                            local version = vim.system(
-                                { params.command, "version" },
-                                { text = true }
-                            )
-                                :wait().stdout
-                            if
-                                version
-                                and (
-                                    version:match "version v2"
-                                    or version:match "version 2"
-                                )
-                            then
-                                return {
-                                    "run",
-                                    "--fix=false",
-                                    "--show-stats=false",
-                                    "--output.json.path=stdout",
-                                }
-                            end
-                            return {
-                                "run",
-                                "--fix=false",
-                                "--out-format=json",
-                            }
-                        end),
                         prefer_local = "bin",
                         timeout = 60 * 1000,
                     },
