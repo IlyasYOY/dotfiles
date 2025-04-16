@@ -1,3 +1,12 @@
+local function find_first_present_file(fileList)
+    for _, filePath in ipairs(fileList) do
+        if vim.fn.filereadable(filePath) == 1 then
+            return filePath
+        end
+    end
+    return nil
+end
+
 return {
     {
         "nvimtools/none-ls.nvim",
@@ -6,6 +15,7 @@ return {
         },
         config = function()
             local none_ls = require "null-ls"
+            local h = require "null-ls.helpers"
             local core = require "ilyasyoy.functions.core"
 
             local function with_root_file(builtin, file)
@@ -72,7 +82,40 @@ return {
                         },
                     },
                     none_ls.builtins.diagnostics.golangci_lint.with {
-                        extra_args = { "--config=~/.golangci.yml" },
+                        extra_args = {
+                            "--config="
+                                .. find_first_present_file {
+                                    "./.golangci.pipeline.yaml",
+                                    core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
+                                },
+                        },
+                        args = h.cache.by_bufnr(function(params)
+                            local version = vim.system(
+                                { params.command, "version" },
+                                { text = true }
+                            )
+                                :wait().stdout
+                            if
+                                version
+                                and (
+                                    version:match "version v2"
+                                    or version:match "version 2"
+                                )
+                            then
+                                return {
+                                    "run",
+                                    "--fix=false",
+                                    "--show-stats=false",
+                                    "--output.json.path=stdout",
+                                }
+                            end
+                            return {
+                                "run",
+                                "--fix=false",
+                                "--out-format=json",
+                            }
+                        end),
+                        prefer_local = "bin",
                         timeout = 60 * 1000,
                     },
                     none_ls.builtins.code_actions.impl,
