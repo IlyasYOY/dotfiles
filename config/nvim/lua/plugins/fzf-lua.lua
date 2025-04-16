@@ -5,6 +5,7 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
         local fzf = require "fzf-lua"
+        local fzf_utils = require "fzf-lua.utils"
 
         fzf.setup {}
         fzf.register_ui_select()
@@ -27,9 +28,22 @@ return {
             fzf.live_grep()
         end, { desc = "find grep through files" })
 
+        vim.keymap.set("v", "<leader>fg", function()
+            fzf.live_grep {
+                search = fzf_utils.get_visual_selection(),
+            }
+        end, { desc = "find grep through files" })
+
         vim.keymap.set("n", "<leader>fG", function()
             fzf.live_grep {
                 cwd = core.string_strip_prefix(vim.fn.expand "%:p:h", "oil://"),
+            }
+        end, { desc = "find files in current dir" })
+
+        vim.keymap.set("v", "<leader>fG", function()
+            fzf.live_grep {
+                cwd = core.string_strip_prefix(vim.fn.expand "%:p:h", "oil://"),
+                search = fzf_utils.get_visual_selection(),
             }
         end, { desc = "find files in current dir" })
 
