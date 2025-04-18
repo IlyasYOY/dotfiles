@@ -7,7 +7,18 @@ return {
         local fzf = require "fzf-lua"
         local fzf_utils = require "fzf-lua.utils"
 
-        fzf.setup {}
+        fzf.setup {
+            git = {
+                branches = {
+                    actions = {
+                        ["ctrl-d"] = function(selected)
+                            vim.cmd.Git("difftool --name-only " .. selected[1])
+                        end,
+                    },
+                },
+            },
+        }
+
         fzf.register_ui_select()
 
         vim.keymap.set("n", "<leader>fr", function()
