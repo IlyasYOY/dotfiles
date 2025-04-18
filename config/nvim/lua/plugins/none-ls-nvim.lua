@@ -9,7 +9,7 @@ end
 
 return {
     {
-        "IlyasYOY/none-ls.nvim",
+        "nvimtools/none-ls.nvim",
         dependencies = {
             "gbprod/none-ls-luacheck.nvim",
         },
