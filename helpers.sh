@@ -16,19 +16,19 @@ info() {
 }
 
 success() {
-    printf "\n✅ \033[1;32m%s\033[0m" "$1"
+    printf "✅ \033[1;32m%s\033[0m\n" "$1"
 }
 
 debug() {
-    printf "\n\033[1;37m%s\033[0m" "$1"
+    printf "\033[1;37m%s\033[0m\n" "$1"
 }
 
 error() {
-    printf "\n💥 \033[1;31m%s\033[0m" "$1"
+    printf "💥 \033[1;31m%s\033[0m\n" "$1"
 }
 
 warning() {
-    printf "\n⚠️ \033[1;33m%s\033[0m" "$1"
+    printf "⚠️ \033[1;33m%s\033[0m\n" "$1"
 }
 
 confirm_update() {
@@ -90,12 +90,13 @@ symlink() {
 clone_repo() {
     local repo="$1"
     local dest="$2"
-    
+
     if [ ! -d "$dest" ]; then
-        git clone "$repo" "$dest"
-        success "Repository cloned $repo to $dest"
+        git clone "$repo" "$dest" \
+            && success "Repository cloned $repo to $dest" \
+            || error "Repository $repo cannot be cloned to $dest"
     else
-        debug "☑️Repository already exists: $dest"
+        debug "Repository already exists: $dest"
     fi
 }
 
@@ -103,8 +104,9 @@ brew_install() {
     local dependency="$1"
 
     if ! brew ls --versions "$dependency" >/dev/null; then
-        brew install "$dependency"
-        success "brew installed $dependency"
+        brew install "$dependency" \
+             && success "brew installed $dependency" \
+             || error "brew failed to install $dependency"
     else
         debug "brew $dependency already installed"
     fi
@@ -112,8 +114,9 @@ brew_install() {
 
 brew_cask_install() {
     if ! brew list --cask "$1" >/dev/null 2>&1; then
-        brew install --cask "$1"
-        success "brew cask installed $dependency"
+        brew install --cask "$1" \
+             && success "brew cask installed $dependency" \
+             || error "brew cask failed to install $dependency"
     else
         debug "brew cask $1 already installed"
     fi
