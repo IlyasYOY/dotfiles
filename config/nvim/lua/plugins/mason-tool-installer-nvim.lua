@@ -37,6 +37,7 @@ return {
                     "prettier",
                     "protolint",
                     "pylint",
+                    "pyright",
                     "ruff",
                     "rust-analyzer",
                     "sqlfluff",
