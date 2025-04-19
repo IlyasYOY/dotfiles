@@ -113,12 +113,14 @@ brew_install() {
 }
 
 brew_cask_install() {
-    if ! brew list --cask "$1" >/dev/null 2>&1; then
-        brew install --cask "$1" \
+    local dependency="$1"
+
+    if ! brew list --cask "$dependency" >/dev/null 2>&1; then
+        brew install --cask "$dependency" \
              && success "brew cask installed $dependency" \
              || error "brew cask failed to install $dependency"
     else
-        debug "brew cask $1 already installed"
+        debug "brew cask $dependency already installed"
     fi
 }
 

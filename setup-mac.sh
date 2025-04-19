@@ -14,6 +14,7 @@ setup_mac_using_brew() {
         curl
         docker
         docker-compose
+        fd
         ffmpeg
         fzf
         gh
@@ -30,6 +31,7 @@ setup_mac_using_brew() {
         rust
         scc
         sqlite
+        syncthing
         tmux
         tree
         vim
@@ -51,6 +53,7 @@ setup_mac_using_brew() {
         libreoffice
         netnewswire
         obsidian
+        syncthing
         telegram
         vial
     )
