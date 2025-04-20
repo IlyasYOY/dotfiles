@@ -63,6 +63,7 @@ setup_mac_using_brew() {
         rust
         scc
         sqlite
+        syncthing
         tmux
         tree
         vim
@@ -81,11 +82,13 @@ setup_mac_using_brew_cask() {
         betterdisplay
         discord
         google-chrome
+        hammerspoon
         iina 
         karabiner-elements
         libreoffice
         netnewswire
         obsidian
+        syncthing
         telegram
         vial
     )
@@ -244,6 +247,12 @@ setup_tmux_plugin_manger() {
     fi
 }
 
+setup_hammerspoon() {
+    info "🔧🍎 Setting up hamerspoon..."
+
+    symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
+}
+
 main() {
     setup_mac_using_brew
     setup_mac_using_brew_cask
@@ -252,6 +261,7 @@ main() {
     setup_notes
     setup_links_to_config_files
     setup_zshrc
+    setup_hammerspoon
     setup_git_config
     setup_sdkman
     setup_go_version_manager

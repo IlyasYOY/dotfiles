@@ -29,4 +29,6 @@ read_globals = {
     "after_each",
     "pending",
     "clear",
+    -- for hammerspoon
+    "hs",
 }
