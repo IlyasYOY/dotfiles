@@ -1,5 +1,5 @@
 for _, app in ipairs {
-    { shortcut = "1", name = "Alacritty" },
+    { shortcut = "1", name = "WezTerm" },
     { shortcut = "2", name = "Google Chrome" },
     { shortcut = "3", name = "TickTick" },
 } do

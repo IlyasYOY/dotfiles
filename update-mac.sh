@@ -42,11 +42,14 @@ update_nvim() {
 
 update_local_repos() {
     local repos=(
+        "git@github.com:IlyasYOY/dotfiles.git:$PERSONAL_PROJECTS_DIR/dotfiles"
+
+        "git@github.com:IlyasYOY/theme.nvim.git:$PERSONAL_PROJECTS_DIR/obs.nvim"
         "git@github.com:IlyasYOY/obs.nvim.git:$PERSONAL_PROJECTS_DIR/obs.nvim"
         "git@github.com:IlyasYOY/coredor.nvim.git:$PERSONAL_PROJECTS_DIR/coredor.nvim"
         "git@github.com:IlyasYOY/git-link.nvim.git:$PERSONAL_PROJECTS_DIR/git-link.nvim"
+
         "git@github.com:IlyasYOY/Notes.git:$NOTES_DIR"
-        "git@github.com:IlyasYOY/dotfiles.git:$PERSONAL_PROJECTS_DIR/dotfiles"
     )
 
     for repo in "${repos[@]}"; do

@@ -8,6 +8,9 @@ return {
         local fzf_utils = require "fzf-lua.utils"
 
         fzf.setup {
+            winopts = {
+                fullscreen = true,
+            },
             git = {
                 branches = {
                     actions = {

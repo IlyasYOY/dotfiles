@@ -5,34 +5,39 @@ source ./helpers.sh
 
 setup_mac_using_app_store() {
     info "🍎 Installing App Store packages..."
-    local apps=(
-        937984704
-        424390742
-        1571033540
-        1445910651
-        424389933
-        682658836
-        1444383602
-        408981434
-        1208561404
-        1035137927
-        409183694
-        302584613
-        634148309
-        441258766
-        434290957
-        409203825
-        409201541
-        904280696
-        966085870
-        1289119450
-        1480933944
-        310633997
-    )
 
-    for app in "${apps[@]}"; do
-        mas_install "$app"
-    done
+    if confirm_update "Update Neovim plugins"; then
+        nvim --headless "+Lazy! sync" +qa && success "Lazy.nvim updated" || error "Failed to update Lazy.nvim"
+
+        local apps=(
+            937984704
+            424390742
+            1571033540
+            1445910651
+            424389933
+            682658836
+            1444383602
+            408981434
+            1208561404
+            1035137927
+            409183694
+            302584613
+            634148309
+            441258766
+            434290957
+            409203825
+            409201541
+            904280696
+            966085870
+            1289119450
+            1480933944
+            310633997
+        )
+
+        for app in "${apps[@]}"; do
+            mas_install "$app"
+        done
+    fi
 }
 
 setup_mac_using_brew() {
@@ -91,6 +96,7 @@ setup_mac_using_brew_cask() {
         syncthing
         telegram
         vial
+        wezterm
     )
     for cask in "${casks[@]}"; do
         brew_cask_install "$cask"
@@ -103,9 +109,11 @@ setup_basic_directories() {
 
 setup_my_project() {
     info "👨💻 Setting up personal projects..."
+
     clone_repo "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim"
     clone_repo "git@github.com:IlyasYOY/coredor.nvim.git" "$PERSONAL_PROJECTS_DIR/coredor.nvim"
     clone_repo "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim"
+    clone_repo "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim"
 }
 
 setup_notes() {
@@ -123,6 +131,8 @@ setup_links_to_config_files() {
     symlink "$DOTFILES_DIR/config/nvim" "$config_dir/nvim"
     symlink "$DOTFILES_DIR/config/nvim-minimal" "$config_dir/nvim-minimal"
     symlink "$DOTFILES_DIR/config/alacritty" "$config_dir/alacritty"
+    symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
+    symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
 
     # Git config
     mkdir -pv "$config_dir/git"
@@ -153,7 +163,7 @@ setup_zshrc() {
         'alias ilyasyoy-notes="cd ~/vimwiki"'
         'export PATH="$HOME/go/bin:$PATH"'
     )
-    
+
     for line in "${lines[@]}"; do
         add_line "$line" "$ZSHRC"
     done
@@ -183,11 +193,11 @@ setup_node_version_manager() {
     else 
         debug "NVM already installed"
     fi
-    
+
     # NVM configuration
     local nvm_config=$' export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
-    
+
     add_block "$ZSHRC" \
         "## START NVM CONFIG ##" \
         "## END NVM CONFIG ##" \
@@ -247,12 +257,6 @@ setup_tmux_plugin_manger() {
     fi
 }
 
-setup_hammerspoon() {
-    info "🔧🍎 Setting up hamerspoon..."
-
-    symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
-}
-
 main() {
     setup_mac_using_brew
     setup_mac_using_brew_cask
@@ -261,7 +265,6 @@ main() {
     setup_notes
     setup_links_to_config_files
     setup_zshrc
-    setup_hammerspoon
     setup_git_config
     setup_sdkman
     setup_go_version_manager
