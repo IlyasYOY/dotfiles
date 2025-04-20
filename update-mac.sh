@@ -2,12 +2,28 @@
 
 source ./helpers.sh
 
-update_mac_using_brew() {
-    info "🍺 Updating Homebrew packages..."
+update_brew() {
+    info "🍺 Updating Homebrew..."
 
     brew update && success "Brew updated" || error "Failed to update Brew"
+}
+
+update_brew_packages() {
+    info "🍺 Updating Homebrew packages..."
+
     brew upgrade && success "Brew packages upgraded" || error "Failed to upgrade packages"
+}
+
+update_brew_cask_packages() {
+    info "🍺 Updating Homebrew cask packages..."
+
     brew upgrade --cask && success "Brew casks upgraded" || error "Failed to upgrade casks"
+}
+
+update_mas_applications() {
+    info "🍎 Updating mas applications..."
+
+    mas upgrade && success "Mas updated" || error "Failed to update mas"
 }
 
 update_nvim() {
@@ -52,7 +68,10 @@ update_tmux_plugins() {
 }
 
 main() {
-    update_mac_using_brew
+    update_brew
+    update_brew_packages
+    update_brew_cask_packages
+    update_mas_applications
     update_local_repos
     update_tmux_plugins
     update_nvim

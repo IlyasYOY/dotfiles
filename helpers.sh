@@ -100,6 +100,19 @@ clone_repo() {
     fi
 }
 
+
+mas_install() {
+    local dependency_id="$1"
+
+    if ! mas info "$dependency_id" >/dev/null; then
+        mas install "$dependency_id" \
+             && success "mas installed $dependency_id" \
+             || error "mas failed to install $dependency_id"
+    else
+        debug "mas $dependency_id already installed"
+    fi
+}
+
 brew_install() {
     local dependency="$1"
 

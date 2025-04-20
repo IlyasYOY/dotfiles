@@ -3,6 +3,38 @@
 
 source ./helpers.sh
 
+setup_mac_using_app_store() {
+    info "🍎 Installing App Store packages..."
+    local apps=(
+        937984704
+        424390742
+        1571033540
+        1445910651
+        424389933
+        682658836
+        1444383602
+        408981434
+        1208561404
+        1035137927
+        409183694
+        302584613
+        634148309
+        441258766
+        434290957
+        409203825
+        409201541
+        904280696
+        966085870
+        1289119450
+        1480933944
+        310633997
+    )
+
+    for app in "${apps[@]}"; do
+        mas_install "$app"
+    done
+}
+
 setup_mac_using_brew() {
     info "🍺 Installing Homebrew packages..."
     local packages=(
@@ -31,7 +63,6 @@ setup_mac_using_brew() {
         rust
         scc
         sqlite
-        syncthing
         tmux
         tree
         vim
@@ -40,7 +71,9 @@ setup_mac_using_brew() {
     for pkg in "${packages[@]}"; do
         brew_install "$pkg"
     done
+}
 
+setup_mac_using_brew_cask() {
     info "🍺 Installing Homebrew casks..."
     local casks=(
         alacritty
@@ -53,7 +86,6 @@ setup_mac_using_brew() {
         libreoffice
         netnewswire
         obsidian
-        syncthing
         telegram
         vial
     )
@@ -61,7 +93,6 @@ setup_mac_using_brew() {
         brew_cask_install "$cask"
     done
 }
-
 setup_basic_directories() {
     info "📁 Creating basic directories..."
     mkdir -pv "$PERSONAL_PROJECTS_DIR" "$WORK_PROJECTS_DIR"
@@ -215,6 +246,8 @@ setup_tmux_plugin_manger() {
 
 main() {
     setup_mac_using_brew
+    setup_mac_using_brew_cask
+    setup_mac_using_app_store
     setup_basic_directories
     setup_notes
     setup_links_to_config_files
