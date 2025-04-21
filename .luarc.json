@@ -1,3 +1,16 @@
 {
-    "workspace.checkThirdParty": false
+    "workspace.checkThirdParty": false,
+    "diagnostics.globals": [
+        "vim",
+        "assert",
+        "describe",
+        "it",
+        "before_each",
+        "after_each",
+        "pending",
+        "clear",
+        "G_P",
+        "G_R",
+        "hs"
+    ]
 }

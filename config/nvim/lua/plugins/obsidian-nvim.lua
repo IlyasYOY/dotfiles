@@ -5,8 +5,6 @@ return {
         "nvim-lua/plenary.nvim",
         "hrsh7th/nvim-cmp",
     },
-    lazy = true,
-    ft = "markdown",
     config = function()
         require("obsidian").setup {
             workspaces = {
