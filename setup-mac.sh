@@ -6,7 +6,7 @@ source ./helpers.sh
 setup_mac_using_app_store() {
     info "🍎 Installing App Store packages..."
 
-    if confirm_update "Update Neovim plugins"; then
+    if confirm_update "Update App Store packages"; then
         nvim --headless "+Lazy! sync" +qa && success "Lazy.nvim updated" || error "Failed to update Lazy.nvim"
 
         local apps=(
