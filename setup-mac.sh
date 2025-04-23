@@ -149,24 +149,50 @@ setup_links_to_config_files() {
 
 setup_zshrc() {
     info "🐚 Configuring .zshrc..."
-    local lines=(
-        'export EDITOR=nvim'
-        'alias mnvim="NVIM_APPNAME=nvim-minimal nvim"'
-        'alias nvims="nvim -S"'
-        'alias vimconfig="vim ~/.vimrc"'
-        'alias nvimconfig="nvim ~/.config/nvim/init.lua"'
-        'alias cdfzf='\''cd "$(find . -type d | fzf )"'\'
-        'alias cdfzfgit='\''cd "$(find . -name .git -type d -prune | fzf)/.."'\'
-        "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
-        'export PATH="${ILYASYOY_DOTFILES_DIR}/bin:$PATH"'
-        'alias ilyasyoy-dotfiles="cd ${ILYASYOY_DOTFILES_DIR}"'
-        'alias ilyasyoy-notes="cd ~/vimwiki"'
-        'export PATH="$HOME/go/bin:$PATH"'
-    )
 
+    local lines=(
+        '[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh'
+    )
     for line in "${lines[@]}"; do
         add_line "$line" "$ZSHRC"
     done
+
+    local aliases=$(cat <<-END
+alias vimconfig="vim ~/.vimrc"
+alias nvimconfig="nvim ~/.config/nvim/init.lua"
+alias mnvim="NVIM_APPNAME=nvim-minimal nvim"
+alias nvims="nvim -S"
+
+alias cdfzf='cd "\$(find . -type d | fzf )"'
+alias cdfzfgit='cd "\$(find . -name .git -type d -prune | fzf)/.."'
+
+alias ilyasyoy-dotfiles="cd \${ILYASYOY_DOTFILES_DIR}"
+alias ilyasyoy-notes="cd ~/vimwiki"
+END
+)
+    add_block "$ZSHRC" \
+        "aliases" \
+        "$aliases"
+
+
+    local exports=$(cat <<-END
+export EDITOR=nvim
+export TERM="xterm-256color"
+export HISTCONTROL=ignoreboth:erasedups
+
+export PATH="\$HOME/go/bin:\$PATH"
+export PATH="\$HOME/local/bin:\$PATH"
+
+export ILYASYOY_DOTFILES_DIR="\$DOTFILES_DIR"
+export COLIMA_HOME=\$HOME/.colima
+export DOCKER_HOST="unix://\${COLIMA_HOME}/default/docker.sock"
+export PATH="\${ILYASYOY_DOTFILES_DIR}/bin:\$PATH"
+END
+)
+    add_block "$ZSHRC" \
+        "exports" \
+        "$exports"
+        
 }
 
 setup_sdkman() {
@@ -195,12 +221,11 @@ setup_node_version_manager() {
     fi
 
     # NVM configuration
-    local nvm_config=$' export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    local nvm_config=$'export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
 
     add_block "$ZSHRC" \
-        "## START NVM CONFIG ##" \
-        "## END NVM CONFIG ##" \
+        "nvm config" \
         "$nvm_config"
 }
 
@@ -220,8 +245,7 @@ setup_go_version_manager() {
     local gvm_config=$'[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
     
     add_block "$ZSHRC" \
-        "## START GVM CONFIG ##" \
-        "## END GVM CONFIG ##" \
+        "gvm config" \
         "$gvm_config"
 }
 

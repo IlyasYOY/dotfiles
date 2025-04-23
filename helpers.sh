@@ -58,16 +58,16 @@ add_line() {
 
 add_block() {
     local file="$1"
-    local start_marker="$2"
-    local end_marker="$3"
-    local content="$4"
+    local marker="$2"
+    local content="$3"
 
     # Check if the block already exists
-    if ! grep -qF "$start_marker" "$file"; then
-        printf "\n%s\n" "$start_marker" >> "$file"
+    if ! grep -qF "$marker" "$file"; then
+        printf "## start \n%s ##\n" "$marker" >> "$file"
         printf "%b\n" "$content" >> "$file"
-        printf "%s\n" "$end_marker" >> "$file"
-        success "Added configuration block to $file"
+        printf "## end %s ##\n" "$marker" >> "$file"
+
+        success "Added configuration block $marker to $file"
     else
         debug "Configuration block already exists in $file"
     fi
