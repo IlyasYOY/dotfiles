@@ -7,7 +7,7 @@ config.font_size = 18
 -- config.color_scheme = "alacritty"
 config.color_scheme = "Bamboo"
 config.colors = {
-    background = "#1c1c1c",
+    background = "#000000",
     foreground = "#bcbcbc",
 }
 

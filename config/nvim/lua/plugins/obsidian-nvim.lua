@@ -13,7 +13,8 @@ return {
                     path = "~/vimwiki",
                 },
             },
-
+            disable_frontmatter = true,
+            new_notes_location = "notes_subdir",
             daily_notes = {
                 folder = "diary",
                 date_format = "%Y-%m-%d",
@@ -22,7 +23,6 @@ return {
             ui = {
                 enable = false,
             },
-            disable_frontmatter = true,
             templates = {
                 folder = "meta/templates",
             },
