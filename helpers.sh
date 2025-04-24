@@ -63,7 +63,7 @@ add_block() {
 
     # Check if the block already exists
     if ! grep -qF "$marker" "$file"; then
-        printf "## start \n%s ##\n" "$marker" >> "$file"
+        printf "## start %s ##\n" "$marker" >> "$file"
         printf "%b\n" "$content" >> "$file"
         printf "## end %s ##\n" "$marker" >> "$file"
 

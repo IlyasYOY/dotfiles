@@ -151,7 +151,7 @@ setup_zshrc() {
     info "🐚 Configuring .zshrc..."
 
     local lines=(
-        '[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh'
+        'source <(fzf --zsh)'
     )
     for line in "${lines[@]}"; do
         add_line "$line" "$ZSHRC"

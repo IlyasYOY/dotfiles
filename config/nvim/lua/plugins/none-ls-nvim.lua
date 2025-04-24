@@ -7,6 +7,26 @@ local function find_first_present_file(fileList)
     return nil
 end
 
+local function golang_ci_link_config()
+    local core = require "ilyasyoy.functions.core"
+
+    local config = {
+        prefer_local = "bin",
+        timeout = 60 * 1000,
+    }
+    local configPath = find_first_present_file {
+        "./.golangci.pipeline.yaml",
+        "./.golangci.yml",
+        core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
+    }
+    if configPath then
+        config.extra_args = {
+            "--config=" .. configPath,
+        }
+    end
+    return config
+end
+
 return {
     {
         "nvimtools/none-ls.nvim",
@@ -80,18 +100,9 @@ return {
                             "-format-only=true",
                         },
                     },
-                    none_ls.builtins.diagnostics.golangci_lint.with {
-                        extra_args = {
-                            "--config="
-                                .. find_first_present_file {
-                                    "./.golangci.pipeline.yaml",
-                                    "./.golangci.yml",
-                                    core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
-                                },
-                        },
-                        prefer_local = "bin",
-                        timeout = 60 * 1000,
-                    },
+                    none_ls.builtins.diagnostics.golangci_lint.with(
+                        golang_ci_link_config()
+                    ),
                     none_ls.builtins.code_actions.impl,
                     none_ls.builtins.code_actions.gomodifytags,
 
