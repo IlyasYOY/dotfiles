@@ -3,6 +3,7 @@ return {
         "hrsh7th/nvim-cmp",
         dependencies = {
             "onsails/lspkind.nvim",
+            "folke/lazydev.nvim",
             "L3MON4D3/LuaSnip",
 
             "hrsh7th/cmp-buffer",

@@ -53,6 +53,7 @@ setup_mac_using_brew() {
         docker-compose
         fd
         ffmpeg
+        fswatch
         fzf
         gh
         go

@@ -10,18 +10,19 @@ end
 local function golang_ci_link_config()
     local core = require "ilyasyoy.functions.core"
 
-    local config = {
-        prefer_local = "bin",
-        timeout = 60 * 1000,
-    }
-    local configPath = find_first_present_file {
+    local config_path = find_first_present_file {
         "./.golangci.pipeline.yaml",
         "./.golangci.yml",
         core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
     }
-    if configPath then
+
+    local config = {
+        prefer_local = "bin",
+        timeout = 60 * 1000,
+    }
+    if config_path then
         config.extra_args = {
-            "--config=" .. configPath,
+            "--config=" .. config_path,
         }
     end
     return config
@@ -35,7 +36,6 @@ return {
         },
         config = function()
             local none_ls = require "null-ls"
-            local h = require "null-ls.helpers"
             local core = require "ilyasyoy.functions.core"
 
             local function with_root_file(builtin, file)

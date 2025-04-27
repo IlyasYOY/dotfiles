@@ -101,30 +101,19 @@ local function setup_lua()
     local lspconfig = require "lspconfig"
 
     lspconfig.lua_ls.setup {
+        root_dir = lspconfig.util.root_pattern(
+            "init.lua",
+            ".luarc.json",
+            ".luarc.jsonc",
+            ".luacheckrc",
+            ".stylua.toml",
+            "stylua.toml",
+            "selene.toml",
+            "selene.yml",
+            ".git"
+        ),
         on_attach = lsp.on_attach,
         capabilities = lsp.get_capabilities(),
-        settings = {
-            Lua = {
-                diagnostics = {
-                    globals = {
-                        "vim",
-                        "assert",
-                        "describe",
-                        "it",
-                        "before_each",
-                        "after_each",
-                        "pending",
-                        "clear",
-
-                        "G_P",
-                        "G_R",
-                    },
-                },
-                format = {
-                    enable = false,
-                },
-            },
-        },
     }
 end
 
@@ -141,18 +130,13 @@ return {
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            "folke/neodev.nvim",
+            "folke/lazydev.nvim",
         },
         config = function()
-            require("neodev").setup {
-                override = function(root_dir, options)
-                    for _, plugin in ipairs(require("lazy").plugins()) do
-                        if plugin.dev and root_dir == plugin.dir then
-                            options.plugins = true
-                        end
-                    end
-                end,
-            }
+            -- HACK: This sucker dosn't work if I add it as a simple plugin due
+            -- to lazy.nvim's 'lazy' nature.
+            require("lazydev").setup()
+
             setup_generic()
             setup_tsserver()
             setup_lua()
