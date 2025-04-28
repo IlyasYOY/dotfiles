@@ -98,8 +98,8 @@ return {
         end, { desc = "find workspace diagnostics" })
 
         vim.keymap.set("n", "<leader>fm", function()
-            fzf.manpages()
-        end, { desc = "find man pager" })
+            fzf.marks()
+        end, { desc = "find marks" })
 
         vim.keymap.set("n", "<leader>fh", function()
             fzf.helptags()
