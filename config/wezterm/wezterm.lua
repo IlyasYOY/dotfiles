@@ -2,7 +2,12 @@ local wezterm = require "wezterm"
 
 local config = {}
 
+-- here i have multiple fonts simply to be able to change them at the speed of
+-- thought.
+config.font = wezterm.font "ProggyClean Nerd Font"
+config.font = wezterm.font "Terminess Nerd Font"
 config.font = wezterm.font "GoMono Nerd Font"
+
 config.font_size = 18
 -- config.color_scheme = "alacritty"
 config.color_scheme = "Bamboo"
