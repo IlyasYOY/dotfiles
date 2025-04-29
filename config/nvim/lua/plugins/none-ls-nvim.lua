@@ -73,13 +73,12 @@ return {
                     none_ls.builtins.diagnostics.yamllint,
 
                     -- sql
-                    -- FIXME: fix mason issue.
-                    -- none_ls.builtins.formatting.sqlfluff.with {
-                    --     extra_args = { "--dialect", "postgres" },
-                    -- },
-                    -- none_ls.builtins.diagnostics.sqlfluff.with {
-                    --     extra_args = { "--dialect", "postgres" },
-                    -- },
+                    none_ls.builtins.formatting.sqlfluff.with {
+                        extra_args = { "--dialect", "postgres" },
+                    },
+                    none_ls.builtins.diagnostics.sqlfluff.with {
+                        extra_args = { "--dialect", "postgres" },
+                    },
 
                     -- proto
                     none_ls.builtins.diagnostics.protolint,
