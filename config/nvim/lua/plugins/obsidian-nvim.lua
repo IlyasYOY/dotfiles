@@ -15,6 +15,18 @@ return {
             },
             disable_frontmatter = true,
             new_notes_location = "notes_subdir",
+            note_id_func = function(title)
+                local prefix = tostring(os.date("%Y-%m-%d", os.time()))
+                if title ~= nil then
+                    title = title
+                        :gsub(" ", "-")
+                        :gsub("[^A-Za-z0-9-]", "")
+                        :lower()
+                else
+                    title = os.time()
+                end
+                return prefix .. "-" .. title
+            end,
             daily_notes = {
                 folder = "diary",
                 date_format = "%Y-%m-%d",
