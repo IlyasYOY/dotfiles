@@ -43,6 +43,7 @@ setup_mac_using_app_store() {
 setup_mac_using_brew() {
     info "🍺 Installing Homebrew packages..."
     local packages=(
+        aider
         ast-grep
         bat
         bison
@@ -71,6 +72,7 @@ setup_mac_using_brew() {
         sqlite
         syncthing
         tmux
+        tmuxp
         tree
         vim
         wget
@@ -193,7 +195,24 @@ END
     add_block "$ZSHRC" \
         "exports" \
         "$exports"
-        
+
+    local utilities=$(cat <<-END
+aider-ollama() {
+    local selected_model=\$(ollama list | awk 'NR>1 {print \$1}' | fzf --prompt="Select a model: ")
+    [[ -n "\$selected_model" ]] && aider --model ollama_chat/"\$selected_model"
+}
+
+tmux-session() {
+    selected_session=\$(tmux list-sessions -F "#{session_name}" | fzf --prompt="Select tmux session: "); 
+    if [ -n "\$selected_session" ]; then 
+        tmux attach -t "\$selected_session" || tmux switch-client -t "\$selected_session"; 
+    fi
+}
+END
+)
+    add_block "$ZSHRC" \
+        "utilities" \
+        "$utilities"
 }
 
 setup_sdkman() {

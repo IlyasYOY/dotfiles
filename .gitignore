@@ -22,3 +22,4 @@ Session.vim
 config/nvim/lua/ilyasyoy/hidden.lua
 
 config/nvim-minimal/lazy-lock.json
+.aider*

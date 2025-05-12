@@ -14,8 +14,30 @@ return {
                     inline = {
                         adapter = "ollama-qwen2.5-coder",
                     },
+                    cmd = {
+                        adapter = "ollama-qwen2.5-coder",
+                    },
                 },
                 adapters = {
+                    ["ollama-qwen3"] = function()
+                        return require("codecompanion.adapters").extend(
+                            "ollama",
+                            {
+                                name = "qwen3",
+                                schema = {
+                                    model = {
+                                        default = "qwen3:latest",
+                                    },
+                                    num_ctx = {
+                                        default = 16384,
+                                    },
+                                    num_predict = {
+                                        default = -1,
+                                    },
+                                },
+                            }
+                        )
+                    end,
                     ["ollama-qwen2.5-coder"] = function()
                         return require("codecompanion.adapters").extend(
                             "ollama",
