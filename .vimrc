@@ -63,9 +63,6 @@ set wildmode=full
 " increase history size 
 set history=300
 
-" noh - no highlight
-nnoremap <Esc> :noh<CR>
-
 set nowrap
 
 " Switch buffers using keys

@@ -20,6 +20,7 @@
    "executeQuery"
    "createStatement"
    "execute")
+
   (#set! injection.language "sql"))
 
 (method_invocation
@@ -40,5 +41,6 @@
    "executeQuery"
    "createStatement"
    "execute")
+
   (#set! injection.language "sql"))
 
