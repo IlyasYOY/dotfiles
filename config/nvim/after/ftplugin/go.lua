@@ -19,7 +19,7 @@ vim.api.nvim_create_user_command(
 
 vim.api.nvim_create_user_command(
     "GoReplaceMockeryOnWithExpect",
-    [[%s/On("\(\w*\)", /EXPECT().\1(/gc]],
+    [[%s/On(\_.\{-}"\(\w*\)",/EXPECT().\1(/gc]],
     {
         desc = "replace all mockery api with a new one",
     }

@@ -2,9 +2,7 @@
 
 import re
 import subprocess
-import tkinter as tk
 from optparse import OptionParser, Values
-from tkinter import filedialog as fd
 from typing import List, NamedTuple
 
 SECONDS_IN_MINUTE = 60
@@ -37,28 +35,12 @@ def main():
         chapters_result = format_chapters(chapters)
         print(chapters_result)
     else:
-        run_ui()
+        print("no file specified")
 
 
 def format_chapters(chapters: List[ChapterInfo]) -> str:
     return '  \n'.join(
         chapter.duration_representation + ' ' + chapter.name for chapter in chapters)
-
-
-def run_ui():
-    filename = fd.askopenfile(title='Video to open', initialdir='~')
-    if filename:
-        print(f'Parsing file: {filename.name}')
-        chapters_text = 'Error parsing file'
-        try:
-            chapters = find_chapters_in_file(filename.name)
-            chapters_text = format_chapters(chapters)
-        except Exception as ex:
-            print('error occured during parsing', ex)
-            chapters_text += '\n' + str(ex)
-        _display_result(chapters_text)
-    else:
-        print('File was not open')
 
 
 def find_chapters_in_file(filename: str) -> List[ChapterInfo]:
@@ -75,15 +57,6 @@ def find_chapters_in_file(filename: str) -> List[ChapterInfo]:
     return _convert_ffmpeg_response(matches)
 
 
-def _display_result(chapters_text):
-    root = tk.Tk()
-    root.title('Chapters for YouTube')
-    text_widget = tk.Text(root)
-    text_widget.insert(tk.END, chapters_text)
-    text_widget.pack()
-    tk.mainloop()
-
-
 def _parse_command_line_options() -> Values:
     parser = OptionParser(
         usage="usage: ffmpeg-chapters-parser [options] filename",
@@ -91,9 +64,6 @@ def _parse_command_line_options() -> Values:
 
     parser.add_option('-f', '--file', dest='infile',
                       help='Input File', metavar='FILE')
-
-    parser.add_option('-u', '--ui', dest='is_ui',
-                      action='store_true', help='Is running in UI', default=True)
 
     options, _ = parser.parse_args()
 

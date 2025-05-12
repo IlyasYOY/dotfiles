@@ -56,12 +56,9 @@ make install
 │   ├── nvim # nvim config.
 │   ├── nvim-minimal # minimal nvim config I use to reproduce errors.
 │   └── pmd.xml
-├── helpers.sh # helpers I use in my maintanance scripts.
 ├── Makefile
 ├── README.md
-├── setup-mac.sh # sets my mac up.
 ├── stylua.toml
-└── update-mac.sh # updates my mac.
 ```
 
 ## Maintenance

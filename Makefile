@@ -4,8 +4,8 @@ commit_lazy_update:
 
 .PHONY: install
 install:
-	./setup-mac.sh
+	@./sh/setup/install.sh
 
 .PHONY: update
 update:
-	./update-mac.sh
+	@./sh/setup/update.sh

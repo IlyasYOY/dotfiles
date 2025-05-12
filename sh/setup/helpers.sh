@@ -9,7 +9,11 @@ WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
 PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
 NOTES_DIR="$PERSONAL_PROJECTS_DIR/Notes"
 ZSHRC="$HOME/.zshrc"
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR=$(realpath $(dirname $0)/../../)
+
+is_mac() {
+    [[ "$(uname -s)" == "Darwin" ]]
+}
 
 info() {
     printf "\n\033[1;34m%s\033[0m\n" "$1"
@@ -22,6 +26,8 @@ success() {
 debug() {
     printf "\033[1;37m%s\033[0m\n" "$1"
 }
+
+debug "dotfile root path: $DOTFILES_DIR"
 
 error() {
     printf "💥 \033[1;31m%s\033[0m\n" "$1"
@@ -69,7 +75,7 @@ add_block() {
 
         success "Added configuration block $marker to $file"
     else
-        debug "Configuration block already exists in $file"
+        debug "Configuration block $marker already exists in $file"
     fi
 }
 

@@ -1,110 +1,8 @@
 #!/usr/bin/env bash
 
+source $(dirname $0)/helpers.sh
+source $(dirname $0)/mac.sh
 
-source ./helpers.sh
-
-setup_mac_using_app_store() {
-    info "🍎 Installing App Store packages..."
-
-    if confirm_update "Update App Store packages"; then
-        nvim --headless "+Lazy! sync" +qa && success "Lazy.nvim updated" || error "Failed to update Lazy.nvim"
-
-        local apps=(
-            937984704
-            424390742
-            1571033540
-            1445910651
-            424389933
-            682658836
-            1444383602
-            408981434
-            1208561404
-            1035137927
-            409183694
-            302584613
-            634148309
-            441258766
-            434290957
-            409203825
-            409201541
-            904280696
-            966085870
-            1289119450
-            1480933944
-            310633997
-        )
-
-        for app in "${apps[@]}"; do
-            mas_install "$app"
-        done
-    fi
-}
-
-setup_mac_using_brew() {
-    info "🍺 Installing Homebrew packages..."
-    local packages=(
-        aider
-        ast-grep
-        bat
-        bison
-        cmake
-        colima
-        curl
-        docker
-        docker-compose
-        fd
-        ffmpeg
-        fswatch
-        fzf
-        gh
-        go
-        mas
-        neovim
-        ollama
-        openjdk
-        pmd
-        pre-commit
-        pyenv
-        python
-        ripgrep
-        rust
-        scc
-        sqlite
-        syncthing
-        tmux
-        tmuxp
-        tree
-        vim
-        wget
-    )
-    for pkg in "${packages[@]}"; do
-        brew_install "$pkg"
-    done
-}
-
-setup_mac_using_brew_cask() {
-    info "🍺 Installing Homebrew casks..."
-    local casks=(
-        alacritty
-        amethyst
-        betterdisplay
-        discord
-        google-chrome
-        hammerspoon
-        iina 
-        karabiner-elements
-        libreoffice
-        netnewswire
-        obsidian
-        syncthing
-        telegram
-        vial
-        wezterm
-    )
-    for cask in "${casks[@]}"; do
-        brew_cask_install "$cask"
-    done
-}
 setup_basic_directories() {
     info "📁 Creating basic directories..."
     mkdir -pv "$PERSONAL_PROJECTS_DIR" "$WORK_PROJECTS_DIR"
@@ -154,69 +52,20 @@ setup_zshrc() {
     info "🐚 Configuring .zshrc..."
 
     local lines=(
+        "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
         'source <(fzf --zsh)'
+        "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
+        "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
+        "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
     )
     for line in "${lines[@]}"; do
         add_line "$line" "$ZSHRC"
     done
-
-    local aliases=$(cat <<-END
-alias vimconfig="vim ~/.vimrc"
-alias nvimconfig="nvim ~/.config/nvim/init.lua"
-alias mnvim="NVIM_APPNAME=nvim-minimal nvim"
-alias nvims="nvim -S"
-
-alias cdfzf='cd "\$(find . -type d | fzf )"'
-alias cdfzfgit='cd "\$(find . -name .git -type d -prune | fzf)/.."'
-
-alias ilyasyoy-dotfiles="cd \${ILYASYOY_DOTFILES_DIR}"
-alias ilyasyoy-notes="cd ~/vimwiki"
-END
-)
-    add_block "$ZSHRC" \
-        "aliases" \
-        "$aliases"
-
-
-    local exports=$(cat <<-END
-export EDITOR=nvim
-export TERM="xterm-256color"
-export HISTCONTROL=ignoreboth:erasedups
-
-export PATH="\$HOME/go/bin:\$PATH"
-export PATH="\$HOME/local/bin:\$PATH"
-
-export ILYASYOY_DOTFILES_DIR="\$DOTFILES_DIR"
-export COLIMA_HOME=\$HOME/.colima
-export DOCKER_HOST="unix://\${COLIMA_HOME}/default/docker.sock"
-export PATH="\${ILYASYOY_DOTFILES_DIR}/bin:\$PATH"
-END
-)
-    add_block "$ZSHRC" \
-        "exports" \
-        "$exports"
-
-    local utilities=$(cat <<-END
-aider-ollama() {
-    local selected_model=\$(ollama list | awk 'NR>1 {print \$1}' | fzf --prompt="Select a model: ")
-    [[ -n "\$selected_model" ]] && aider --model ollama_chat/"\$selected_model"
-}
-
-tmux-session() {
-    selected_session=\$(tmux list-sessions -F "#{session_name}" | fzf --prompt="Select tmux session: "); 
-    if [ -n "\$selected_session" ]; then 
-        tmux attach -t "\$selected_session" || tmux switch-client -t "\$selected_session"; 
-    fi
-}
-END
-)
-    add_block "$ZSHRC" \
-        "utilities" \
-        "$utilities"
 }
 
 setup_sdkman() {
     info "☕ Installing SDKMAN..."
+
     if [ ! -d "$HOME/.sdkman" ]; then
         curl -s "https://get.sdkman.io" | bash
         success "SDKMAN installed"
@@ -245,7 +94,7 @@ setup_node_version_manager() {
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
 
     add_block "$ZSHRC" \
-        "nvm config" \
+        "ilyasyoy nvm config" \
         "$nvm_config"
 }
 
@@ -265,7 +114,7 @@ setup_go_version_manager() {
     local gvm_config=$'[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
     
     add_block "$ZSHRC" \
-        "gvm config" \
+        "ilyasyoy gvm config" \
         "$gvm_config"
 }
 
@@ -281,6 +130,7 @@ setup_oh_my_zsh() {
 
 setup_git_config() {
     info "🔧 Configuring Git..."
+
     git config --global alias.st "status --short"
     git config --global alias.c "commit"
     git config --global alias.co "checkout"
@@ -291,6 +141,7 @@ setup_git_config() {
 
 setup_tmux_plugin_manger() {
     info "🖥️ Setting up Tmux Plugin Manager..."
+
     local tpm_dir="$HOME/.tmux/plugins/tpm"
     if [ ! -d "$tpm_dir" ]; then
         clone_repo "https://github.com/tmux-plugins/tpm" "$tpm_dir"
@@ -302,9 +153,6 @@ setup_tmux_plugin_manger() {
 }
 
 main() {
-    setup_mac_using_brew
-    setup_mac_using_brew_cask
-    setup_mac_using_app_store
     setup_basic_directories
     setup_notes
     setup_links_to_config_files
@@ -316,7 +164,11 @@ main() {
     setup_oh_my_zsh
     setup_tmux_plugin_manger
     setup_my_project
-    
+
+    setup_mac_using_brew
+    setup_mac_using_brew_cask
+    setup_mac_using_app_store
+
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"
 }
