@@ -46,7 +46,7 @@ return {
             fzf.live_grep {
                 search = fzf_utils.get_visual_selection(),
             }
-        end, { desc = "find grep through files" })
+        end, { desc = "find grep through files for selection" })
 
         vim.keymap.set("n", "<leader>fG", function()
             fzf.live_grep {
@@ -59,7 +59,7 @@ return {
                 cwd = core.string_strip_prefix(vim.fn.expand "%:p:h", "oil://"),
                 search = fzf_utils.get_visual_selection(),
             }
-        end, { desc = "find files in current dir" })
+        end, { desc = "find files in current dir for selection" })
 
         vim.keymap.set("n", "<leader>fa", function()
             vim.cmd [[FzfLua]]
@@ -108,5 +108,9 @@ return {
         vim.keymap.set("n", "<leader>fb", function()
             fzf.buffers()
         end, { desc = "find buffers" })
+
+        vim.keymap.set("n", "<leader>gfs", function()
+            fzf.git_status()
+        end)
     end,
 }
