@@ -11,7 +11,7 @@ tms() {
 
 aider-ollama() {
     local selected_model=$(ollama list | awk 'NR>1 {print $1}' | fzf --prompt="Select a model: ")
-    [[ -n "$selected_model" ]] && aider --model ollama_chat/"$selected_model"
+    [[ -n "$selected_model" ]] && aider --model ollama_chat/"$selected_model" --watch-files
 }
 
 # repo-to-file dumps full repository into one file. sometimes it might be
