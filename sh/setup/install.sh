@@ -37,13 +37,13 @@ setup_links_to_config_files() {
 
     # Git config
     mkdir -pv "$config_dir/git"
-    symlink "$DOTFILES_DIR/.gitignore-global" "$config_dir/git/ignore"
+    symlink "$DOTFILES_DIR/config/.gitignore-global" "$config_dir/git/ignore"
 
     # Home directory links
     symlink "$DOTFILES_DIR/config/.golangci.yml" "$HOME_DIR/.golangci.yml"
-    symlink "$DOTFILES_DIR/.tmux.conf" "$HOME_DIR/.tmux.conf"
-    symlink "$DOTFILES_DIR/.vimrc" "$HOME_DIR/.vimrc"
-    symlink "$DOTFILES_DIR/.amethyst.yml" "$HOME_DIR/.amethyst.yml"
+    symlink "$DOTFILES_DIR/config/.tmux.conf" "$HOME_DIR/.tmux.conf"
+    symlink "$DOTFILES_DIR/config/.vimrc" "$HOME_DIR/.vimrc"
+    symlink "$DOTFILES_DIR/config/.amethyst.yml" "$HOME_DIR/.amethyst.yml"
 }
 
 
