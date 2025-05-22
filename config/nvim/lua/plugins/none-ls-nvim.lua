@@ -89,7 +89,9 @@ return {
 
                     none_ls.builtins.formatting.golines.with {
                         extra_args = {
-                            "-m 80 --base-formatter=goimports -format-only=true",
+                            "-m",
+                            "80",
+                            "--base-formatter=goimports -format-only=true",
                         },
                     },
                     none_ls.builtins.formatting.gofumpt,
