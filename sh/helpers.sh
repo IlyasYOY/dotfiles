@@ -11,7 +11,36 @@ tms() {
 
 aider-ollama() {
     local selected_model=$(ollama list | awk 'NR>1 {print $1}' | fzf --prompt="Select a model: ")
-    [[ -n "$selected_model" ]] && aider --model ollama_chat/"$selected_model" --watch-files
+
+    [[ -n "$selected_model" ]] && \
+        aider-base \
+            --model "ollama_chat/$selected_model" \
+            "$@"
+}
+
+aider-yandex() {
+    local selected_model=$(fzf --prompt="Select a model: " <<< "llama
+llama-lite
+yandexgpt
+yandexgpt-32k
+yandexgpt-lite")
+
+    [[ -n "$selected_model" ]] && \
+        aider-base \
+            --openai-api-key $(pass cloud/yandex/ilyasyoy-ai-api-key) \
+            --openai-api-base 'https://llm.api.cloud.yandex.net/v1' \
+            --model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/$selected_model" \
+            "$@"
+}
+
+aider-base() {
+    aider \
+        --watch-files \
+        --notifications \
+        --dark-mode \
+        --chat-language en \
+        --no-show-model-warnings \
+        "$@"
 }
 
 # repo-to-file dumps full repository into one file. sometimes it might be
