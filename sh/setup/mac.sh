@@ -67,6 +67,7 @@ setup_mac_using_brew() {
         neovim
         ollama
         openjdk
+        pass
         pmd
         pre-commit
         pyenv

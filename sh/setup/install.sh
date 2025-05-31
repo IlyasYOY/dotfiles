@@ -152,6 +152,12 @@ setup_tmux_plugin_manger() {
     fi
 }
 
+setup_pass() {
+    info "💻🔐 pass password-store..."
+
+    clone_repo "git@github.com:IlyasYOY/password-store.git" "~/.password-store/"
+}
+
 main() {
     setup_basic_directories
     setup_notes
@@ -168,6 +174,8 @@ main() {
     setup_mac_using_brew
     setup_mac_using_brew_cask
     setup_mac_using_app_store
+
+    setup_pass
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

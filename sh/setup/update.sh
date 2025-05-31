@@ -18,28 +18,26 @@ update_nvim() {
 }
 
 update_local_repos() {
-    local repos=(
-        "git@github.com:IlyasYOY/dotfiles.git:$PERSONAL_PROJECTS_DIR/dotfiles"
+    update_repo "$PERSONAL_PROJECTS_DIR/dotfiles"
+    update_repo "$PERSONAL_PROJECTS_DIR/theme.nvim"
+    update_repo "$PERSONAL_PROJECTS_DIR/obs.nvim"
+    update_repo "$PERSONAL_PROJECTS_DIR/coredor.nvim"
+    update_repo "$PERSONAL_PROJECTS_DIR/git-link.nvim"
 
-        "git@github.com:IlyasYOY/theme.nvim.git:$PERSONAL_PROJECTS_DIR/obs.nvim"
-        "git@github.com:IlyasYOY/obs.nvim.git:$PERSONAL_PROJECTS_DIR/obs.nvim"
-        "git@github.com:IlyasYOY/coredor.nvim.git:$PERSONAL_PROJECTS_DIR/coredor.nvim"
-        "git@github.com:IlyasYOY/git-link.nvim.git:$PERSONAL_PROJECTS_DIR/git-link.nvim"
+    update_repo "$NOTES_DIR"
 
-        "git@github.com:IlyasYOY/Notes.git:$NOTES_DIR"
-    )
+    update_repo "$HOME/.password-store"
+}
 
-    for repo in "${repos[@]}"; do
-        local repo_url="${repo%%:*}"
-        local repo_path="${repo##*:}"
+update_repo() {
+    local repo_path="$1"
 
-        if [ -d "$repo_path/.git" ]; then
-            info "Updating repository: $repo_path"
-            git -C "$repo_path" pull && success "Updated $repo_path" || error "Failed to update $repo_path"
-        else 
-            warning "$repo_path is not a git repo"
-        fi
-    done
+    if [ -d "$repo_path/.git" ]; then
+        info "Updating repository: $repo_path"
+        git -C "$repo_path" pull && success "Updated $repo_path" || error "Failed to update $repo_path"
+    else 
+        warning "$repo_path is not a git repo"
+    fi
 }
 
 update_tmux_plugins() {
