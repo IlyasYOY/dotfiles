@@ -1,14 +1,19 @@
 # Dotfiles
 
-My personal dotfiles and development environment configuration. Built for
-productivity across multiple languages and tools.
+My personal dotfiles and development environment configuration.
+Built for productivity across multiple languages and tools.
+
+## Disclaimer
+
+> This configuration is constantly evolving. Use at your own
+> risk. Always review changes before pulling updates.
 
 ## Features
 
 - **Neovim IDE Setup**
   - LSP & DAP integration (Java, Go, Python, Lua, etc.)
-  - FZF-based fuzzy finding
-  - Treesitter syntax highlighting
+  - Fuzzy finding (FZF-based)
+  - Syntax highlighting (Treesitter)
   - Debugger integration (Java, Go, Python)
   - Obsidian note-taking integration
   - Custom snippets and mappings
@@ -23,10 +28,10 @@ productivity across multiple languages and tools.
   - Python (pyright, pylint)
   - SQL (sqlfluff)
 - **Tools Integration**
-  - Alacritty terminal config
+  - Wezterm & Alacritty terminal config
+  - Hammerspoon for MacOS automation
   - Amethyst window manager setup
-  - Obsidian note templates
-  - Database client (vim-dadbod)
+  - pass password manager.
 
 ## Installation
 
@@ -44,22 +49,12 @@ make install
 
 ## Structure
 
-```text
-.
-├── bin # Binaries I use in my work & life.
-├── config
-│   ├── alacritty # configs for the terminal I use.
-│   │   └── alacritty.toml
-│   ├── checkstyle.xml
-│   ├── eclipse-java-google-style.xml
-│   ├── eclipse-my-java-google-style.xml
-│   ├── nvim # nvim config.
-│   ├── nvim-minimal # minimal nvim config I use to reproduce errors.
-│   └── pmd.xml
-├── Makefile
-├── README.md
-├── stylua.toml
-```
+- `config` - configs for applications/utilities that I use.
+  - `nvim-minimal` - minimal configuration so I can reproduce
+    errors.
+  - `nvim` - neovim configuration built by myself from zero.
+- `sh` - shell scripts/aliases & etc.
+- `bin` - binaries I might use from time to time.
 
 ## Maintenance
 
@@ -74,8 +69,3 @@ make update
 ```bash
 nvim --headless "+Lazy! sync" +qa
 ```
-
-## Disclaimer
-
-> This configuration is constantly evolving. Use at your own risk. Always
-> review changes before pulling updates.
