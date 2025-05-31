@@ -47,8 +47,8 @@ local config = {
         "--jvm-arg=-Xms700m",
         "--jvm-arg=-Xlog:disable",
         "--jvm-arg=-javaagent:"
-            .. get_install_path_for "jdtls"
-            .. "/lombok.jar",
+        .. get_install_path_for "jdtls"
+        .. "/lombok.jar",
     },
 
     root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
@@ -234,8 +234,8 @@ local config = {
             core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-debug-adapter"
-                        .. "/extension/server/"
-                        .. "com.microsoft.java.debug.plugin-*.jar",
+                    .. "/extension/server/"
+                    .. "com.microsoft.java.debug.plugin-*.jar",
                     1
                 ),
                 "\n"
@@ -243,8 +243,8 @@ local config = {
             core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-test"
-                        .. "/extension/server/"
-                        .. "*.jar",
+                    .. "/extension/server/"
+                    .. "*.jar",
                     1
                 ),
                 "\n"
@@ -254,3 +254,46 @@ local config = {
 }
 
 jdtls.start_or_attach(config)
+
+vim.keymap.set("n", "<leader>ta", function()
+    vim.cmd.Dispatch { "./gradlew test" }
+end, { desc = "run test for all packages", buffer = true })
+
+vim.keymap.set("n", "<leader>tt", function()
+    vim.cmd.Dispatch {
+        "./gradlew test --tests " .. vim.fn.expand "%:t:r",
+    }
+end, { desc = "run test for a file", buffer = true })
+
+vim.keymap.set("n", "<leader>tf", function()
+    local cwf = vim.fn.expand "%:."
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    if string.find(cwf, "Test.java$") then
+        local function_name = nil
+        local node_under_cursor = vim.treesitter.get_node()
+        local curr_node = node_under_cursor
+        while curr_node do
+            -- TODO: Here we can check if we have Test annotation but I think it's overcomplication
+            if curr_node:type() == "method_declaration" then
+                local name_node = curr_node:field("name")[1]
+                if name_node then
+                    function_name =
+                        vim.treesitter.get_node_text(name_node, bufnr)
+                    break
+                end
+            end
+            curr_node = curr_node:parent()
+        end
+        if not function_name then
+            vim.notify "test function was not found"
+        else
+            vim.cmd.Dispatch {
+                "./gradlew test --tests "
+                .. vim.fn.expand "%:t:r"
+                .. "."
+                .. function_name,
+            }
+        end
+    end
+end, { desc = "run test for a function", buffer = true })

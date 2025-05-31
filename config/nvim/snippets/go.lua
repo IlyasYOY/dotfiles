@@ -5,7 +5,6 @@ local t = ls.text_node
 local s = ls.snippet
 local i = ls.insert_node
 local f = ls.function_node
-local c = ls.choice_node
 local ilyasyoy_snippets = require "ilyasyoy.snippets"
 
 local function rep_capitalize(node_index)
