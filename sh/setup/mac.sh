@@ -48,6 +48,7 @@ setup_mac_using_brew() {
 
     info "🍺 Installing Homebrew packages..."
     local packages=(
+        aichat
         aider
         ast-grep
         bat
