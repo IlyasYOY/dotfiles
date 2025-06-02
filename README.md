@@ -63,9 +63,3 @@ make install
 ```bash
 make update
 ```
-
-### Update Neovim plugins separately
-
-```bash
-nvim --headless "+Lazy! sync" +qa
-```
