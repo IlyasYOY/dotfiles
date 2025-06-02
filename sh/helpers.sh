@@ -30,6 +30,7 @@ yandexgpt-lite")
             --openai-api-key $(pass cloud/yandex/ilyasyoy-ai-api-key) \
             --openai-api-base 'https://llm.api.cloud.yandex.net/v1' \
             --model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/$selected_model" \
+            --weak-model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/yandexgpt-lite" \
             "$@"
 }
 
@@ -132,3 +133,18 @@ convert-webp-to-png() {
         ffmpeg -n -i "$webpfile" "$webpfile.png";
     done
 }
+
+# aichat can generate shell command by text.
+# this is not correct: https://github.com/sigoden/aichat/blob/main/scripts/shell-integration/integration.zsh.
+# fix is here: https://github.com/sigoden/aichat/issues/1231.
+_aichat_zsh() {
+    if [[ -n "$BUFFER" ]]; then
+        local _old=$BUFFER
+        BUFFER+="⌛"
+        zle -I && zle redisplay
+        BUFFER=$(command aichat -r '%shell%' "$_old")
+        zle end-of-line
+    fi
+}
+zle -N _aichat_zsh
+bindkey '\ee' _aichat_zsh

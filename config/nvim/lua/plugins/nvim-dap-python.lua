@@ -6,7 +6,7 @@ return {
         },
         ft = "python",
         config = function()
-            require("dap-python").setup()
+            require("dap-python").setup("uv")
         end,
     },
 }

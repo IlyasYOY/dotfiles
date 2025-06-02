@@ -8,6 +8,7 @@ return {
             require("mason-tool-installer").setup {
                 ensure_installed = {
                     "autopep8",
+                    "basedpyright",
                     "bash-language-server",
                     "buf",
                     "checkstyle",
@@ -37,7 +38,6 @@ return {
                     "prettier",
                     "protolint",
                     "pylint",
-                    "pyright",
                     "ruff",
                     "rust-analyzer",
                     "sqlfluff",

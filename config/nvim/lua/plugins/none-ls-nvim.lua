@@ -102,7 +102,6 @@ return {
                     none_ls.builtins.code_actions.gomodifytags,
 
                     -- python
-                    none_ls.builtins.diagnostics.pylint,
                     none_ls.builtins.formatting.isort,
 
                     -- front

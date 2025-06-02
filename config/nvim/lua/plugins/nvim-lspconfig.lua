@@ -164,7 +164,7 @@ end
 local function setup_python()
     local lspconfig = require "lspconfig"
 
-    lspconfig.pyright.setup {
+    lspconfig.basedpyright.setup {
         on_attach = lsp.on_attach,
         capabilities = lsp.get_capabilities(),
     }
