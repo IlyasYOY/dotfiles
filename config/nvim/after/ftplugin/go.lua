@@ -57,9 +57,9 @@ end, {
 
 vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
     if opts.bang then
-        vim.cmd.Dispatch { "go test -short -fullpath ./..." }
+        vim.cmd.Dispatch { "go test -fullpath -failfast -short ./..." }
     else
-        vim.cmd.Dispatch { "go test -fullpath ./..." }
+        vim.cmd.Dispatch { "go test -fullpath -failfast ./..." }
     end
 end, {
     desc = "run test for all packages",
@@ -76,11 +76,11 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
     if opts.bang then
         vim.cmd.Dispatch {
-            "go test -short -fullpath " .. vim.fn.expand "%:p:h",
+            "go test -fullpath -failfast -short " .. vim.fn.expand "%:p:h",
         }
     else
         vim.cmd.Dispatch {
-            "go test -fullpath " .. vim.fn.expand "%:p:h",
+            "go test -fullpath -failfast " .. vim.fn.expand "%:p:h",
         }
     end
 end, {
@@ -98,9 +98,9 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
     local cwf = vim.fn.expand "%:."
     if opts.bang then
-        vim.cmd.Dispatch { "go test -short -fullpath " .. cwf }
+        vim.cmd.Dispatch { "go test -fullpath -failfast -short " .. cwf }
     else
-        vim.cmd.Dispatch { "go test -fullpath " .. cwf }
+        vim.cmd.Dispatch { "go test -fullpath -failfast " .. cwf }
     end
 end, {
     desc = "run test for a file",
@@ -138,14 +138,17 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
         elseif string.match(function_name, "^Test.+") then
             if opts.bang then
                 vim.cmd.Dispatch {
-                    "go test -short -fullpath "
-                        .. cwf
-                        .. " -run "
-                        .. function_name,
+                    "go test -fullpath -failfast -short "
+                    .. cwf
+                    .. " -run "
+                    .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
-                    "go test -fullpath " .. cwf .. " -run " .. function_name,
+                    "go test -fullpath -failfast "
+                    .. cwf
+                    .. " -run "
+                    .. function_name,
                 }
             end
         else
