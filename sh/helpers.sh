@@ -39,11 +39,8 @@ aider-base() {
         --watch-files \
         --notifications \
         --dark-mode \
-        --chat-language en \
         --no-show-model-warnings \
         --cache-prompts \
-        --edit-format diff \
-        --editor-edit-format editor-diff \
         "$@"
 }
 
