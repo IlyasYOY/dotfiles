@@ -19,8 +19,9 @@ setup_my_project() {
 
 setup_notes() {
     info "📝 Setting up notes..."
-    clone_repo "git@github.com:IlyasYOY/Notes.git" "$NOTES_DIR"
-    symlink "$NOTES_DIR" "$HOME_DIR/vimwiki"
+
+    clone_repo "git@github.com:IlyasYOY/notes-wiki.git" "$NOTES_DIR"
+    clone_repo "git@github.com:IlyasYOY/Legacy-Notes.git" "$LEGACY_NOTES_DIR"
 }
 
 setup_links_to_config_files() {

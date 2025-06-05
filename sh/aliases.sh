@@ -4,4 +4,4 @@ alias mnvim="NVIM_APPNAME=nvim-minimal nvim"
 alias nvims="nvim -S"
 
 alias ilyasyoy-dotfiles="cd $ILYASYOY_DOTFILES_DIR"
-alias ilyasyoy-notes="cd ~/vimwiki"
+alias ilyasyoy-notes="cd ~/Projects/IlyasYOY/notes-wiki"
