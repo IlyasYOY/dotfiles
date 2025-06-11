@@ -167,7 +167,7 @@ vim.keymap.set(
     { desc = "run test for a function", buffer = true }
 )
 
-vim.keymap.set("n", "<localleader>goi", function()
+vim.keymap.set("n", "<localleader>oi", function()
     vim.lsp.buf.code_action {
         apply = true,
         filter = function(x)
@@ -178,7 +178,7 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set({ "v", "s" }, "<localleader>gem", function()
+vim.keymap.set({ "v", "s" }, "<localleader>em", function()
     vim.lsp.buf.code_action {
         apply = true,
         filter = function(x)
@@ -189,7 +189,7 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set({ "v", "s" }, "<leader><leader>gef", function()
+vim.keymap.set({ "v", "s" }, "<localleader>ef", function()
     vim.lsp.buf.code_action {
         apply = true,
         filter = function(x)
@@ -200,7 +200,7 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set({ "v", "s" }, "<localleader>gev", function()
+vim.keymap.set({ "v", "s" }, "<localleader>ev", function()
     vim.lsp.buf.code_action {
         apply = true,
         filter = function(x)
@@ -211,7 +211,7 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set("n", "<localleader>gfs", function()
+vim.keymap.set("n", "<localleader>fs", function()
     vim.lsp.buf.code_action {
         filter = function(x)
             return x.kind == "refactor.rewrite.fillStruct"
@@ -236,3 +236,7 @@ vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
     desc = "toggle between test and source code",
     buffer = true,
 })
+
+vim.keymap.set("n", "<localleader>dm", function()
+    require("dap-go").debug_test()
+end)

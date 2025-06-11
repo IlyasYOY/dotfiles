@@ -4,7 +4,7 @@ local jdtls = require "jdtls"
 local core = require "ilyasyoy.functions.core"
 
 local function get_install_path_for(package)
-    return require("mason-registry").get_package(package):get_install_path()
+    return vim.fn.expand("$MASON/packages/" .. package)
 end
 
 -- loads jdks from sdkman.
@@ -47,8 +47,8 @@ local config = {
         "--jvm-arg=-Xms700m",
         "--jvm-arg=-Xlog:disable",
         "--jvm-arg=-javaagent:"
-            .. get_install_path_for "jdtls"
-            .. "/lombok.jar",
+        .. get_install_path_for "jdtls"
+        .. "/lombok.jar",
     },
 
     root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
@@ -134,77 +134,77 @@ local config = {
     on_attach = function(client, bufnr)
         require("jdtls").setup_dap()
 
-        vim.keymap.set("n", "<localleader>joi", function()
+        vim.keymap.set("n", "<localleader>oi", function()
             jdtls.organize_imports()
         end, {
             desc = "organize imports",
         })
-        vim.keymap.set("n", "<localleader>joa", function()
+        vim.keymap.set("n", "<localleader>oa", function()
             jdtls.organize_imports()
             vim.lsp.buf.format()
         end, {
             desc = "organize all",
         })
 
-        vim.keymap.set("v", "<localleader>jev", function()
+        vim.keymap.set("v", "<localleader>ev", function()
             jdtls.extract_variable(true)
         end, {
             desc = "java extract selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<localleader>jev", function()
+        vim.keymap.set("n", "<localleader>ev", function()
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
             noremap = true,
         })
 
-        vim.keymap.set("v", "<localleader>jeV", function()
+        vim.keymap.set("v", "<localleader>eV", function()
             jdtls.extract_variable_all(true)
         end, {
             desc = "java extract all selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<localleader>jeV", function()
+        vim.keymap.set("n", "<localleader>eV", function()
             jdtls.extract_variable_all()
         end, {
             desc = "java extract all to variable",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<localleader>jec", function()
+        vim.keymap.set("n", "<localleader>ec", function()
             jdtls.extract_constant()
         end, {
             desc = "java extract constant",
             noremap = true,
         })
-        vim.keymap.set("v", "<localleader>jec", function()
+        vim.keymap.set("v", "<localleader>ec", function()
             jdtls.extract_constant(true)
         end, {
             desc = "java extract selected to constant",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<localleader>jem", function()
+        vim.keymap.set("n", "<localleader>em", function()
             jdtls.extract_method()
         end, {
             desc = "java extract method",
             noremap = true,
         })
-        vim.keymap.set("v", "<localleader>jem", function()
+        vim.keymap.set("v", "<localleader>em", function()
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
             noremap = true,
         })
-        vim.keymap.set("n", "<localleader>joT", function()
+        vim.keymap.set("n", "<localleader>oT", function()
             local plugin = require "jdtls.tests"
             plugin.goto_subjects()
         end, {
             desc = "java open test",
             noremap = true,
         })
-        vim.keymap.set("n", "<localleader>jct", function()
+        vim.keymap.set("n", "<localleader>ct", function()
             local plugin = require "jdtls.tests"
             plugin.generate()
         end, {
@@ -212,15 +212,15 @@ local config = {
             noremap = true,
         })
 
-        vim.keymap.set("n", "<localleader>jdm", function()
+        vim.keymap.set("n", "<localleader>dm", function()
             jdtls.test_nearest_method()
         end, { desc = "java debug nearest test method" })
-        vim.keymap.set("n", "<localleader>jdc", function()
+        vim.keymap.set("n", "<localleader>dc", function()
             jdtls.test_class()
         end, { desc = "java debug nearest test class" })
         vim.keymap.set(
             "n",
-            "<localleader>jr",
+            "<localleader>lr",
             "<cmd>JdtWipeDataAndRestart<CR>",
             { desc = "restart jdtls" }
         )
@@ -230,26 +230,28 @@ local config = {
     capabilities = lsp.get_capabilities(),
 
     init_options = {
-        bundles = vim.tbl_flatten {
-            core.string_split(
-                vim.fn.glob(
-                    get_install_path_for "java-debug-adapter"
+        bundles = vim.iter({
+                core.string_split(
+                    vim.fn.glob(
+                        get_install_path_for "java-debug-adapter"
                         .. "/extension/server/"
                         .. "com.microsoft.java.debug.plugin-*.jar",
-                    1
+                        1
+                    ),
+                    "\n"
                 ),
-                "\n"
-            ),
-            core.string_split(
-                vim.fn.glob(
-                    get_install_path_for "java-test"
+                core.string_split(
+                    vim.fn.glob(
+                        get_install_path_for "java-test"
                         .. "/extension/server/"
                         .. "*.jar",
-                    1
+                        1
+                    ),
+                    "\n"
                 ),
-                "\n"
-            ),
-        },
+            })
+            :flatten()
+            :totable(),
     },
 }
 
@@ -290,9 +292,9 @@ vim.keymap.set("n", "<localleader>tf", function()
         else
             vim.cmd.Dispatch {
                 "./gradlew test --tests "
-                    .. vim.fn.expand "%:t:r"
-                    .. "."
-                    .. function_name,
+                .. vim.fn.expand "%:t:r"
+                .. "."
+                .. function_name,
             }
         end
     end
