@@ -68,7 +68,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>ta",
+    "<localleader>ta",
     "<cmd>GoTestAll<cr>",
     { desc = "run test for all packages", buffer = true }
 )
@@ -90,7 +90,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>tp",
+    "<localleader>tp",
     "<cmd>GoTestPackage<cr>",
     { desc = "run test for a package", buffer = true }
 )
@@ -109,7 +109,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>tt",
+    "<localleader>tt",
     "<cmd>GoTestFile<cr>",
     { desc = "run test for a file", buffer = true }
 )
@@ -162,7 +162,61 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>tf",
+    "<localleader>tf",
     "<cmd>GoTestFunction<cr>",
     { desc = "run test for a function", buffer = true }
 )
+
+vim.keymap.set("n", "<localleader>goi", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "source.organizeImports"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>gem", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.method"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<leader><leader>gef", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.function"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>gev", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.variable"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>gfs", function()
+    vim.lsp.buf.code_action {
+        filter = function(x)
+            return x.kind == "refactor.rewrite.fillStruct"
+        end,
+    }
+end, {
+    buffer = true,
+})

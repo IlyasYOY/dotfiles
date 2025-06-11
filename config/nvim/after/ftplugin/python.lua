@@ -6,7 +6,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>ta",
+    "<localleader>ta",
     "<cmd>PythonTestAll<cr>",
     { desc = "run test for all packages", buffer = true }
 )
@@ -21,7 +21,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>tp",
+    "<localleader>tp",
     "<cmd>PythonTestPackage<cr>",
     { desc = "run test for a package", buffer = true }
 )
@@ -35,7 +35,7 @@ end, {
 
 vim.keymap.set(
     "n",
-    "<leader>tt",
+    "<localleader>tt",
     "<cmd>PythonTestFile<cr>",
     { desc = "run test for a file", buffer = true }
 )

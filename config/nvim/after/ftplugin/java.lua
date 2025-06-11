@@ -134,77 +134,77 @@ local config = {
     on_attach = function(client, bufnr)
         require("jdtls").setup_dap()
 
-        vim.keymap.set("n", "<leader><leader>joi", function()
+        vim.keymap.set("n", "<localleader>joi", function()
             jdtls.organize_imports()
         end, {
             desc = "organize imports",
         })
-        vim.keymap.set("n", "<leader><leader>joa", function()
+        vim.keymap.set("n", "<localleader>joa", function()
             jdtls.organize_imports()
             vim.lsp.buf.format()
         end, {
             desc = "organize all",
         })
 
-        vim.keymap.set("v", "<leader><leader>jev", function()
+        vim.keymap.set("v", "<localleader>jev", function()
             jdtls.extract_variable(true)
         end, {
             desc = "java extract selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader><leader>jev", function()
+        vim.keymap.set("n", "<localleader>jev", function()
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
             noremap = true,
         })
 
-        vim.keymap.set("v", "<leader><leader>jeV", function()
+        vim.keymap.set("v", "<localleader>jeV", function()
             jdtls.extract_variable_all(true)
         end, {
             desc = "java extract all selected to variable",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader><leader>jeV", function()
+        vim.keymap.set("n", "<localleader>jeV", function()
             jdtls.extract_variable_all()
         end, {
             desc = "java extract all to variable",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader><leader>jec", function()
+        vim.keymap.set("n", "<localleader>jec", function()
             jdtls.extract_constant()
         end, {
             desc = "java extract constant",
             noremap = true,
         })
-        vim.keymap.set("v", "<leader><leader>jec", function()
+        vim.keymap.set("v", "<localleader>jec", function()
             jdtls.extract_constant(true)
         end, {
             desc = "java extract selected to constant",
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader><leader>jem", function()
+        vim.keymap.set("n", "<localleader>jem", function()
             jdtls.extract_method()
         end, {
             desc = "java extract method",
             noremap = true,
         })
-        vim.keymap.set("v", "<leader><leader>jem", function()
+        vim.keymap.set("v", "<localleader>jem", function()
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader><leader>joT", function()
+        vim.keymap.set("n", "<localleader>joT", function()
             local plugin = require "jdtls.tests"
             plugin.goto_subjects()
         end, {
             desc = "java open test",
             noremap = true,
         })
-        vim.keymap.set("n", "<leader><leader>jct", function()
+        vim.keymap.set("n", "<localleader>jct", function()
             local plugin = require "jdtls.tests"
             plugin.generate()
         end, {
@@ -212,15 +212,15 @@ local config = {
             noremap = true,
         })
 
-        vim.keymap.set("n", "<leader><leader>jdm", function()
+        vim.keymap.set("n", "<localleader>jdm", function()
             jdtls.test_nearest_method()
         end, { desc = "java debug nearest test method" })
-        vim.keymap.set("n", "<leader><leader>jdc", function()
+        vim.keymap.set("n", "<localleader>jdc", function()
             jdtls.test_class()
         end, { desc = "java debug nearest test class" })
         vim.keymap.set(
             "n",
-            "<leader><leader>jr",
+            "<localleader>jr",
             "<cmd>JdtWipeDataAndRestart<CR>",
             { desc = "restart jdtls" }
         )
@@ -255,17 +255,17 @@ local config = {
 
 jdtls.start_or_attach(config)
 
-vim.keymap.set("n", "<leader>ta", function()
+vim.keymap.set("n", "<localleader>ta", function()
     vim.cmd.Dispatch { "./gradlew test" }
 end, { desc = "run test for all packages", buffer = true })
 
-vim.keymap.set("n", "<leader>tt", function()
+vim.keymap.set("n", "<localleader>tt", function()
     vim.cmd.Dispatch {
         "./gradlew test --tests " .. vim.fn.expand "%:t:r",
     }
 end, { desc = "run test for a file", buffer = true })
 
-vim.keymap.set("n", "<leader>tf", function()
+vim.keymap.set("n", "<localleader>tf", function()
     local cwf = vim.fn.expand "%:."
     local bufnr = vim.api.nvim_get_current_buf()
 

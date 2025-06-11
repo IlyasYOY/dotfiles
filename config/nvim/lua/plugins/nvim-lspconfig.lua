@@ -36,50 +36,6 @@ local function setup_go()
         on_attach = function(client, bufnr)
             client.server_capabilities.documentFormattingProvider = false
             lsp.on_attach(client, bufnr)
-
-            vim.keymap.set("n", "<leader><leader>goi", function()
-                vim.lsp.buf.code_action {
-                    apply = true,
-                    filter = function(x)
-                        return x.kind == "source.organizeImports"
-                    end,
-                }
-            end)
-
-            vim.keymap.set({ "v", "s" }, "<leader><leader>gem", function()
-                vim.lsp.buf.code_action {
-                    apply = true,
-                    filter = function(x)
-                        return x.kind == "refactor.extract.method"
-                    end,
-                }
-            end)
-
-            vim.keymap.set({ "v", "s" }, "<leader><leader>gef", function()
-                vim.lsp.buf.code_action {
-                    apply = true,
-                    filter = function(x)
-                        return x.kind == "refactor.extract.function"
-                    end,
-                }
-            end)
-
-            vim.keymap.set({ "v", "s" }, "<leader><leader>gev", function()
-                vim.lsp.buf.code_action {
-                    apply = true,
-                    filter = function(x)
-                        return x.kind == "refactor.extract.variable"
-                    end,
-                }
-            end)
-
-            vim.keymap.set("n", "<leader><leader>gfs", function()
-                vim.lsp.buf.code_action {
-                    filter = function(x)
-                        return x.kind == "refactor.rewrite.fillStruct"
-                    end,
-                }
-            end)
         end,
         settings = {
             gopls = {
