@@ -47,8 +47,8 @@ local config = {
         "--jvm-arg=-Xms700m",
         "--jvm-arg=-Xlog:disable",
         "--jvm-arg=-javaagent:"
-        .. get_install_path_for "jdtls"
-        .. "/lombok.jar",
+            .. get_install_path_for "jdtls"
+            .. "/lombok.jar",
     },
 
     root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
@@ -234,8 +234,8 @@ local config = {
             core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-debug-adapter"
-                    .. "/extension/server/"
-                    .. "com.microsoft.java.debug.plugin-*.jar",
+                        .. "/extension/server/"
+                        .. "com.microsoft.java.debug.plugin-*.jar",
                     1
                 ),
                 "\n"
@@ -243,8 +243,8 @@ local config = {
             core.string_split(
                 vim.fn.glob(
                     get_install_path_for "java-test"
-                    .. "/extension/server/"
-                    .. "*.jar",
+                        .. "/extension/server/"
+                        .. "*.jar",
                     1
                 ),
                 "\n"
@@ -290,10 +290,31 @@ vim.keymap.set("n", "<localleader>tf", function()
         else
             vim.cmd.Dispatch {
                 "./gradlew test --tests "
-                .. vim.fn.expand "%:t:r"
-                .. "."
-                .. function_name,
+                    .. vim.fn.expand "%:t:r"
+                    .. "."
+                    .. function_name,
             }
         end
     end
 end, { desc = "run test for a function", buffer = true })
+
+vim.api.nvim_buf_create_user_command(0, "JavaToggleTest", function()
+    local cwf = vim.fn.expand "%:."
+    local change_to = cwf
+    if string.find(cwf, "/main/java/") then
+        change_to = string.gsub(change_to, "/main/java/", "/test/java/")
+        change_to = string.gsub(change_to, "(%w+)%.java$", "%1Test.java")
+        vim.cmd("edit " .. change_to)
+    elseif string.find(cwf, "/test/java/") then
+        change_to = string.gsub(change_to, "/test/java/", "/main/java/")
+        change_to = string.gsub(change_to, "(%w+)Test%.java$", "%1.java")
+        vim.cmd("edit " .. change_to)
+    end
+end, {
+    desc = "toggle between test and source code",
+})
+
+vim.keymap.set("n", "<localleader>ot", "<cmd>JavaToggleTest<cr>", {
+    desc = "toggle between test and source code",
+    buffer = true,
+})

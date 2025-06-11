@@ -39,3 +39,19 @@ vim.keymap.set(
     "<cmd>PythonTestFile<cr>",
     { desc = "run test for a file", buffer = true }
 )
+
+vim.api.nvim_buf_create_user_command(0, "PythonToggleTest", function()
+    local cwf = vim.fn.expand "%:."
+    if string.find(cwf, "test_.*%.py$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "test_(%w+)%.py$", "%1.py"))
+    elseif string.find(cwf, "%.py$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.py$", "test_%1.py"))
+    end
+end, {
+    desc = "toggle between test and source code",
+})
+
+vim.keymap.set("n", "<localleader>ot", "<cmd>PythonToggleTest<cr>", {
+    desc = "toggle between test and source code",
+    buffer = true,
+})

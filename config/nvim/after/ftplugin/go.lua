@@ -139,16 +139,16 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
             if opts.bang then
                 vim.cmd.Dispatch {
                     "go test -fullpath -failfast -short "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
+                        .. cwf
+                        .. " -run "
+                        .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
                     "go test -fullpath -failfast "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
+                        .. cwf
+                        .. " -run "
+                        .. function_name,
                 }
             end
         else
@@ -218,5 +218,21 @@ vim.keymap.set("n", "<localleader>gfs", function()
         end,
     }
 end, {
+    buffer = true,
+})
+
+vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
+    local cwf = vim.fn.expand "%:."
+    if string.find(cwf, "_test%.go$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go"))
+    elseif string.find(cwf, "%.go$") then
+        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go"))
+    end
+end, {
+    desc = "toggle between test and source code",
+})
+
+vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
+    desc = "toggle between test and source code",
     buffer = true,
 })
