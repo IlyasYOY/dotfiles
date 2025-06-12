@@ -7,3 +7,9 @@ require("cmp").setup.buffer {
         { { name = "buffer" } }
     ),
 }
+
+vim.keymap.set("n", "<localleader>gc", function()
+    require("codecompanion").prompt "commit-inline"
+end, {
+    buffer = true,
+})

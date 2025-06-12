@@ -38,6 +38,37 @@ return {
 
             require("codecompanion").setup {
                 prompt_library = {
+                    ["Generate a Commit Message Inline"] = {
+                        strategy = "inline",
+                        description = "Generate a commit message",
+                        opts = {
+                            is_default = true,
+                            is_slash_cmd = false,
+                            user_prompt = false,
+                            short_name = "commit-inline",
+                            placement = "before",
+                            stop_context_insertion = true,
+                        },
+                        prompts = {
+                            {
+                                role = "user",
+                                content = function()
+                                    return string.format(
+                                        [[You are an expert at following the Conventional Commit specification. Given the git diff listed below, please generate a commit message for me:
+
+```diff
+%s
+```
+]],
+                                        vim.fn.system "git diff --no-ext-diff --staged"
+                                    )
+                                end,
+                                opts = {
+                                    contains_code = true,
+                                },
+                            },
+                        },
+                    },
                     ["Refine Prompt"] = {
                         strategy = "chat",
                         description = "Refines prompts",
@@ -146,6 +177,16 @@ Code:
                     },
                     inline = {
                         adapter = "yandex_yandexgpt_openai",
+                        keymaps = {
+                            accept_change = {
+                                modes = { n = "ga" },
+                                description = "Accept the suggested change",
+                            },
+                            reject_change = {
+                                modes = { n = "gr" },
+                                description = "Reject the suggested change",
+                            },
+                        },
                     },
                     cmd = {
                         adapter = "yandex_yandexgpt_openai",
@@ -184,9 +225,7 @@ Code:
 
             vim.keymap.set("n", "<leader>Cgc", function()
                 require("codecompanion").prompt "commit"
-            end, {
-                buffer = true,
-            })
+            end)
             vim.keymap.set(
                 "n",
                 "<leader>Cc",
