@@ -239,4 +239,12 @@ vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
 
 vim.keymap.set("n", "<localleader>dm", function()
     require("dap-go").debug_test()
-end)
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>awe", function()
+    require("codecompanion").prompt "go-wrap-error"
+end, {
+    buffer = true,
+})

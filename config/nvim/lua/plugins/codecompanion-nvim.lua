@@ -38,7 +38,7 @@ return {
 
             require("codecompanion").setup {
                 prompt_library = {
-                    ["Go Error Wrap Prompt"] = {
+                    ["Go Wrap Error"] = {
                         strategy = "inline",
                         description = "Wraps errors in Go",
                         opts = {
@@ -46,6 +46,7 @@ return {
                             is_slash_cmd = false,
                             user_prompt = false,
                             modes = { "v" },
+                            short_name = "go-wrap-error",
                             stop_context_insertion = true,
                         },
                         prompts = {
