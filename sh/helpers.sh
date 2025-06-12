@@ -39,6 +39,7 @@ aider-base() {
         --watch-files \
         --notifications \
         --dark-mode \
+        --no-auto-commit \
         --no-show-model-warnings \
         --cache-prompts \
         "$@"
