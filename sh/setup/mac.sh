@@ -69,6 +69,7 @@ setup_mac_using_brew() {
         ollama
         openjdk
         pass
+        pinentry-mac
         pmd
         pre-commit
         pyenv
