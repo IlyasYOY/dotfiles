@@ -243,8 +243,3 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set({ "v", "s" }, "<localleader>awe", function()
-    require("codecompanion").prompt "go-wrap-error"
-end, {
-    buffer = true,
-})
