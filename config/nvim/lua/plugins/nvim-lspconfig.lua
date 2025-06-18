@@ -55,6 +55,8 @@ local function setup_go()
                 staticcheck = true,
                 hints = hints,
                 analyses = {
+                    recursiveiter = true,
+                    maprange = true,
                     framepointer = true,
                     modernize = true,
                     nilness = true,

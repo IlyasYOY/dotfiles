@@ -36,6 +36,8 @@ setup_links_to_config_files() {
     symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
     symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
     symlink "$DOTFILES_DIR/config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+    gpgconf --kill gpg-agent && gpgconf --launch gpg-agent && debug "restart gpg-agent"
+
 
     # Git config
     mkdir -pv "$config_dir/git"

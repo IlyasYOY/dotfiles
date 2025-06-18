@@ -55,11 +55,46 @@ end, {
     desc = "find files in go mod",
 })
 
+-- get_build_tags fetches all build tags of the go file. Later they will be used to run tests from this file.
+-- all commands for the buffer inherit tags of the buffer.
+local function get_build_tags()
+    local build_tags = {}
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+    local core = require "ilyasyoy.functions.core"
+    for _, line in ipairs(lines) do
+        if core.string_has_prefix(line, "//go:build", true) then
+            line = core.string_strip_prefix(line, "//go:build")
+            local tags = core.string_split(line, " ")
+
+            for _, tag in ipairs(tags) do
+                if tag ~= "" then
+                    table.insert(build_tags, tag)
+                end
+            end
+        end
+    end
+
+    return build_tags
+end
+
+local base_go_test = "go test -fullpath -failfast"
+
+local tags = get_build_tags()
+
+if #tags > 0 then
+    -- I also add -v cause I want to see the output of hard tests as they go.
+    base_go_test = base_go_test
+        .. '-v -tags "'
+        .. table.concat(get_build_tags(), " ")
+        .. '"'
+end
+
 vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
     if opts.bang then
-        vim.cmd.Dispatch { "go test -fullpath -failfast -short ./..." }
+        vim.cmd.Dispatch { base_go_test .. " -short ./..." }
     else
-        vim.cmd.Dispatch { "go test -fullpath -failfast ./..." }
+        vim.cmd.Dispatch { base_go_test .. " ./..." }
     end
 end, {
     desc = "run test for all packages",
@@ -76,11 +111,11 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
     if opts.bang then
         vim.cmd.Dispatch {
-            "go test -fullpath -failfast -short " .. vim.fn.expand "%:p:h",
+            base_go_test .. " -short " .. vim.fn.expand "%:p:h",
         }
     else
         vim.cmd.Dispatch {
-            "go test -fullpath -failfast " .. vim.fn.expand "%:p:h",
+            base_go_test .. " " .. vim.fn.expand "%:p:h",
         }
     end
 end, {
@@ -98,9 +133,9 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
     local cwf = vim.fn.expand "%:."
     if opts.bang then
-        vim.cmd.Dispatch { "go test -fullpath -failfast -short " .. cwf }
+        vim.cmd.Dispatch { base_go_test .. " -short " .. cwf }
     else
-        vim.cmd.Dispatch { "go test -fullpath -failfast " .. cwf }
+        vim.cmd.Dispatch { base_go_test .. " " .. cwf }
     end
 end, {
     desc = "run test for a file",
@@ -138,17 +173,15 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
         elseif string.match(function_name, "^Test.+") then
             if opts.bang then
                 vim.cmd.Dispatch {
-                    "go test -fullpath -failfast -short "
+                    base_go_test
+                        .. " -short "
                         .. cwf
                         .. " -run "
                         .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
-                    "go test -fullpath -failfast "
-                        .. cwf
-                        .. " -run "
-                        .. function_name,
+                    base_go_test .. " " .. cwf .. " -run " .. function_name,
                 }
             end
         else
@@ -242,4 +275,3 @@ vim.keymap.set("n", "<localleader>dm", function()
 end, {
     buffer = true,
 })
-
