@@ -39,6 +39,7 @@ local function setup_go()
         end,
         settings = {
             gopls = {
+                buildFlags = { "-tags=e2e" },
                 codelenses = {
                     test = true,
                     gc_details = true,

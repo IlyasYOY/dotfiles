@@ -85,7 +85,7 @@ local tags = get_build_tags()
 if #tags > 0 then
     -- I also add -v cause I want to see the output of hard tests as they go.
     base_go_test = base_go_test
-        .. '-v -tags "'
+        .. ' -v -tags "'
         .. table.concat(get_build_tags(), " ")
         .. '"'
 end
@@ -106,6 +106,13 @@ vim.keymap.set(
     "<localleader>ta",
     "<cmd>GoTestAll<cr>",
     { desc = "run test for all packages", buffer = true }
+)
+
+vim.keymap.set(
+    "n",
+    "<localleader>tA",
+    "<cmd>GoTestAll!<cr>",
+    { desc = "run test for all packages short", buffer = true }
 )
 
 vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
@@ -130,6 +137,13 @@ vim.keymap.set(
     { desc = "run test for a package", buffer = true }
 )
 
+vim.keymap.set(
+    "n",
+    "<localleader>tP",
+    "<cmd>GoTestPackage!<cr>",
+    { desc = "run test for a package short", buffer = true }
+)
+
 vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
     local cwf = vim.fn.expand "%:."
     if opts.bang then
@@ -146,6 +160,13 @@ vim.keymap.set(
     "n",
     "<localleader>tt",
     "<cmd>GoTestFile<cr>",
+    { desc = "run test for a file", buffer = true }
+)
+
+vim.keymap.set(
+    "n",
+    "<localleader>tT",
+    "<cmd>GoTestFile!<cr>",
     { desc = "run test for a file", buffer = true }
 )
 
@@ -198,6 +219,13 @@ vim.keymap.set(
     "<localleader>tf",
     "<cmd>GoTestFunction<cr>",
     { desc = "run test for a function", buffer = true }
+)
+
+vim.keymap.set(
+    "n",
+    "<localleader>tF",
+    "<cmd>GoTestFunction!<cr>",
+    { desc = "run test for a function short", buffer = true }
 )
 
 vim.keymap.set("n", "<localleader>oi", function()
@@ -272,6 +300,12 @@ vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
 
 vim.keymap.set("n", "<localleader>dm", function()
     require("dap-go").debug_test()
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>we", function()
+    require("codecompanion").prompt "go-wrap-error-inline"
 end, {
     buffer = true,
 })

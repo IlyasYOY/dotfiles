@@ -36,7 +36,42 @@ return {
                 end
             end
 
+            -- so I can override the models for different environments.
+            local strategies = vim.g.codecompanion_strategies
+                or {
+                    chat = {
+                        adapter = "yandex_yandexgpt_openai",
+                    },
+                    inline = {
+                        adapter = "yandex_llama_openai",
+                        keymaps = {
+                            accept_change = {
+                                modes = { n = "ga" },
+                                description = "Accept the suggested change",
+                            },
+                            reject_change = {
+                                modes = { n = "gr" },
+                                description = "Reject the suggested change",
+                            },
+                        },
+                    },
+                    cmd = {
+                        adapter = "yandex_yandexgpt_openai",
+                    },
+                }
+
+            local adapters = vim.g.codecompanion_adapters
+                or {
+                    yandex_yandexgpt_lite_openai = yandex_openai_compatible_for_model "yandexgpt-lite",
+                    yandex_yandexgpt_openai = yandex_openai_compatible_for_model "yandexgpt",
+                    yandex_yandexgpt_32k_openai = yandex_openai_compatible_for_model "yandexgpt-32k",
+                    yandex_llama_openai = yandex_openai_compatible_for_model "llama",
+                    yandex_llama_lite_openai = yandex_openai_compatible_for_model "llama-lite",
+                }
+
             require("codecompanion").setup {
+                strategies = strategies,
+                adapters = adapters,
                 prompt_library = {
                     ["Git Generate a Commit Message Inline"] = {
                         strategy = "inline",
@@ -81,6 +116,7 @@ git diff listed below, please generate a commit message for me:
                             is_slash_cmd = false,
                             user_prompt = false,
                             placement = "replace",
+                            short_name = "go-wrap-error-inline",
                             auto_submit = true,
                         },
                         prompts = {
@@ -176,54 +212,6 @@ Your workflow should be:
                             },
                         },
                     },
-                },
-                strategies = {
-                    chat = {
-                        adapter = "yandex_yandexgpt_openai",
-                    },
-                    inline = {
-                        adapter = "yandex_llama_openai",
-                        keymaps = {
-                            accept_change = {
-                                modes = { n = "ga" },
-                                description = "Accept the suggested change",
-                            },
-                            reject_change = {
-                                modes = { n = "gr" },
-                                description = "Reject the suggested change",
-                            },
-                        },
-                    },
-                    cmd = {
-                        adapter = "yandex_yandexgpt_openai",
-                    },
-                },
-                adapters = {
-                    yandex_yandexgpt_lite_openai = yandex_openai_compatible_for_model "yandexgpt-lite",
-                    yandex_yandexgpt_openai = yandex_openai_compatible_for_model "yandexgpt",
-                    yandex_yandexgpt_32k_openai = yandex_openai_compatible_for_model "yandexgpt-32k",
-                    yandex_llama_openai = yandex_openai_compatible_for_model "llama",
-                    yandex_llama_lite_openai = yandex_openai_compatible_for_model "llama-lite",
-
-                    ["ollama-qwen2.5-coder"] = function()
-                        return require("codecompanion.adapters").extend(
-                            "ollama",
-                            {
-                                name = "qwen2.5-coder",
-                                schema = {
-                                    model = {
-                                        default = "qwen2.5-coder:latest",
-                                    },
-                                    num_ctx = {
-                                        default = 16384,
-                                    },
-                                    num_predict = {
-                                        default = -1,
-                                    },
-                                },
-                            }
-                        )
-                    end,
                 },
             }
 
