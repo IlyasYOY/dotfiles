@@ -40,10 +40,10 @@ return {
             local strategies = vim.g.codecompanion_strategies
                 or {
                     chat = {
-                        adapter = "yandex_yandexgpt_openai",
+                        adapter = "yandex_yandexgpt_32k_openai",
                     },
                     inline = {
-                        adapter = "yandex_llama_openai",
+                        adapter = "yandex_yandexgpt_32k_openai",
                         keymaps = {
                             accept_change = {
                                 modes = { n = "ga" },
@@ -56,7 +56,7 @@ return {
                         },
                     },
                     cmd = {
-                        adapter = "yandex_yandexgpt_openai",
+                        adapter = "yandex_yandexgpt_32k_openai",
                     },
                 }
 
