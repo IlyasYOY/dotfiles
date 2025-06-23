@@ -41,6 +41,7 @@ aider-base() {
         --dark-mode \
         --no-show-model-warnings \
         --cache-prompts \
+        --edit-format diff \
         "$@"
 }
 
