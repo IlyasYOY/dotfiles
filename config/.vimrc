@@ -72,9 +72,6 @@ nnoremap <silent> [<C-q> :colder<cr>
 nnoremap <silent> ]<C-l> :lnewer<cr>
 nnoremap <silent> [<C-l> :lolder<cr>
 
-nnoremap <silent> <leader>co :copen<cr>
-nnoremap <silent> <leader>cc :cclose<cr>
-
 " :h matchit  
 " Helps you to match syntax constuctions in Vim
 runtime macros/matchit.vim

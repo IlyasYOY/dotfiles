@@ -69,28 +69,25 @@ return {
                     yandex_llama_lite_openai = yandex_openai_compatible_for_model "llama-lite",
                 }
 
-            require("codecompanion").setup {
-                strategies = strategies,
-                adapters = adapters,
-                prompt_library = {
-                    ["Git Generate a Commit Message Inline"] = {
-                        strategy = "inline",
-                        description = "Generate a commit message",
-                        opts = {
-                            is_default = true,
-                            is_slash_cmd = false,
-                            user_prompt = false,
-                            short_name = "commit-inline",
-                            placement = "before",
-                            stop_context_insertion = true,
-                            auto_submit = true,
-                        },
-                        prompts = {
-                            {
-                                role = "user",
-                                content = function()
-                                    return string.format(
-                                        [[
+            local prompts = {
+                ["Git Generate a Commit Message Inline"] = {
+                    strategy = "inline",
+                    description = "Generate a commit message",
+                    opts = {
+                        is_default = true,
+                        is_slash_cmd = false,
+                        user_prompt = false,
+                        short_name = "commit-inline",
+                        placement = "before",
+                        stop_context_insertion = true,
+                        auto_submit = true,
+                    },
+                    prompts = {
+                        {
+                            role = "user",
+                            content = function()
+                                return string.format(
+                                    [[
 You are an expert at following the Conventional Commit specification. Given the
 git diff listed below, please generate a commit message for me:
 
@@ -98,32 +95,32 @@ git diff listed below, please generate a commit message for me:
 %s
 ```
 ]],
-                                        vim.fn.system "git diff --no-ext-diff --staged"
-                                    )
-                                end,
-                                opts = {
-                                    contains_code = true,
-                                },
+                                    vim.fn.system "git diff --no-ext-diff --staged"
+                                )
+                            end,
+                            opts = {
+                                contains_code = true,
                             },
                         },
                     },
-                    ["Go Wrap Error Inline"] = {
-                        strategy = "inline",
-                        description = "Wrap errors in go code",
-                        opts = {
-                            index = 3,
-                            is_default = true,
-                            is_slash_cmd = false,
-                            user_prompt = false,
-                            placement = "replace",
-                            short_name = "go-wrap-error-inline",
-                            auto_submit = true,
-                        },
-                        prompts = {
-                            {
-                                role = "system",
-                                content = function(context)
-                                    return [[
+                },
+                ["Go Wrap Error Inline"] = {
+                    strategy = "inline",
+                    description = "Wrap errors in go code",
+                    opts = {
+                        index = 3,
+                        is_default = true,
+                        is_slash_cmd = false,
+                        user_prompt = false,
+                        placement = "replace",
+                        short_name = "go-wrap-error-inline",
+                        auto_submit = true,
+                    },
+                    prompts = {
+                        {
+                            role = "system",
+                            content = function(context)
+                                return [[
 Context: You are provided with a code block written in the GO language. Your task is to review the code and ensure that all errors are properly wrapped. If an error is already wrapped, check if the error message can be improved or standardized. If an error is not wrapped, wrap it in a consistent manner.
 Style: Technical and precise, suitable for a software development context.
 Tone: Neutral and professional.
@@ -137,50 +134,50 @@ Workflow:
 3. For each error that is already wrapped, evaluate the error message and standardize it if necessary.
 4. Return the modified code block.
 ]]
-                                end,
-                                opts = {
-                                    visible = false,
-                                    tag = "system_tag",
-                                },
+                            end,
+                            opts = {
+                                visible = false,
+                                tag = "system_tag",
                             },
                         },
-                        {
-                            role = "user",
-                            content = function(context)
-                                local code = require(
-                                    "codecompanion.helpers.actions"
-                                ).get_code(
-                                    context.start_line,
-                                    context.end_line
-                                )
+                    },
+                    {
+                        role = "user",
+                        content = function(context)
+                            local code = require(
+                                "codecompanion.helpers.actions"
+                            ).get_code(
+                                context.start_line,
+                                context.end_line
+                            )
 
-                                return string.format(
-                                    [[
+                            return string.format(
+                                [[
 Wra errors in this code:
 
 ```%s
 %s
 ```
 ]],
-                                    context.filetype,
-                                    code
-                                )
-                            end,
-                            opts = {
-                                contains_code = true,
-                            },
+                                context.filetype,
+                                code
+                            )
+                        end,
+                        opts = {
+                            contains_code = true,
                         },
                     },
-                    ["Text Refine Prompt Chat"] = {
-                        strategy = "chat",
-                        description = "Refines prompts",
-                        opts = {
-                            ignore_system_prompt = true,
-                        },
-                        prompts = {
-                            {
-                                role = "system",
-                                content = [[
+                },
+                ["Text Refine Prompt Chat"] = {
+                    strategy = "chat",
+                    description = "Refines prompts",
+                    opts = {
+                        ignore_system_prompt = true,
+                    },
+                    prompts = {
+                        {
+                            role = "system",
+                            content = [[
 As a professional Prompt Engineer, your role is to create effective and innovative prompts for interacting with AI models.
 
 Your core skills include:
@@ -205,26 +202,37 @@ Your workflow should be:
 2. Based on user needs, create prompts that meet requirements, with each part being professional and detailed.
 3. Must only output the newly generated and optimized prompts, without explanation, without wrapping it in markdown code block.
 ]],
-                            },
-                            {
-                                role = "user",
-                                content = "I want to...",
-                            },
+                        },
+                        {
+                            role = "user",
+                            content = "I want to...",
                         },
                     },
                 },
+            }
+
+            if vim.g.codecompanion_prompts then
+                for key, value in pairs(vim.g.codecompanion_prompts) do
+                    prompts[key] = value
+                end
+            end
+
+            require("codecompanion").setup {
+                strategies = strategies,
+                adapters = adapters,
+                prompt_library = prompts,
             }
 
             require("ilyasyoy.code-companion-fidget-spinner"):init()
 
             vim.keymap.set(
                 "n",
-                "<leader>Cc",
+                "<leader>cc",
                 "<cmd>CodeCompanionChat Toggle<CR>"
             )
             vim.keymap.set(
                 { "n", "v", "s" },
-                "<leader>Ca",
+                "<leader>ca",
                 "<cmd>CodeCompanionActions<CR>"
             )
         end,
