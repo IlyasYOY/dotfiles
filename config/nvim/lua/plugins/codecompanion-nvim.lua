@@ -104,6 +104,61 @@ git diff listed below, please generate a commit message for me:
                         },
                     },
                 },
+                ["Text Fix Spelling Inline"] = {
+                    strategy = "inline",
+                    opts = {
+                        index = 3,
+                        is_default = true,
+                        is_slash_cmd = false,
+                        user_prompt = false,
+                        placement = "replace",
+                        short_name = "text-fix-spelling-inline",
+                        auto_submit = true,
+                    },
+                    prompts = {
+                        {
+                            role = "system",
+                            content = function(context)
+                                return [[
+Fix the grammar and spelling.
+Preserve all formatting, line breaks, and special characters.
+Do not add or remove any content.
+Return only the corrected text.
+]]
+                            end,
+                            opts = {
+                                visible = false,
+                                tag = "system_tag",
+                            },
+                        },
+                    },
+                    {
+                        role = "user",
+                        content = function(context)
+                            local code = require(
+                                "codecompanion.helpers.actions"
+                            ).get_code(
+                                context.start_line,
+                                context.end_line
+                            )
+
+                            return string.format(
+                                [[
+Fix spelling for this:
+
+```%s
+%s
+```
+]],
+                                context.filetype,
+                                code
+                            )
+                        end,
+                        opts = {
+                            contains_code = true,
+                        },
+                    },
+                },
                 ["Go Wrap Error Inline"] = {
                     strategy = "inline",
                     description = "Wrap errors in go code",
@@ -153,7 +208,7 @@ Workflow:
 
                             return string.format(
                                 [[
-Wra errors in this code:
+Wrap errors in this code:
 
 ```%s
 %s

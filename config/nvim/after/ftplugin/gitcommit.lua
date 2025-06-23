@@ -13,3 +13,9 @@ vim.keymap.set("n", "<localleader>gc", function()
 end, {
     buffer = true,
 })
+
+vim.keymap.set("n", "<localleader>fs", function()
+    require("codecompanion").prompt "text-fix-spelling-inline"
+end, {
+    buffer = true,
+})
