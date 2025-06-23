@@ -43,7 +43,7 @@ return {
                         adapter = "yandex_yandexgpt_32k_openai",
                     },
                     inline = {
-                        adapter = "yandex_yandexgpt_32k_openai",
+                        adapter = "yandex_llama_openai",
                         keymaps = {
                             accept_change = {
                                 modes = { n = "ga" },
