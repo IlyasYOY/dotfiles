@@ -11,3 +11,70 @@ vim.o.spellfile = vim.fn.expand "~/.config/nvim/spell/custom.utf-8.add"
 vim.o.winborder = "rounded"
 
 vim.diagnostic.config { virtual_text = true }
+
+-- Create a variable to track the state
+vim.g.auto_refresh_enabled = false
+
+-- Function to toggle the behavior
+local function toggle_auto_refresh()
+    if vim.g.auto_refresh_enabled then
+        vim.api.nvim_clear_autocmds { group = "AutoRefresh" }
+        vim.g.auto_refresh_enabled = false
+        print "Auto refresh disabled"
+    else
+        vim.o.autoread = true
+        vim.api.nvim_create_augroup("AutoRefresh", { clear = true })
+        vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+            group = "AutoRefresh",
+            command = "if mode() != 'c' | checktime | endif",
+            pattern = "*",
+        })
+        vim.g.auto_refresh_enabled = true
+        print "Auto refresh enabled"
+    end
+end
+
+vim.keymap.set("n", "<leader><leader>ar", toggle_auto_refresh, {
+    noremap = true,
+    silent = false,
+    desc = "Toggle auto refresh of files",
+})
+
+vim.keymap.set("n", "<leader><leader>sc", function()
+    vim.opt_local.spell = not (vim.opt_local.spell:get())
+    vim.notify("spell: " .. tostring(vim.o.spell))
+end, { desc = "Toggle spell check" })
+
+vim.keymap.set(
+    "t",
+    "<Esc>",
+    "<C-\\><C-n>",
+    { desc = "Use Escape to go from terminal to Normal mode" }
+)
+
+-- Dev things
+
+vim.keymap.set(
+    "n",
+    "<leader><leader>S",
+    "<cmd>mksession!<CR>",
+    { desc = "create session file" }
+)
+
+vim.keymap.set(
+    "n",
+    "<leader>Dt",
+    "<cmd>diffthis<CR>",
+    { desc = "diff this file" }
+)
+
+vim.keymap.set(
+    "n",
+    "<leader>Do",
+    "<cmd>diffoff<CR>",
+    { desc = "diff off file" }
+)
+
+vim.keymap.set("n", "<leader>D", function()
+    vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostic virtual_lines" })

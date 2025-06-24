@@ -7,7 +7,5 @@ pcall(require, "ilyasyoy.hidden")
 
 require "ilyasyoy.plugins"
 
-require "ilyasyoy"
 require "ilyasyoy.global"
-
-require "ilyasyoy.mapping"
+require "ilyasyoy"

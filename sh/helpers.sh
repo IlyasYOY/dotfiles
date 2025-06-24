@@ -37,10 +37,11 @@ yandexgpt-lite")
 aider-base() {
     aider \
         --watch-files \
+        --pretty \
+        --stream \
         --notifications \
         --dark-mode \
         --no-show-model-warnings \
-        --cache-prompts \
         --edit-format diff \
         "$@"
 }
