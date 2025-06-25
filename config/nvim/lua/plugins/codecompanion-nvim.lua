@@ -40,7 +40,7 @@ return {
             local strategies = vim.g.codecompanion_strategies
                 or {
                     chat = {
-                        adapter = "yandex_yandexgpt_32k_openai",
+                        adapter = "yandex_yandexgpt_openai",
                     },
                     inline = {
                         adapter = "yandex_llama_openai",
@@ -56,17 +56,18 @@ return {
                         },
                     },
                     cmd = {
-                        adapter = "yandex_yandexgpt_32k_openai",
+                        adapter = "yandex_yandexgpt_openai",
                     },
                 }
 
             local adapters = vim.g.codecompanion_adapters
                 or {
-                    yandex_yandexgpt_lite_openai = yandex_openai_compatible_for_model "yandexgpt-lite",
-                    yandex_yandexgpt_openai = yandex_openai_compatible_for_model "yandexgpt",
-                    yandex_yandexgpt_32k_openai = yandex_openai_compatible_for_model "yandexgpt-32k",
-                    yandex_llama_openai = yandex_openai_compatible_for_model "llama",
                     yandex_llama_lite_openai = yandex_openai_compatible_for_model "llama-lite",
+                    yandex_llama_openai = yandex_openai_compatible_for_model "llama",
+                    yandex_yandexgpt_lite_openai = yandex_openai_compatible_for_model "yandexgpt-lite",
+                    yandex_yandexgpt_lite_rc_openai = yandex_openai_compatible_for_model "yandexgpt-lite/rc",
+                    yandex_yandexgpt_openai = yandex_openai_compatible_for_model "yandexgpt",
+                    yandex_yandexgpt_rc_openai = yandex_openai_compatible_for_model "yandexgpt/rc",
                 }
 
             local prompts = {

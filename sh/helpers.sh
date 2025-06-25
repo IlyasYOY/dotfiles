@@ -19,11 +19,13 @@ aider-ollama() {
 }
 
 aider-yandex() {
-    local selected_model=$(fzf --prompt="Select a model: " <<< "llama
-llama-lite
-yandexgpt
-yandexgpt-32k
-yandexgpt-lite")
+    local  selected_model=$(
+        curl https://llm.api.cloud.yandex.net/v1/models \
+            | jq ".data[].id" -r \
+            | grep ^gpt \
+            | sed "s@gpt://<folder_id>/@@g" \
+            | fzf --prompt="Select a model: "
+    )
 
     [[ -n "$selected_model" ]] && \
         aider-base \
