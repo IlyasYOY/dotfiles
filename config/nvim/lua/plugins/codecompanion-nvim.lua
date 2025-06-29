@@ -71,6 +71,32 @@ return {
                 }
 
             local prompts = {
+                ["Custom Prompt"] = {
+                    strategy = "inline",
+                    description = "Prompt the LLM from Neovim",
+                    opts = {
+                        index = 3,
+                        is_default = true,
+                        is_slash_cmd = false,
+                        short_name = "custom-prompt",
+                        user_prompt = true,
+                    },
+                    prompts = {
+                        {
+                            role = "system",
+                            content = function(context)
+                                return string.format(
+                                    [[I want you to act as a senior %s developer. I will ask you specific questions and I want you to return raw code only (no codeblocks and no explanations). If you can't respond with code, respond with nothing]],
+                                    context.filetype
+                                )
+                            end,
+                            opts = {
+                                visible = false,
+                                tag = "system_tag",
+                            },
+                        },
+                    },
+                },
                 ["Git Generate a Commit Message Inline"] = {
                     strategy = "inline",
                     description = "Generate a commit message",
@@ -282,6 +308,11 @@ Your workflow should be:
             require("ilyasyoy.code-companion-fidget-spinner"):init()
 
             vim.keymap.set(
+                { "n", "s" },
+                "<leader>cc",
+                "<cmd>CodeCompanionChat<CR>"
+            )
+            vim.keymap.set(
                 "n",
                 "<leader>cc",
                 "<cmd>CodeCompanionChat Toggle<CR>"
@@ -291,6 +322,9 @@ Your workflow should be:
                 "<leader>ca",
                 "<cmd>CodeCompanionActions<CR>"
             )
+            vim.keymap.set({ "v", "s" }, "<leader>ce", function()
+                require("codecompanion").prompt "custom-prompt"
+            end)
         end,
     },
 }
