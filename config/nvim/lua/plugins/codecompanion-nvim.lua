@@ -7,67 +7,40 @@ return {
             "j-hui/fidget.nvim",
         },
         config = function()
-            local function yandex_openai_compatible_for_model(model)
-                return function()
-                    local pass = require "ilyasyoy.functions.pass"
-
-                    local yandex_api_key =
-                        pass.load_secret "cloud/yandex/ilyasyoy-ai-api-key"
-                    local yandex_catalog_id =
-                        pass.load_secret "cloud/yandex/ilyasyoy-catalog-id"
-
-                    return require("codecompanion.adapters").extend(
-                        "openai_compatible",
-                        {
-                            env = {
-                                url = "https://llm.api.cloud.yandex.net",
-                                api_key = yandex_api_key,
-                            },
-                            schema = {
-                                model = {
-                                    default = "gpt://"
-                                        .. yandex_catalog_id
-                                        .. "/"
-                                        .. model,
-                                },
-                            },
-                        }
-                    )
-                end
-            end
+            local pass = require "ilyasyoy.functions.pass"
 
             -- so I can override the models for different environments.
             local strategies = vim.g.codecompanion_strategies
                 or {
                     chat = {
-                        adapter = "yandex_yandexgpt_openai",
+                        adapter = "yandexgpt",
                     },
                     inline = {
-                        adapter = "yandex_llama_openai",
-                        keymaps = {
-                            accept_change = {
-                                modes = { n = "ga" },
-                                description = "Accept the suggested change",
-                            },
-                            reject_change = {
-                                modes = { n = "gr" },
-                                description = "Reject the suggested change",
-                            },
+                        adapter = {
+                            name = "yandexgpt",
+                            model = "gpt://"
+                                .. pass.load_secret "cloud/yandex/ilyasyoy-catalog-id"
+                                .. "/llama",
                         },
                     },
                     cmd = {
-                        adapter = "yandex_yandexgpt_openai",
+                        adapter = "yandexgpt",
                     },
                 }
 
             local adapters = vim.g.codecompanion_adapters
                 or {
-                    yandex_llama_lite_openai = yandex_openai_compatible_for_model "llama-lite",
-                    yandex_llama_openai = yandex_openai_compatible_for_model "llama",
-                    yandex_yandexgpt_lite_openai = yandex_openai_compatible_for_model "yandexgpt-lite",
-                    yandex_yandexgpt_lite_rc_openai = yandex_openai_compatible_for_model "yandexgpt-lite/rc",
-                    yandex_yandexgpt_openai = yandex_openai_compatible_for_model "yandexgpt",
-                    yandex_yandexgpt_rc_openai = yandex_openai_compatible_for_model "yandexgpt/rc",
+                    yandexgpt = function()
+                        return require("codecompanion.adapters").extend(
+                            "openai_compatible",
+                            {
+                                env = {
+                                    url = "https://llm.api.cloud.yandex.net",
+                                    api_key = pass.load_secret "cloud/yandex/ilyasyoy-ai-api-key",
+                                },
+                            }
+                        )
+                    end,
                 }
 
             local prompts = {
