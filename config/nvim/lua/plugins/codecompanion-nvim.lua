@@ -71,14 +71,14 @@ return {
                 }
 
             local prompts = {
-                ["Custom Prompt"] = {
+                ["Code Edit"] = {
                     strategy = "inline",
                     description = "Prompt the LLM from Neovim",
                     opts = {
                         index = 3,
                         is_default = true,
                         is_slash_cmd = false,
-                        short_name = "custom-prompt",
+                        short_name = "code-edit-inline",
                         user_prompt = true,
                     },
                     prompts = {
@@ -93,6 +93,42 @@ return {
                             opts = {
                                 visible = false,
                                 tag = "system_tag",
+                            },
+                        },
+                    },
+                },
+                ["Review Diff"] = {
+                    strategy = "chat",
+                    description = "Generate a commit message",
+                    opts = {
+                        index = 10,
+                        is_default = true,
+                        is_slash_cmd = true,
+                        short_name = "review-diff",
+                        auto_submit = true,
+                    },
+                    prompts = {
+                        {
+                            role = "user",
+                            content = function()
+                                return string.format(
+                                    [[
+I want you to act as a Code reviewer who is experienced developer in the given
+code language. I will provide you with the code block or methods or code file
+along with the code language name, and I would like you to review the code and
+share the feedback, suggestions and alternative recommended approaches. Please
+write explanations behind the feedback or suggestions or alternative
+approaches.
+
+```diff
+%s
+```
+                                    ]],
+                                    vim.fn.system "git diff --no-ext-diff --staged"
+                                )
+                            end,
+                            opts = {
+                                contains_code = true,
                             },
                         },
                     },
@@ -322,8 +358,13 @@ Your workflow should be:
                 "<leader>ca",
                 "<cmd>CodeCompanionActions<CR>"
             )
+
             vim.keymap.set({ "v", "s" }, "<leader>ce", function()
-                require("codecompanion").prompt "custom-prompt"
+                require("codecompanion").prompt "code-edit-inline"
+            end)
+
+            vim.keymap.set({ "n" }, "<leader>cr", function()
+                require("codecompanion").prompt "review-diff"
             end)
         end,
     },
