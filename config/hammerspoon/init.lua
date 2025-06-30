@@ -3,7 +3,7 @@ for _, app in ipairs {
     { shortcut = "2", name = "Google Chrome" },
     { shortcut = "3", name = "Obsidian" },
     { shortcut = "4", name = "Telegram" },
-    { shortcut = "5", name = "TickTick" },
+    { shortcut = "5", name = "Calendar" },
 } do
     hs.hotkey.bind({ "alt" }, app.shortcut, function()
         hs.application.launchOrFocus(app.name)

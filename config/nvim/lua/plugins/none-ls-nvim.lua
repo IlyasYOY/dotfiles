@@ -82,7 +82,6 @@ return {
 
                     -- proto
                     none_ls.builtins.diagnostics.protolint,
-                    none_ls.builtins.formatting.buf,
                     none_ls.builtins.diagnostics.buf,
 
                     -- go

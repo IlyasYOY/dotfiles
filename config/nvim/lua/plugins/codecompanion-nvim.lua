@@ -75,8 +75,6 @@ return {
                     strategy = "inline",
                     description = "Prompt the LLM from Neovim",
                     opts = {
-                        index = 3,
-                        is_default = true,
                         is_slash_cmd = false,
                         short_name = "code-edit-inline",
                         user_prompt = true,
@@ -101,8 +99,6 @@ return {
                     strategy = "chat",
                     description = "Generate a commit message",
                     opts = {
-                        index = 10,
-                        is_default = true,
                         is_slash_cmd = true,
                         short_name = "review-diff",
                         auto_submit = true,
@@ -127,9 +123,6 @@ approaches.
                                     vim.fn.system "git diff --no-ext-diff --staged"
                                 )
                             end,
-                            opts = {
-                                contains_code = true,
-                            },
                         },
                     },
                 },
@@ -137,7 +130,6 @@ approaches.
                     strategy = "inline",
                     description = "Generate a commit message",
                     opts = {
-                        is_default = true,
                         is_slash_cmd = false,
                         user_prompt = false,
                         short_name = "commit-inline",
@@ -170,8 +162,6 @@ git diff listed below, please generate a commit message for me:
                 ["Text Fix Spelling Inline"] = {
                     strategy = "inline",
                     opts = {
-                        index = 3,
-                        is_default = true,
                         is_slash_cmd = false,
                         user_prompt = false,
                         placement = "replace",
@@ -226,8 +216,6 @@ Fix spelling for this:
                     strategy = "inline",
                     description = "Wrap errors in go code",
                     opts = {
-                        index = 3,
-                        is_default = true,
                         is_slash_cmd = false,
                         user_prompt = false,
                         placement = "replace",
