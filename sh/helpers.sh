@@ -161,6 +161,10 @@ _aichat_zsh() {
 zle -N _aichat_zsh
 bindkey '\ee' _aichat_zsh
 
+aichat-today-tasks() {
+    aichat --role %tasks-assistent% --session $(date +%F)
+}
+
 # aichat-review-diff review the diff and puts it in STDOUT. It can be used
 # later to be posted somewhere.
 aichat-review-diff() {
