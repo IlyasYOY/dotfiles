@@ -190,6 +190,19 @@ return {
         in_test_fn
     ),
     s(
+        "rlen",
+        fmt(
+            [[
+        require.Len(t, {}, {})
+        ]],
+            {
+                i(1, "slice"),
+                i(0, "len"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
         "aeq",
         fmt(
             [[
@@ -211,6 +224,19 @@ return {
             {
                 i(1, "expected"),
                 i(0, "actual"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
+        "alen",
+        fmt(
+            [[
+        assert.Len(t, {}, {})
+        ]],
+            {
+                i(1, "slice"),
+                i(0, "len"),
             }
         ),
         in_test_fn

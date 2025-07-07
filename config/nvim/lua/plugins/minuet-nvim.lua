@@ -2,18 +2,25 @@ return {
     {
         "IlyasYOY/minuet-ai.nvim",
         dependences = {
-            { "nvim-lua/plenary.nvim" },
+            "nvim-lua/plenary.nvim",
+            "j-hui/fidget.nvim",
         },
         config = function()
             local pass = require "ilyasyoy.functions.pass"
 
             require("minuet").setup {
                 virtualtext = {
+                    auto_trigger_ft = {
+                        "lua",
+                        "go",
+                        "python",
+                    },
+
                     keymap = {
                         -- accept whole completion
                         accept = "<A-l>",
                         -- accept one line
-                        accept_line = "<A-L>",
+                        accept_line = "<A-;>",
                         accept_n_lines = nil,
                         -- Cycle to prev completion item, or manually invoke completion
                         prev = "<A-k>",
@@ -28,7 +35,7 @@ return {
                 },
                 provider = "openai_compatible",
                 request_timeout = 2.5,
-                throttle = 3000,
+                throttle = 1000,
                 debounce = 1500,
                 provider_options = {
                     openai_compatible = vim.g.minuet_provider_options_openai_compatible
