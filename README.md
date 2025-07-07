@@ -49,12 +49,11 @@ make install
 
 ## Structure
 
-- `config` - configs for applications/utilities that I use.
-  - `nvim-minimal` - minimal configuration so I can reproduce
-    errors.
-  - `nvim` - neovim configuration built by myself from zero.
-- `sh` - shell scripts/aliases & etc.
-- `bin` - binaries I might use from time to time.
+- `config` — configs for applications/utilities that I use.
+  - `nvim-minimal` — minimal configuration so I can reproduce errors.
+  - `nvim` — neovim configuration built by myself from zero.
+- `sh` — shell scripts/aliases & etc.
+- `bin` — binaries I might use from time to time.
 
 ## Maintenance
 

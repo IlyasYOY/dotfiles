@@ -162,6 +162,19 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
 }
 
+setup_aichat_roles() {
+    info "🤖 Setting up AI Chat roles..."
+    local aichat_config_dir="$HOME/Library/Application Support/aichat"
+    local dotfiles_roles_dir="$DOTFILES_DIR/config/aichat/roles"
+
+    if [ ! -d "$aichat_config_dir" ]; then
+        warn "⚠️ AI Chat directory is absent. Please ensure AI Chat is installed before proceeding."
+        return
+    fi
+
+    ln -s "$dotfiles_roles_dir" "$aichat_config_dir/roles"
+}
+
 main() {
     setup_basic_directories
     setup_notes
@@ -175,6 +188,8 @@ main() {
     setup_tmux_plugin_manger
     setup_my_project
     setup_pass
+
+    setup_aichat_roles
 
     setup_mac_using_brew
     setup_mac_using_brew_cask
