@@ -105,9 +105,17 @@ return {
             fzf.helptags()
         end, { desc = "find help tags" })
 
-        vim.keymap.set("n", "<leader>fb", function()
+        vim.keymap.set("n", "<leader>fB", function()
             fzf.buffers()
         end, { desc = "find buffers" })
+
+        vim.keymap.set("n", "<leader>fbl", function()
+            fzf.blines()
+        end, { desc = "find buffer lines" })
+
+        vim.keymap.set("n", "<leader>fbt", function()
+            fzf.treesitter()
+        end, { desc = "find buffer treesitter" })
 
         vim.keymap.set("n", "<leader>gfs", function()
             fzf.git_status()
