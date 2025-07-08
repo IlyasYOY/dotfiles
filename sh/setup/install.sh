@@ -116,7 +116,7 @@ setup_go_version_manager() {
 
     # GVM configuration
     local gvm_config=$'[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
-    
+
     add_block "$ZSHRC" \
         "ilyasyoy gvm config" \
         "$gvm_config"
@@ -164,15 +164,15 @@ setup_pass() {
 
 setup_aichat_roles() {
     info "🤖 Setting up AI Chat roles..."
-    local aichat_config_dir="$HOME/Library/Application Support/aichat"
-    local dotfiles_roles_dir="$DOTFILES_DIR/config/aichat/roles"
 
+    # this dir is correct only for mac
+    local aichat_config_dir="$HOME/Library/Application Support/aichat"
     if [ ! -d "$aichat_config_dir" ]; then
         warn "⚠️ AI Chat directory is absent. Please ensure AI Chat is installed before proceeding."
         return
     fi
 
-    ln -s "$dotfiles_roles_dir" "$aichat_config_dir/roles"
+    symlink "$DOTFILES_DIR/config/aichat/roles" "$aichat_config_dir/roles"
 }
 
 main() {
