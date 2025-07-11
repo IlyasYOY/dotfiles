@@ -10,11 +10,7 @@ return {
 
             require("minuet").setup {
                 virtualtext = {
-                    auto_trigger_ft = {
-                        "lua",
-                        "go",
-                        "python",
-                    },
+                    auto_trigger_ft = {},
 
                     keymap = {
                         -- accept whole completion
@@ -35,8 +31,8 @@ return {
                 },
                 provider = "openai_compatible",
                 request_timeout = 2.5,
-                throttle = 1000,
-                debounce = 1500,
+                throttle = 1500,
+                debounce = 300,
                 provider_options = {
                     openai_compatible = vim.g.minuet_provider_options_openai_compatible
                         or {
