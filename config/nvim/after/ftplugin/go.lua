@@ -78,7 +78,19 @@ local function get_build_tags()
     return build_tags
 end
 
+local function is_gotestsum_in_path()
+    local cmd = "which gotestsum"
+    local handle = io.popen(cmd)
+    local result = handle:read "*a"
+    handle:close()
+
+    return string.match(result, "/gotestsum") ~= nil
+end
+
 local base_go_test = "go test -fullpath -failfast"
+if is_gotestsum_in_path() then
+    base_go_test = "gotestsum --format testname --"
+end
 
 local tags = get_build_tags()
 
@@ -92,9 +104,9 @@ end
 
 vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
     if opts.bang then
-        vim.cmd.Dispatch { '-compiler=make', base_go_test .. " -short ./..." }
+        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " -short ./..." }
     else
-        vim.cmd.Dispatch { '-compiler=make', base_go_test .. " ./..." }
+        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " ./..." }
     end
 end, {
     desc = "run test for all packages",
@@ -118,12 +130,12 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
     if opts.bang then
         vim.cmd.Dispatch {
-            '-compiler=make',
+            "-compiler=make",
             base_go_test .. " -short " .. vim.fn.expand "%:p:h",
         }
     else
         vim.cmd.Dispatch {
-            '-compiler=make',
+            "-compiler=make",
             base_go_test .. " " .. vim.fn.expand "%:p:h",
         }
     end
@@ -150,11 +162,11 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
     local cwf = vim.fn.expand "%:."
     if opts.bang then
         vim.cmd.Dispatch {
-            '-compiler=make',
+            "-compiler=make",
             base_go_test .. " -short " .. cwf,
         }
     else
-        vim.cmd.Dispatch { '-compiler=make', base_go_test .. " " .. cwf }
+        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " " .. cwf }
     end
 end, {
     desc = "run test for a file",
@@ -199,16 +211,16 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
         elseif string.match(function_name, "^Test.+") then
             if opts.bang then
                 vim.cmd.Dispatch {
-                    '-compiler=make',
+                    "-compiler=make",
                     base_go_test
-                    .. " -short "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
+                        .. " -short "
+                        .. cwf
+                        .. " -run "
+                        .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
-                    '-compiler=make',
+                    "-compiler=make",
                     base_go_test .. " " .. cwf .. " -run " .. function_name,
                 }
             end
