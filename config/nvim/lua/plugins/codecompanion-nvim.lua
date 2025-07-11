@@ -6,6 +6,38 @@ return {
             "nvim-treesitter/nvim-treesitter",
             "j-hui/fidget.nvim",
         },
+        keys = {
+            {
+                "<leader>cc",
+                "<cmd>CodeCompanionChat<CR>",
+                mode = { "n", "s", "v" },
+            },
+            {
+                "<leader>cc",
+                "<cmd>CodeCompanionChat Toggle<CR>",
+                mode = "n",
+            },
+            {
+                "<leader>ca",
+                "<cmd>CodeCompanionActions<CR>",
+                mode = { "n", "v", "s" },
+            },
+
+            {
+                "<leader>ce",
+                function()
+                    require("codecompanion").prompt "code-edit-inline"
+                end,
+                mode = { "v", "s" },
+            },
+            {
+                "<leader>cr",
+                function()
+                    require("codecompanion").prompt "review-diff"
+                end,
+                mode = { "n" },
+            },
+        },
         config = function()
             local pass = require "ilyasyoy.functions.pass"
 
@@ -303,30 +335,6 @@ Your workflow should be:
             }
 
             require("ilyasyoy.code-companion-fidget-spinner"):init()
-
-            vim.keymap.set(
-                { "n", "s" },
-                "<leader>cc",
-                "<cmd>CodeCompanionChat<CR>"
-            )
-            vim.keymap.set(
-                "n",
-                "<leader>cc",
-                "<cmd>CodeCompanionChat Toggle<CR>"
-            )
-            vim.keymap.set(
-                { "n", "v", "s" },
-                "<leader>ca",
-                "<cmd>CodeCompanionActions<CR>"
-            )
-
-            vim.keymap.set({ "v", "s" }, "<leader>ce", function()
-                require("codecompanion").prompt "code-edit-inline"
-            end)
-
-            vim.keymap.set({ "n" }, "<leader>cr", function()
-                require("codecompanion").prompt "review-diff"
-            end)
         end,
     },
 }

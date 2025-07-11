@@ -5,6 +5,14 @@ return {
             "nvim-lua/plenary.nvim",
             "j-hui/fidget.nvim",
         },
+        keys = {
+            {
+                "<leader>M",
+                "<cmd>Minuet virtualtext toggle<CR>",
+                mode = "n",
+                desc = "Toggle Minuet virtual text",
+            },
+        },
         config = function()
             local pass = require "ilyasyoy.functions.pass"
 
@@ -54,13 +62,6 @@ return {
                         },
                 },
             }
-
-            vim.keymap.set(
-                "n",
-                "<leader>M",
-                "<cmd>Minuet virtualtext toggle<CR>",
-                { desc = "Toggle Minuet virtual text" }
-            )
 
             require("minuet.fidget"):init()
         end,
