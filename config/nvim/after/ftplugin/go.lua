@@ -1,5 +1,6 @@
 vim.opt_local.expandtab = false
 vim.opt_local.spell = false
+vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
 vim.api.nvim_buf_create_user_command(
     0,
@@ -213,10 +214,10 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
                 vim.cmd.Dispatch {
                     "-compiler=make",
                     base_go_test
-                        .. " -short "
-                        .. cwf
-                        .. " -run "
-                        .. function_name,
+                    .. " -short "
+                    .. cwf
+                    .. " -run "
+                    .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
