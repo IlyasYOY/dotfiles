@@ -89,7 +89,7 @@ end
 
 local base_go_test = "go test -fullpath -failfast"
 if is_gotestsum_in_path() then
-    base_go_test = "gotestsum --format testname --"
+    base_go_test = "gotestsum --format testname -- -fullpath -failfast"
 end
 
 local tags = get_build_tags()
