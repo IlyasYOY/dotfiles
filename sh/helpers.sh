@@ -21,21 +21,29 @@ aider-ollama() {
 }
 
 aider-yandex() {
-    local  selected_model=$(
-        curl https://llm.api.cloud.yandex.net/v1/models \
-            | jq ".data[].id" -r \
-            | grep ^gpt \
-            | sed "s@gpt://<folder_id>/@@g" \
-            | fzf --prompt="Select a model: "
-    )
+    local default_model="qwen3-235b-a22b-fp8/latest"
+    
+    local raw_models=$(curl -s https://llm.api.cloud.yandex.net/v1/models)
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to fetch models from Yandex API" >&2
+        return 1
+    fi
 
-    [[ -n "$selected_model" ]] && \
+    local models=$(echo "$raw_models" | jq -r '.data[].id' | grep ^gpt | sed "s@gpt://<folder_id>/@@g")
+    if ! echo "$models" | grep -q "^$default_model$"; then
+        models="$models"$'\n'"$default_model"
+    fi
+
+    local selected_model=$(echo "$models" | sort -u | fzf --prompt="Select a model: ")
+    
+    if [[ -n "$selected_model" ]]; then
         aider-base \
-            --openai-api-key $(pass cloud/yandex/ilyasyoy-ai-api-key) \
-            --openai-api-base 'https://llm.api.cloud.yandex.net/v1' \
+            --openai-api-key "$(pass cloud/yandex/ilyasyoy-ai-api-key)" \
+            --openai-api-base "https://llm.api.cloud.yandex.net/v1" \
             --model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/$selected_model" \
             --weak-model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/yandexgpt-lite" \
             "$@"
+    fi
 }
 
 aider-base() {
