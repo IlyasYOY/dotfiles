@@ -45,7 +45,12 @@ return {
             local strategies = vim.g.codecompanion_strategies
                 or {
                     chat = {
-                        adapter = "yandexgpt",
+                        adapter = {
+                            name = "yandexgpt",
+                            model = "gpt://"
+                                .. pass.load_secret "cloud/yandex/ilyasyoy-catalog-id"
+                                .. "/qwen3-235b-a22b-fp8/latest",
+                        },
                     },
                     inline = {
                         adapter = {
