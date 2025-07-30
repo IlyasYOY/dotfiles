@@ -21,21 +21,15 @@ aider-ollama() {
 }
 
 aider-yandex() {
-    local default_model="qwen3-235b-a22b-fp8/latest"
-    
-    local raw_models=$(curl -s https://llm.api.cloud.yandex.net/v1/models)
-    if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to fetch models from Yandex API" >&2
-        return 1
-    fi
-
-    local models=$(echo "$raw_models" | jq -r '.data[].id' | grep ^gpt | sed "s@gpt://<folder_id>/@@g")
-    if ! echo "$models" | grep -q "^$default_model$"; then
-        models="$models"$'\n'"$default_model"
-    fi
+    local models="qwen3-235b-a22b-fp8/latest
+llama-lite/latest
+llama/latest
+yandexgpt-lite/latest
+yandexgpt-lite/rc
+yandexgpt/latest
+yandexgpt/rc"
 
     local selected_model=$(echo "$models" | sort -u | fzf --prompt="Select a model: ")
-    
     if [[ -n "$selected_model" ]]; then
         aider-base \
             --openai-api-key "$(pass cloud/yandex/ilyasyoy-ai-api-key)" \
