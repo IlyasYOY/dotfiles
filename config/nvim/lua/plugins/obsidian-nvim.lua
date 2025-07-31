@@ -13,6 +13,7 @@ return {
                     path = "~/Projects/IlyasYOY/notes-wiki",
                 },
             },
+            legacy_commands = false,
             disable_frontmatter = true,
             new_notes_location = "notes_subdir",
             note_id_func = function(title)
@@ -41,14 +42,14 @@ return {
             },
         }
 
-        vim.keymap.set("n", "<leader>nn", "<cmd>ObsidianFollowLink<cr>")
-        vim.keymap.set("n", "<leader>nN", "<cmd>ObsidianNew<cr>")
-        vim.keymap.set("n", "<leader>no", "<cmd>ObsidianOpen<cr>")
-        vim.keymap.set("n", "<leader>nd", "<cmd>ObsidianDailies<cr>")
-        vim.keymap.set("n", "<leader>nrn", "<cmd>ObsidianRename<cr>")
-        vim.keymap.set("n", "<leader>nT", "<cmd>ObsidianTemplate<cr>")
-        vim.keymap.set("n", "<leader>nb", "<cmd>ObsidianBacklinks<cr>")
-        vim.keymap.set("n", "<leader>nfg", "<cmd>ObsidianSearch<cr>")
+        vim.keymap.set("n", "<leader>nn", "<cmd>Obsidian follow_link<cr>")
+        vim.keymap.set("n", "<leader>nN", "<cmd>Obsidian new<cr>")
+        vim.keymap.set("n", "<leader>no", "<cmd>Obsidian open<cr>")
+        vim.keymap.set("n", "<leader>nd", "<cmd>Obsidian dailies<cr>")
+        vim.keymap.set("n", "<leader>nrn", "<cmd>Obsidian rename<cr>")
+        vim.keymap.set("n", "<leader>nT", "<cmd>Obsidiant template<cr>")
+        vim.keymap.set("n", "<leader>nb", "<cmd>Obsidian backlinks<cr>")
+        vim.keymap.set("n", "<leader>nfg", "<cmd>Obsidian search<cr>")
 
         -- TODO: Implement
         -- vim.keymap.set("n", "<leader>nff", "<cmd>ObsNvimFindNote<cr>")
