@@ -32,10 +32,10 @@ yandexgpt/rc"
     local selected_model=$(echo "$models" | sort -u | fzf --prompt="Select a model: ")
     if [[ -n "$selected_model" ]]; then
         aider-base \
-            --openai-api-key "$(pass cloud/yandex/ilyasyoy-ai-api-key)" \
+            --openai-api-key "$(pass cloud/yandex/llm-api-key)" \
             --openai-api-base "https://llm.api.cloud.yandex.net/v1" \
-            --model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/$selected_model" \
-            --weak-model "openai/gpt://$(pass cloud/yandex/ilyasyoy-catalog-id)/yandexgpt-lite" \
+            --model "openai/gpt://$(pass cloud/yandex/catalog-id)/$selected_model" \
+            --weak-model "openai/gpt://$(pass cloud/yandex/catalog-id)/yandexgpt-lite" \
             "$@"
     fi
 }
