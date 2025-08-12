@@ -22,6 +22,8 @@ aider-ollama() {
 
 aider-yandex() {
     local models="qwen3-235b-a22b-fp8/latest
+gpt-oss-120b
+gpt-oss-20b
 llama-lite/latest
 llama/latest
 yandexgpt-lite/latest
