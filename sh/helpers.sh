@@ -98,42 +98,6 @@ repo-to-file() {
     done
 }
 
-
-# list-git-repos-urls lists all repos' urls in the directory.
-list-git-repo-get-urls() {
-    find . \( -type d -o -type f \) -name .git | while read -r git_entry; do
-        repo_dir=$(dirname "$git_entry")
-        (cd "$repo_dir" && git config --get remote.origin.url 2>/dev/null)
-    done
-}
-
-# list-git-repo-clone-all clones all provided repos considering it's nested
-# structure. might be used with list-git-repos-urls.
-list-git-repo-clone-urls() {
-    while read -r url; do
-        # Convert URL to directory path
-        dir=$(echo "$url" | sed -e 's/^git@[^:]*://' \
-                               -e 's/^https:\/\/[^\/]*\///' \
-                               -e 's/\.git$//')
-
-        # Create parent directories if needed
-        mkdir -p "$dir"
-
-        # Check if directory exists and is empty
-        if [ -d "$dir" ] && [ -n "$(ls -A "$dir" 2>/dev/null)" ]; then
-            if [ -d "$dir/.git" ]; then
-                echo "Skipping existing repository: $dir"
-            else
-                echo "Warning: Directory $dir exists but is not a git repository"
-            fi
-            continue
-        fi
-
-        echo "Cloning $url => $dir"
-        git clone "$url" "$dir"
-    done
-}
-
 ### multimedia conversion ###
 
 convert-webm-to-mp4() {
