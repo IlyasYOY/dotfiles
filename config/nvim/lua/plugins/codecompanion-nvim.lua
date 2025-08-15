@@ -49,7 +49,7 @@ return {
                             name = "yandexgpt",
                             model = "gpt://"
                                 .. pass.load_secret "cloud/yandex/catalog-id"
-                                .. "/qwen3-235b-a22b-fp8/latest",
+                                .. "/gpt-oss-120b/latest",
                         },
                     },
                     inline = {
