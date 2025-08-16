@@ -174,19 +174,19 @@ return {
                         enable = true,
                         set_jumps = true,
                         goto_next_start = {
-                            ["]m"] = "@function.outer",
+                            ["]f"] = "@function.outer",
                             ["]i"] = "@conditional.outer",
                         },
                         goto_next_end = {
-                            ["]M"] = "@function.outer",
+                            ["]F"] = "@function.outer",
                             ["]I"] = "@conditional.outer",
                         },
                         goto_previous_start = {
-                            ["[m"] = "@function.outer",
+                            ["[f"] = "@function.outer",
                             ["[i"] = "@conditional.outer",
                         },
                         goto_previous_end = {
-                            ["[M"] = "@function.outer",
+                            ["[F"] = "@function.outer",
                             ["[I"] = "@conditional.outer",
                         },
                     },
@@ -195,12 +195,10 @@ return {
                         swap_next = {
                             ["<leader>man"] = "@parameter.inner",
                             ["<leader>mfn"] = "@function.outer",
-                            ["<leader>mcn"] = "@class.outer",
                         },
                         swap_previous = {
                             ["<leader>map"] = "@parameter.inner",
                             ["<leader>mfp"] = "@function.outer",
-                            ["<leader>mcp"] = "@class.outer",
                         },
                     },
                 },
