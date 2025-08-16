@@ -36,8 +36,8 @@ yandexgpt/rc"
         aider-base \
             --openai-api-key "$(pass cloud/yandex/llm-api-key)" \
             --openai-api-base "https://llm.api.cloud.yandex.net/v1" \
-            --model "openai/gpt://$(pass cloud/yandex/catalog-id)/$selected_model" \
-            --weak-model "openai/gpt://$(pass cloud/yandex/catalog-id)/yandexgpt-lite" \
+            --model "openai/gpt://$(pass cloud/yandex/folder-id)/$selected_model" \
+            --weak-model "openai/gpt://$(pass cloud/yandex/folder-id)/yandexgpt-lite" \
             "$@"
     fi
 }

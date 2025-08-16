@@ -48,7 +48,7 @@ return {
                         adapter = {
                             name = "yandexgpt",
                             model = "gpt://"
-                                .. pass.load_secret "cloud/yandex/catalog-id"
+                                .. pass.load_secret "cloud/yandex/folder-id"
                                 .. "/gpt-oss-120b/latest",
                         },
                     },
@@ -56,7 +56,7 @@ return {
                         adapter = {
                             name = "yandexgpt",
                             model = "gpt://"
-                                .. pass.load_secret "cloud/yandex/catalog-id"
+                                .. pass.load_secret "cloud/yandex/folder-id"
                                 .. "/llama",
                         },
                     },
