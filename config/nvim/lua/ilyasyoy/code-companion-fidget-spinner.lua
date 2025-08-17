@@ -58,8 +58,8 @@ end
 function M:llm_role_title(adapter)
     local parts = {}
     table.insert(parts, adapter.formatted_name)
-    if adapter.model and adapter.model ~= "" then
-        table.insert(parts, "(" .. adapter.model .. ")")
+    if adapter.name and adapter.name ~= "" then
+        table.insert(parts, "(" .. adapter.name .. ")")
     end
     return table.concat(parts, " ")
 end
