@@ -57,7 +57,7 @@ return {
                             name = "yandexgpt",
                             model = "gpt://"
                                 .. pass.load_secret "cloud/yandex/folder-id"
-                                .. "/llama",
+                                .. "/gpt-oss-20b/latest",
                         },
                     },
                     cmd = {
