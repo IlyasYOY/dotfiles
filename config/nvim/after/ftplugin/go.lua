@@ -214,10 +214,10 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
                 vim.cmd.Dispatch {
                     "-compiler=make",
                     base_go_test
-                    .. " -short "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
+                        .. " -short "
+                        .. cwf
+                        .. " -run "
+                        .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
@@ -275,6 +275,17 @@ vim.keymap.set({ "v", "s" }, "<localleader>ef", function()
         apply = true,
         filter = function(x)
             return x.kind == "refactor.extract.function"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>ec", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.constant"
         end,
     }
 end, {
