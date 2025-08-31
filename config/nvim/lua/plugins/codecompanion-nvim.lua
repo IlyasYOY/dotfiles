@@ -263,7 +263,7 @@ Wrap errors in this code:
 
             require("codecompanion").setup {
                 strategies = strategies,
-                adapters = adapters,
+                adapters = { http = adapters },
                 prompt_library = prompts,
             }
 
