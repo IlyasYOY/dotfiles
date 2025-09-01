@@ -47,7 +47,7 @@ return {
         vim.keymap.set("n", "<leader>no", "<cmd>Obsidian open<cr>")
         vim.keymap.set("n", "<leader>nd", "<cmd>Obsidian dailies<cr>")
         vim.keymap.set("n", "<leader>nrn", "<cmd>Obsidian rename<cr>")
-        vim.keymap.set("n", "<leader>nT", "<cmd>Obsidiant template<cr>")
+        vim.keymap.set("n", "<leader>nT", "<cmd>Obsidian template<cr>")
         vim.keymap.set("n", "<leader>nb", "<cmd>Obsidian backlinks<cr>")
         vim.keymap.set("n", "<leader>nfg", "<cmd>Obsidian search<cr>")
 
