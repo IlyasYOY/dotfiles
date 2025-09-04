@@ -12,8 +12,6 @@ return {
                     "bash-language-server",
                     "buf",
                     "checkstyle",
-                    "clangd",
-                    "clojure-lsp",
                     "debugpy",
                     "delve",
                     "eslint_d",
