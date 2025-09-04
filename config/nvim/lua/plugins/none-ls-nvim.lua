@@ -85,14 +85,6 @@ return {
                     none_ls.builtins.diagnostics.buf,
 
                     -- go
-
-                    none_ls.builtins.formatting.golines.with {
-                        extra_args = {
-                            "-m",
-                            "80",
-                            "--base-formatter=goimports -format-only=true",
-                        },
-                    },
                     none_ls.builtins.formatting.gofumpt,
                     none_ls.builtins.diagnostics.golangci_lint.with(
                         golang_ci_link_config()
