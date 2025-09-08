@@ -79,17 +79,8 @@ local function get_build_tags()
     return build_tags
 end
 
-local function is_gotestsum_in_path()
-    local cmd = "which gotestsum"
-    local handle = io.popen(cmd)
-    local result = handle:read "*a"
-    handle:close()
-
-    return string.match(result, "/gotestsum") ~= nil
-end
-
 local base_go_test = "go test -fullpath -failfast"
-if is_gotestsum_in_path() then
+if vim.fn.executable "gotestsum" then
     base_go_test = "gotestsum --format testname -- -fullpath -failfast"
 end
 
