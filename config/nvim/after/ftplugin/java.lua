@@ -26,32 +26,21 @@ local function get_java_dir(version)
     return sdkman_dir .. java_dir
 end
 
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:gs?/?-?:s?~-??")
-local workspace_dir = Path.path.home
-    .. "/Projects/eclipse-java/"
-    .. project_name
-
-local eclipse_format_path =
-    core.resolve_relative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml"
-
 local config = {
+    name = "jdtls",
+
     cmd = {
         "jdtls",
         "-data",
-        workspace_dir,
-        "--jvm-arg=-XX:+UseParallelGC",
-        "--jvm-arg=-XX:GCTimeRatio=4",
-        "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90",
-        "--jvm-arg=-Dsun.zip.disableMemoryMapping=true",
-        "--jvm-arg=-Xmx1500m",
-        "--jvm-arg=-Xms700m",
-        "--jvm-arg=-Xlog:disable",
+        Path.path.home
+        .. "/Projects/eclipse-java/"
+        .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:gs?/?-?:s?~-??"),
         "--jvm-arg=-javaagent:"
         .. get_install_path_for "jdtls"
         .. "/lombok.jar",
     },
 
-    root_dir = require("jdtls.setup").find_root { "mvnw", "gradlew" },
+    root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
 
     settings = {
         java = {
@@ -78,7 +67,7 @@ local config = {
             maven = { downloadSources = true },
             format = {
                 settings = {
-                    url = eclipse_format_path,
+                    url = core.resolve_relative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml",
                     profile = "GoogleStyle",
                 },
             },
@@ -94,7 +83,6 @@ local config = {
             },
             eclipse = { downloadSources = true },
             completion = {
-                -- doesn't seem to work now with cmp.
                 chain = { enabled = false },
                 guessMethodArguments = "off",
                 favouriteStaticMembers = {
@@ -138,12 +126,14 @@ local config = {
             jdtls.organize_imports()
         end, {
             desc = "organize imports",
+            buffer = bufnr,
         })
         vim.keymap.set("n", "<localleader>oa", function()
             jdtls.organize_imports()
             vim.lsp.buf.format()
         end, {
             desc = "organize all",
+            buffer = bufnr,
         })
 
         vim.keymap.set("v", "<localleader>ev", function()
@@ -151,12 +141,14 @@ local config = {
         end, {
             desc = "java extract selected to variable",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("n", "<localleader>ev", function()
             jdtls.extract_variable()
         end, {
             desc = "java extract variable",
             noremap = true,
+            buffer = bufnr,
         })
 
         vim.keymap.set("v", "<localleader>eV", function()
@@ -164,12 +156,14 @@ local config = {
         end, {
             desc = "java extract all selected to variable",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("n", "<localleader>eV", function()
             jdtls.extract_variable_all()
         end, {
             desc = "java extract all to variable",
             noremap = true,
+            buffer = bufnr,
         })
 
         vim.keymap.set("n", "<localleader>ec", function()
@@ -177,12 +171,14 @@ local config = {
         end, {
             desc = "java extract constant",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("v", "<localleader>ec", function()
             jdtls.extract_constant(true)
         end, {
             desc = "java extract selected to constant",
             noremap = true,
+            buffer = bufnr,
         })
 
         vim.keymap.set("n", "<localleader>em", function()
@@ -190,12 +186,14 @@ local config = {
         end, {
             desc = "java extract method",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("v", "<localleader>em", function()
             jdtls.extract_method(true)
         end, {
             desc = "java extract selected to method",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("n", "<localleader>oT", function()
             local plugin = require "jdtls.tests"
@@ -203,6 +201,7 @@ local config = {
         end, {
             desc = "java open test",
             noremap = true,
+            buffer = bufnr,
         })
         vim.keymap.set("n", "<localleader>ct", function()
             local plugin = require "jdtls.tests"
@@ -210,25 +209,31 @@ local config = {
         end, {
             desc = "java create test",
             noremap = true,
+            buffer = bufnr,
         })
 
         vim.keymap.set("n", "<localleader>dm", function()
             jdtls.test_nearest_method()
-        end, { desc = "java debug nearest test method" })
+        end, {
+            desc = "java debug nearest test method",
+            buffer = bufnr,
+        })
         vim.keymap.set("n", "<localleader>dc", function()
             jdtls.test_class()
-        end, { desc = "java debug nearest test class" })
+        end, {
+            desc = "java debug nearest test class",
+            buffer = bufnr,
+        })
         vim.keymap.set(
             "n",
             "<localleader>lr",
             "<cmd>JdtWipeDataAndRestart<CR>",
-            { desc = "restart jdtls" }
+            { desc = "restart jdtls", buffer = bufnr }
         )
 
         lsp.on_attach(client, bufnr)
     end,
     capabilities = lsp.get_capabilities(),
-
     init_options = {
         bundles = vim.iter({
                 core.string_split(
@@ -257,48 +262,72 @@ local config = {
 
 jdtls.start_or_attach(config)
 
-vim.keymap.set("n", "<localleader>ta", function()
+vim.api.nvim_buf_create_user_command(0, "JavaTestAll", function()
+    -- Run all tests in the project
     vim.cmd.Dispatch { "./gradlew test" }
-end, { desc = "run test for all packages", buffer = true })
+end, {
+    desc = "run test for all packages",
+})
 
-vim.keymap.set("n", "<localleader>tt", function()
+vim.api.nvim_buf_create_user_command(0, "JavaTestFile", function()
     vim.cmd.Dispatch {
         "./gradlew test --tests " .. vim.fn.expand "%:t:r",
     }
-end, { desc = "run test for a file", buffer = true })
+end, {
+    desc = "run test for a file",
+})
 
-vim.keymap.set("n", "<localleader>tf", function()
+vim.api.nvim_buf_create_user_command(0, "JavaTestFunction", function()
     local cwf = vim.fn.expand "%:."
     local bufnr = vim.api.nvim_get_current_buf()
 
-    if string.find(cwf, "Test.java$") then
-        local function_name = nil
-        local node_under_cursor = vim.treesitter.get_node()
-        local curr_node = node_under_cursor
-        while curr_node do
-            -- TODO: Here we can check if we have Test annotation but I think it's overcomplication
-            if curr_node:type() == "method_declaration" then
-                local name_node = curr_node:field("name")[1]
-                if name_node then
-                    function_name =
-                        vim.treesitter.get_node_text(name_node, bufnr)
-                    break
-                end
-            end
-            curr_node = curr_node:parent()
-        end
-        if not function_name then
-            vim.notify "test function was not found"
-        else
-            vim.cmd.Dispatch {
-                "./gradlew test --tests "
-                .. vim.fn.expand "%:t:r"
-                .. "."
-                .. function_name,
-            }
-        end
+    if not string.find(cwf, "Test%.java$") then
+        vim.notify "Not a test file"
+        return
     end
-end, { desc = "run test for a function", buffer = true })
+
+    local function_name = nil
+    local node = vim.treesitter.get_node()
+    while node do
+        if node:type() == "method_declaration" then
+            local name_node = node:field("name")[1]
+            if name_node then
+                function_name = vim.treesitter.get_node_text(name_node, bufnr)
+                break
+            end
+        end
+        node = node:parent()
+    end
+
+    if not function_name then
+        vim.notify "Test function was not found"
+        return
+    end
+
+    vim.cmd.Dispatch {
+        "./gradlew test --tests "
+        .. vim.fn.expand "%:t:r"
+        .. "."
+        .. function_name,
+    }
+end, {
+    desc = "run test for a function",
+})
+
+vim.keymap.set("n", "<localleader>ta", "<cmd>JavaTestAll<cr>", {
+    desc = "run test for all packages",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>tt", "<cmd>JavaTestFile<cr>", {
+    desc = "run test for a file",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>tf", "<cmd>JavaTestFunction<cr>", {
+    desc = "run test for a function",
+    buffer = true,
+})
 
 vim.api.nvim_buf_create_user_command(0, "JavaToggleTest", function()
     local cwf = vim.fn.expand "%:."
