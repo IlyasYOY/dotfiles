@@ -4,11 +4,12 @@ local config = {}
 
 -- here i have multiple fonts simply to be able to change them at the speed of
 -- thought.
-config.font = wezterm.font "ProggyClean Nerd Font"
-config.font = wezterm.font "Terminess Nerd Font"
 config.font = wezterm.font "GoMono Nerd Font"
+config.font = wezterm.font "Profont Nerd Font"
+config.font = wezterm.font "Atkinson Hyperlegible Mono"
+config.font = wezterm.font "0xProto Nerd Font"
 
-config.font_size = 18
+config.font_size = 20
 -- config.color_scheme = "alacritty"
 config.color_scheme = "Bamboo"
 config.colors = {
