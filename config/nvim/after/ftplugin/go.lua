@@ -239,6 +239,28 @@ vim.keymap.set(
     { desc = "run test for a function short", buffer = true }
 )
 
+vim.keymap.set("n", "<localleader>jl", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.rewrite.joinLines"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>sl", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.rewrite.splitLines"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
 vim.keymap.set("n", "<localleader>oi", function()
     vim.lsp.buf.code_action {
         apply = true,
@@ -272,11 +294,33 @@ end, {
     buffer = true,
 })
 
+vim.keymap.set({ "v", "s" }, "<localleader>eC", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.constant-all"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
 vim.keymap.set({ "v", "s" }, "<localleader>ec", function()
     vim.lsp.buf.code_action {
         apply = true,
         filter = function(x)
             return x.kind == "refactor.extract.constant"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
+vim.keymap.set({ "v", "s" }, "<localleader>eV", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.extract.variable-all"
         end,
     }
 end, {
