@@ -1,20 +1,8 @@
 local ls = require "luasnip"
 local fmt = require("luasnip.extras.fmt").fmt
-local rep = require("luasnip.extras").rep
 local t = ls.text_node
 local s = ls.snippet
 local i = ls.insert_node
-local f = ls.function_node
-local ilyasyoy_snippets = require "ilyasyoy.snippets"
-
-local function rep_capitalize(node_index)
-    return f(function(arguments)
-        local first_argument = arguments[1][1]
-        local splitted = string.sub(first_argument, 1, 1):upper()
-            .. string.sub(first_argument, 2, #first_argument)
-        return splitted
-    end, { node_index })
-end
 
 local function in_func()
     local ok, ts_utils = pcall(require, "nvim-treesitter.ts_utils")
@@ -56,7 +44,7 @@ local in_test_fn = {
 return {
     s("ctxb", t "ctx := context.Background()"),
     s(
-        "ctxb",
+        "ctxbc",
         t [[
             ctx, cancel := context.WithCancel(context.Background())
             cancel()
@@ -66,62 +54,16 @@ return {
         { trig = "gocmp", dscr = "Create an if block comparing with cmp.Diff" },
         fmt(
             [[
-        if diff := cmp.Diff({}, {}); diff != "" {{
-        	t.Errorf("(-want +got):\\n%s", diff)
-        }}
-      ]],
+                if diff := cmp.Diff({}, {}); diff != "" {{
+                    t.Errorf("(-want +got):\\n%s", diff)
+                }}
+            ]],
             {
                 i(1, "want"),
                 i(2, "got"),
             }
         ),
         in_test_fn
-    ),
-    s("today", ilyasyoy_snippets.current_date()),
-    s(
-        "withfopts",
-        fmt(
-            [[
-            func With{}(o *{}) error {{
-                return nil
-            }}
-            ]],
-            {
-                i(1, "Param"),
-                i(2, "opts"),
-            }
-        )
-    ),
-    s(
-        "fopts",
-        fmt(
-            [[
-            type {} struct{{
-            }}
-
-            type {}Configurer func(*{}) error
-
-            func new{}(cs ...{}Configurer) (*{}, error) {{
-                o := new({})
-                for _, c := range cs {{
-                    err := c(o)
-                    if err != nil {{
-                        return nil, err
-                    }}
-                }}
-                return o, nil
-            }}
-            ]],
-            {
-                i(1, "opts"),
-                rep(1),
-                rep(1),
-                rep_capitalize(1),
-                rep(1),
-                rep(1),
-                rep(1),
-            }
-        )
     ),
     s(
         "trun",
@@ -145,7 +87,7 @@ return {
         require.NoError(t, {})
         ]],
             {
-                i(0, "error"),
+                i(0, "gotErr"),
             }
         ),
         in_test_fn
@@ -157,8 +99,8 @@ return {
         require.ErrorIs(t, {}, {})
         ]],
             {
-                i(1, "expected"),
-                i(0, "actual"),
+                i(1, "want"),
+                i(0, "got"),
             }
         ),
         in_test_fn
@@ -170,8 +112,8 @@ return {
         require.Equal(t, {}, {})
         ]],
             {
-                i(1, "expected"),
-                i(0, "actual"),
+                i(1, "want"),
+                i(0, "got"),
             }
         ),
         in_test_fn
@@ -183,8 +125,8 @@ return {
         require.EqualValues(t, {}, {})
         ]],
             {
-                i(1, "expected"),
-                i(0, "actual"),
+                i(1, "want"),
+                i(0, "got"),
             }
         ),
         in_test_fn
@@ -196,7 +138,7 @@ return {
         require.Len(t, {}, {})
         ]],
             {
-                i(1, "slice"),
+                i(1, "got"),
                 i(0, "len"),
             }
         ),
@@ -209,8 +151,8 @@ return {
         assert.Equal(t, {}, {})
         ]],
             {
-                i(1, "expected"),
-                i(0, "actual"),
+                i(1, "want"),
+                i(0, "got"),
             }
         ),
         in_test_fn
@@ -222,8 +164,8 @@ return {
         assert.EqualValues(t, {}, {})
         ]],
             {
-                i(1, "expected"),
-                i(0, "actual"),
+                i(1, "want"),
+                i(0, "got"),
             }
         ),
         in_test_fn
@@ -235,7 +177,7 @@ return {
         assert.Len(t, {}, {})
         ]],
             {
-                i(1, "slice"),
+                i(1, "got"),
                 i(0, "len"),
             }
         ),
