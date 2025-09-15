@@ -348,6 +348,17 @@ end, {
     buffer = true,
 })
 
+vim.keymap.set("n", "<localleader>fS", function()
+    vim.lsp.buf.code_action {
+        apply = true,
+        filter = function(x)
+            return x.kind == "refactor.rewrite.fillStruct"
+        end,
+    }
+end, {
+    buffer = true,
+})
+
 vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
     local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_test%.go$") then
