@@ -50,6 +50,8 @@ aider-base() {
         --notifications \
         --dark-mode \
         --no-show-model-warnings \
+        --no-auto-commits \
+        --no-dirty-commits \
         --edit-format diff \
         "$@"
 }
