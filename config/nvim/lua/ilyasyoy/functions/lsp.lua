@@ -35,9 +35,13 @@ function M.lsp_attach(data)
     end
 
     if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-        vim.keymap.set("n", "<leader>lih", function()
+        vim.keymap.set("n", "<localleader>lih", function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
         end, described(bufopts, "Toggle Inlay Hints"))
+    end
+
+    if client.name == "jdtls" then
+        require("jdtls").setup_dap()
     end
 end
 

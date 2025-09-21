@@ -27,7 +27,7 @@ local handler = function(virtText, lnum, endLnum, width, truncate)
 end
 
 local provider_settings = {
-    java = { "lsp", "treesitter" },
+    java = { "treesitter" },
     python = { "treesitter" },
     git = "",
     fugitive = "",
