@@ -37,7 +37,6 @@ return {
                     "protolint",
                     "pylint",
                     "ruff",
-                    "rust-analyzer",
                     "sqlfluff",
                     "stylelint",
                     "stylua",

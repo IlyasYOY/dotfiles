@@ -31,10 +31,6 @@ local config = {
 
     cmd = {
         "jdtls",
-        "-data",
-        Path.path.home
-        .. "/Projects/eclipse-java/"
-        .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:gs?/?-?:s?~-??"),
         "--jvm-arg=-javaagent:"
         .. get_install_path_for "jdtls"
         .. "/lombok.jar",
@@ -44,11 +40,10 @@ local config = {
 
     settings = {
         java = {
-            home = get_java_dir "23",
+            home = get_java_dir "21",
             redhat = {
                 telemetry = { enabled = false },
             },
-            extendedClientCapabilities = jdtls.extendedClientCapabilities,
             sources = {
                 organizeImports = {
                     starThreshold = 9999,
@@ -230,10 +225,7 @@ local config = {
             "<cmd>JdtWipeDataAndRestart<CR>",
             { desc = "restart jdtls", buffer = bufnr }
         )
-
-        lsp.on_attach(client, bufnr)
     end,
-    capabilities = lsp.get_capabilities(),
     init_options = {
         bundles = vim.iter({
                 core.string_split(

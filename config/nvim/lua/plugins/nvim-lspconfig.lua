@@ -4,25 +4,7 @@ local described = lsp.described
 
 local opts = { noremap = true, silent = true }
 
-local function setup_generic()
-    local lspconfig = require "lspconfig"
-
-    local generic_servers = {
-        "clojure_lsp",
-        "rust_analyzer",
-        "bashls",
-    }
-    for _, client in ipairs(generic_servers) do
-        lspconfig[client].setup {
-            on_attach = lsp.on_attach,
-            capabilities = lsp.get_capabilities(),
-        }
-    end
-end
-
-local function setup_go()
-    local lspconfig = require "lspconfig"
-
+local function config_go()
     local hints = vim.empty_dict()
     hints.assignVariableTypes = true
     hints.compositeLiteralFields = true
@@ -31,12 +13,7 @@ local function setup_go()
     hints.functionTypeParameters = true
     hints.parameterNames = true
     hints.rangeVariableTypes = true
-
-    lspconfig.gopls.setup {
-        on_attach = function(client, bufnr)
-            client.server_capabilities.documentFormattingProvider = false
-            lsp.on_attach(client, bufnr)
-        end,
+    vim.lsp.config("gopls", {
         settings = {
             gopls = {
                 buildFlags = { "-tags=e2e" },
@@ -74,59 +51,7 @@ local function setup_go()
                 },
             },
         },
-        capabilities = lsp.get_capabilities(),
-    }
-end
-
-local function setup_tsserver()
-    local lspconfig = require "lspconfig"
-
-    lspconfig.ts_ls.setup {
-        on_attach = function(client, bufnr)
-            client.server_capabilities.documentFormattingProvider = false
-            lsp.on_attach(client, bufnr)
-        end,
-        capabilities = lsp.get_capabilities(),
-    }
-end
-
-local function setup_clangd()
-    local lspconfig = require "lspconfig"
-
-    lspconfig.clangd.setup {
-        on_attach = lsp.on_attach,
-        filetypes = { "c", "cpp" },
-        capabilities = lsp.get_capabilities(),
-    }
-end
-
-local function setup_lua()
-    local lspconfig = require "lspconfig"
-
-    lspconfig.lua_ls.setup {
-        root_dir = lspconfig.util.root_pattern(
-            "init.lua",
-            ".luarc.json",
-            ".luarc.jsonc",
-            ".luacheckrc",
-            ".stylua.toml",
-            "stylua.toml",
-            "selene.toml",
-            "selene.yml",
-            ".git"
-        ),
-        on_attach = lsp.on_attach,
-        capabilities = lsp.get_capabilities(),
-    }
-end
-
-local function setup_python()
-    local lspconfig = require "lspconfig"
-
-    lspconfig.basedpyright.setup {
-        on_attach = lsp.on_attach,
-        capabilities = lsp.get_capabilities(),
-    }
+    })
 end
 
 return {
@@ -140,14 +65,24 @@ return {
             -- to lazy.nvim's 'lazy' nature.
             require("lazydev").setup()
 
-            setup_generic()
-            setup_tsserver()
-            setup_lua()
-            setup_python()
-            setup_clangd()
-            setup_go()
+            config_go()
+
+            for _, server in ipairs {
+                "bashls",
+                "ts_ls",
+                "lua_ls",
+                "basedpyright",
+                "gopls",
+            } do
+                vim.lsp.enable(server)
+            end
 
             local bufopts = { noremap = true, silent = true }
+
+            vim.api.nvim_create_autocmd("LspAttach", {
+                group = vim.api.nvim_create_augroup("ilyasyoy.lsp", {}),
+                callback = lsp.lsp_attach,
+            })
 
             vim.keymap.set(
                 "n",
@@ -156,7 +91,7 @@ return {
                 described(opts, "diagnostics")
             )
 
-            vim.keymap.set({ "n", "v" }, "<leader>oc", function()
+            vim.keymap.set({ "n", "v" }, "<localleader>oc", function()
                 vim.lsp.buf.format { async = false, timeout_ms = 10000 }
             end, described(bufopts, "organize code"))
 

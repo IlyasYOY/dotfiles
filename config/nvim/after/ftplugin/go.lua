@@ -2,6 +2,21 @@ vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>lclR",
+    "<Cmd>lua vim.lsp.codelens.refresh { bufnr = 0 }<CR>",
+    { silent = true }
+)
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>lclr",
+    "<Cmd>lua vim.lsp.codelens.run()<CR>",
+    { silent = true }
+)
+
 vim.api.nvim_buf_create_user_command(
     0,
     "GoReplaceDotComments",
@@ -205,10 +220,10 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
                 vim.cmd.Dispatch {
                     "-compiler=make",
                     base_go_test
-                        .. " -short "
-                        .. cwf
-                        .. " -run "
-                        .. function_name,
+                    .. " -short "
+                    .. cwf
+                    .. " -run "
+                    .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
