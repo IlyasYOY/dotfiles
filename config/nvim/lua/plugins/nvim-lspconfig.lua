@@ -1,8 +1,42 @@
-local lsp = require "ilyasyoy.functions.lsp"
-
-local described = lsp.described
+local function described(x, desc)
+    return vim.tbl_extend("force", x, { desc = desc })
+end
 
 local opts = { noremap = true, silent = true }
+
+local function lsp_attach(data)
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local bufopts = { noremap = true, silent = true, buffer = data.buf }
+
+    vim.keymap.set("n", "<C-s>", vim.lsp.buf.signature_help)
+    vim.keymap.set("n", "grs", function()
+        vim.lsp.buf.typehierarchy "subtypes"
+    end, described(bufopts, "go to subtypes"))
+    vim.keymap.set("n", "grS", function()
+        vim.lsp.buf.typehierarchy "supertypes"
+    end, described(bufopts, "go to supertypes"))
+    vim.keymap.set(
+        "n",
+        "grd",
+        vim.lsp.buf.definition,
+        described(bufopts, "go to definitions")
+    )
+
+    local client = vim.lsp.get_client_by_id(data.data.client_id)
+    if not client then
+        return
+    end
+
+    if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+        vim.keymap.set("n", "<localleader>lih", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end, described(bufopts, "Toggle Inlay Hints"))
+    end
+
+    if client.name == "jdtls" then
+        require("jdtls").setup_dap()
+    end
+end
 
 local function config_go()
     local hints = vim.empty_dict()
@@ -81,7 +115,7 @@ return {
 
             vim.api.nvim_create_autocmd("LspAttach", {
                 group = vim.api.nvim_create_augroup("ilyasyoy.lsp", {}),
-                callback = lsp.lsp_attach,
+                callback = lsp_attach,
             })
 
             vim.keymap.set(
