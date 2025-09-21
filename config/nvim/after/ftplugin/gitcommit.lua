@@ -9,13 +9,7 @@ require("cmp").setup.buffer {
 }
 
 vim.keymap.set("n", "<localleader>gc", function()
-    require("codecompanion").prompt "commit-inline"
+    return ":r!git diff --no-ext-diff --staged | aichat --code --role \\%conventional-commit-message\\%<CR>"
 end, {
-    buffer = true,
-})
-
-vim.keymap.set("n", "<localleader>fs", function()
-    require("codecompanion").prompt "text-fix-spelling-inline"
-end, {
-    buffer = true,
+    expr = true,
 })

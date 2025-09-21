@@ -205,10 +205,10 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
                 vim.cmd.Dispatch {
                     "-compiler=make",
                     base_go_test
-                        .. " -short "
-                        .. cwf
-                        .. " -run "
-                        .. function_name,
+                    .. " -short "
+                    .. cwf
+                    .. " -run "
+                    .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
@@ -381,8 +381,13 @@ end, {
     buffer = true,
 })
 
-vim.keymap.set({ "v", "s" }, "<localleader>we", function()
-    require("codecompanion").prompt "go-wrap-error-inline"
+vim.api.nvim_buf_create_user_command(0, "AIChatGoWrapErrors", function(opts)
+    vim.cmd "'<,'>!aichat --code --role \\%nvim-go-wrap-errors\\% "
+end, { range = true })
+
+vim.keymap.set("v", "<localleader>we", function()
+    return "AIChatGoWrapErrors"
 end, {
+    expr = true,
     buffer = true,
 })

@@ -108,4 +108,61 @@ function M.string_strip_prefix(target, prefix)
     return string.sub(target, #prefix + 1, #target)
 end
 
+--- Get the visually selected text.
+--- @return string
+function M.get_visual_selection()
+    local mode = vim.fn.visualmode()
+    local start_pos
+    local end_pos
+
+    if mode == "v" or mode == "V" then
+        -- Character-wise and line-wise visual mode
+        start_pos = vim.fn.getpos "'<"
+        end_pos = vim.fn.getpos "'>"
+    elseif mode == "" then
+        -- Block-wise visual mode (Ctrl-V)
+        start_pos = vim.fn.getpos "v"
+        end_pos = vim.fn.getpos "."
+    else
+        return ""
+    end
+
+    local start_line = start_pos[2]
+    local start_col = start_pos[3]
+    local end_line = end_pos[2]
+    local end_col = end_pos[3]
+
+    -- Ensure start is always before end
+    if
+        start_line > end_line
+        or (start_line == end_line and start_col > end_col)
+    then
+        start_line, end_line = end_line, start_line
+        start_col, end_col = end_col, start_col
+    end
+
+    -- Get lines from the buffer (API uses 0-based indexing)
+    local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+    if mode == "v" then
+        -- Trim a single-line character selection
+        if start_line == end_line then
+            return string.sub(lines[1], start_col, end_col)
+        end
+
+        -- Trim multi-line character selection
+        lines[1] = string.sub(lines[1], start_col)
+        lines[#lines] = string.sub(lines[#lines], 1, end_col)
+    elseif mode == "" then
+        -- Process block-wise visual mode
+        local result_lines = {}
+        for _, line in ipairs(lines) do
+            table.insert(result_lines, string.sub(line, start_col, end_col))
+        end
+        lines = result_lines
+    end
+
+    return table.concat(lines, "\n")
+end
+
 return M
