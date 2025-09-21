@@ -205,10 +205,10 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
                 vim.cmd.Dispatch {
                     "-compiler=make",
                     base_go_test
-                    .. " -short "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
+                        .. " -short "
+                        .. cwf
+                        .. " -run "
+                        .. function_name,
                 }
             else
                 vim.cmd.Dispatch {
@@ -383,11 +383,15 @@ end, {
 
 vim.api.nvim_buf_create_user_command(0, "AIChatGoWrapErrors", function(opts)
     vim.cmd "'<,'>!aichat --code --role \\%nvim-go-wrap-errors\\% "
-end, { range = true })
+end, {
+    range = true,
+    desc = "Wrap Go errors in the selected region using AI Chat",
+})
 
 vim.keymap.set("v", "<localleader>we", function()
     return "AIChatGoWrapErrors"
 end, {
     expr = true,
     buffer = true,
+    desc = "Wrap errors via AIChatGo",
 })

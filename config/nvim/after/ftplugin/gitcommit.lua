@@ -8,8 +8,13 @@ require("cmp").setup.buffer {
     ),
 }
 
+vim.api.nvim_buf_create_user_command(0, "AIChatGitGenerateCommit", function()
+    vim.cmd ".!git diff --no-ext-diff --cached | aichat --code --role \\%conventional-commit-message\\% "
+end, { desc = "Generate a conventional commit message from staged changes" })
+
 vim.keymap.set("n", "<localleader>gc", function()
-    return ":r!git diff --no-ext-diff --staged | aichat --code --role \\%conventional-commit-message\\%<CR>"
+    return ":AIChatGitGenerateCommit<CR>"
 end, {
     expr = true,
+    desc = "Generate AI commit message",
 })
