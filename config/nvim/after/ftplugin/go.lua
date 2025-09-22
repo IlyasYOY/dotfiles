@@ -71,53 +71,81 @@ end, {
     desc = "find files in go mod",
 })
 
--- get_build_tags fetches all build tags of the go file. Later they will be used to run tests from this file.
--- all commands for the buffer inherit tags of the buffer.
-local function get_build_tags()
-    local build_tags = {}
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+--- Run a `go test` command for the given *path*.
+--- The function builds the command line, adds the common flags
+--- (`-short`, `-count=`) and finally dispatches it via `:Dispatch`.
+--- @param path string   The path/argument that will be appended to the test
+--- command. Typical values: "./...", cwd, or a file name.
+--- @param opts table    Table supplied by the user‑command. It contains:
+--- - `bang`  (boolean) – whether the command was invoked with `!`.
+--- - `count` (integer) – the count supplied before the command
+--- (e.g. `3GoTestFile`). A value of `0` means “no count”.
+local function run_go_test(path, opts)
+    --- Extract the Go build tags declared in the current buffer.
+    ---
+    --- The function scans the whole buffer for lines that start with the
+    --- `//go:build` directive, removes that prefix, splits the remaining
+    --- expression on whitespace and returns each individual tag as an
+    --- element of a table.
+    ---
+    --- @return table string[] of strings, each being a single build tag found in
+    --- the buffer. If no `//go:build` lines are present, an empty table is
+    --- returned.
+    local function get_build_tags()
+        local build_tags = {}
+        local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
-    local core = require "ilyasyoy.functions.core"
-    for _, line in ipairs(lines) do
-        if core.string_has_prefix(line, "//go:build", true) then
-            line = core.string_strip_prefix(line, "//go:build")
-            local tags = core.string_split(line, " ")
+        local core = require "ilyasyoy.functions.core"
+        for _, line in ipairs(lines) do
+            if core.string_has_prefix(line, "//go:build", true) then
+                line = core.string_strip_prefix(line, "//go:build")
+                local tags = core.string_split(line, " ")
 
-            for _, tag in ipairs(tags) do
-                if tag ~= "" then
-                    table.insert(build_tags, tag)
+                for _, tag in ipairs(tags) do
+                    if tag ~= "" then
+                        table.insert(build_tags, tag)
+                    end
                 end
             end
         end
+
+        return build_tags
     end
 
-    return build_tags
-end
+    local base_go_test = "go test -fullpath -failfast"
+    if vim.fn.executable "gotestsum" then
+        base_go_test = "gotestsum --format testname -- -fullpath -failfast"
+    end
 
-local base_go_test = "go test -fullpath -failfast"
-if vim.fn.executable "gotestsum" then
-    base_go_test = "gotestsum --format testname -- -fullpath -failfast"
-end
+    local tags = get_build_tags()
+    if #tags > 0 then
+        -- I also add -v cause I want to see the output of hard tests as they go.
+        base_go_test = base_go_test
+            .. ' -v -tags "'
+            .. table.concat(tags, " ")
+            .. '"'
+    end
 
-local tags = get_build_tags()
+    local cmd_parts = { base_go_test }
+    if opts.bang then
+        table.insert(cmd_parts, "-short")
+    end
+    -- TODO: for now it works only for commands, I have to add the separate
+    -- logic to support this in keymaps.
+    if opts.count ~= 0 then
+        table.insert(cmd_parts, "-count=" .. opts.count)
+    end
 
-if #tags > 0 then
-    -- I also add -v cause I want to see the output of hard tests as they go.
-    base_go_test = base_go_test
-        .. ' -v -tags "'
-        .. table.concat(get_build_tags(), " ")
-        .. '"'
+    table.insert(cmd_parts, path)
+    vim.cmd.Dispatch { "-compiler=make", table.concat(cmd_parts, " ") }
 end
 
 vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
-    if opts.bang then
-        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " -short ./..." }
-    else
-        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " ./..." }
-    end
+    run_go_test("./...", opts)
 end, {
     desc = "run test for all packages",
     bang = true,
+    count = 0,
 })
 
 vim.keymap.set(
@@ -135,20 +163,11 @@ vim.keymap.set(
 )
 
 vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
-    if opts.bang then
-        vim.cmd.Dispatch {
-            "-compiler=make",
-            base_go_test .. " -short " .. vim.fn.expand "%:p:h",
-        }
-    else
-        vim.cmd.Dispatch {
-            "-compiler=make",
-            base_go_test .. " " .. vim.fn.expand "%:p:h",
-        }
-    end
+    run_go_test(vim.fn.expand "%:p:h", opts)
 end, {
     desc = "run test for a package",
     bang = true,
+    count = 0,
 })
 
 vim.keymap.set(
@@ -166,18 +185,11 @@ vim.keymap.set(
 )
 
 vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
-    local cwf = vim.fn.expand "%:."
-    if opts.bang then
-        vim.cmd.Dispatch {
-            "-compiler=make",
-            base_go_test .. " -short " .. cwf,
-        }
-    else
-        vim.cmd.Dispatch { "-compiler=make", base_go_test .. " " .. cwf }
-    end
+    run_go_test(vim.fn.expand "%:.", opts)
 end, {
     desc = "run test for a file",
     bang = true,
+    count = 0,
 })
 
 vim.keymap.set(
@@ -196,6 +208,7 @@ vim.keymap.set(
 
 vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
     local cwf = vim.fn.expand "%:."
+    local cwd = vim.fn.expand "%:p:h"
 
     local bufnr = vim.api.nvim_get_current_buf()
     if string.find(cwf, "_test%.go$") then
@@ -216,21 +229,7 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
         if not function_name then
             vim.notify "test function was not found"
         elseif string.match(function_name, "^Test.+") then
-            if opts.bang then
-                vim.cmd.Dispatch {
-                    "-compiler=make",
-                    base_go_test
-                    .. " -short "
-                    .. cwf
-                    .. " -run "
-                    .. function_name,
-                }
-            else
-                vim.cmd.Dispatch {
-                    "-compiler=make",
-                    base_go_test .. " " .. cwf .. " -run " .. function_name,
-                }
-            end
+            run_go_test(cwd .. " -run " .. function_name, opts)
         else
             vim.notify "function is not a test"
         end
@@ -238,6 +237,7 @@ vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
 end, {
     desc = "run test for a function",
     bang = true,
+    count = 0,
 })
 
 vim.keymap.set(
