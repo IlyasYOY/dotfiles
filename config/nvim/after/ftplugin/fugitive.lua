@@ -15,7 +15,7 @@ vim.api.nvim_buf_create_user_command(
     0,
     "AIChatGitReviewUnstaged",
     function(opts)
-        vim.cmd "tabnew | r!git diff --no-ext-diff | aichat --code --role \\%diff-comments\\% "
+        vim.cmd "tabnew | r!git diff --no-ext-diff | aichat --role \\%diff-comments\\% "
         vim.opt.filetype = "markdown"
     end,
     {
@@ -25,6 +25,6 @@ vim.api.nvim_buf_create_user_command(
 )
 
 vim.api.nvim_buf_create_user_command(0, "AIChatGitReviewStaged", function(opts)
-    vim.cmd "tabnew | r!git diff --no-ext-diff --cached | aichat --code --role \\%diff-comments\\% "
+    vim.cmd "tabnew | r!git diff --no-ext-diff --cached | aichat --role \\%diff-comments\\% "
     vim.opt.filetype = "markdown"
 end, { range = true, desc = "Review staged changes with AI Chat" })
