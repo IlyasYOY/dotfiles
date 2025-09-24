@@ -206,33 +206,48 @@ vim.keymap.set(
     { desc = "run test for a file", buffer = true }
 )
 
+---@param node TSNode
+---@return string?
+local function get_test_name(node)
+    if node:type() == "function_declaration" then
+        local name_nodes = node:field "name"
+        if #name_nodes == 0 then
+            return
+        end
+
+        local name_node = name_nodes[1]
+        if not name_node then
+            return
+        end
+
+        local bufnr = vim.api.nvim_get_current_buf()
+        return vim.treesitter.get_node_text(name_node, bufnr)
+    end
+end
+
 vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
     local cwf = vim.fn.expand "%:."
     local cwd = vim.fn.expand "%:p:h"
 
-    local bufnr = vim.api.nvim_get_current_buf()
-    if string.find(cwf, "_test%.go$") then
-        local function_name = nil
-        local node_under_cursor = vim.treesitter.get_node()
-        local curr_node = node_under_cursor
-        while curr_node do
-            if curr_node:type() == "function_declaration" then
-                local name_node = curr_node:field("name")[1]
-                if name_node then
-                    function_name =
-                        vim.treesitter.get_node_text(name_node, bufnr)
-                    break
-                end
-            end
-            curr_node = curr_node:parent()
+    if not string.find(cwf, "_test%.go$") then
+        vim.notify "not a test file"
+        return
+    end
+
+    local test_name = nil
+    local node = vim.treesitter.get_node()
+    while node do
+        test_name = get_test_name(node)
+        if test_name then
+            break
         end
-        if not function_name then
-            vim.notify "test function was not found"
-        elseif string.match(function_name, "^Test.+") then
-            run_go_test(cwd .. " -run " .. function_name, opts)
-        else
-            vim.notify "function is not a test"
-        end
+        node = node:parent()
+    end
+
+    if not test_name then
+        vim.notify "test function was not found"
+    elseif string.match(test_name, "^Test.+") then
+        run_go_test(cwd .. " -run " .. test_name, opts)
     end
 end, {
     desc = "run test for a function",
