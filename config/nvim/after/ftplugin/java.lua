@@ -160,38 +160,53 @@ end, {
     desc = "run test for a file",
 })
 
+---gets test name for the node
+---@param node TSNode
+---@return string?
+local function get_test_name(node)
+    if node:type() ~= "method_declaration" then
+        return
+    end
+
+    local name_nodes = node:field "name"
+    if #name_nodes == 0 then
+        return
+    end
+
+    local name_node = name_nodes[1]
+    if not name_node then
+        return
+    end
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    return vim.treesitter.get_node_text(name_node, bufnr)
+end
+
 vim.api.nvim_buf_create_user_command(0, "JavaTestFunction", function()
     local cwf = vim.fn.expand "%:."
-    local bufnr = vim.api.nvim_get_current_buf()
 
     if not string.find(cwf, "Test%.java$") then
         vim.notify "Not a test file"
         return
     end
 
-    local function_name = nil
+    local test_name = nil
     local node = vim.treesitter.get_node()
     while node do
-        if node:type() == "method_declaration" then
-            local name_node = node:field("name")[1]
-            if name_node then
-                function_name = vim.treesitter.get_node_text(name_node, bufnr)
-                break
-            end
+        test_name = get_test_name(node)
+        if test_name then
+            break
         end
         node = node:parent()
     end
 
-    if not function_name then
+    if not test_name then
         vim.notify "Test function was not found"
         return
     end
 
     vim.cmd.Dispatch {
-        "./gradlew test --tests "
-        .. vim.fn.expand "%:t:r"
-        .. "."
-        .. function_name,
+        "./gradlew test --tests " .. vim.fn.expand "%:t:r" .. "." .. test_name,
     }
 end, {
     desc = "run test for a function",
