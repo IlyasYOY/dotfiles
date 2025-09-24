@@ -1,11 +1,15 @@
 vim.api.nvim_buf_create_user_command(0, "JSTestAll", function()
-    vim.cmd.Dispatch { "npx jest ." }
+    vim.cmd.Dispatch {
+        "-compiler=jest",
+        "npx jest .",
+    }
 end, {
     desc = "run test for all packages",
 })
 
 vim.api.nvim_buf_create_user_command(0, "JSTestPackage", function()
     vim.cmd.Dispatch {
+        "-compiler=jest",
         "npx jest " .. vim.fn.expand "%:.:h",
     }
 end, {
@@ -14,6 +18,7 @@ end, {
 
 vim.api.nvim_buf_create_user_command(0, "JSTestFile", function()
     vim.cmd.Dispatch {
+        "-compiler=jest",
         "npx jest " .. vim.fn.expand "%",
     }
 end, {
@@ -83,6 +88,7 @@ vim.api.nvim_buf_create_user_command(0, "JSTestFunction", function()
     end
 
     vim.cmd.Dispatch {
+        "-compiler=jest",
         "npx jest -t '" .. function_name .. "'",
     }
 end, {
