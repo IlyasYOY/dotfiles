@@ -27,7 +27,7 @@ end, {
 
 ---@param node TSNode
 ---@return string?
-local function get_test_name_from_node(node)
+local function get_test_name(node)
     if node:type() ~= "call_expression" then
         return
     end
@@ -71,25 +71,25 @@ vim.api.nvim_buf_create_user_command(0, "JSTestFunction", function()
         return
     end
 
-    local function_name = nil
+    local test_name = nil
     local node = vim.treesitter.get_node() -- node under the cursor
 
     while node do
-        function_name = get_test_name_from_node(node)
-        if function_name then
+        test_name = get_test_name(node)
+        if test_name then
             break
         end
         node = node:parent()
     end
 
-    if not function_name then
+    if not test_name then
         vim.notify "Test function was not found"
         return
     end
 
     vim.cmd.Dispatch {
         "-compiler=jest",
-        "npx jest -t '" .. function_name .. "'",
+        "npx jest -t '" .. test_name .. "'",
     }
 end, {
     desc = "run test for a function",
