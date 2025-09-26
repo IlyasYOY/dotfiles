@@ -19,6 +19,14 @@ end, {
     desc = "Run AIChat code edit on the selected range with the provided arguments",
 })
 
+vim.keymap.set("v", "<leader>ce", function()
+    local prompt = vim.fn.input "Write a prompt: "
+    return ":AIChatCodeEdit " .. prompt .. "<CR>"
+end, {
+    expr = true,
+    desc = "Edit code via AIChat",
+})
+
 vim.api.nvim_create_user_command(
     "AIChatFixGrammar",
     "'<'>!aichat --code --role \\%fix-grammar\\%",

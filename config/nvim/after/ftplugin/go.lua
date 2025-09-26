@@ -419,7 +419,7 @@ end, {
 })
 
 vim.keymap.set("v", "<localleader>we", function()
-    return "AIChatGoWrapErrors"
+    return ":AIChatGoWrapErrors<CR>"
 end, {
     expr = true,
     buffer = true,
