@@ -67,6 +67,7 @@ setup_mac_using_brew() {
         mas
         neovim
         ollama
+        openai-whisper
         openjdk
         pass
         pinentry-mac
