@@ -13,11 +13,10 @@ tms() {
 
 
 qwen-yandex() {
-
     OPENAI_API_KEY=$(pass cloud/yandex/llm-api-key) \
-        OPENAI_BASE_URL="https://llm.api.cloud.yandex.net/v1" \
-        OPENAI_MODEL="gpt://$(pass cloud/yandex/folder-id)/qwen3-235b-a22b-fp8/latest" \
-        qwen
+    OPENAI_BASE_URL="https://llm.api.cloud.yandex.net/v1" \
+    OPENAI_MODEL="gpt://$(pass cloud/yandex/folder-id)/qwen3-235b-a22b-fp8/latest" \
+    qwen "$@"
 }
 
 
