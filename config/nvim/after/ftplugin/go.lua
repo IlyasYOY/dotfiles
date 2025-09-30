@@ -2,6 +2,8 @@ vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
+local last_test_command = nil
+
 vim.api.nvim_buf_set_keymap(
     0,
     "n",
@@ -137,7 +139,9 @@ local function run_go_test(path, opts)
     end
 
     table.insert(cmd_parts, path)
-    vim.cmd.Dispatch { "-compiler=make", table.concat(cmd_parts, " ") }
+
+    last_test_command = table.concat(cmd_parts, " ")
+    vim.cmd.Dispatch { "-compiler=make", last_test_command }
 end
 
 vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
@@ -267,6 +271,25 @@ vim.keymap.set(
     "<localleader>tF",
     "<cmd>GoTestFunction!<cr>",
     { desc = "run test for a function short", buffer = true }
+)
+
+vim.api.nvim_buf_create_user_command(0, "GoTestLast", function(opts)
+    if last_test_command then
+        vim.cmd.Dispatch { "-compiler=make", last_test_command }
+    else
+        vim.notify("No previous test command to run", vim.log.levels.WARN)
+    end
+end, {
+    desc = "run the last test command again",
+    bang = true,
+    count = 0,
+})
+
+vim.keymap.set(
+    "n",
+    "<localleader>tl",
+    "<cmd>GoTestLast<cr>",
+    { desc = "run the last test command again", buffer = true }
 )
 
 vim.keymap.set("n", "<localleader>jl", function()

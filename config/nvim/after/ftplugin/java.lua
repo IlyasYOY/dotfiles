@@ -25,6 +25,8 @@ local function get_java_dir(version)
     return sdkman_dir .. java_dir
 end
 
+local last_java_test_command = nil
+
 local config = {
     name = "jdtls",
 
@@ -147,15 +149,17 @@ jdtls.start_or_attach(config)
 
 vim.api.nvim_buf_create_user_command(0, "JavaTestAll", function()
     -- Run all tests in the project
-    vim.cmd.Dispatch { "./gradlew test" }
+    local cmd = "./gradlew test"
+    last_java_test_command = cmd
+    vim.cmd.Dispatch { last_java_test_command }
 end, {
     desc = "run test for all packages",
 })
 
 vim.api.nvim_buf_create_user_command(0, "JavaTestFile", function()
-    vim.cmd.Dispatch {
-        "./gradlew test --tests " .. vim.fn.expand "%:t:r",
-    }
+    local cmd = "./gradlew test --tests " .. vim.fn.expand "%:t:r"
+    last_java_test_command = cmd
+    vim.cmd.Dispatch { last_java_test_command }
 end, {
     desc = "run test for a file",
 })
@@ -205,9 +209,9 @@ vim.api.nvim_buf_create_user_command(0, "JavaTestFunction", function()
         return
     end
 
-    vim.cmd.Dispatch {
-        "./gradlew test --tests " .. vim.fn.expand "%:t:r" .. "." .. test_name,
-    }
+    local cmd = "./gradlew test --tests " .. vim.fn.expand "%:t:r" .. "." .. test_name
+    last_java_test_command = cmd
+    vim.cmd.Dispatch { last_java_test_command }
 end, {
     desc = "run test for a function",
 })
@@ -226,6 +230,23 @@ vim.keymap.set("n", "<localleader>tf", "<cmd>JavaTestFunction<cr>", {
     desc = "run test for a function",
     buffer = true,
 })
+
+vim.api.nvim_buf_create_user_command(0, "JavaTestLast", function(opts)
+    if last_java_test_command then
+        vim.cmd.Dispatch { last_java_test_command }
+    else
+        vim.notify("No previous Java test command to run", vim.log.levels.WARN)
+    end
+end, {
+    desc = "run the last test command again",
+})
+
+vim.keymap.set(
+    "n",
+    "<localleader>tl",
+    "<cmd>JavaTestLast<cr>",
+    { desc = "run the last test command again", buffer = true }
+)
 
 vim.api.nvim_buf_create_user_command(0, "JavaToggleTest", function()
     local cwf = vim.fn.expand "%:."

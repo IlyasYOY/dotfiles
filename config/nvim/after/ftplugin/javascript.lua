@@ -1,25 +1,33 @@
+local last_js_test_command = nil
+
 vim.api.nvim_buf_create_user_command(0, "JSTestAll", function()
+    local cmd = "npx jest ."
+    last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        "npx jest .",
+        last_js_test_command,
     }
 end, {
     desc = "run test for all packages",
 })
 
 vim.api.nvim_buf_create_user_command(0, "JSTestPackage", function()
+    local cmd = "npx jest " .. vim.fn.expand "%:.:h"
+    last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        "npx jest " .. vim.fn.expand "%:.:h",
+        last_js_test_command,
     }
 end, {
     desc = "run test for a file",
 })
 
 vim.api.nvim_buf_create_user_command(0, "JSTestFile", function()
+    local cmd = "npx jest " .. vim.fn.expand "%"
+    last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        "npx jest " .. vim.fn.expand "%",
+        last_js_test_command,
     }
 end, {
     desc = "run test for a file",
@@ -87,9 +95,11 @@ vim.api.nvim_buf_create_user_command(0, "JSTestFunction", function()
         return
     end
 
+        local cmd = "npx jest -t '" .. test_name .. "'"
+    last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        "npx jest -t '" .. test_name .. "'",
+        last_js_test_command,
     }
 end, {
     desc = "run test for a function",
@@ -114,6 +124,23 @@ vim.keymap.set("n", "<localleader>tf", "<cmd>JSTestFunction<cr>", {
     desc = "run test for a function",
     buffer = true,
 })
+
+vim.api.nvim_buf_create_user_command(0, "JSTestLast", function()
+    if last_js_test_command then
+        vim.cmd.Dispatch { "-compiler=jest", last_js_test_command }
+    else
+        vim.notify("No previous JavaScript test command to run", vim.log.levels.WARN)
+    end
+end, {
+    desc = "run the last test command again",
+})
+
+vim.keymap.set(
+    "n",
+    "<localleader>tl",
+    "<cmd>JSTestLast<cr>",
+    { desc = "run the last test command again", buffer = true }
+)
 
 vim.api.nvim_buf_create_user_command(0, "JSToggleTest", function()
     local cwf = vim.fn.expand "%:."

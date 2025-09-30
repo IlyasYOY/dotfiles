@@ -1,9 +1,13 @@
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
+local last_python_test_command = nil
+
 vim.api.nvim_buf_create_user_command(0, "PythonTestAll", function(opts)
+    local cmd = "pytest"
+    last_python_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=pytest",
-        "pytest",
+        last_python_test_command,
     }
 end, {
     desc = "run test for all packages",
@@ -17,9 +21,11 @@ vim.keymap.set(
 )
 
 vim.api.nvim_buf_create_user_command(0, "PythonTestPackage", function(opts)
+    local cmd = "pytest " .. vim.fn.expand "%:p:h"
+    last_python_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=pytest",
-        "pytest " .. vim.fn.expand "%:p:h",
+        last_python_test_command,
     }
 end, {
     desc = "run test for a package",
@@ -34,9 +40,11 @@ vim.keymap.set(
 
 vim.api.nvim_buf_create_user_command(0, "PythonTestFile", function(opts)
     local cwf = vim.fn.expand "%:."
+    local cmd = "pytest " .. cwf
+    last_python_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=pytest",
-        "pytest " .. cwf,
+        last_python_test_command,
     }
 end, {
     desc = "run test for a file",
@@ -92,9 +100,11 @@ vim.api.nvim_buf_create_user_command(0, "PythonTestFunction", function()
         return
     end
 
+        local cmd = "pytest " .. cwf .. "::" .. test_name
+    last_python_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=pytest",
-        "pytest " .. cwf .. "::" .. test_name,
+        last_python_test_command,
     }
 end, {
     desc = "run test for a function",
@@ -104,6 +114,23 @@ vim.keymap.set("n", "<localleader>tf", "<cmd>PythonTestFunction<cr>", {
     desc = "run test for a function",
     buffer = true,
 })
+
+vim.api.nvim_buf_create_user_command(0, "PythonTestLast", function(opts)
+    if last_python_test_command then
+        vim.cmd.Dispatch { "-compiler=pytest", last_python_test_command }
+    else
+        vim.notify("No previous Python test command to run", vim.log.levels.WARN)
+    end
+end, {
+    desc = "run the last test command again",
+})
+
+vim.keymap.set(
+    "n",
+    "<localleader>tl",
+    "<cmd>PythonTestLast<cr>",
+    { desc = "run the last test command again", buffer = true }
+)
 
 vim.api.nvim_buf_create_user_command(0, "PythonToggleTest", function()
     local cwf = vim.fn.expand "%:."
