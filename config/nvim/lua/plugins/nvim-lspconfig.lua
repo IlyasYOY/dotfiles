@@ -50,7 +50,7 @@ local function config_go()
     vim.lsp.config("gopls", {
         settings = {
             gopls = {
-                buildFlags = { "-tags=e2e" },
+                buildFlags = { "-tags=e2e,integration" },
                 codelenses = {
                     test = true,
                     gc_details = true,
