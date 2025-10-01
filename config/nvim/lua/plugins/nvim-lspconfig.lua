@@ -107,6 +107,7 @@ return {
                 "lua_ls",
                 "basedpyright",
                 "gopls",
+                "kotlin_lsp",
             } do
                 vim.lsp.enable(server)
             end

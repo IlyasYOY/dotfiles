@@ -30,6 +30,7 @@ return {
                     "jdtls",
                     "json-to-struct",
                     "jsonlint",
+                    "kotlin-lsp",
                     "lua-language-server",
                     "luacheck",
                     "markdownlint",
