@@ -136,6 +136,7 @@ local function run_go_test(path, opts)
     -- logic to support this in keymaps.
     if opts.count ~= 0 then
         table.insert(cmd_parts, "-count=" .. opts.count)
+        table.insert(cmd_parts, "-shuffle=on")
     end
 
     table.insert(cmd_parts, path)
