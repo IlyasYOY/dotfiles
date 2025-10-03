@@ -435,6 +435,26 @@ end, {
     buffer = true,
 })
 
+vim.api.nvim_buf_create_user_command(
+    0,
+    "AIChatGoTestErrorMessages",
+    function(opts)
+        vim.cmd "'<,'>!aichat --code --role \\%nvim-go-test-error-messages\\% "
+    end,
+    {
+        range = true,
+        desc = "Add test error message in the selected region using AI Chat",
+    }
+)
+
+vim.keymap.set("v", "<localleader>atem", function()
+    return ":AIChatGoTestErrorMessages<CR>"
+end, {
+    expr = true,
+    buffer = true,
+    desc = "Add test error message via AIChatGoTestErrorMessages",
+})
+
 vim.api.nvim_buf_create_user_command(0, "AIChatGoWrapErrors", function(opts)
     vim.cmd "'<,'>!aichat --code --role \\%nvim-go-wrap-errors\\% "
 end, {
@@ -442,7 +462,7 @@ end, {
     desc = "Wrap Go errors in the selected region using AI Chat",
 })
 
-vim.keymap.set("v", "<localleader>we", function()
+vim.keymap.set("v", "<localleader>awe", function()
     return ":AIChatGoWrapErrors<CR>"
 end, {
     expr = true,
