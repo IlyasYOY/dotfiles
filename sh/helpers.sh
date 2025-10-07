@@ -31,6 +31,31 @@ aider-ollama() {
             "$@"
 }
 
+aider-yandex-architect() {
+    local models="qwen3-235b-a22b-fp8/latest
+gpt-oss-120b
+gpt-oss-20b
+llama-lite/latest
+llama/latest
+yandexgpt-lite/latest
+yandexgpt-lite/rc
+yandexgpt/latest
+yandexgpt/rc"
+
+    local selected_editor_model=$(echo "$models" | sort -u | fzf --prompt="Select an editor model: ")
+    local selected_architect_model=$(echo "$models" | sort -u | fzf --prompt="Select an architect model: ")
+    if [[ -n "$selected_editor_model" ]]; then
+        aider-base \
+            --openai-api-key "$(pass cloud/yandex/llm-api-key)" \
+            --openai-api-base "https://llm.api.cloud.yandex.net/v1" \
+            --model "openai/gpt://$(pass cloud/yandex/folder-id)/$selected_architect_model" \
+            --editor-model "openai/gpt://$(pass cloud/yandex/folder-id)/$selected_editor_model" \
+            --weak-model "openai/gpt://$(pass cloud/yandex/folder-id)/yandexgpt-lite" \
+            --architect
+            "$@"
+    fi
+}
+
 aider-yandex() {
     local models="qwen3-235b-a22b-fp8/latest
 gpt-oss-120b
@@ -42,12 +67,12 @@ yandexgpt-lite/rc
 yandexgpt/latest
 yandexgpt/rc"
 
-    local selected_model=$(echo "$models" | sort -u | fzf --prompt="Select a model: ")
-    if [[ -n "$selected_model" ]]; then
+    local selected_editor_model=$(echo "$models" | sort -u | fzf --prompt="Select an editor model: ")
+    if [[ -n "$selected_editor_model" ]]; then
         aider-base \
             --openai-api-key "$(pass cloud/yandex/llm-api-key)" \
             --openai-api-base "https://llm.api.cloud.yandex.net/v1" \
-            --model "openai/gpt://$(pass cloud/yandex/folder-id)/$selected_model" \
+            --model "openai/gpt://$(pass cloud/yandex/folder-id)/$selected_editor_model" \
             --weak-model "openai/gpt://$(pass cloud/yandex/folder-id)/yandexgpt-lite" \
             "$@"
     fi
