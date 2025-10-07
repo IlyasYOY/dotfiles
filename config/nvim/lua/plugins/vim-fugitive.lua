@@ -11,13 +11,13 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gg",
-                ":Gedit :<CR>",
+                ":vertical Git<CR>",
                 { desc = "Open fugitive UI window", silent = true }
             )
             vim.keymap.set(
                 "n",
                 "<leader>gl",
-                ":Git log<cr>",
+                ":Git log<CR>",
                 { desc = "Open log", silent = true }
             )
 
