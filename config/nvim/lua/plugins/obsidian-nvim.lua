@@ -14,7 +14,9 @@ return {
                 },
             },
             legacy_commands = false,
-            disable_frontmatter = true,
+            frontmatter = {
+                enabled = true
+            },
             new_notes_location = "notes_subdir",
             note_id_func = function(title)
                 local prefix = tostring(os.date("%Y-%m-%d", os.time()))
