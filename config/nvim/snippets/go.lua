@@ -51,6 +51,19 @@ return {
         ]]
     ),
     s(
+        { trig = "gocmpass", dscr = "Create an if block comparing with cmp.Diff and assert" },
+        fmt(
+            [[
+                assert.Empty(t, cmp.Diff({}, {}), "(-want +got)")
+            ]],
+            {
+                i(1, "want"),
+                i(2, "got"),
+            }
+        ),
+        in_test_fn
+    ),
+    s(
         { trig = "gocmp", dscr = "Create an if block comparing with cmp.Diff" },
         fmt(
             [[
