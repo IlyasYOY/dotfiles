@@ -1,11 +1,9 @@
-local last_js_test_command = nil
-
 vim.api.nvim_buf_create_user_command(0, "JSTestAll", function()
     local cmd = "npx jest ."
-    last_js_test_command = cmd
+    vim.g.last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        last_js_test_command,
+        vim.g.last_js_test_command,
     }
 end, {
     desc = "run test for all packages",
@@ -13,10 +11,10 @@ end, {
 
 vim.api.nvim_buf_create_user_command(0, "JSTestPackage", function()
     local cmd = "npx jest " .. vim.fn.expand "%:.:h"
-    last_js_test_command = cmd
+    vim.g.last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        last_js_test_command,
+        vim.g.last_js_test_command,
     }
 end, {
     desc = "run test for a file",
@@ -24,10 +22,10 @@ end, {
 
 vim.api.nvim_buf_create_user_command(0, "JSTestFile", function()
     local cmd = "npx jest " .. vim.fn.expand "%"
-    last_js_test_command = cmd
+    vim.g.last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        last_js_test_command,
+        vim.g.last_js_test_command,
     }
 end, {
     desc = "run test for a file",
@@ -95,11 +93,11 @@ vim.api.nvim_buf_create_user_command(0, "JSTestFunction", function()
         return
     end
 
-        local cmd = "npx jest -t '" .. test_name .. "'"
-    last_js_test_command = cmd
+    local cmd = "npx jest -t '" .. test_name .. "'"
+    vim.g.last_js_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=jest",
-        last_js_test_command,
+        vim.g.last_js_test_command,
     }
 end, {
     desc = "run test for a function",
@@ -126,10 +124,13 @@ vim.keymap.set("n", "<localleader>tf", "<cmd>JSTestFunction<cr>", {
 })
 
 vim.api.nvim_buf_create_user_command(0, "JSTestLast", function()
-    if last_js_test_command then
-        vim.cmd.Dispatch { "-compiler=jest", last_js_test_command }
+    if vim.g.last_js_test_command then
+        vim.cmd.Dispatch { "-compiler=jest", vim.g.last_js_test_command }
     else
-        vim.notify("No previous JavaScript test command to run", vim.log.levels.WARN)
+        vim.notify(
+            "No previous JavaScript test command to run",
+            vim.log.levels.WARN
+        )
     end
 end, {
     desc = "run the last test command again",

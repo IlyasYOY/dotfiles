@@ -25,8 +25,6 @@ local function get_java_dir(version)
     return sdkman_dir .. java_dir
 end
 
-local last_java_test_command = nil
-
 local config = {
     name = "jdtls",
 
@@ -150,16 +148,16 @@ jdtls.start_or_attach(config)
 vim.api.nvim_buf_create_user_command(0, "JavaTestAll", function()
     -- Run all tests in the project
     local cmd = "./gradlew test"
-    last_java_test_command = cmd
-    vim.cmd.Dispatch { last_java_test_command }
+    vim.g.last_java_test_command = cmd
+    vim.cmd.Dispatch { vim.g.last_java_test_command }
 end, {
     desc = "run test for all packages",
 })
 
 vim.api.nvim_buf_create_user_command(0, "JavaTestFile", function()
     local cmd = "./gradlew test --tests " .. vim.fn.expand "%:t:r"
-    last_java_test_command = cmd
-    vim.cmd.Dispatch { last_java_test_command }
+    vim.g.last_java_test_command = cmd
+    vim.cmd.Dispatch { vim.g.last_java_test_command }
 end, {
     desc = "run test for a file",
 })
@@ -209,9 +207,12 @@ vim.api.nvim_buf_create_user_command(0, "JavaTestFunction", function()
         return
     end
 
-    local cmd = "./gradlew test --tests " .. vim.fn.expand "%:t:r" .. "." .. test_name
-    last_java_test_command = cmd
-    vim.cmd.Dispatch { last_java_test_command }
+    local cmd = "./gradlew test --tests "
+        .. vim.fn.expand "%:t:r"
+        .. "."
+        .. test_name
+    vim.g.last_java_test_command = cmd
+    vim.cmd.Dispatch { vim.g.last_java_test_command }
 end, {
     desc = "run test for a function",
 })
@@ -232,8 +233,8 @@ vim.keymap.set("n", "<localleader>tf", "<cmd>JavaTestFunction<cr>", {
 })
 
 vim.api.nvim_buf_create_user_command(0, "JavaTestLast", function(opts)
-    if last_java_test_command then
-        vim.cmd.Dispatch { last_java_test_command }
+    if vim.g.last_java_test_command then
+        vim.cmd.Dispatch { vim.g.last_java_test_command }
     else
         vim.notify("No previous Java test command to run", vim.log.levels.WARN)
     end
