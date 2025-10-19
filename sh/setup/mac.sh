@@ -79,6 +79,7 @@ setup_mac_using_brew() {
         rust
         scc
         sqlite
+        sst/tap/opencode
         syncthing
         tmux
         tmuxp
