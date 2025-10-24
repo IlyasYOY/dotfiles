@@ -112,9 +112,9 @@ local function run_go_test(path, opts)
         return build_tags
     end
 
-    local base_go_test = "go test -fullpath -failfast"
+    local base_go_test = "go test -fullpath"
     if vim.fn.executable "gotestsum" then
-        base_go_test = "gotestsum --format testname -- -fullpath -failfast"
+        base_go_test = "gotestsum --format testname -- -fullpath"
     end
 
     local tags = get_build_tags()
