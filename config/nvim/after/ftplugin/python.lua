@@ -1,7 +1,5 @@
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
-
-
 vim.api.nvim_buf_create_user_command(0, "PythonTestAll", function(opts)
     local cmd = "pytest"
     vim.g.last_python_test_command = cmd
@@ -100,7 +98,7 @@ vim.api.nvim_buf_create_user_command(0, "PythonTestFunction", function()
         return
     end
 
-        local cmd = "pytest " .. cwf .. "::" .. test_name
+    local cmd = "pytest " .. cwf .. "::" .. test_name
     vim.g.last_python_test_command = cmd
     vim.cmd.Dispatch {
         "-compiler=pytest",
@@ -119,7 +117,10 @@ vim.api.nvim_buf_create_user_command(0, "PythonTestLast", function(opts)
     if vim.g.last_python_test_command then
         vim.cmd.Dispatch { "-compiler=pytest", vim.g.last_python_test_command }
     else
-        vim.notify("No previous Python test command to run", vim.log.levels.WARN)
+        vim.notify(
+            "No previous Python test command to run",
+            vim.log.levels.WARN
+        )
     end
 end, {
     desc = "run the last test command again",
@@ -135,9 +136,13 @@ vim.keymap.set(
 vim.api.nvim_buf_create_user_command(0, "PythonToggleTest", function()
     local cwf = vim.fn.expand "%:."
     if string.find(cwf, "test_[%w_]+%.py$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "test_([%w_]+)%.py$", "%1.py"))
+        vim.fn.execute(
+            "edit " .. string.gsub(cwf, "test_([%w_]+)%.py$", "%1.py")
+        )
     elseif string.find(cwf, "[%w_]+%.py$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "([%w_]+)%.py$", "test_%1.py"))
+        vim.fn.execute(
+            "edit " .. string.gsub(cwf, "([%w_]+)%.py$", "test_%1.py")
+        )
     end
 end, {
     desc = "toggle between test and source code",

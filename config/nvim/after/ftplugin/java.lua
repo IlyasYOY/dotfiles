@@ -1,149 +1,31 @@
-local Path = require "plenary.path"
-local jdtls = require "jdtls"
 local core = require "ilyasyoy.functions.core"
 
-local function get_install_path_for(package)
-    return vim.fn.expand("$MASON/packages/" .. package)
-end
+vim.api.nvim_buf_create_user_command(
+    0,
+    "JavaPMD",
+    function()
+        vim.cmd.Dispatch {
+            "-compiler=make",
+            "pmd check --no-cache --dir % -R " .. core.resolve_relative_to_dotfiles_dir "config/pmd.xml",
+        }
+    end,
+    {
+        desc = "runs pmd for current buffer",
+    }
+)
 
--- loads jdks from sdkman.
----@param version string java version to search for
--- This requires java to be installed using sdkman.
-local function get_java_dir(version)
-    local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
-    local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
-        if core.string_has_prefix(file, version, true) then
-            return 1
-        end
-    end)
-
-    local java_dir = java_dirs[1]
-    if not java_dir then
-        error(string.format("No %s java version was found", version))
-    end
-
-    return sdkman_dir .. java_dir
-end
-
-local config = {
-    name = "jdtls",
-
-    cmd = {
-        "jdtls",
-        "--jvm-arg=-javaagent:"
-        .. get_install_path_for "jdtls"
-        .. "/lombok.jar",
-    },
-
-    root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
-
-    settings = {
-        java = {
-            home = get_java_dir "21",
-            redhat = {
-                telemetry = { enabled = false },
-            },
-            sources = {
-                organizeImports = {
-                    starThreshold = 9999,
-                    staticStarThreshold = 9999,
-                },
-            },
-            codeGeneration = {
-                toString = {
-                    template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
-                },
-                hashCodeEquals = {
-                    useJava7Objects = true,
-                },
-                useBlocks = true,
-            },
-            maven = { downloadSources = true },
-            format = {
-                settings = {
-                    url = core.resolve_relative_to_dotfiles_dir "config/eclipse-my-java-google-style.xml",
-                    profile = "GoogleStyle",
-                },
-            },
-            compile = {
-                nullAnalysis = {
-                    nonnull = {
-                        "lombok.NonNull",
-                        "javax.annotation.Nonnull",
-                        "org.eclipse.jdt.annotation.NonNull",
-                        "org.springframework.lang.NonNull",
-                    },
-                },
-            },
-            eclipse = { downloadSources = true },
-            completion = {
-                chain = { enabled = false },
-                guessMethodArguments = "off",
-                favouriteStaticMembers = {
-                    "org.junit.jupiter.api.Assertions.*",
-                    "org.junit.jupiter.api.Assumptions.*",
-                    "org.mockito.Mockito.*",
-                    "java.util.Objects.*",
-                },
-            },
-            configuration = {
-                runtimes = {
-                    {
-                        name = "JavaSE-1.8",
-                        path = get_java_dir "8",
-                    },
-                    {
-                        name = "JavaSE-11",
-                        path = get_java_dir "11",
-                    },
-                    {
-                        name = "JavaSE-17",
-                        path = get_java_dir "17",
-                    },
-                    {
-                        name = "JavaSE-21",
-                        path = get_java_dir "21",
-                    },
-                    {
-                        name = "JavaSE-23",
-                        path = get_java_dir "23",
-                    },
-                    {
-                        name = "JavaSE-25",
-                        path = get_java_dir "25",
-                    },
-                },
-            },
-        },
-    },
-
-    init_options = {
-        bundles = vim.iter({
-                core.string_split(
-                    vim.fn.glob(
-                        get_install_path_for "java-debug-adapter"
-                        .. "/extension/server/"
-                        .. "com.microsoft.java.debug.plugin-*.jar",
-                        1
-                    ),
-                    "\n"
-                ),
-                core.string_split(
-                    vim.fn.glob(
-                        get_install_path_for "java-test"
-                        .. "/extension/server/"
-                        .. "*.jar",
-                        1
-                    ),
-                    "\n"
-                ),
-            })
-            :flatten()
-            :totable(),
-    },
-}
-
-jdtls.start_or_attach(config)
+vim.api.nvim_buf_create_user_command(
+    0,
+    "JavaCheckstyle",
+    function()
+        vim.cmd.Dispatch {
+            "checkstyle % -c " .. core.resolve_relative_to_dotfiles_dir "config/checkstyle.xml",
+        }
+    end,
+    {
+        desc = "runs checkstyle for current buffer",
+    }
+)
 
 vim.api.nvim_buf_create_user_command(0, "JavaTestAll", function()
     -- Run all tests in the project
@@ -270,18 +152,24 @@ vim.keymap.set("n", "<localleader>ot", "<cmd>JavaToggleTest<cr>", {
     buffer = true,
 })
 
+
+local jdtls = require "jdtls"
+
+local jdtls_config = require("ilyasyoy.functions.java").get_jdtls_config()
+jdtls.start_or_attach(jdtls_config)
+
 vim.keymap.set("n", "<localleader>oi", function()
     jdtls.organize_imports()
 end, {
     desc = "organize imports",
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>oa", function()
     jdtls.organize_imports()
     vim.lsp.buf.format()
 end, {
     desc = "organize all",
-    buffer = bufnr,
+    buffer = true,
 })
 
 vim.keymap.set("v", "<localleader>ev", function()
@@ -289,14 +177,14 @@ vim.keymap.set("v", "<localleader>ev", function()
 end, {
     desc = "java extract selected to variable",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>ev", function()
     jdtls.extract_variable()
 end, {
     desc = "java extract variable",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 
 vim.keymap.set("v", "<localleader>eV", function()
@@ -304,14 +192,14 @@ vim.keymap.set("v", "<localleader>eV", function()
 end, {
     desc = "java extract all selected to variable",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>eV", function()
     jdtls.extract_variable_all()
 end, {
     desc = "java extract all to variable",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 
 vim.keymap.set("n", "<localleader>ec", function()
@@ -319,14 +207,14 @@ vim.keymap.set("n", "<localleader>ec", function()
 end, {
     desc = "java extract constant",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("v", "<localleader>ec", function()
     jdtls.extract_constant(true)
 end, {
     desc = "java extract selected to constant",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 
 vim.keymap.set("n", "<localleader>em", function()
@@ -334,14 +222,14 @@ vim.keymap.set("n", "<localleader>em", function()
 end, {
     desc = "java extract method",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("v", "<localleader>em", function()
     jdtls.extract_method(true)
 end, {
     desc = "java extract selected to method",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>oT", function()
     local plugin = require "jdtls.tests"
@@ -349,7 +237,7 @@ vim.keymap.set("n", "<localleader>oT", function()
 end, {
     desc = "java open test",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>ct", function()
     local plugin = require "jdtls.tests"
@@ -357,24 +245,24 @@ vim.keymap.set("n", "<localleader>ct", function()
 end, {
     desc = "java create test",
     noremap = true,
-    buffer = bufnr,
+    buffer = true,
 })
 
 vim.keymap.set("n", "<localleader>dm", function()
     jdtls.test_nearest_method()
 end, {
     desc = "java debug nearest test method",
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set("n", "<localleader>dc", function()
     jdtls.test_class()
 end, {
     desc = "java debug nearest test class",
-    buffer = bufnr,
+    buffer = true,
 })
 vim.keymap.set(
     "n",
     "<localleader>lr",
     "<cmd>JdtWipeDataAndRestart<CR>",
-    { desc = "restart jdtls", buffer = bufnr }
+    { desc = "restart jdtls", buffer = true }
 )

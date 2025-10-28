@@ -5,6 +5,7 @@ vim.api.nvim_buf_set_keymap(
     "<Cmd>lua vim.lsp.codelens.refresh { bufnr = 0 }<CR>",
     { silent = true }
 )
+
 vim.api.nvim_buf_set_keymap(
     0,
     "n",

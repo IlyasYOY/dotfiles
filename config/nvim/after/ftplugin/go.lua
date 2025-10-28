@@ -1,6 +1,47 @@
 vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
+vim.bo.formatprg = "gofumpt"
+
+
+vim.api.nvim_buf_create_user_command(
+    0,
+    "GoLangCiLint",
+    function(opts)
+        local command = "run --fix=false --out-format=json"
+        local binary = "golangci-lint"
+        local fallback_binary = "bin/golangci-lint"
+
+        if vim.fn.filereadable(fallback_binary) == 1 and vim.fn.executable(fallback_binary) then
+            binary = fallback_binary
+        end
+
+        -- the solution is borrowed from here:
+        -- https://github.com/nvimtools/none-ls.nvim/blob/a96172f673f720cd4f3572e1fcd08400ed3eb25d/lua/null-ls/builtins/diagnostics/golangci_lint.lua#L30-L42
+        local version = vim.system({ binary, "version" }, { text = true }):wait().stdout
+        if version and (version:match("version v2.0.") or version:match("version 2.0.")) then
+            command = "run --fix=false --show-stats=false --output.json.path=stdout"
+        elseif version and (version:match("version v2") or version:match("version 2")) then
+            command = "run --fix=false --show-stats=false --output.json.path=stdout --path-mode=abs"
+        end
+
+        local core = require "ilyasyoy.functions.core"
+        local config_path = core.find_first_present_file {
+            "./.golangci.pipeline.yaml",
+            "./.golangci.yml",
+            core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
+        }
+
+        vim.cmd.Dispatch {
+            string.format("%s %s --config %s %s", binary, command, config_path, opts.fargs[1]),
+        }
+    end,
+    {
+        nargs = 1,
+        desc = "runs golangci-lint for current buffer",
+    }
+)
+
 
 vim.api.nvim_buf_set_keymap(
     0,

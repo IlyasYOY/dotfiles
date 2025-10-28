@@ -7,6 +7,15 @@ local function resolve_dotfiles_plenary_path()
     return Path:new(path_from_env)
 end
 
+function M.find_first_present_file(fileList)
+    for _, filePath in ipairs(fileList) do
+        if vim.fn.filereadable(filePath) == 1 then
+            return filePath
+        end
+    end
+    return nil
+end
+
 function M.get_dotfiles_dir()
     return resolve_dotfiles_plenary_path():expand()
 end

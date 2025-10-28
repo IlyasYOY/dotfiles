@@ -1,3 +1,5 @@
+vim.bo.formatprg = "stylua -"
+
 vim.api.nvim_buf_create_user_command(0, "LuaToggleTest", function()
     local cwf = vim.fn.expand "%:."
     if string.find(cwf, "_spec%.lua$") then
