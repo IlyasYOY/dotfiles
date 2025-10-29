@@ -51,8 +51,8 @@ end, {
 vim.keymap.set(
     "n",
     "<localleader>tt",
-    "<cmd>PythonTestFile<cr>",
-    { desc = "run test for a file", buffer = true }
+    "<cmd>PythonTestFunction<cr>",
+    { desc = "run test for a function", buffer = true }
 )
 
 ---@param node TSNode
@@ -108,8 +108,8 @@ end, {
     desc = "run test for a function",
 })
 
-vim.keymap.set("n", "<localleader>tf", "<cmd>PythonTestFunction<cr>", {
-    desc = "run test for a function",
+vim.keymap.set("n", "<localleader>tf", "<cmd>PythonTestFile<cr>", {
+    desc = "run test for a file",
     buffer = true,
 })
 

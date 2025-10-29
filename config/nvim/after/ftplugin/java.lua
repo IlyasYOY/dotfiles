@@ -104,13 +104,13 @@ vim.keymap.set("n", "<localleader>ta", "<cmd>JavaTestAll<cr>", {
     buffer = true,
 })
 
-vim.keymap.set("n", "<localleader>tt", "<cmd>JavaTestFile<cr>", {
-    desc = "run test for a file",
+vim.keymap.set("n", "<localleader>tt", "<cmd>JavaTestFunction<cr>", {
+    desc = "run test for a function",
     buffer = true,
 })
 
-vim.keymap.set("n", "<localleader>tf", "<cmd>JavaTestFunction<cr>", {
-    desc = "run test for a function",
+vim.keymap.set("n", "<localleader>tf", "<cmd>JavaTestFile<cr>", {
+    desc = "run test for a file",
     buffer = true,
 })
 

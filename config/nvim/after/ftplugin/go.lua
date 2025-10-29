@@ -245,15 +245,15 @@ end, {
 vim.keymap.set(
     "n",
     "<localleader>tt",
-    "<cmd>GoTestFile<cr>",
-    { desc = "run test for a file", buffer = true }
+    "<cmd>GoTestFunction<cr>",
+    { desc = "run test for a function", buffer = true }
 )
 
 vim.keymap.set(
     "n",
     "<localleader>tT",
-    "<cmd>GoTestFile!<cr>",
-    { desc = "run test for a file", buffer = true }
+    "<cmd>GoTestFunction!<cr>",
+    { desc = "run test for a function", buffer = true }
 )
 
 ---@param node TSNode
@@ -308,15 +308,15 @@ end, {
 vim.keymap.set(
     "n",
     "<localleader>tf",
-    "<cmd>GoTestFunction<cr>",
-    { desc = "run test for a function", buffer = true }
+    "<cmd>GoTestFile<cr>",
+    { desc = "run test for a file", buffer = true }
 )
 
 vim.keymap.set(
     "n",
     "<localleader>tF",
-    "<cmd>GoTestFunction!<cr>",
-    { desc = "run test for a function short", buffer = true }
+    "<cmd>GoTestFile!<cr>",
+    { desc = "run test for a file short", buffer = true }
 )
 
 vim.api.nvim_buf_create_user_command(0, "GoTestLast", function(opts)

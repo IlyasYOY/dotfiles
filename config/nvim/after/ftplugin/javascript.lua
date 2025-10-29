@@ -113,13 +113,13 @@ vim.keymap.set("n", "<localleader>tp", "<cmd>JSTestPackage<cr>", {
     buffer = true,
 })
 
-vim.keymap.set("n", "<localleader>tt", "<cmd>JSTestFile<cr>", {
-    desc = "run test for a file",
+vim.keymap.set("n", "<localleader>tt", "<cmd>JSTestFunction<cr>", {
+    desc = "run test for a function",
     buffer = true,
 })
 
-vim.keymap.set("n", "<localleader>tf", "<cmd>JSTestFunction<cr>", {
-    desc = "run test for a function",
+vim.keymap.set("n", "<localleader>tf", "<cmd>JSTestFile<cr>", {
+    desc = "run test for a file",
     buffer = true,
 })
 
