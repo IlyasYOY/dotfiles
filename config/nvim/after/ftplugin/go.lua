@@ -8,7 +8,7 @@ vim.api.nvim_buf_create_user_command(
     0,
     "GoLangCiLint",
     function(opts)
-        local command = "run --fix=false --out-format=json"
+        local command = "run --fix=false --out-format=tab"
         local binary = "golangci-lint"
         local fallback_binary = "bin/golangci-lint"
 
@@ -20,28 +20,34 @@ vim.api.nvim_buf_create_user_command(
         -- https://github.com/nvimtools/none-ls.nvim/blob/a96172f673f720cd4f3572e1fcd08400ed3eb25d/lua/null-ls/builtins/diagnostics/golangci_lint.lua#L30-L42
         local version = vim.system({ binary, "version" }, { text = true }):wait().stdout
         if version and (version:match("version v2.0.") or version:match("version 2.0.")) then
-            command = "run --fix=false --show-stats=false --output.json.path=stdout"
+            command = "run --fix=false --show-stats=false --output.tab.path=stdout"
         elseif version and (version:match("version v2") or version:match("version 2")) then
-            command = "run --fix=false --show-stats=false --output.json.path=stdout --path-mode=abs"
+            command = "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
         end
 
         local core = require "ilyasyoy.functions.core"
         local config_path = core.find_first_present_file {
             "./.golangci.pipeline.yaml",
+            "./.golangci.pipeline.yml",
             "./.golangci.yml",
+            "./.golangci.yaml",
             core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
         }
 
         vim.cmd.Dispatch {
+            "-compiler=make",
             string.format("%s %s --config %s %s", binary, command, config_path, opts.fargs[1]),
         }
     end,
     {
         nargs = 1,
-        desc = "runs golangci-lint for current buffer",
+        desc = "runs golangci-lint for files specified in the first argument",
     }
 )
 
+vim.keymap.set("n", "<localleader>la", "<cmd>GoLangCiLint ./...<cr>")
+vim.keymap.set("n", "<localleader>lf", "<cmd>GoLangCiLint %<cr>")
+vim.keymap.set("n", "<localleader>lp", "<cmd>GoLangCiLint %:p:h<cr>")
 
 vim.api.nvim_buf_set_keymap(
     0,
