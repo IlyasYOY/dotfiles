@@ -3,7 +3,6 @@ vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 vim.bo.formatprg = "gofumpt"
 
-
 vim.api.nvim_buf_create_user_command(
     0,
     "GoLangCiLint",
