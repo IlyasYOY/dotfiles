@@ -10,9 +10,14 @@ return {
             end
 
             lualine.setup {
+                options = {
+                    icons_enabled = false,
+                },
                 sections = {
-                    lualine_a = { "mode" },
-                    lualine_b = { "branch" },
+                    lualine_a = {
+                        "lsp_status",
+                    },
+                    lualine_b = { 'FugitiveHead' },
                     lualine_c = {
                         {
                             "filename",
@@ -28,7 +33,7 @@ return {
                             end,
                         },
                     },
-                    lualine_x = { "fileformat", "filetype" },
+                    lualine_x = { "filetype" },
                     lualine_y = { "progress" },
                     lualine_z = { "location" },
                 },
