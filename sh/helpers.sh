@@ -9,17 +9,6 @@ tms() {
     fi
 }
 
-### qwen ### 
-
-
-qwen-yandex() {
-    OPENAI_API_KEY=$(pass cloud/yandex/llm-api-key) \
-    OPENAI_BASE_URL="https://llm.api.cloud.yandex.net/v1" \
-    OPENAI_MODEL="gpt://$(pass cloud/yandex/folder-id)/qwen3-235b-a22b-fp8/latest" \
-    qwen "$@"
-}
-
-
 ### aider ###
 
 aider-ollama() {
@@ -166,10 +155,6 @@ _aichat_zsh() {
 }
 zle -N _aichat_zsh
 bindkey '\ee' _aichat_zsh
-
-aichat-today-tasks() {
-    aichat --role %tasks-assistent% --session $(date +%F)
-}
 
 # aichat-review-diff review the diff and puts it in STDOUT. It can be used
 # later to be posted somewhere.
