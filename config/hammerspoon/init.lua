@@ -24,7 +24,6 @@ hs.hotkey.bind({ "alt" }, "g", function()
     local cmd = "echo '"
         .. escaped
         .. "' | aichat --role %fix-grammar% --code 2>&1"
-    hs.alert.show(cmd)
     local output = hs.execute(cmd, true)
 
     if not output or output == "" then
