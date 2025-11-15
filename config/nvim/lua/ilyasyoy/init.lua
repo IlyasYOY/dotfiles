@@ -41,6 +41,8 @@ vim.keymap.set("v", "<leader>cp", function()
     local link = path
     if start_line ~= end_line then
         link = link .. "#" .. start_line .. "-" .. end_line
+    else
+        link = link .. "#" .. start_line
     end
     vim.fn.setreg("+", link)
     vim.notify("Copied: " .. link)
