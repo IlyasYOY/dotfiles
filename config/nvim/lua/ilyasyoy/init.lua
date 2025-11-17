@@ -25,6 +25,7 @@ end, { desc = "Toggle spell check" })
 
 vim.keymap.set("n", "<leader>cp", function()
     local path = vim.fn.expand "%:."
+    path = "./" .. path
     vim.fn.setreg("+", path)
     vim.notify("Copied: " .. path)
 end, { desc = "Copy relative file path to clipboard" })
@@ -40,10 +41,11 @@ vim.keymap.set("v", "<leader>cp", function()
     local path = vim.fn.expand "%:."
     local link = path
     if start_line ~= end_line then
-        link = link .. "#" .. start_line .. "-" .. end_line
+        link = link .. ":" .. start_line .. "-" .. end_line
     else
-        link = link .. "#" .. start_line
+        link = link .. ":" .. start_line
     end
+    path = "./" .. path
     vim.fn.setreg("+", link)
     vim.notify("Copied: " .. link)
 end, { desc = "Copy relative file path with line numbers to clipboard" })
