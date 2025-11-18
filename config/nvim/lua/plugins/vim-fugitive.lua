@@ -14,12 +14,6 @@ return {
                 ":vertical Git<CR>",
                 { desc = "Open fugitive UI window", silent = true }
             )
-            vim.keymap.set(
-                "n",
-                "<leader>gl",
-                ":Git log<CR>",
-                { desc = "Open log", silent = true }
-            )
 
             vim.keymap.set(
                 "n",
@@ -52,11 +46,26 @@ return {
                 ":'<'>GBrowse!<cr>",
                 { desc = "Copy link to current lines" }
             )
+
             vim.keymap.set(
-                "n",
-                "<leader>gB",
+                { "n", "v", "s" },
+                "<leader>gb",
                 ":Git blame<cr>",
                 { desc = "Open blame" }
+            )
+
+            vim.keymap.set(
+                { "n", "v", "s" },
+                "<leader>gl",
+                ":Gclog<cr>",
+                { desc = "Open history for repo or selection" }
+            )
+
+            vim.keymap.set(
+                { "n" },
+                "<leader>gL",
+                ":Gclog %<cr>",
+                { desc = "Open history for the selected buffer" }
             )
         end,
     },
