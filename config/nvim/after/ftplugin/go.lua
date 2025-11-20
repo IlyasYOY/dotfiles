@@ -3,6 +3,7 @@ vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 vim.bo.formatprg = "gofumpt"
 
+
 vim.api.nvim_buf_create_user_command(
     0,
     "GoLangCiLint",
@@ -117,6 +118,174 @@ end, {
     desc = "find files in go mod",
 })
 
+
+--- Extract the Go build tags declared in the current buffer.
+---
+--- The function scans the whole buffer for lines that start with the
+--- `//go:build` directive, removes that prefix, splits the remaining
+--- expression on whitespace and returns each individual tag as an
+--- element of a table.
+---
+--- @return table string[] of strings, each being a single build tag found in
+--- the buffer. If no `//go:build` lines are present, an empty table is
+--- returned.
+local function get_build_tags()
+    local build_tags = {}
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+    local core = require "ilyasyoy.functions.core"
+    for _, line in ipairs(lines) do
+        if core.string_has_prefix(line, "//go:build", true) then
+            line = core.string_strip_prefix(line, "//go:build")
+            local tags = core.string_split(line, " ")
+
+            for _, tag in ipairs(tags) do
+                if tag ~= "" then
+                    table.insert(build_tags, tag)
+                end
+            end
+        end
+    end
+
+    return build_tags
+end
+
+--- Run a benchmark command.
+--- `path` is the argument that will be appended to the command
+--- (e.g. "./...", a package directory, a file name, or a `-run`
+--- pattern for a single benchmark).
+--- `opts` is the table supplied by the user‑command (bang, count).
+local function run_go_bench(path, names, opts)
+    local base = "go test -fullpath -bench=" .. names
+    local tags = get_build_tags()
+    if #tags > 0 then
+        base = base .. ' -tags "' .. table.concat(tags, " ") .. '"'
+    end
+
+    local cmd = { base }
+
+    -- `!` (bang) → add `-run=^$` to skip tests, run only benchmarks
+    if opts.bang then
+        table.insert(cmd, "-run=^$")
+    end
+
+    -- `count` → repeat the benchmark N times (`-count=N`)
+    if opts.count ~= 0 then
+        table.insert(cmd, "-count=" .. opts.count)
+    end
+
+    table.insert(cmd, path)
+
+    vim.g.last_bench_command = table.concat(cmd, " ")
+    vim.cmd.Dispatch { "-compiler=make", vim.g.last_bench_command }
+end
+
+vim.api.nvim_buf_create_user_command(0, "GoBenchAll", function(opts)
+    run_go_bench("./...", ".", opts)
+end, {
+    desc = "run benchmarks for all packages",
+    bang = true,
+    count = 0,
+})
+
+vim.api.nvim_buf_create_user_command(0, "GoBenchPackage", function(opts)
+    run_go_bench(vim.fn.expand "%:p:h", ".", opts)
+end, {
+    desc = "run benchmarks for the current package",
+    bang = true,
+    count = 0,
+})
+
+vim.api.nvim_buf_create_user_command(0, "GoBenchFile", function(opts)
+    run_go_bench(vim.fn.expand "%:.", ".", opts)
+end, {
+    desc = "run benchmarks for the current file",
+    bang = true,
+    count = 0,
+})
+
+--- Run a single benchmark under the cursor.
+--- It extracts the benchmark name from the nearest function
+--- declaration that starts with `Benchmark`.
+vim.api.nvim_buf_create_user_command(0, "GoBenchFunction", function(opts)
+    local cwd = vim.fn.expand "%:p:h"
+    local node = vim.treesitter.get_node()
+    while node do
+        if node:type() == "function_declaration" then
+            local name_node = node:field("name")[1]
+            if name_node then
+                local bufnr = vim.api.nvim_get_current_buf()
+                local name = vim.treesitter.get_node_text(name_node, bufnr)
+                if name:match("^Benchmark") then
+                    run_go_bench(cwd, "^" .. name .. "$", opts)
+                    return
+                end
+            end
+        end
+        node = node:parent()
+    end
+    vim.notify("No benchmark function found under cursor", vim.log.levels.WARN)
+end, {
+    desc = "run benchmark for the function under cursor",
+    bang = true,
+    count = 0,
+})
+
+vim.api.nvim_buf_create_user_command(0, "GoBenchLast", function(opts)
+    if vim.g.last_bench_command then
+        vim.cmd.Dispatch { "-compiler=make", vim.g.last_bench_command }
+    else
+        vim.notify("No previous benchmark command to run", vim.log.levels.WARN)
+    end
+end, {
+    desc = "re‑run the last benchmark command",
+    bang = true,
+    count = 0,
+})
+
+vim.keymap.set("n", "<localleader>ba", "<cmd>GoBenchAll<cr>", {
+    desc = "run all benchmarks",
+    buffer = true,
+})
+vim.keymap.set("n", "<localleader>bA", "<cmd>GoBenchAll!<cr>", {
+    desc = "run all benchmarks (skip tests)",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>bp", "<cmd>GoBenchPackage<cr>", {
+    desc = "run package benchmarks",
+    buffer = true,
+})
+vim.keymap.set("n", "<localleader>bP", "<cmd>GoBenchPackage!<cr>", {
+    desc = "run package benchmarks (skip tests)",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>bf", "<cmd>GoBenchFile<cr>", {
+    desc = "run file benchmarks",
+    buffer = true,
+})
+vim.keymap.set("n", "<localleader>bF", "<cmd>GoBenchFile!<cr>", {
+    desc = "run file benchmarks (skip tests)",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>bb", "<cmd>GoBenchFunction<cr>", {
+    desc = "run benchmark under cursor",
+    buffer = true,
+})
+vim.keymap.set("n", "<localleader>bB", "<cmd>GoBenchFunction!<cr>", {
+    desc = "run benchmark under cursor (skip tests)",
+    buffer = true,
+})
+
+vim.keymap.set("n", "<localleader>bl", "<cmd>GoBenchLast<cr>", {
+    desc = "re‑run last benchmark command",
+    buffer = true,
+})
+
+
+
 --- Run a `go test` command for the given *path*.
 --- The function builds the command line, adds the common flags
 --- (`-short`, `-count=`) and finally dispatches it via `:Dispatch`.
@@ -127,37 +296,6 @@ end, {
 --- - `count` (integer) – the count supplied before the command
 --- (e.g. `3GoTestFile`). A value of `0` means “no count”.
 local function run_go_test(path, opts)
-    --- Extract the Go build tags declared in the current buffer.
-    ---
-    --- The function scans the whole buffer for lines that start with the
-    --- `//go:build` directive, removes that prefix, splits the remaining
-    --- expression on whitespace and returns each individual tag as an
-    --- element of a table.
-    ---
-    --- @return table string[] of strings, each being a single build tag found in
-    --- the buffer. If no `//go:build` lines are present, an empty table is
-    --- returned.
-    local function get_build_tags()
-        local build_tags = {}
-        local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-
-        local core = require "ilyasyoy.functions.core"
-        for _, line in ipairs(lines) do
-            if core.string_has_prefix(line, "//go:build", true) then
-                line = core.string_strip_prefix(line, "//go:build")
-                local tags = core.string_split(line, " ")
-
-                for _, tag in ipairs(tags) do
-                    if tag ~= "" then
-                        table.insert(build_tags, tag)
-                    end
-                end
-            end
-        end
-
-        return build_tags
-    end
-
     local base_go_test = "go test -fullpath"
     if vim.fn.executable "gotestsum" then
         base_go_test = "gotestsum --format testname -- -fullpath"
