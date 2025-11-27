@@ -297,10 +297,6 @@ vim.keymap.set("n", "<localleader>bl", "<cmd>GoBenchLast<cr>", {
 --- (e.g. `3GoTestFile`). A value of `0` means “no count”.
 local function run_go_test(path, opts)
     local base_go_test = "go test -fullpath"
-    if vim.fn.executable "gotestsum" then
-        base_go_test = "gotestsum --format testname -- -fullpath"
-    end
-
     local tags = get_build_tags()
     if #tags > 0 then
         -- I also add -v cause I want to see the output of hard tests as they go.
