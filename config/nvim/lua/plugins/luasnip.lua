@@ -7,17 +7,37 @@ return {
         config = function()
             local ls = require "luasnip"
 
+            vim.keymap.set("i", "<C-f>", function()
+                if ls.expandable() then
+                    vim.schedule(function()
+                        ls.expand()
+                    end)
+                else
+                    return "<C-f>"
+                end
+            end, {
+                expr = true
+            })
+
             vim.keymap.set("i", "<C-l>", function()
                 if ls.choice_active() then
                     ls.change_choice(1)
+                else
+                    return "<C-l>"
                 end
-            end)
+            end, {
+                expr = true
+            })
 
             vim.keymap.set("i", "<C-h>", function()
                 if ls.choice_active() then
                     ls.change_choice(-1)
+                else
+                    return "<C-h>"
                 end
-            end)
+            end, {
+                expr = true
+            })
 
             require("luasnip.loaders.from_snipmate").lazy_load()
             require("luasnip.loaders.from_lua").lazy_load {
