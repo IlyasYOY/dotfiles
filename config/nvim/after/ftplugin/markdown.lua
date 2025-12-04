@@ -1,5 +1,6 @@
 vim.opt_local.spell = true
 vim.opt_local.wrap = true
+vim.bo.formatprg = "mdsf format --stdin --log-level=off"
 
 vim.api.nvim_buf_create_user_command(0, "AIChatMDCreateTitle", function()
     local filename = vim.api.nvim_buf_get_name(0)

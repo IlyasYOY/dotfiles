@@ -31,6 +31,7 @@ return {
                     "lua-language-server",
                     "luacheck",
                     "markdownlint",
+                    "mdsf",
                     "prettier",
                     "protolint",
                     "pylint",
