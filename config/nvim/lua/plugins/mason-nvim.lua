@@ -1,6 +1,7 @@
 return {
     {
         "williamboman/mason.nvim",
+        event = "VeryLazy",
         config = function()
             local mason = require "mason"
 

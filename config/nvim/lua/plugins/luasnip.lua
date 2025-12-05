@@ -1,6 +1,12 @@
 return {
     {
         "L3MON4D3/LuaSnip",
+        ft = {
+            "go",
+            "java",
+            "lua",
+            "markdown",
+        },
         dependencies = {
             "honza/vim-snippets",
         },

@@ -1,7 +1,7 @@
 return {
     {
         "mbbill/undotree",
-        lazy = true,
+        event = "VeryLazy",
         keys = {
             "<leader>ut",
         },

@@ -1,6 +1,7 @@
 return {
     {
         "tpope/vim-fugitive",
+        event = "VeryLazy",
         dependencies = {
             "shumphrey/fugitive-gitlab.vim",
             "tommcdo/vim-fubitive",
