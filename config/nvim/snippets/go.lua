@@ -82,7 +82,7 @@ return {
         "trun",
         fmt(
             [[
-        t.Run("{}", func(t *testing.T) {{
+        t.Run({}, func(t *testing.T) {{
             {}
         }})
         ]],

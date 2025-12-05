@@ -19,6 +19,30 @@ return {
                 expr = true
             })
 
+            vim.keymap.set("i", "<C-j>", function()
+                if ls.expandable() then
+                    vim.schedule(function()
+                        ls.expand()
+                    end)
+                elseif ls.locally_jumpable(1) then
+                    ls.expand_or_jump()
+                else
+                    return "<C-j>"
+                end
+            end, {
+                expr = true
+            })
+
+            vim.keymap.set("i", "<C-k>", function()
+                if ls.jumpable(-1) then
+                    ls.jump(-1)
+                else
+                    return "<C-k>"
+                end
+            end, {
+                expr = true
+            })
+
             vim.keymap.set("i", "<C-l>", function()
                 if ls.choice_active() then
                     ls.change_choice(1)
