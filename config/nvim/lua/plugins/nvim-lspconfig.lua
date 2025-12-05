@@ -5,10 +5,23 @@ end
 local opts = { noremap = true, silent = true }
 
 local function lsp_attach(data)
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap = true, silent = true, buffer = data.buf }
+    vim.lsp.completion.enable(true, data.data.client_id, data.buf)
 
-    vim.keymap.set("n", "<C-s>", vim.lsp.buf.signature_help)
+    -- I need this to enable omnifunc expanding snippets.
+    -- <c-y> expands snippets with side effects; 
+    -- this is built-in neovim snippets & autocompletion functionality.
+    vim.keymap.set("i", "<CR>", function()
+        if vim.fn.pumvisible() then
+            return "<C-y>"
+        end
+        return "<CR>"
+    end, {
+        buffer = data.buf,
+        expr = true,
+    })
+
+    vim.keymap.set("n", "<C-s>", vim.lsp.buf.signature_help, bufopts)
     vim.keymap.set("n", "grs", function()
         vim.lsp.buf.typehierarchy "subtypes"
     end, described(bufopts, "go to subtypes"))
@@ -19,6 +32,12 @@ local function lsp_attach(data)
         "n",
         "grd",
         vim.lsp.buf.definition,
+        described(bufopts, "go to definitions")
+    )
+    vim.keymap.set(
+        "n",
+        "grd",
+        vim.lsp.buf.declaration,
         described(bufopts, "go to definitions")
     )
 
@@ -50,7 +69,6 @@ local function config_go()
     vim.lsp.config("gopls", {
         settings = {
             gopls = {
-                buildFlags = { "-tags=e2e,integration" },
                 codelenses = {
                     test = true,
                     gc_details = true,
