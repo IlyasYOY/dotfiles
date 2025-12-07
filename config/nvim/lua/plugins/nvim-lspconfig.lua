@@ -9,7 +9,7 @@ local function lsp_attach(data)
     vim.lsp.completion.enable(true, data.data.client_id, data.buf)
 
     -- I need this to enable omnifunc expanding snippets.
-    -- <c-y> expands snippets with side effects; 
+    -- <c-y> expands snippets with side effects;
     -- this is built-in neovim snippets & autocompletion functionality.
     vim.keymap.set("i", "<CR>", function()
         if vim.fn.pumvisible() ~= 0 then
@@ -109,6 +109,7 @@ end
 return {
     {
         "neovim/nvim-lspconfig",
+        event = "VeryLazy",
         dependencies = {
             "folke/lazydev.nvim",
         },
