@@ -14,18 +14,6 @@ return {
         config = function()
             local ls = require "luasnip"
 
-            vim.keymap.set("i", "<C-f>", function()
-                if ls.expandable() then
-                    vim.schedule(function()
-                        ls.expand()
-                    end)
-                else
-                    return "<C-f>"
-                end
-            end, {
-                expr = true
-            })
-
             vim.keymap.set("i", "<C-j>", function()
                 if ls.expandable() then
                     vim.schedule(function()
