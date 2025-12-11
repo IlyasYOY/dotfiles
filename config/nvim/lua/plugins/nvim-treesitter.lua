@@ -5,6 +5,7 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
+            "nvim-treesitter/nvim-treesitter-context",
         },
         build = function()
             local ts_update = require("nvim-treesitter.install").update {
@@ -206,6 +207,17 @@ return {
 
             vim.treesitter.language.register("javascript", "tsx")
             vim.treesitter.language.register("typescript.tsc", "tsx")
+
+            require("treesitter-context").setup {
+                enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+                max_lines = 1, -- How many lines the window should span. Values <= 0 mean no limit.
+                line_numbers = true,
+            }
+
+
+            vim.keymap.set("n", "[c", function()
+                require("treesitter-context").go_to_context(vim.v.count1)
+            end, { silent = true })
         end,
     },
 }
