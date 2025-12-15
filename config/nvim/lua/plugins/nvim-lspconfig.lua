@@ -93,7 +93,6 @@ local function config_go()
                 gofumpt = true,
                 completeUnimported = true,
                 usePlaceholders = false,
-                diagnosticsDelay = "250ms",
                 staticcheck = true,
                 hints = hints,
                 analyses = {
@@ -162,11 +161,6 @@ return {
             end, described(bufopts, "organize code"))
 
             vim.keymap.set("n", "<leader>lr", "<cmd>LspRestart<cr>")
-
-            vim.lsp.handlers["textDocument/hover"] =
-                vim.lsp.with(vim.lsp.handlers.hover, {
-                    border = "single",
-                })
         end,
     },
 }
