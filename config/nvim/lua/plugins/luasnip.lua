@@ -14,6 +14,20 @@ return {
         config = function()
             local ls = require "luasnip"
 
+            vim.keymap.set("i", "<Tab>", function()
+                if ls.expandable() then
+                    vim.schedule(function()
+                        ls.expand()
+                    end)
+                elseif ls.locally_jumpable(1) then
+                    ls.expand_or_jump()
+                else
+                    return "<Tab>"
+                end
+            end, {
+                expr = true
+            })
+
             vim.keymap.set("i", "<C-j>", function()
                 if ls.expandable() then
                     vim.schedule(function()
@@ -62,9 +76,22 @@ return {
             require("luasnip.loaders.from_lua").lazy_load {
                 paths = { "~/.config/nvim/snippets/" },
             }
-            ls.parser.parse_snippet(
-                { trig = "lsp" },
-                "$1 is ${2|hard,easy,challenging|}"
+
+
+            local random = math.random
+            local function uuid()
+                local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+                return string.gsub(template, '[xy]', function(c)
+                    local v = (c == 'x') and random(0, 0xf) or random(8, 0xb)
+                    return string.format('%x', v)
+                end)
+            end
+
+            ls.add_snippets(
+                "all",
+                {
+                    ls.s({ trig = "uid", wordTrig = true }, { ls.f(uuid), ls.i(0) })
+                }
             )
         end,
     },
