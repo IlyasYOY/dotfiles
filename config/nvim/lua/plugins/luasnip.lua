@@ -19,6 +19,8 @@ return {
                     vim.schedule(function()
                         ls.expand()
                     end)
+                elseif ls.locally_jumpable(1) then
+                    ls.expand_or_jump()
                 else
                     return "<Tab>"
                 end

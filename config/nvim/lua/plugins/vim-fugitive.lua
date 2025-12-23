@@ -12,7 +12,7 @@ return {
             vim.keymap.set(
                 "n",
                 "<leader>gg",
-                ":vertical Git<CR>",
+                ":Gedit :<CR>",
                 { desc = "Open fugitive UI window", silent = true }
             )
 
