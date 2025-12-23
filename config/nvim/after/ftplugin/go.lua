@@ -102,13 +102,13 @@ local function setup_linters()
             and (version:match "version v2.0." or version:match "version 2.0.")
         then
             command =
-                "run --fix=false --show-stats=false --output.tab.path=stdout"
+            "run --fix=false --show-stats=false --output.tab.path=stdout"
         elseif
             version
             and (version:match "version v2" or version:match "version 2")
         then
             command =
-                "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
+            "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
         end
 
         local core = require "ilyasyoy.functions.core"
@@ -500,6 +500,51 @@ local function setup_test()
     )
 end
 
+local function setup_build()
+    vim.api.nvim_buf_create_user_command(0, "GoBuildAll", function()
+        local tags = get_build_tags()
+        local cmd = "go build"
+        if #tags > 0 then
+            cmd = cmd .. ' -tags "' .. table.concat(tags, " ") .. '"'
+        end
+        cmd = cmd .. " ./..."
+        vim.cmd.Dispatch { "-compiler=make", cmd }
+    end, { desc = "build all packages" })
+    vim.keymap.set("n", "<localleader>ba", "<cmd>GoBuildAll<cr>", {
+        desc = "build all packages",
+        buffer = true,
+    })
+
+    vim.api.nvim_buf_create_user_command(0, "GoBuildPackage", function()
+        local tags = get_build_tags()
+        local cmd = "go build"
+        if #tags > 0 then
+            cmd = cmd .. ' -tags "' .. table.concat(tags, " ") .. '"'
+        end
+        cmd = cmd .. " ."
+        vim.cmd.Dispatch { "-compiler=make", cmd }
+    end, { desc = "build current package" })
+    vim.keymap.set("n", "<localleader>bp", "<cmd>GoBuildPackage<cr>", {
+        desc = "build current package",
+        buffer = true,
+    })
+
+    vim.api.nvim_buf_create_user_command(0, "GoBuildFile", function()
+        local tags = get_build_tags()
+        local cmd = "go build"
+        if #tags > 0 then
+            cmd = cmd .. ' -tags "' .. table.concat(tags, " ") .. '"'
+        end
+        local file = vim.fn.expand "%:p"
+        cmd = cmd .. " " .. file
+        vim.cmd.Dispatch { "-compiler=make", cmd }
+    end, { desc = "build current file" })
+    vim.keymap.set("n", "<localleader>bf", "<cmd>GoBuildFile<cr>", {
+        desc = "build current file",
+        buffer = true,
+    })
+end
+
 local function setup_lsp_actions()
     vim.keymap.set("n", "<localleader>jl", function()
         vim.lsp.buf.code_action {
@@ -662,5 +707,6 @@ end
 setup_linters()
 setup_bench()
 setup_test()
+setup_build()
 setup_lsp_actions()
 setup_ai()
