@@ -1,30 +1,37 @@
-vim.keymap.set("n", "dt", ":Gtabedit <Plug><cfile><Bar>Gvdiffsplit<CR>", {
-    buffer = true,
-})
-
-vim.keymap.set(
-    "n",
-    "<localleader>rs",
-    [[<cmd>execute ':Git reset --soft ' . expand('<cWORD>') <CR>]],
-    {
+local function setup_keymaps()
+    vim.keymap.set("n", "dt", ":Gtabedit <Plug><cfile><Bar>Gvdiffsplit<CR>", {
         buffer = true,
-    }
-)
+    })
 
-vim.api.nvim_buf_create_user_command(
-    0,
-    "AIChatGitReviewUnstaged",
-    function(opts)
-        vim.cmd "tabnew | r!git diff --no-ext-diff | aichat --role \\%diff-comments\\% "
+    vim.keymap.set(
+        "n",
+        "<localleader>rs",
+        [[<cmd>execute ':Git reset --soft ' . expand('<cWORD>') <CR>]],
+        {
+            buffer = true,
+        }
+    )
+end
+
+local function setup_ai()
+    vim.api.nvim_buf_create_user_command(
+        0,
+        "AIChatGitReviewUnstaged",
+        function(opts)
+            vim.cmd "tabnew | r!git diff --no-ext-diff | aichat --role \\%diff-comments\\% "
+            vim.opt.filetype = "markdown"
+        end,
+        {
+            range = true,
+            desc = "Review unstaged changes with AI Chat",
+        }
+    )
+
+    vim.api.nvim_buf_create_user_command(0, "AIChatGitReviewStaged", function(opts)
+        vim.cmd "tabnew | r!git diff --no-ext-diff --cached | aichat --role \\%diff-comments\\% "
         vim.opt.filetype = "markdown"
-    end,
-    {
-        range = true,
-        desc = "Review unstaged changes with AI Chat",
-    }
-)
+    end, { range = true, desc = "Review staged changes with AI Chat" })
+end
 
-vim.api.nvim_buf_create_user_command(0, "AIChatGitReviewStaged", function(opts)
-    vim.cmd "tabnew | r!git diff --no-ext-diff --cached | aichat --role \\%diff-comments\\% "
-    vim.opt.filetype = "markdown"
-end, { range = true, desc = "Review staged changes with AI Chat" })
+setup_keymaps()
+setup_ai()

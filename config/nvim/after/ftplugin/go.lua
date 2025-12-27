@@ -49,21 +49,23 @@ vim.api.nvim_buf_create_user_command(
     { desc = "replace assert with suite assert" }
 )
 
-vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
-    local cwf = vim.fn.expand "%:."
-    if string.find(cwf, "_test%.go$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go"))
-    elseif string.find(cwf, "%.go$") then
-        vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go"))
-    end
-end, {
-    desc = "toggle between test and source code",
-})
+local function setup_toggle()
+    vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
+        local cwf = vim.fn.expand "%:."
+        if string.find(cwf, "_test%.go$") then
+            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go"))
+        elseif string.find(cwf, "%.go$") then
+            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go"))
+        end
+    end, {
+        desc = "toggle between test and source code",
+    })
 
-vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
-    desc = "toggle between test and source code",
-    buffer = true,
-})
+    vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
+        desc = "toggle between test and source code",
+        buffer = true,
+    })
+end
 
 vim.api.nvim_buf_create_user_command(0, "GoFzfLuaInGoMod", function()
     local fzf = require "fzf-lua"
@@ -710,3 +712,4 @@ setup_test()
 setup_build()
 setup_lsp_actions()
 setup_ai()
+setup_toggle()
