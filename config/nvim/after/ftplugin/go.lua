@@ -1,3 +1,5 @@
+vim.treesitter.start()
+
 vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"

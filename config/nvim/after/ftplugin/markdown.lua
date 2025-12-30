@@ -1,3 +1,5 @@
+vim.treesitter.start()
+
 vim.opt_local.spell = true
 vim.opt_local.wrap = true
 vim.bo.formatprg = "mdsf format --stdin --log-level=off"

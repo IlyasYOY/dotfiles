@@ -1,3 +1,5 @@
+vim.treesitter.start()
+
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
 local function setup_test()

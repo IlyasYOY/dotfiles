@@ -1,3 +1,5 @@
+vim.treesitter.start()
+
 local core = require "ilyasyoy.functions.core"
 
 local function setup_linters()

@@ -1,3 +1,5 @@
+vim.treesitter.start()
+
 vim.bo.formatprg = "stylua -"
 
 local function setup_toggle()

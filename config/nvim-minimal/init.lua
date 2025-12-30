@@ -30,17 +30,14 @@ vim.g.maplocalleader = ","
 
 require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
-    build = function()
-        local ts_update = require("nvim-treesitter.install").update {
-            with_sync = true,
-        }
-        ts_update()
-    end,
     config = function()
-        local ts_config = require "nvim-treesitter.configs"
-
-        ts_config.setup {
-            ensure_installed = "all",
+        local ts = require "nvim-treesitter"
+        ts.install {
+            -- languages
+            "lua",
+            "luadoc",
+            "vim",
+            "vimdoc",
         }
     end,
 }, {
