@@ -56,6 +56,19 @@ return {
                             )
                         end)
 
+                        vim.keymap.set({ "x", "o" }, "af", function()
+                            ts_select.select_textobject(
+                                "@function.outer",
+                                "textobjects"
+                            )
+                        end)
+                        vim.keymap.set({ "x", "o" }, "if", function()
+                            ts_select.select_textobject(
+                                "@function.inner",
+                                "textobjects"
+                            )
+                        end)
+
                         vim.keymap.set({ "x", "o" }, "at", function()
                             ts_select.select_textobject(
                                 "@class.outer",
