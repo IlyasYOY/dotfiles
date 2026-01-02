@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+# Helper functions
+
+is_git_repo() {
+  git rev-parse --git-dir >/dev/null 2>&1
+}
+
+get_project_name() {
+  basename "$(git rev-parse --show-toplevel)"
+}
+
+get_default_branch() {
+  if git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
+    git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  else
+    # Attempt to set the symbolic ref from remote
+    if git remote set-head origin --auto >/dev/null 2>&1; then
+      # Retry symbolic-ref now that it's set
+      git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+    else
+      # Final fallback: detect from local remote branches
+      git branch -r | sed -n 's|origin/\(main\|master\).*|\1|p' | head -1
+    fi
+  fi
+}
+
+get_accumulated_prefix() {
+  local project_name="$1"
+  local current_dir="$(basename "$PWD")"
+  if [[ "$current_dir" == "$project_name" ]]; then
+    echo ""
+  else
+    local suffix="${current_dir#$project_name-}"
+    echo "${suffix}-"
+  fi
+}
+
+# Main logic
+
+if [[ $# -lt 1 ]]; then
+  echo "projector: A tool for managing git worktrees and branches in a project setup."
+  echo ""
+  echo "Usage: projector <command> [args]"
+  echo ""
+  echo "Commands:"
+  echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
+  echo "  sync                    Pull the latest changes from the default branch of the 'source' remote (if configured)."
+  echo "  feature <name>          Create a new git worktree for a feature branch (feature/<name>) and switch to it."
+  echo "                          The worktree path is derived from the project name and current directory."
+  echo ""
+  echo "Notes:"
+  echo "  - This script assumes you're in a git repository with 'origin' remote configured."
+  echo "  - For commands that change directories (e.g., 'feature'), source the script to persist the change:"
+  echo "    Example: source projector feature myfeature   # or: . projector feature myfeature"
+  echo "    Without sourcing, the directory change won't affect your current shell."
+  echo ""
+  echo "Examples:"
+  echo "  projector pull          # Update from origin's default branch"
+  echo "  source projector feature auth  # Create worktree for 'feature/auth' and switch to it"
+  exit 1
+fi
+
+command="$1"
+shift
+
+if ! is_git_repo; then
+  echo "Error: Not in a git repository"
+  exit 1
+fi
+
+case "$command" in
+  pull)
+    if [[ $# -ne 0 ]]; then
+      echo "Error: 'pull' takes no arguments"
+      exit 1
+    fi
+    default_branch="$(get_default_branch)"
+    echo "Pulling from origin/$default_branch..."
+    git pull origin "$default_branch"
+    ;;
+  sync)
+    if [[ $# -ne 0 ]]; then
+      echo "Error: 'sync' takes no arguments"
+      exit 1
+    fi
+    if ! git remote | grep -q source; then
+      echo "Warning: No 'source' remote found, skipping sync"
+      exit 0
+    fi
+    default_branch="$(get_default_branch)"
+    echo "Syncing from source/$default_branch..."
+    git pull source "$default_branch"
+    ;;
+  feature)
+    if [[ $# -ne 1 ]]; then
+      echo "Error: 'feature' requires exactly one argument: <name>"
+      exit 1
+    fi
+    name="$1"
+    project_name="$(get_project_name)"
+    accumulated_prefix="$(get_accumulated_prefix "$project_name")"
+    worktree_path="../${project_name}-${accumulated_prefix}${name}"
+    branch_name="feature/${name}"
+    current_branch="$(git branch --show-current)"
+    
+    if [[ -d "$worktree_path" ]]; then
+      echo "Warning: Worktree directory '$worktree_path' already exists. Reusing it."
+      cd "$worktree_path"
+      exit 0
+    fi
+    
+    if ! git show-ref --verify --quiet "refs/heads/$branch_name"; then
+      echo "Creating branch '$branch_name' from '$current_branch'..."
+      git branch "$branch_name" "$current_branch"
+    fi
+    
+    echo "Creating worktree '$worktree_path' for branch '$branch_name'..."
+    git worktree add "$worktree_path" "$branch_name"
+    cd "$worktree_path"
+    echo "Switched to worktree: $PWD"
+    ;;
+  *)
+    echo "Error: Unknown command '$command'"
+    echo "Available commands: pull, sync, feature <name>"
+    exit 1
+    ;;
+esac
