@@ -135,6 +135,53 @@ return {
                     setup_selects()
                     setup_moves()
                     setup_swaps()
+
+                    vim.api.nvim_create_autocmd('FileType', {
+                        pattern = {
+                            'go',
+                            'gomod',
+                            'gosum',
+                            'java',
+                            'lua',
+                            'markdown',
+                            'proto',
+                            'python',
+                            'query',
+                            'sql',
+                            'typescript',
+                            'vim',
+                        },
+                        callback = function()
+                            vim.treesitter.start()
+                        end,
+                    })
+
+                    vim.api.nvim_create_autocmd('FileType', {
+                        pattern = {
+                            'go',
+                            'gomod',
+                            'gosum',
+                            'java',
+                            'lua',
+                            'markdown',
+                            'proto',
+                            'python',
+                            'query',
+                            'sql',
+                            'typescript',
+                            'vim',
+                        },
+                        callback = function()
+                            vim.treesitter.start()
+
+                            vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+                            vim.wo[0][0].foldmethod = 'expr'
+                            vim.o.foldcolumn = "1"
+                            vim.o.foldlevel = 99
+                            vim.o.foldlevelstart = 99
+                            vim.o.foldenable = true
+                        end,
+                    })
                 end,
             },
             {

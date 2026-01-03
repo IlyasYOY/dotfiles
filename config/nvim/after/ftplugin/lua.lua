@@ -1,5 +1,9 @@
-vim.treesitter.start()
-
+vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.wo[0][0].foldmethod = 'expr'
+vim.o.foldcolumn = "1"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 vim.bo.formatprg = "stylua -"
 
 local function setup_toggle()
