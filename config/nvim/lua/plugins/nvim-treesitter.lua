@@ -136,26 +136,7 @@ return {
                     setup_moves()
                     setup_swaps()
 
-                    vim.api.nvim_create_autocmd('FileType', {
-                        pattern = {
-                            'go',
-                            'gomod',
-                            'gosum',
-                            'java',
-                            'lua',
-                            'markdown',
-                            'proto',
-                            'python',
-                            'query',
-                            'sql',
-                            'typescript',
-                            'vim',
-                        },
-                        callback = function()
-                            vim.treesitter.start()
-                        end,
-                    })
-
+                    local ts_group = vim.api.nvim_create_augroup("ilyasyoy-treesitter", {})
                     vim.api.nvim_create_autocmd('FileType', {
                         pattern = {
                             'go',
@@ -181,6 +162,7 @@ return {
                             vim.o.foldlevelstart = 99
                             vim.o.foldenable = true
                         end,
+                        group = ts_group,
                     })
                 end,
             },
