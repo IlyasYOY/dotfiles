@@ -440,8 +440,6 @@ local function setup_test()
 
     vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
         local cwf = vim.fn.expand "%:."
-        local cwd = vim.fn.expand "%:p:h"
-
         if not string.find(cwf, "_test%.go$") then
             vim.notify "not a test file"
             return
@@ -460,6 +458,7 @@ local function setup_test()
         if not test_name then
             vim.notify "test function was not found"
         elseif string.match(test_name, "^Test.+") then
+            local cwd = vim.fn.expand "%:p:h"
             run_go_test(cwd .. " -run " .. test_name, opts)
         end
     end, {
