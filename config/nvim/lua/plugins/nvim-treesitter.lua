@@ -23,59 +23,59 @@ return {
                         local ts_select =
                             require "nvim-treesitter-textobjects.select"
 
-                        vim.keymap.set({ "x", "o" }, "r=", function()
+                        vim.keymap.set({ "o", "x" }, "=r", function()
                             ts_select.select_textobject(
                                 "@assignment.rhs",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "x", "o" }, "aa", function()
+                        vim.keymap.set({ "o", "x" }, "aa", function()
                             ts_select.select_textobject(
                                 "@parameter.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "x", "o" }, "ia", function()
+                        vim.keymap.set({ "o", "x" }, "ia", function()
                             ts_select.select_textobject(
                                 "@parameter.inner",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "x", "o" }, "ai", function()
+                        vim.keymap.set({ "o", "x" }, "ai", function()
                             ts_select.select_textobject(
                                 "@conditional.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "x", "o" }, "ii", function()
+                        vim.keymap.set({ "o", "x" }, "ii", function()
                             ts_select.select_textobject(
                                 "@conditional.inner",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "x", "o" }, "af", function()
+                        vim.keymap.set({ "o", "x" }, "af", function()
                             ts_select.select_textobject(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "x", "o" }, "if", function()
+                        vim.keymap.set({ "o", "x" }, "if", function()
                             ts_select.select_textobject(
                                 "@function.inner",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "x", "o" }, "at", function()
+                        vim.keymap.set({ "o", "x" }, "at", function()
                             ts_select.select_textobject(
                                 "@class.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "x", "o" }, "it", function()
+                        vim.keymap.set({ "o", "x" }, "it", function()
                             ts_select.select_textobject(
                                 "@class.inner",
                                 "textobjects"
@@ -86,26 +86,26 @@ return {
                     local function setup_moves()
                         local ts_moves =
                             require "nvim-treesitter-textobjects.move"
-                        vim.keymap.set({ "n", "x", "o" }, "]f", function()
+                        vim.keymap.set({ "n", "o" }, "]f", function()
                             ts_moves.goto_next_start(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "n", "x", "o" }, "]F", function()
+                        vim.keymap.set({ "n", "o" }, "]F", function()
                             ts_moves.goto_next_end(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "n", "x", "o" }, "[f", function()
+                        vim.keymap.set({ "n", "o" }, "[f", function()
                             ts_moves.goto_previous_start(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "n", "x", "o" }, "[F", function()
+                        vim.keymap.set({ "n", "o" }, "[F", function()
                             ts_moves.goto_previous_end(
                                 "@function.outer",
                                 "textobjects"
@@ -142,6 +142,7 @@ return {
                             'go',
                             'gomod',
                             'gosum',
+                            'make',
                             'java',
                             'lua',
                             'markdown',
@@ -201,6 +202,7 @@ return {
                 "kotlin",
                 "lua",
                 "luadoc",
+                "make",
                 "proto",
                 "python",
                 "rust",
