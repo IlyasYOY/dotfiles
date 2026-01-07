@@ -8,7 +8,6 @@ return {
                 branch = "main",
                 config = function()
                     vim.g.no_plugin_maps = true
-
                     require("nvim-treesitter-textobjects").setup {
                         select = {
                             lookahead = true,
@@ -132,10 +131,6 @@ return {
                         end)
                     end
 
-                    setup_selects()
-                    setup_moves()
-                    setup_swaps()
-
                     local ts_group = vim.api.nvim_create_augroup("ilyasyoy-treesitter", {})
                     vim.api.nvim_create_autocmd('FileType', {
                         pattern = {
@@ -155,6 +150,11 @@ return {
                         },
                         callback = function()
                             vim.treesitter.start()
+
+                            setup_selects()
+                            setup_moves()
+                            setup_swaps()
+
 
                             vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
                             vim.wo[0][0].foldmethod = 'expr'
