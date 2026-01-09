@@ -30,6 +30,7 @@ update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/git-link.nvim"
     update_repo "$PERSONAL_PROJECTS_DIR/obs.nvim"
     update_repo "$PERSONAL_PROJECTS_DIR/theme.nvim"
+    update_repo "$PERSONAL_PROJECTS_DIR/monotask"
 
     update_repo "$NOTES_DIR"
 
