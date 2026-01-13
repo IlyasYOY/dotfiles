@@ -12,6 +12,7 @@ local function setup_ai()
         return ":AIChatGitGenerateCommit<CR>"
     end, {
         expr = true,
+        buffer = true,
         desc = "Generate AI commit message",
     })
 end

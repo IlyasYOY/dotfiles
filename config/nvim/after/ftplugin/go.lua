@@ -340,8 +340,7 @@ local function setup_test()
         if opts.bang then
             table.insert(cmd_parts, "-short")
         end
-        -- TODO: for now it works only for commands, I have to add the separate
-        -- logic to support this in keymaps.
+        -- TODO: for now it works only for commands, I have to add the separate logic to support this in keymaps.
         if opts.count ~= 0 then
             table.insert(cmd_parts, "-count=" .. opts.count)
             table.insert(cmd_parts, "-shuffle=on")
