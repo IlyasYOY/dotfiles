@@ -51,3 +51,19 @@ vim.keymap.set("v", "<leader>cp", function()
     vim.fn.setreg("+", link)
     vim.notify("Copied: " .. link)
 end, { desc = "Copy relative file path with line numbers to clipboard" })
+
+-- Monotask integration
+local function run_monotask(path)
+    path = path or '.'
+    local cmd = 'monotask ' .. vim.fn.shellescape(path)
+    vim.cmd.Dispatch { "-compiler=make", cmd }
+end
+
+vim.api.nvim_create_user_command('Monotask', function(opts)
+    run_monotask(opts.args ~= '' and opts.args or nil)
+end, {
+    nargs = '?',
+    desc = 'Run monotask on path (default: current dir) and populate quickfix'
+})
+
+vim.keymap.set('n', '<leader>mt', function() run_monotask() end, {desc = 'Run monotask on current directory'})
