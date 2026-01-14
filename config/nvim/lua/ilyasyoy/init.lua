@@ -1,6 +1,6 @@
 vim.cmd "source ~/.vimrc"
 
-vim.opt.completeopt = { "fuzzy", "popup", "menu", }
+vim.opt.completeopt = { "fuzzy", "popup", "menu" }
 
 vim.g.netrw_banner = 0    -- Now we won't have bloated top of the window
 vim.g.netrw_liststyle = 3 -- Now it will be a tree view
@@ -54,16 +54,22 @@ end, { desc = "Copy relative file path with line numbers to clipboard" })
 
 -- Monotask integration
 local function run_monotask(path)
-    path = path or '.'
-    local cmd = 'monotask ' .. vim.fn.shellescape(path)
+    path = path or "."
+    local cmd = "monotask " .. vim.fn.shellescape(path)
     vim.cmd.Dispatch { "-compiler=make", cmd }
 end
 
-vim.api.nvim_create_user_command('Monotask', function(opts)
-    run_monotask(opts.args ~= '' and opts.args or nil)
+vim.api.nvim_create_user_command("Monotask", function(opts)
+    run_monotask(opts.args ~= "" and opts.args or nil)
 end, {
-    nargs = '?',
-    desc = 'Run monotask on path (default: current dir) and populate quickfix'
+    nargs = "?",
+    desc = "Run monotask on path (default: current dir) and populate quickfix",
 })
 
-vim.keymap.set('n', '<leader>mt', function() run_monotask() end, {desc = 'Run monotask on current directory'})
+vim.keymap.set("n", "<leader>mt", function()
+    run_monotask()
+end, { desc = "Run monotask on current directory" })
+
+vim.keymap.set("n", "<leader>mT", function()
+    run_monotask(vim.fn.expand "%")
+end, { desc = "Run monotask on current file" })
