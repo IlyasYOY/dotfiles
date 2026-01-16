@@ -29,8 +29,14 @@ vim.keymap.set("n", "<leader>cp", function()
     local path = vim.fn.expand "%:."
     path = "./" .. path
     vim.fn.setreg("+", path)
-    vim.notify("Copied: " .. path)
+    vim.notify("copied: " .. path)
 end, { desc = "Copy relative file path to clipboard" })
+
+vim.keymap.set("n", "<leader>cP", function()
+    local abs_path = vim.fn.expand "%:p"
+    vim.fn.setreg("+", abs_path)
+    vim.notify("copied absolute path: " .. abs_path)
+end, { desc = "Copy absolute file path to clipboard" })
 
 vim.keymap.set("v", "<leader>cp", function()
     vim.api.nvim_feedkeys(
@@ -41,16 +47,33 @@ vim.keymap.set("v", "<leader>cp", function()
     local start_line = vim.fn.line "'<"
     local end_line = vim.fn.line "'>"
     local path = vim.fn.expand "%:."
-    local link = path
     if start_line ~= end_line then
-        link = link .. ":" .. start_line .. "-" .. end_line
+        path = path .. ":" .. start_line .. "-" .. end_line
     else
-        link = link .. ":" .. start_line
+        path = path .. ":" .. start_line
     end
     path = "./" .. path
-    vim.fn.setreg("+", link)
-    vim.notify("Copied: " .. link)
+    vim.fn.setreg("+", path)
+    vim.notify("copied: " .. path)
 end, { desc = "Copy relative file path with line numbers to clipboard" })
+
+vim.keymap.set("v", "<leader>cP", function()
+    vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+        "nx",
+        false
+    )
+    local path = vim.fn.expand "%:p"
+    local start_line = vim.fn.line "'<"
+    local end_line = vim.fn.line "'>"
+    if start_line ~= end_line then
+        path = path .. ":" .. start_line .. "-" .. end_line
+    else
+        path = path .. ":" .. start_line
+    end
+    vim.fn.setreg("+", path)
+    vim.notify("Copied: " .. path)
+end, { desc = "Copy absolute file path with line numbers to clipboard" })
 
 -- Monotask integration
 local function run_monotask(path)
