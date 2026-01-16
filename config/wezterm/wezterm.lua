@@ -8,7 +8,7 @@ config.font = wezterm.font "0xProto Nerd Font"
 config.font = wezterm.font "Atkinson Hyperlegible Mono"
 config.font = wezterm.font "GoMono Nerd Font"
 
-config.font_size = 15
+config.font_size = 18
 -- config.color_scheme = "alacritty"
 config.color_scheme = "Bamboo"
 config.colors = {
