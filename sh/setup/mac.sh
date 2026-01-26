@@ -61,7 +61,6 @@ setup_mac_using_brew() {
         docker-compose
         fd
         ffmpeg
-        fswatch
         fzf
         gh
         go
@@ -83,7 +82,6 @@ setup_mac_using_brew() {
         sst/tap/opencode
         syncthing
         tmux
-        tmuxp
         tree
         vim
         wget
