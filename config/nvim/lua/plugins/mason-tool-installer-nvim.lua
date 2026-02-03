@@ -20,7 +20,6 @@ return {
                     "goimports",
                     "golangci-lint",
                     "golines",
-                    "gomodifytags",
                     "gopls",
                     "gotestsum",
                     "isort",

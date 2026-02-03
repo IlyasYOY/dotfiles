@@ -70,48 +70,13 @@ local function lsp_attach(data)
 end
 
 local function config_go()
-    local hints = vim.empty_dict()
-    hints.assignVariableTypes = true
-    hints.compositeLiteralFields = true
-    hints.compositeLiteralTypes = true
-    hints.constantValues = true
-    hints.functionTypeParameters = true
-    hints.parameterNames = true
-    hints.rangeVariableTypes = true
     vim.lsp.config("gopls", {
         settings = {
             gopls = {
-                codelenses = {
-                    test = true,
-                    gc_details = true,
-                    generate = true,
-                    run_govulncheck = true,
-                    tidy = true,
-                    upgrade_dependency = true,
-                    vendor = true,
-                },
                 gofumpt = true,
                 completeUnimported = true,
                 usePlaceholders = false,
                 staticcheck = true,
-                hints = hints,
-                analyses = {
-                    recursiveiter = true,
-                    maprange = true,
-                    framepointer = true,
-                    modernize = true,
-                    nilness = true,
-                    hostport = true,
-                    gofix = true,
-                    sigchanyzer = true,
-                    stdversion = true,
-                    unreachable = true,
-                    unusedfunc = true,
-                    unusedparams = true,
-                    unusedvariable = true,
-                    unusedwrite = true,
-                    useany = true,
-                },
             },
         },
     })
@@ -125,7 +90,7 @@ return {
             "folke/lazydev.nvim",
         },
         config = function()
-            -- HACK: This sucker dosn't work if I add it as a simple plugin due
+            -- BUG: This sucker dosn't work if I add it as a simple plugin due
             -- to lazy.nvim's 'lazy' nature.
             require("lazydev").setup()
 
@@ -138,6 +103,7 @@ return {
                 "basedpyright",
                 "gopls",
                 "kotlin_lsp",
+                "dartls",
             } do
                 vim.lsp.enable(server)
             end
