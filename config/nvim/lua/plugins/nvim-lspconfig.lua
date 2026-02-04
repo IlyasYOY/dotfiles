@@ -86,14 +86,7 @@ return {
     {
         "neovim/nvim-lspconfig",
         event = "VeryLazy",
-        dependencies = {
-            "folke/lazydev.nvim",
-        },
         config = function()
-            -- BUG: This sucker dosn't work if I add it as a simple plugin due
-            -- to lazy.nvim's 'lazy' nature.
-            require("lazydev").setup()
-
             config_go()
 
             for _, server in ipairs {

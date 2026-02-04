@@ -131,22 +131,24 @@ return {
                         end)
                     end
 
-                    local ts_group = vim.api.nvim_create_augroup("ilyasyoy-treesitter", {})
-                    vim.api.nvim_create_autocmd('FileType', {
+                    local ts_group =
+                        vim.api.nvim_create_augroup("ilyasyoy-treesitter", {})
+                    vim.api.nvim_create_autocmd("FileType", {
                         pattern = {
-                            'go',
-                            'gomod',
-                            'gosum',
-                            'make',
-                            'java',
-                            'lua',
-                            'markdown',
-                            'proto',
-                            'python',
-                            'query',
-                            'sql',
-                            'typescript',
-                            'vim',
+                            "go",
+                            "gomod",
+                            "gosum",
+                            "java",
+                            "lua",
+                            "make",
+                            "markdown",
+                            "proto",
+                            "python",
+                            "query",
+                            "sql",
+                            "typescript",
+                            "vim",
+                            "yaml",
                         },
                         callback = function()
                             vim.treesitter.start()
@@ -155,13 +157,16 @@ return {
                             setup_moves()
                             setup_swaps()
 
-
-                            vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-                            vim.wo[0][0].foldmethod = 'expr'
+                            vim.wo[0][0].foldexpr =
+                                "v:lua.vim.treesitter.foldexpr()"
+                            vim.wo[0][0].foldmethod = "expr"
                             vim.o.foldcolumn = "1"
                             vim.o.foldlevel = 99
                             vim.o.foldlevelstart = 99
                             vim.o.foldenable = true
+
+                            vim.bo.indentexpr =
+                                "v:lua.require'nvim-treesitter'.indentexpr()"
                         end,
                         group = ts_group,
                     })
