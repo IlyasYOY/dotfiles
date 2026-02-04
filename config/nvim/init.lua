@@ -3,7 +3,4 @@
 pcall(require, "ilyasyoy.hidden")
 
 require "ilyasyoy.plugins"
-
-require "ilyasyoy.global"
 require "ilyasyoy"
-require "ilyasyoy.aichat"
