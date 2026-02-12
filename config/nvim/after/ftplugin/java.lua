@@ -39,7 +39,7 @@ end
 local function setup_test()
     vim.api.nvim_buf_create_user_command(0, "JavaTestAll", function()
         -- Run all tests in the project
-        local cmd = "./gradlew test"
+        local cmd = "./gradlew test --console=plain"
         vim.g.last_java_test_command = cmd
         vim.cmd.Dispatch { vim.g.last_java_test_command }
     end, {
@@ -79,7 +79,7 @@ local function setup_test()
     vim.api.nvim_buf_create_user_command(0, "JavaTestFunction", function()
         local cwf = vim.fn.expand "%:."
 
-        if not string.find(cwf, "Test%.java$") then
+        if not string.find(cwf, "Tests?%.java$") then
             vim.notify "Not a test file"
             return
         end
