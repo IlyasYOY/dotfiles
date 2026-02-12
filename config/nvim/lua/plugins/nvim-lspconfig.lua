@@ -64,6 +64,8 @@ local function lsp_attach(data)
         end, described(bufopts, "Toggle Inlay Hints"))
     end
 
+    client.server_capabilities.semanticTokensProvider = nil
+
     if client.name == "jdtls" then
         require("jdtls").setup_dap()
     end
