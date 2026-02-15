@@ -1,6 +1,6 @@
 {
     "Lua.diagnostics.globals": [
         "hs",
-        "vim",
+        "vim"
     ]
 }
