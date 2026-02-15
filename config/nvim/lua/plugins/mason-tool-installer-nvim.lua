@@ -39,6 +39,7 @@ return {
                     "sqlfluff",
                     "stylelint",
                     "stylua",
+                    "tinymist",
                     "typescript-language-server",
                     "yamllint",
                 },

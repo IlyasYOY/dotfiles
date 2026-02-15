@@ -69,19 +69,17 @@ local function lsp_attach(data)
     if client.name == "jdtls" then
         require("jdtls").setup_dap()
     end
-end
 
-local function config_go()
-    vim.lsp.config("gopls", {
-        settings = {
-            gopls = {
-                gofumpt = true,
-                completeUnimported = true,
-                usePlaceholders = false,
-                staticcheck = true,
-            },
-        },
-    })
+    if client.name == "tinymist" then
+        vim.api.nvim_buf_create_user_command(0, "TypstPreview", function()
+            vim.lsp.buf.execute_command {
+                command = "tinymist.startDefaultPreview",
+                arguments = {},
+            }
+        end, {
+            desc = "Start typst preview using tinymist",
+        })
+    end
 end
 
 return {
@@ -89,7 +87,27 @@ return {
         "neovim/nvim-lspconfig",
         event = "VeryLazy",
         config = function()
-            config_go()
+            vim.lsp.config("gopls", {
+                settings = {
+                    gopls = {
+                        gofumpt = true,
+                        completeUnimported = true,
+                        usePlaceholders = false,
+                        staticcheck = true,
+                    },
+                },
+            })
+            vim.lsp.config("tinymist", {
+                settings = {
+                    preview = {
+                        background = {
+                            enabled = true,
+                        }
+                    },
+                    formatterMode = "typstyle"
+                }
+            })
+
 
             for _, server in ipairs {
                 "bashls",
@@ -97,6 +115,7 @@ return {
                 "lua_ls",
                 "basedpyright",
                 "gopls",
+                "tinymist",
                 "kotlin_lsp",
                 "dartls",
             } do

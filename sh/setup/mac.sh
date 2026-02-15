@@ -83,6 +83,7 @@ setup_mac_using_brew() {
         syncthing
         tmux
         tree
+        typst
         vim
         wget
     )

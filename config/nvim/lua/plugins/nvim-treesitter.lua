@@ -148,6 +148,7 @@ return {
                             "query",
                             "sql",
                             "typescript",
+                            "typst",
                             "vim",
                             "yaml",
                         },
@@ -228,6 +229,7 @@ return {
                 "markdown_inline",
                 "xml",
                 "asm",
+                "typst",
                 -- config
                 "dot",
                 "toml",
