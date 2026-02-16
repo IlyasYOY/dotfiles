@@ -121,7 +121,7 @@ end, {
 
 vim.api.nvim_create_user_command(
     "AIChatFixGrammar",
-    "'<'>!aichat --code --role \\%fix-grammar\\%",
+    "'<'>!aichat --code --role \\%nvim-fix-grammar\\%",
     {
         range = true,
         desc = "Fix grammar using AIChat",
