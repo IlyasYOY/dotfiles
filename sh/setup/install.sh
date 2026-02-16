@@ -176,6 +176,18 @@ setup_aichat_roles() {
     symlink "$DOTFILES_DIR/config/aichat/roles" "$aichat_config_dir/roles"
 }
 
+setup_opencode_agents() {
+    info "🤖 Setting up OpenCode agents..."
+
+    local opencode_config_dir="$HOME/.config/opencode"
+    if [ ! -d "$opencode_config_dir" ]; then
+        warn "⚠️ OpenCode config directory is absent. Please ensure OpenCode is installed before proceeding."
+        return
+    fi
+
+    symlink "$DOTFILES_DIR/config/opencode/agents" "$opencode_config_dir/agents"
+}
+
 main() {
     setup_basic_directories
     setup_notes
@@ -191,6 +203,8 @@ main() {
     setup_pass
 
     setup_aichat_roles
+
+    setup_opencode_agents
 
     setup_mac_using_brew
     setup_mac_using_brew_cask
