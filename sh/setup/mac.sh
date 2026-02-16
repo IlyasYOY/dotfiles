@@ -100,7 +100,6 @@ setup_mac_using_brew_cask() {
 
     info "🍺 Installing Homebrew casks packages..."
     local casks=(
-        alacritty
         amethyst
         betterdisplay
         discord

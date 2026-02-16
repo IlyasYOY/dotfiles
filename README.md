@@ -28,7 +28,7 @@ Built for productivity across multiple languages and tools.
   - Python (pyright, pylint)
   - SQL (sqlfluff)
 - **Tools Integration**
-  - Wezterm & Alacritty terminal config
+  - Wezterm terminal config
   - Hammerspoon for MacOS automation
   - Amethyst window manager setup
   - pass password manager.

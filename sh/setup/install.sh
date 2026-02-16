@@ -16,6 +16,7 @@ setup_my_project() {
     clone_repo "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim"
     clone_repo "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim"
     clone_repo "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask"
+    clone_repo "git@github.com:IlyasYOY/exectest.git" "$PERSONAL_PROJECTS_DIR/monotask"
 }
 
 setup_notes() {
@@ -33,7 +34,6 @@ setup_links_to_config_files() {
     # Main config links
     symlink "$DOTFILES_DIR/config/nvim" "$config_dir/nvim"
     symlink "$DOTFILES_DIR/config/nvim-minimal" "$config_dir/nvim-minimal"
-    symlink "$DOTFILES_DIR/config/alacritty" "$config_dir/alacritty"
     symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
     symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
     symlink "$DOTFILES_DIR/config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
