@@ -81,7 +81,7 @@ bash sh/helpers.sh
 - `sh/` - Shell scripts and utilities
 - `bin/` - Executable binaries
 - `config/nvim/` - Neovim configuration
-- `config/aichat/roles/` - AI chat role definitions
+- `config/opencode/agents/` - OpenCode agent definitions
 
 ### File Naming
 

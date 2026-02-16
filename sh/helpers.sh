@@ -22,17 +22,3 @@ convert-webp-to-png() {
         ffmpeg -n -i "$webpfile" "$webpfile.png";
     done
 }
-
-### opencode ###
-_opencode_zsh() {
-    if [[ -n "$BUFFER" ]]; then
-        local _old=$BUFFER
-        BUFFER+="⌛"
-        zle -I && zle redisplay
-        BUFFER=$(command opencode run --agent 'shell-command-generator' "$_old")
-        zle end-of-line
-    fi
-}
-zle -N _opencode_zsh
-bindkey '\ee' _opencode_zsh
-

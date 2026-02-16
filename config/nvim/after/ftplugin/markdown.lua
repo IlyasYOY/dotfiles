@@ -38,12 +38,12 @@ local function setup_ai()
         local filename = vim.api.nvim_buf_get_name(0)
         local cmd = "cat "
             .. vim.fn.shellescape(filename)
-            .. " | aichat --code --role %create-title%"
+            .. " | opencode run --agent 'create-title' | sed '1,3d'"
 
         local output = vim.fn.systemlist(cmd)
         if vim.v.shell_error ~= 0 then
             vim.notify(
-                "AIChat failed: " .. table.concat(output, "\n"),
+                "OpenCode failed: " .. table.concat(output, "\n"),
                 vim.log.levels.ERROR
             )
             return
@@ -59,7 +59,7 @@ local function setup_ai()
         )
     end, {
         range = false,
-        desc = 'Create a title for the current markdown buffer using AIChat and copy it to the " register',
+        desc = 'Create a title for the current markdown buffer using OpenCode and copy it to the " register',
     })
 end
 

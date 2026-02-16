@@ -53,9 +53,13 @@ local function setup_toggle()
     vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
         local cwf = vim.fn.expand "%:."
         if string.find(cwf, "_test%.go$") then
-            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go"))
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go")
+            )
         elseif string.find(cwf, "%.go$") then
-            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go"))
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go")
+            )
         end
     end, {
         desc = "toggle between test and source code",
@@ -667,47 +671,9 @@ local function setup_lsp_actions()
     })
 end
 
-local function setup_ai()
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "AIChatGoTestErrorMessages",
-        function(opts)
-            vim.cmd "'<,'>!aichat --code --role \\%nvim-go-test-error-messages\\% "
-        end,
-        {
-            range = true,
-            desc = "Add test error message in the selected region using AI Chat",
-        }
-    )
-
-    vim.keymap.set("v", "<localleader>atem", function()
-        return ":AIChatGoTestErrorMessages<CR>"
-    end, {
-        expr = true,
-        buffer = true,
-        desc = "Add test error message via AIChatGoTestErrorMessages",
-    })
-
-    vim.api.nvim_buf_create_user_command(0, "AIChatGoWrapErrors", function(opts)
-        vim.cmd "'<,'>!aichat --code --role \\%nvim-go-wrap-errors\\% "
-    end, {
-        range = true,
-        desc = "Wrap Go errors in the selected region using AI Chat",
-    })
-
-    vim.keymap.set("v", "<localleader>awe", function()
-        return ":AIChatGoWrapErrors<CR>"
-    end, {
-        expr = true,
-        buffer = true,
-        desc = "Wrap errors via AIChatGo",
-    })
-end
-
 setup_linters()
 setup_bench()
 setup_test()
 setup_build()
 setup_lsp_actions()
-setup_ai()
 setup_toggle()

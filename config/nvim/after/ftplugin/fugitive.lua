@@ -13,25 +13,4 @@ local function setup_keymaps()
     )
 end
 
-local function setup_ai()
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "AIChatGitReviewUnstaged",
-        function(opts)
-            vim.cmd "tabnew | r!git diff --no-ext-diff | aichat --role \\%diff-comments\\% "
-            vim.opt.filetype = "markdown"
-        end,
-        {
-            range = true,
-            desc = "Review unstaged changes with AI Chat",
-        }
-    )
-
-    vim.api.nvim_buf_create_user_command(0, "AIChatGitReviewStaged", function(opts)
-        vim.cmd "tabnew | r!git diff --no-ext-diff --cached | aichat --role \\%diff-comments\\% "
-        vim.opt.filetype = "markdown"
-    end, { range = true, desc = "Review staged changes with AI Chat" })
-end
-
 setup_keymaps()
-setup_ai()
