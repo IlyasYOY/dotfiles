@@ -307,6 +307,7 @@ hi("LineNr", { guifg = palette.muted })
 -- QUICKFIX
 -- =============================================================================
 hi("QuickFixLine", { guifg = palette.accent_search, gui = "reverse" })
+hi("qfFileName", { gui = "bold" })
 
 -- =============================================================================
 -- FUGITIVE
