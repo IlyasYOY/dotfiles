@@ -163,19 +163,6 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
 }
 
-setup_aichat_roles() {
-    info "🤖 Setting up AI Chat roles..."
-
-    # this dir is correct only for mac
-    local aichat_config_dir="$HOME/Library/Application Support/aichat"
-    if [ ! -d "$aichat_config_dir" ]; then
-        warn "⚠️ AI Chat directory is absent. Please ensure AI Chat is installed before proceeding."
-        return
-    fi
-
-    symlink "$DOTFILES_DIR/config/aichat/roles" "$aichat_config_dir/roles"
-}
-
 setup_opencode_agents() {
     info "🤖 Setting up OpenCode agents..."
 
@@ -201,8 +188,6 @@ main() {
     setup_tmux_plugin_manger
     setup_my_project
     setup_pass
-
-    setup_aichat_roles
 
     setup_opencode_agents
 
