@@ -37,12 +37,12 @@ local palette = {
     muted = "#707070",
     noise = "#191919",
 
-    accent_search = "#00afff",
-    accent_visual = "#ffaf00",
-    accent_diff_add = "#416241",
-    accent_diff_del = "#722529",
-    accent_error = "#ff005f",
-    accent_cursor = "#8787af",
+    search = "#00afff",
+    visual = "#ffaf00",
+    add = "#416241",
+    remove = "#722529",
+    error = "#ff005f",
+    cursor = "#8787af",
 }
 
 local bg = vim.o.background
@@ -53,8 +53,8 @@ if bg == "light" then
     palette.elevated = "#eeeeee"
     palette.subtle = "#e4e4e4"
     palette.muted = "#626262"
-    palette.accent_diff_add = "#8dda9e"
-    palette.accent_diff_del = "#da8d8d"
+    palette.add = "#8dda9e"
+    palette.remove = "#da8d8d"
     palette.noise = "#cccccc"
 end
 
@@ -177,27 +177,27 @@ link("@tag.attribute", "Type")
 -- =============================================================================
 hi(
     "Search",
-    { guifg = palette.accent_search, guibg = palette.bg, gui = "reverse" }
+    { guifg = palette.search, guibg = palette.bg, gui = "reverse" }
 )
 hi(
     "IncSearch",
-    { guifg = palette.accent_visual, guibg = palette.bg, gui = "reverse" }
+    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
 )
 hi(
     "CurSearch",
-    { guifg = palette.accent_visual, guibg = palette.bg, gui = "reverse" }
+    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
 )
 hi(
     "Visual",
-    { guifg = palette.accent_visual, guibg = palette.elevated }
+    { guifg = palette.visual, guibg = palette.elevated }
 )
 hi("VisualNOS", { guibg = palette.subtle })
 
 -- =============================================================================
 -- DIFF
 -- =============================================================================
-hi("DiffAdd", { guibg = palette.accent_diff_add })
-hi("DiffDelete", { guibg = palette.accent_diff_del })
+hi("DiffAdd", { guibg = palette.add })
+hi("DiffDelete", { guibg = palette.remove })
 hi("DiffChange", { guifg = "#87afd7", guibg = palette.bg })
 hi("DiffText", { guifg = "#d787d7", guibg = palette.bg })
 
@@ -231,7 +231,7 @@ hi("PmenuThumb", { guibg = palette.muted })
 
 hi(
     "WildMenu",
-    { guifg = palette.accent_search, guibg = palette.bg, gui = "bold" }
+    { guifg = palette.search, guibg = palette.bg, gui = "bold" }
 )
 hi("Directory", { guifg = palette.fg })
 hi("Title", { guifg = palette.fg })
@@ -242,10 +242,10 @@ hi("ModeMsg", { guifg = palette.fg, gui = "bold" })
 -- =============================================================================
 -- MATCH AND SPELL
 -- =============================================================================
-hi("MatchParen", { guifg = palette.accent_visual, gui = "bold,underline" })
+hi("MatchParen", { guifg = palette.visual, gui = "bold,underline" })
 hi("SpellBad", {
-    guifg = palette.accent_error,
-    guisp = palette.accent_error,
+    guifg = palette.error,
+    guisp = palette.error,
     gui = "undercurl",
 })
 hi("SpellCap", { guifg = "#0087d7", guisp = "#0087d7", gui = "undercurl" })
@@ -257,19 +257,19 @@ hi("SpellRare", { guifg = "#00afaf", guisp = "#00afaf", gui = "undercurl" })
 -- =============================================================================
 hi(
     "Error",
-    { guifg = palette.accent_error, guibg = palette.bg, gui = "bold,reverse" }
+    { guifg = palette.error, guibg = palette.bg, gui = "bold,reverse" }
 )
-hi("ErrorMsg", { guifg = palette.fg, guibg = palette.bg, gui = "reverse" })
+hi("ErrorMsg", { guibg = palette.error })
 hi("WarningMsg", { guifg = palette.fg })
-hi("Todo", { guifg = palette.accent_search, gui = "bold,reverse" })
+hi("Todo", { guifg = palette.search, gui = "bold,reverse" })
 
 -- =============================================================================
 -- DIAGNOSTICS
 -- =============================================================================
-hi("DiagnosticError", { guifg = palette.accent_error, gui = "bold" })
-hi("DiagnosticUnderlineError", { guisp = palette.accent_error, gui = "undercurl" })
-hi("DiagnosticVirtualTextError", { guifg = palette.accent_error })
-hi("DiagnosticFloatingError", { guifg = palette.accent_error })
+hi("DiagnosticError", { guifg = palette.error, gui = "bold" })
+hi("DiagnosticUnderlineError", { guisp = palette.error, gui = "undercurl" })
+hi("DiagnosticVirtualTextError", { guifg = palette.error })
+hi("DiagnosticFloatingError", { guifg = palette.error })
 link("DiagnosticSignError", "DiagnosticError")
 
 hi("DiagnosticWarn", { guisp = palette.noise })
@@ -295,7 +295,7 @@ link("DiagnosticSignOk", "DiagnosticOk")
 -- =============================================================================
 -- CURSOR
 -- =============================================================================
-hi("Cursor", { guibg = palette.accent_cursor })
+hi("Cursor", { guibg = palette.cursor })
 
 -- =============================================================================
 -- SIGN COLUMN
@@ -306,7 +306,7 @@ hi("LineNr", { guifg = palette.muted })
 -- =============================================================================
 -- QUICKFIX
 -- =============================================================================
-hi("QuickFixLine", { guifg = palette.accent_search, gui = "reverse" })
+hi("QuickFixLine", { guifg = palette.search, gui = "reverse" })
 hi("qfFileName", { gui = "bold" })
 
 -- =============================================================================
@@ -358,10 +358,10 @@ hi("FzfLuaBackdrop", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaPreviewNormal", { guifg = palette.fg, guibg = palette.elevated })
 hi("FzfLuaPreviewBorder", { guifg = palette.muted, guibg = palette.elevated })
 hi("FzfLuaPreviewTitle", { guifg = palette.fg, guibg = palette.elevated })
-hi("FzfLuaCursor", { guibg = palette.accent_cursor })
+hi("FzfLuaCursor", { guibg = palette.cursor })
 hi("FzfLuaCursorLine", { guibg = palette.subtle })
 hi("FzfLuaCursorLineNr", { guifg = palette.fg, guibg = palette.subtle })
-hi("FzfLuaSearch", { guifg = palette.accent_visual, guibg = palette.bg, gui = "reverse" })
+hi("FzfLuaSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
 hi("FzfLuaScrollBorderEmpty", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollBorderFull", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollFloatEmpty", { guibg = palette.subtle })
@@ -370,26 +370,26 @@ hi("FzfLuaHelpNormal", { guifg = palette.fg, guibg = palette.bg })
 hi("FzfLuaHelpBorder", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaHeaderBind", { guifg = palette.fg })
 hi("FzfLuaHeaderText", { guifg = palette.fg })
-hi("FzfLuaPathColNr", { guifg = palette.accent_search })
-hi("FzfLuaPathLineNr", { guifg = palette.accent_diff_add })
+hi("FzfLuaPathColNr", { guifg = palette.search })
+hi("FzfLuaPathLineNr", { guifg = palette.add })
 hi("FzfLuaBufName", { guifg = palette.fg })
 hi("FzfLuaBufId", { guifg = palette.muted })
 hi("FzfLuaBufNr", { guifg = palette.fg })
 hi("FzfLuaBufLineNr", { guifg = palette.muted })
 hi("FzfLuaBufFlagCur", { guifg = palette.fg })
-hi("FzfLuaBufFlagAlt", { guifg = palette.accent_search })
-hi("FzfLuaTabTitle", { guifg = palette.accent_search })
+hi("FzfLuaBufFlagAlt", { guifg = palette.search })
+hi("FzfLuaTabTitle", { guifg = palette.search })
 hi("FzfLuaTabMarker", { guifg = palette.fg })
 hi("FzfLuaDirIcon", { guifg = palette.fg })
 hi("FzfLuaDirPart", { guifg = palette.muted })
 hi("FzfLuaFilePart", { guifg = palette.fg })
 hi("FzfLuaLivePrompt", { guifg = palette.fg })
-hi("FzfLuaLiveSym", { guifg = palette.accent_search })
+hi("FzfLuaLiveSym", { guifg = palette.search })
 hi("FzfLuaCmdEx", { guifg = palette.fg })
-hi("FzfLuaCmdBuf", { guifg = palette.accent_diff_add })
+hi("FzfLuaCmdBuf", { guifg = palette.add })
 hi("FzfLuaCmdGlobal", { guifg = palette.fg })
 hi("FzfLuaFzfNormal", { guifg = palette.fg, guibg = palette.bg })
 hi("FzfLuaFzfCursorLine", { guifg = palette.fg, guibg = palette.subtle })
-hi("FzfLuaFzfMatch", { guifg = palette.accent_search, gui = "bold" })
+hi("FzfLuaFzfMatch", { guifg = palette.search, gui = "bold" })
 hi("FzfLuaFzfBorder", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaFzfScrollbar", { guifg = palette.muted, guibg = palette.bg })
