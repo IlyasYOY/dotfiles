@@ -189,7 +189,7 @@ hi(
 )
 hi(
     "Visual",
-    { guifg = palette.accent_visual, guibg = palette.bg, gui = "reverse" }
+    { guifg = palette.accent_visual, guibg = palette.elevated }
 )
 hi("VisualNOS", { guibg = palette.subtle })
 
@@ -262,6 +262,35 @@ hi(
 hi("ErrorMsg", { guifg = palette.fg, guibg = palette.bg, gui = "reverse" })
 hi("WarningMsg", { guifg = palette.fg })
 hi("Todo", { guifg = palette.accent_search, gui = "bold,reverse" })
+
+-- =============================================================================
+-- DIAGNOSTICS
+-- =============================================================================
+hi("DiagnosticError", { guifg = palette.accent_error, gui = "bold" })
+hi("DiagnosticUnderlineError", { guisp = palette.accent_error, gui = "undercurl" })
+hi("DiagnosticVirtualTextError", { guifg = palette.accent_error })
+hi("DiagnosticFloatingError", { guifg = palette.accent_error })
+link("DiagnosticSignError", "DiagnosticError")
+
+hi("DiagnosticWarn", { guisp = palette.noise })
+hi("DiagnosticInfo", { guisp = palette.noise })
+hi("DiagnosticHint", { guisp = palette.noise })
+hi("DiagnosticOk", { guisp = palette.noise })
+
+hi("DiagnosticVirtualTextWarn", { guisp = palette.noise })
+hi("DiagnosticVirtualTextInfo", { guisp = palette.noise })
+hi("DiagnosticVirtualTextHint", { guisp = palette.noise })
+hi("DiagnosticVirtualTextOk", { guisp = palette.noise })
+
+hi("DiagnosticUnderlineWarn", { guisp = palette.noise, gui = "undercurl" })
+hi("DiagnosticUnderlineInfo", { guisp = palette.noise, gui = "undercurl" })
+hi("DiagnosticUnderlineHint", { guisp = palette.noise, gui = "undercurl" })
+hi("DiagnosticUnderlineOk", { guisp = palette.noise, gui = "undercurl" })
+
+link("DiagnosticSignWarn", "DiagnosticWarn")
+link("DiagnosticSignInfo", "DiagnosticInfo")
+link("DiagnosticSignHint", "DiagnosticHint")
+link("DiagnosticSignOk", "DiagnosticOk")
 
 -- =============================================================================
 -- CURSOR
