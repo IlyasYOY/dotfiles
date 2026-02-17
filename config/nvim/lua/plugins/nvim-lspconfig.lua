@@ -53,6 +53,12 @@ local function lsp_attach(data)
         described(bufopts, "go to typehierarchy")
     )
 
+    vim.keymap.set({ "n", "v" }, "<localleader>oc", function()
+        vim.lsp.buf.format { async = false, timeout_ms = 10000 }
+    end, described(bufopts, "organize code"))
+
+
+
     local client = vim.lsp.get_client_by_id(data.data.client_id)
     if not client then
         return
@@ -135,10 +141,6 @@ return {
                 vim.diagnostic.open_float,
                 described(opts, "diagnostics")
             )
-
-            vim.keymap.set({ "n", "v" }, "<localleader>oc", function()
-                vim.lsp.buf.format { async = false, timeout_ms = 10000 }
-            end, described(bufopts, "organize code"))
 
             vim.keymap.set("n", "<leader>lr", "<cmd>LspRestart<cr>")
         end,
