@@ -198,8 +198,8 @@ hi("VisualNOS", { guibg = palette.subtle })
 -- =============================================================================
 hi("DiffAdd", { guibg = palette.add })
 hi("DiffDelete", { guibg = palette.remove })
-hi("DiffChange", { guifg = "#87afd7", guibg = palette.bg })
-hi("DiffText", { guifg = "#d787d7", guibg = palette.bg })
+hi("DiffChange", { guibg = "#87afd7" })
+hi("DiffText", { guibg = "#d787d7" })
 
 link("@diff.plus", "DiffAdd")
 link("@diff.minus", "DiffDelete")
