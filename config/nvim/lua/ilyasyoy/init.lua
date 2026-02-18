@@ -4,6 +4,21 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+vim.o.autoread = true
+
+-- Useful for checking what changes have been made since opening the file and
+-- mergin changes.
+vim.api.nvim_create_user_command("DiffOrig", function()
+    vim.cmd "vert new"
+    vim.cmd "set buftype=nofile"
+    vim.cmd "read ++edit #"
+    vim.cmd "0d_"
+    vim.cmd "diffthis"
+    vim.cmd "wincmd p"
+    vim.cmd "diffthis"
+end, { desc = "Diff current buffer with original file" })
+
+
 vim.cmd "source ~/.vimrc"
 
 vim.opt.completeopt = { "fuzzy", "popup", "menu" }
