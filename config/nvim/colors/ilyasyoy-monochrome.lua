@@ -48,9 +48,9 @@ local palette = {
 local bg = vim.o.background
 
 if bg == "light" then
-    palette.bg = "#d7d7d7"
+    palette.bg = "#eeeeee"
     palette.fg = "#000000"
-    palette.elevated = "#eeeeee"
+    palette.elevated = "#d7d7d7"
     palette.subtle = "#e4e4e4"
     palette.muted = "#626262"
     palette.add = "#8dda9e"
