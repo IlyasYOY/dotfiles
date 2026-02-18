@@ -146,4 +146,14 @@ M.window_decorations = "RESIZE"
 M.send_composed_key_when_left_alt_is_pressed = false
 M.send_composed_key_when_right_alt_is_pressed = false
 
+M.native_macos_fullscreen_mode = true
+
+M.keys = {
+    {
+        key = 'f',
+        mods = 'CTRL|CMD',
+        action = wezterm.action.ToggleFullScreen,
+    },
+}
+
 return M
