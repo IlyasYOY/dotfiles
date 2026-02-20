@@ -36,39 +36,15 @@ M.color_schemes = {
             "#87afd7", -- bright cyan
             "#ffffff", -- bright white
         },
-        tab_bar = {
-            background = "#000000",
-            active_tab = {
-                bg_color = "#1c1c1c",
-                fg_color = "#dadada",
-                intensity = "Bold",
-            },
-            inactive_tab = {
-                bg_color = "#000000",
-                fg_color = "#707070",
-            },
-            inactive_tab_hover = {
-                bg_color = "#1c1c1c",
-                fg_color = "#dadada",
-            },
-            new_tab = {
-                bg_color = "#000000",
-                fg_color = "#707070",
-            },
-            new_tab_hover = {
-                bg_color = "#1c1c1c",
-                fg_color = "#dadada",
-            },
-        },
     },
 
     ["IlyasYOY Monochrome Light"] = {
         foreground = "#000000",
         background = "#eeeeee",
         cursor_bg = "#8787af",
-        cursor_fg = "#eeeeee",
+        cursor_fg = "#dadada",
         cursor_border = "#8787af",
-        selection_fg = "#eeeeee",
+        selection_fg = "#dadada",
         selection_bg = "#ffaf00",
         scrollbar_thumb = "#626262",
         split = "#626262",
@@ -80,7 +56,7 @@ M.color_schemes = {
             "#00afff", -- blue    (search)
             "#8787af", -- magenta (cursor)
             "#00afaf", -- cyan
-            "#eeeeee", -- white   (bg)
+            "#727272", -- white   (bg)
         },
         brights = {
             "#626262", -- bright black  (muted)
@@ -90,31 +66,7 @@ M.color_schemes = {
             "#00afff", -- bright blue   (search)
             "#d787d7", -- bright magenta
             "#87afd7", -- bright cyan
-            "#ffffff", -- bright white
-        },
-        tab_bar = {
-            background = "#eeeeee",
-            active_tab = {
-                bg_color = "#d7d7d7",
-                fg_color = "#000000",
-                intensity = "Bold",
-            },
-            inactive_tab = {
-                bg_color = "#eeeeee",
-                fg_color = "#626262",
-            },
-            inactive_tab_hover = {
-                bg_color = "#d7d7d7",
-                fg_color = "#000000",
-            },
-            new_tab = {
-                bg_color = "#eeeeee",
-                fg_color = "#626262",
-            },
-            new_tab_hover = {
-                bg_color = "#d7d7d7",
-                fg_color = "#000000",
-            },
+            "#828282", -- bright white
         },
     },
 }
