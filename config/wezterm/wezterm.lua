@@ -106,6 +106,11 @@ M.keys = {
         mods = 'CTRL|CMD',
         action = wezterm.action.ToggleFullScreen,
     },
+    {
+        key = 'r',
+        mods = 'CTRL|CMD',
+        action = wezterm.action.ResetTerminal,
+    },
 }
 
 return M
