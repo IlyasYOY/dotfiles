@@ -81,3 +81,6 @@ set langmap=йq,цw,уe,кr,еt,нy,гu,шi,щo,зp,х[,ъ],фa,ыs,вd,аf,пg,
 imap <C-ц> <C-w>
 imap <C-х> <C-[>
 imap <C-щ> <C-o>
+
+" Reselect last changed/inserted text with gV
+nnoremap gV `[v`]
