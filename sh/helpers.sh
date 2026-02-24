@@ -22,3 +22,5 @@ convert-webp-to-png() {
         ffmpeg -n -i "$webpfile" "$webpfile.png";
     done
 }
+
+alias cplt="copilot --model gpt-5-mini"

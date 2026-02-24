@@ -100,17 +100,4 @@ M.send_composed_key_when_right_alt_is_pressed = false
 
 M.native_macos_fullscreen_mode = true
 
-M.keys = {
-    {
-        key = 'f',
-        mods = 'CTRL|CMD',
-        action = wezterm.action.ToggleFullScreen,
-    },
-    {
-        key = 'r',
-        mods = 'CTRL|CMD',
-        action = wezterm.action.ResetTerminal,
-    },
-}
-
 return M
