@@ -23,7 +23,6 @@ local function create_package()
 end
 
 return {
-    s("today", ilyasyoy_snippets.current_date()),
     s(
         "package",
         fmt("package {};", {

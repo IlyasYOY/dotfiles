@@ -8,9 +8,6 @@ return {
             "lua",
             "markdown",
         },
-        dependencies = {
-            "honza/vim-snippets",
-        },
         config = function()
             local ls = require "luasnip"
 
@@ -73,9 +70,14 @@ return {
                 end)
             end
 
+            local ilyasyoy_snippets = require "ilyasyoy.snippets"
+            local fmt = require("luasnip.extras.fmt").fmt
             ls.add_snippets(
                 "all",
                 {
+                    ls.s("today", ilyasyoy_snippets.current_date()),
+                    ls.s("tomorrow", fmt("{}", ilyasyoy_snippets.tomorrow_date())),
+                    ls.s("yesterday", fmt("{}", ilyasyoy_snippets.yesterday_date())),
                     ls.s({ trig = "uid", wordTrig = true }, { ls.f(uuid), ls.i(0) })
                 }
             )
