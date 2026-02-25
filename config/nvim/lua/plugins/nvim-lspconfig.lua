@@ -57,7 +57,13 @@ local function lsp_attach(data)
         vim.lsp.buf.format { async = false, timeout_ms = 10000 }
     end, described(bufopts, "organize code"))
 
-
+    vim.keymap.set(
+        "n",
+        "<localleader>d",
+        vim.diagnostic.open_float,
+        described(bufopts, "diagnostics")
+    )
+    vim.keymap.set("n", "<localleader>lr", "<cmd>LspRestart<cr>", described(bufopts, "restart lsp"))
 
     local client = vim.lsp.get_client_by_id(data.data.client_id)
     if not client then
@@ -108,12 +114,11 @@ return {
                     preview = {
                         background = {
                             enabled = true,
-                        }
+                        },
                     },
-                    formatterMode = "typstyle"
-                }
+                    formatterMode = "typstyle",
+                },
             })
-
 
             for _, server in ipairs {
                 "bashls",
@@ -123,26 +128,14 @@ return {
                 "gopls",
                 "tinymist",
                 "kotlin_lsp",
-                "dartls",
             } do
                 vim.lsp.enable(server)
             end
-
-            local bufopts = { noremap = true, silent = true }
 
             vim.api.nvim_create_autocmd("LspAttach", {
                 group = vim.api.nvim_create_augroup("ilyasyoy.lsp", {}),
                 callback = lsp_attach,
             })
-
-            vim.keymap.set(
-                "n",
-                "<leader>d",
-                vim.diagnostic.open_float,
-                described(opts, "diagnostics")
-            )
-
-            vim.keymap.set("n", "<leader>lr", "<cmd>LspRestart<cr>")
         end,
     },
 }

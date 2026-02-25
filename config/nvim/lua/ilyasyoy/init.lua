@@ -43,7 +43,7 @@ end, { desc = "Toggle diagnostic" })
 
 vim.keymap.set("n", "<localleader>sc", function()
     vim.opt_local.spell = not (vim.opt_local.spell:get())
-    vim.notify("spell: " .. tostring(vim.o.spell))
+    vim.notify("spell: " .. tostring(vim.opt_local.spell))
 end, { desc = "Toggle spell check" })
 
 vim.keymap.set("n", "<leader>cp", function()

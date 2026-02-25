@@ -24,3 +24,18 @@ convert-webp-to-png() {
 }
 
 alias cplt="copilot --model gpt-5-mini"
+
+
+### copilot ###
+_copilot_zsh() {
+    if [[ -n "$BUFFER" ]]; then
+        local _old=$BUFFER
+        BUFFER+="⌛"
+        zle -I && zle redisplay
+        BUFFER=$(command copilot --model gpt-5-mini --agent shell-command-generator -p "$_old")
+        zle end-of-line
+    fi
+}
+zle -N _copilot_zsh
+bindkey '\ee' _copilot_zsh
+

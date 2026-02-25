@@ -54,14 +54,15 @@ update_tmux_plugins() {
 }
 
 main() {
-    update_local_repos
-    update_tmux_plugins
-    update_nvim
-
     update_brew
     update_brew_packages
     update_brew_cask_packages
     update_mas_applications
+
+    update_local_repos
+    update_tmux_plugins
+    update_nvim
+
 }
 
 main "$@"
