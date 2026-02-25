@@ -160,18 +160,15 @@ return {
                             setup_swaps()
 
                             local ft = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
-                            if ft ~= "markdown" then
-                                vim.bo.indentexpr =
-                                "v:lua.require'nvim-treesitter'.indentexpr()"
-                            end
+                            vim.opt_local.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 
-                            vim.wo[0][0].foldexpr =
-                            "v:lua.vim.treesitter.foldexpr()"
-                            vim.wo[0][0].foldmethod = "expr"
-                            vim.o.foldcolumn = "1"
-                            vim.o.foldlevel = 99
-                            vim.o.foldlevelstart = 99
-                            vim.o.foldenable = true
+                            vim.opt_local.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+                            vim.opt_local.foldmethod = 'expr'
+
+                            vim.opt_local.foldcolumn = "1"
+                            vim.opt_local.foldlevel = 99
+                            vim.opt_local.foldlevelstart = 99
+                            vim.opt_local.foldenable = true
                         end,
                         group = ts_group,
                     })
