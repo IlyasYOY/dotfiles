@@ -24,6 +24,7 @@ convert-webp-to-png() {
 }
 
 alias cplt="copilot --model gpt-5-mini"
+alias opncd="opencode -m github-copilot/gpt-5-mini"
 
 
 ### copilot ###
