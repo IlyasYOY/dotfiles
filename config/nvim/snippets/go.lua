@@ -102,4 +102,9 @@ return {
         ),
         in_test_fn
     ),
+    s({ trig = "test", dscr = "Go test function" }, fmt([[
+func Test{}(t *testing.T) {{
+    {}
+}}
+]], { i(1, "Name"), i(0, "") }), { show_condition = is_in_test_file, condition = is_in_test_file }),
 }
