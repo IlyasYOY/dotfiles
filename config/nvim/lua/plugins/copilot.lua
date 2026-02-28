@@ -5,6 +5,7 @@ return {
             vim.g.copilot_filetypes = {
                 ["*"] = false,
 
+                markdown = true,
                 lua = true,
                 gitcommit = true,
                 python = true,
