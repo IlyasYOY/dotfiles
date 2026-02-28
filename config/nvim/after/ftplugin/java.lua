@@ -255,13 +255,13 @@ local function setup_lsp_actions()
         buffer = true,
     })
 
-    vim.keymap.set("n", "<localleader>dm", function()
+    vim.keymap.set("n", "<localleader>Dm", function()
         jdtls.test_nearest_method()
     end, {
         desc = "java debug nearest test method",
         buffer = true,
     })
-    vim.keymap.set("n", "<localleader>dc", function()
+    vim.keymap.set("n", "<localleader>Dc", function()
         jdtls.test_class()
     end, {
         desc = "java debug nearest test class",

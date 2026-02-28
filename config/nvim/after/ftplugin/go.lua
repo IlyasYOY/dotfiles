@@ -80,7 +80,7 @@ end, {
     desc = "find files in go mod",
 })
 
-vim.keymap.set("n", "<localleader>dm", function()
+vim.keymap.set("n", "<localleader>Dm", function()
     require("dap-go").debug_test()
 end, {
     buffer = true,

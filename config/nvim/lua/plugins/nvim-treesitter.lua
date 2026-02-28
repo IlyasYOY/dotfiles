@@ -85,26 +85,26 @@ return {
                     local function setup_moves()
                         local ts_moves =
                             require "nvim-treesitter-textobjects.move"
-                        vim.keymap.set({ "n", "o" }, "]f", function()
+                        vim.keymap.set({ "n", "o", "x" }, "]f", function()
                             ts_moves.goto_next_start(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "n", "o" }, "]F", function()
+                        vim.keymap.set({ "n", "o", "x" }, "]F", function()
                             ts_moves.goto_next_end(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
 
-                        vim.keymap.set({ "n", "o" }, "[f", function()
+                        vim.keymap.set({ "n", "o", "x" }, "[f", function()
                             ts_moves.goto_previous_start(
                                 "@function.outer",
                                 "textobjects"
                             )
                         end)
-                        vim.keymap.set({ "n", "o" }, "[F", function()
+                        vim.keymap.set({ "n", "o", "x" }, "[F", function()
                             ts_moves.goto_previous_end(
                                 "@function.outer",
                                 "textobjects"

@@ -155,6 +155,11 @@ local function setup_toggle()
         desc = "toggle between test and source code",
         buffer = true,
     })
+
+    vim.keymap.set("n", "<localleader>Dm", function()
+        local dap_python = require "dap-python"
+        dap_python.test_method()
+    end)
 end
 
 setup_test()
