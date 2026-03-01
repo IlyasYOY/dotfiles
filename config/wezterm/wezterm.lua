@@ -100,4 +100,14 @@ M.send_composed_key_when_right_alt_is_pressed = false
 
 M.native_macos_fullscreen_mode = true
 
+-- Try attaching to an existing tmux session; if none exist, create a new one named 'main'.
+wezterm.on("gui-startup", function(cmd)
+  local mux = wezterm.mux
+  local shell = os.getenv("SHELL") or "/bin/bash"
+  local session = "main"
+  mux.spawn_window{
+    args = {shell, "-lc", "exec tmux attach || exec tmux new -s " .. session},
+  }
+end)
+
 return M
