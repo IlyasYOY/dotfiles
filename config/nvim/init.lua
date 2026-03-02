@@ -3,4 +3,4 @@
 pcall(require, "ilyasyoy.hidden")
 
 require "ilyasyoy"
-require "ilyasyoy.lazy-nvim"
+require "ilyasyoy.pack"
