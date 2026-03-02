@@ -23,7 +23,6 @@ vim.pack.add {
 
     -- Navigation & file management
     gh "ibhagwan/fzf-lua",
-    gh "nvim-tree/nvim-web-devicons",
     gh "stevearc/oil.nvim",
     gh "christoomey/vim-tmux-navigator",
 
