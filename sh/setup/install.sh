@@ -80,27 +80,16 @@ setup_sdkman() {
 }
 
 setup_node_version_manager() {
-    info "⬢ Installing Node Version Manager..."
-    if [ ! -d "$HOME/.nvm" ]; then
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    info "⬢ Installing fnm (Fast Node Manager)..."
 
-        # Source and install Node.js
-        export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        nvm install --lts
+    brew_install fnm
 
-        success "NVM installed"
-    else 
-        debug "NVM already installed"
-    fi
-
-    # NVM configuration
-    local nvm_config=$'export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+    # fnm configuration
+    local fnm_config='eval "$(fnm env --use-on-cd --shell zsh)"'
 
     add_block "$ZSHRC" \
-        "ilyasyoy nvm config" \
-        "$nvm_config"
+        "ilyasyoy fnm config" \
+        "$fnm_config"
 }
 
 setup_go_version_manager() {
@@ -116,7 +105,7 @@ setup_go_version_manager() {
     fi
 
     # GVM configuration
-    local gvm_config=$'[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
+    local gvm_config=$'_gvm_lazy_load() {\n    unset -f gvm\n    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"\n    "$@"\n}\ngvm() { _gvm_lazy_load gvm "$@" }'
 
     add_block "$ZSHRC" \
         "ilyasyoy gvm config" \

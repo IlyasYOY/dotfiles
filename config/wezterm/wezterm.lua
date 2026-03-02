@@ -106,7 +106,7 @@ wezterm.on("gui-startup", function(cmd)
   local shell = os.getenv("SHELL") or "/bin/bash"
   local session = "main"
   mux.spawn_window{
-    args = {shell, "-lc", "exec tmux attach || exec tmux new -s " .. session},
+    args = {shell, "-lc", "tmux list-sessions >/dev/null 2>&1 && exec tmux attach || exec " .. shell},
   }
 end)
 
