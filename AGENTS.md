@@ -97,6 +97,7 @@ bash sh/helpers.sh
 - Use conventional commit format when possible
 - Write clear, descriptive commit messages
 - Keep commits focused on single changes
+- Agents must not commit changes without explicit user approval
 
 ### Branching
 
