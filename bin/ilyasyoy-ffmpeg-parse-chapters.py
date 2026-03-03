@@ -18,10 +18,11 @@ class ChapterInfo(NamedTuple):
     def duration_representation(self) -> str:
         start = int(self.start)
 
-        hours = str(start // SECONDS_IN_MINUTE).rjust(2, '0')
-        minutes = str(start % SECONDS_IN_MINUTE).rjust(2, '0')
+        hours = str(start // (SECONDS_IN_MINUTE * SECONDS_IN_MINUTE)).rjust(2, '0')
+        minutes = str((start % (SECONDS_IN_MINUTE * SECONDS_IN_MINUTE)) // SECONDS_IN_MINUTE).rjust(2, '0')
+        seconds = str(start % SECONDS_IN_MINUTE).rjust(2, '0')
 
-        return f'{hours}:{minutes}'
+        return f'{hours}:{minutes}:{seconds}'
 
 
 def main():
