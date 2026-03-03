@@ -41,6 +41,8 @@ local palette = {
     visual = "#ffaf00",
     add = "#416241",
     remove = "#722529",
+    change = "#1d2b3a",
+    change_text = "#2d4560",
     error = "#ff005f",
     cursor = "#8787af",
 }
@@ -55,6 +57,8 @@ if bg == "light" then
     palette.muted = "#626262"
     palette.add = "#8dda9e"
     palette.remove = "#da8d8d"
+    palette.change = "#b8d8f0"
+    palette.change_text = "#7ab5e0"
     palette.noise = "#cccccc"
 end
 
@@ -198,8 +202,8 @@ hi("VisualNOS", { guibg = palette.subtle })
 -- =============================================================================
 hi("DiffAdd", { guibg = palette.add })
 hi("DiffDelete", { guibg = palette.remove })
-hi("DiffChange", { guibg = "#87afd7" })
-hi("DiffText", { guibg = "#d787d7" })
+hi("DiffChange", { guibg = palette.change })
+hi("DiffText", { guibg = palette.change_text })
 
 link("@diff.plus", "DiffAdd")
 link("@diff.minus", "DiffDelete")
@@ -248,9 +252,9 @@ hi("SpellBad", {
     guisp = palette.error,
     gui = "undercurl",
 })
-hi("SpellCap", { guifg = "#0087d7", guisp = "#0087d7", gui = "undercurl" })
-hi("SpellLocal", { guifg = "#d787d7", guisp = "#d787d7", gui = "undercurl" })
-hi("SpellRare", { guifg = "#00afaf", guisp = "#00afaf", gui = "undercurl" })
+hi("SpellCap", { guisp = palette.error, gui = "undercurl" })
+hi("SpellLocal", { guisp = palette.error, gui = "undercurl" })
+hi("SpellRare", { guisp = palette.error, gui = "undercurl" })
 
 -- =============================================================================
 -- ERROR AND TODO
