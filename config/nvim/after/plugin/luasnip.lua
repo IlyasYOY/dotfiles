@@ -44,25 +44,27 @@ end, {
     expr = true,
 })
 
-require("luasnip.loaders.from_snipmate").lazy_load()
-require("luasnip.loaders.from_lua").lazy_load {
-    paths = { "~/.config/nvim/snippets/" },
-}
+vim.defer_fn(function()
+    require("luasnip.loaders.from_snipmate").lazy_load()
+    require("luasnip.loaders.from_lua").lazy_load {
+        paths = { "~/.config/nvim/snippets/" },
+    }
 
-local random = math.random
-local function uuid()
-    local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-    return string.gsub(template, "[xy]", function(c)
-        local v = (c == "x") and random(0, 0xf) or random(8, 0xb)
-        return string.format("%x", v)
-    end)
-end
+    local random = math.random
+    local function uuid()
+        local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        return string.gsub(template, "[xy]", function(c)
+            local v = (c == "x") and random(0, 0xf) or random(8, 0xb)
+            return string.format("%x", v)
+        end)
+    end
 
-local ilyasyoy_snippets = require "ilyasyoy.snippets"
-local fmt = require("luasnip.extras.fmt").fmt
-ls.add_snippets("all", {
-    ls.s("today", ilyasyoy_snippets.current_date()),
-    ls.s("tomorrow", fmt("{}", ilyasyoy_snippets.tomorrow_date())),
-    ls.s("yesterday", fmt("{}", ilyasyoy_snippets.yesterday_date())),
-    ls.s({ trig = "uid", wordTrig = true }, { ls.f(uuid), ls.i(0) }),
-})
+    local ilyasyoy_snippets = require "ilyasyoy.snippets"
+    local fmt = require("luasnip.extras.fmt").fmt
+    ls.add_snippets("all", {
+        ls.s("today", ilyasyoy_snippets.current_date()),
+        ls.s("tomorrow", fmt("{}", ilyasyoy_snippets.tomorrow_date())),
+        ls.s("yesterday", fmt("{}", ilyasyoy_snippets.yesterday_date())),
+        ls.s({ trig = "uid", wordTrig = true }, { ls.f(uuid), ls.i(0) }),
+    })
+end, 0)
