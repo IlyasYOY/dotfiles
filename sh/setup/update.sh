@@ -3,20 +3,6 @@
 source $(dirname $0)/helpers.sh
 source $(dirname $0)/mac.sh
 
-update_nvim() {
-    info "Updating Neovim plugins..."
-
-    if confirm_update "Update Neovim plugins"; then
-        nvim --headless "+Lazy! sync" +qa && success "Lazy.nvim updated" || error "Failed to update Lazy.nvim"
-    fi
-
-    info "Updating Mason tools..."
-
-    if confirm_update "Update Mason tools"; then
-        nvim --headless "+MasonToolsUpdateSync" +qa && success "Mason tools updated" || error "Failed to update Mason tools"
-    fi
-}
-
 update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles"
 
@@ -26,6 +12,7 @@ update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/go-retry"
     update_repo "$PERSONAL_PROJECTS_DIR/httpservertest"
     update_repo "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
+    update_repo "$PERSONAL_PROJECTS_DIR/remotion-projects"
 
     update_repo "$PERSONAL_PROJECTS_DIR/git-link.nvim"
     update_repo "$PERSONAL_PROJECTS_DIR/obs.nvim"
@@ -61,7 +48,6 @@ main() {
 
     update_local_repos
     update_tmux_plugins
-    update_nvim
 
 }
 
