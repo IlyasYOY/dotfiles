@@ -112,6 +112,11 @@ setup_mac_using_brew_cask() {
         telegram
         vial
         wezterm
+
+        font-fontawesome
+        font-go-mono-nerd-font
+        font-roboto
+        font-roboto-mono-nerd-font
     )
     for cask in "${casks[@]}"; do
         brew_cask_install "$cask"
