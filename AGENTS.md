@@ -25,7 +25,7 @@ stylua config/nvim/lua/ilyasyoy/init.lua
 
 ```bash
 # Check shell scripts with shellcheck
-shellcheck sh/*.sh bin/*
+shellcheck sh/*.sh sh/setup/*.sh bin/*
 
 # Run shell script
 bash sh/helpers.sh
@@ -79,9 +79,14 @@ bash sh/helpers.sh
 
 - `config/` - Application configurations
 - `sh/` - Shell scripts and utilities
+- `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh)
 - `bin/` - Executable binaries
 - `config/nvim/` - Neovim configuration
-- `config/opencode/agents/` - OpenCode agent definitions
+- `config/nvim/after/ftplugin/` - Language-specific Neovim configs
+- `config/nvim/after/plugin/` - Per-plugin Neovim configs
+- `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
+- `.github/agents/` - GitHub Copilot subagent definitions
+- `config/copilot/` - Copilot instructions and agent definitions
 
 ### File Naming
 
@@ -89,6 +94,10 @@ bash sh/helpers.sh
 - Use lowercase with underscores for Python: `my_module.py`
 - Follow language conventions for other files
 - Use descriptive names that indicate purpose
+
+### LuaSnip Snippets
+
+When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `luasnip` subagent defined in `.github/agents/luasnip.md`. It has specialized knowledge of the snippet structure, LuaSnip APIs, and the required workflow (read → append → luacheck → stylua).
 
 ## Git Workflow
 
@@ -144,7 +153,7 @@ bash sh/helpers.sh
 ## Tool Versions
 
 - Go: Latest stable version with modules
-- Node.js: LTS via nvm
+- Node.js: LTS via fnm
 - Python: 3.8+ with virtual environments
 - Java: Latest LTS with SDKMAN
 - Neovim: 0.9+ with Lua support
