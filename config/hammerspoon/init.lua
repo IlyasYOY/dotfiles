@@ -1,8 +1,8 @@
 for _, app in ipairs {
     { shortcut = "1", name = "WezTerm" },
     { shortcut = "2", name = "Google Chrome" },
-    { shortcut = "3", name = "Obsidian" },
-    { shortcut = "4", name = "Things3" },
+    { shortcut = "3", name = "Things3" },
+    { shortcut = "4", name = "Obsidian" },
     { shortcut = "5", name = "Final Cut Pro" },
 
     { shortcut = "8", name = "Telegram" },
