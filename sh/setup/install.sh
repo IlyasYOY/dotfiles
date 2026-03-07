@@ -152,8 +152,8 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
 }
 
-setup_copilot_agents() {
-    info "🤖 Setting up Copilot agents..."
+setup_copilot() {
+    info "🤖 Setting up Copilot..."
 
     local copilot_config_dir="$HOME/.copilot"
     if [ ! -d "$copilot_config_dir" ]; then
@@ -161,19 +161,12 @@ setup_copilot_agents() {
         return
     fi
 
+    info "🤖 Setting up Copilot instructions..."
+    symlink "$DOTFILES_DIR/config/copilot/copilot-instructions.md" "$copilot_config_dir/copilot-instructions.md"
+
+
+    info "🤖 Setting up Copilot agents..."
     symlink "$DOTFILES_DIR/config/copilot/agents" "$copilot_config_dir/agents"
-}
-
-setup_opencode_agents() {
-    info "🤖 Setting up OpenCode agents..."
-
-    local opencode_config_dir="$HOME/.config/opencode"
-    if [ ! -d "$opencode_config_dir" ]; then
-        warn "⚠️ OpenCode config directory is absent. Please ensure OpenCode is installed before proceeding."
-        return
-    fi
-
-    symlink "$DOTFILES_DIR/config/opencode/agents" "$opencode_config_dir/agents"
 }
 
 main() {
@@ -190,8 +183,7 @@ main() {
     setup_my_project
     setup_pass
 
-    setup_opencode_agents
-    setup_copilot_agents
+    setup_copilot
 
     setup_mac_using_brew
     setup_mac_using_brew_cask

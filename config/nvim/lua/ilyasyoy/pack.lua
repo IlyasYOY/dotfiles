@@ -76,5 +76,6 @@ vim.pack.add {
     gh "tpope/vim-fugitive",
 
     -- Copilot
-    { src = gh "github/copilot.vim", version = "release" },
+    gh "zbirenbaum/copilot.lua",
+    gh "copilotlsp-nvim/copilot-lsp",
 }

@@ -77,7 +77,6 @@ setup_mac_using_brew() {
         rust
         scc
         sqlite
-        sst/tap/opencode
         syncthing
         tmux
         tree
@@ -100,6 +99,7 @@ setup_mac_using_brew_cask() {
     local casks=(
         amethyst
         betterdisplay
+        copilot-cli
         discord
         google-chrome
         hammerspoon

@@ -23,9 +23,8 @@ convert-webp-to-png() {
     done
 }
 
-alias cplt="copilot --model gpt-5-mini"
-alias opncd="opencode -m github-copilot/gpt-5-mini"
-
+alias cplt="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini"
+alias copilot="copilot --disable-mcp-server github-mcp-server"
 
 ### copilot ###
 _copilot_zsh() {
