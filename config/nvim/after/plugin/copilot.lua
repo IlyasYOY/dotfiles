@@ -1,6 +1,3 @@
--- Required before setup for NES debounce configuration
-vim.g.copilot_nes_debounce = 500
-
 require("copilot").setup {
     filetypes = {
         ["*"] = false,
@@ -23,14 +20,6 @@ require("copilot").setup {
             next = "<M-]>",
             prev = "<M-[>",
             dismiss = "<M-h>",
-        },
-    },
-    nes = {
-        enabled = true,
-        keymap = {
-            accept_and_goto = "<M-o>",
-            accept = "<M-a>",
-            dismiss = "<Esc>",
         },
     },
 }

@@ -77,5 +77,7 @@ vim.pack.add {
 
     -- Copilot
     gh "zbirenbaum/copilot.lua",
+    -- This plugin is required for NES support.
+    -- I don't use NES, but I include it anyway.
     gh "copilotlsp-nvim/copilot-lsp",
 }
