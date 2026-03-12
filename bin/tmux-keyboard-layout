@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+selected_layout_name=$(
+    defaults read "$HOME/Library/Preferences/com.apple.HIToolbox.plist" AppleSelectedInputSources 2>/dev/null |
+        awk -F'= ' '
+            /KeyboardLayout Name/ {
+                gsub(/;$/, "", $2)
+                gsub(/"/, "", $2)
+                layout = $2
+            }
+            END {
+                if (layout != "") {
+                    print layout
+                }
+            }
+        '
+)
+
+if [[ -z "${selected_layout_name:-}" ]]; then
+    selected_layout_name=$(
+        {
+            defaults read com.apple.HIToolbox AppleCurrentKeyboardLayoutInputSourceID 2>/dev/null ||
+                defaults read com.apple.HIToolbox AppleCurrentInputSourceID 2>/dev/null
+        } |
+            awk -F. 'NF { print $NF; exit }'
+    )
+fi
+
+case "${selected_layout_name:-}" in
+    ABC|U.S.|US|British)
+        printf "EN\n"
+        ;;
+    Russian*)
+        printf "RU\n"
+        ;;
+    "")
+        printf "??\n"
+        ;;
+    *)
+        selected_layout_code=$(
+            printf "%s" "$selected_layout_name" |
+                tr -cd '[:alpha:]' |
+                tr '[:lower:]' '[:upper:]' |
+                cut -c1-3
+        )
+
+        if [[ -n "$selected_layout_code" ]]; then
+            printf "%s\n" "$selected_layout_code"
+        else
+            printf "??\n"
+        fi
+        ;;
+esac
