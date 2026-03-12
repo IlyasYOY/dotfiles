@@ -14,21 +14,7 @@ Never answer codebase questions from memory alone — always dispatch an `explor
 
 ---
 
-## 2. Use the Right Model for the Right Task
-
-Match model capability to task complexity to maximize speed and quality.
-
-| Model | When to use |
-|---|---|
-| `claude-haiku-4.5` | Single-file edits, simple grep/glob searches, focused `task` runs, well-scoped `explore` queries |
-| `claude-sonnet-4.6` | Multi-file editing, `explore` with synthesis, `general-purpose` agents, complex reasoning |
-| `claude-opus-4.x` | Reserved for highly complex architectural decisions or deep multi-step reasoning only |
-
-**Default rule:** Use `haiku` for `explore` and `task` agents on focused, well-defined work. Use `sonnet-4.6` when the task requires understanding context across many files or synthesizing results.
-
----
-
-## 3. Run Tasks in Parallel
+## 2. Run Tasks in Parallel
 
 Always identify independent tasks and run them simultaneously using separate subagents.
 
@@ -38,3 +24,23 @@ Always identify independent tasks and run them simultaneously using separate sub
 - If you need to **edit multiple unrelated files**, call `edit` on all of them in the same response.
 
 **Anti-pattern to avoid:** Sequential subagent calls when tasks are independent. Always ask: "Can I run this at the same time as something else?" If yes, do it.
+
+---
+
+## 3. Review the Final Solution
+
+After implementation is complete, run a final review of the delivered solution before replying to the user.
+
+- Use the **`code-review` agent** to inspect your branch diff or working-tree changes for real issues (bugs, security problems, logic mistakes).
+- Fix any critical findings, then re-run relevant checks/tests.
+- In your final response, briefly summarize what was reviewed and whether any review findings were addressed.
+
+---
+
+## 4. Confirm Task Completion with the User
+
+At the end of every task, always use the **`ask_user` tool** to confirm the solution is satisfactory and ask if there is anything else to do.
+
+- Ask: "Does the solution look good to you? Is there anything else you'd like me to do?"
+- Use the `ask_user` tool — do NOT ask via plain text.
+- Provide relevant choices such as `["Looks good, nothing more to do", "I have more changes"]`.
