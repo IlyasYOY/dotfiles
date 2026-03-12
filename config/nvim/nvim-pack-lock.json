@@ -70,7 +70,7 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lspconfig": {
-      "rev": "2163c54bb6cfec53e3e555665ada945b8c8331b9",
+      "rev": "0203a9608d63eda57679b01e69f33a7b4c34b0d1",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -89,10 +89,6 @@
       "rev": "4e91b5d0394329a229725b021a8ea217099826ef",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
       "version": "'main'"
-    },
-    "nvim-web-devicons": {
-      "rev": "737cf6c657898d0c697311d79d361288a1343d50",
-      "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
     "obs.nvim": {
       "rev": "b7b86e08272f72c8daf7cfc58444595661ef1e37",
