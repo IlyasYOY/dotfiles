@@ -120,6 +120,13 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `lu
 - Run tests before committing changes
 - Ensure tests pass on all supported platforms
 
+### Agent Experimentation
+
+- When an agent wants to experiment to check a hypothesis, create a small function in the current project that implements the experiment and add an automated test that verifies the hypothesis. Do not run experiments in temporary directories (e.g., /tmp); experiments must live in the repository so they are reproducible and attachable to artifacts.
+- The experiment code and its test must be added to the project's test suite so results are reviewable, reproducible, and easily reusable.
+- Keep experiments small and well-documented. After review, either remove the experiment or refactor its logic into production code with proper tests and documentation.
+
+
 ## Security Considerations
 
 - Never commit sensitive information (API keys, passwords)

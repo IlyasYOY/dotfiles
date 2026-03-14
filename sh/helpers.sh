@@ -23,8 +23,16 @@ convert-webp-to-png() {
     done
 }
 
-alias cplt="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini"
-alias copilot="copilot --disable-mcp-server github-mcp-server"
+alias copilotr="copilot --resume"
+
+alias cplt="copilot --model gpt-5-mini"
+alias cpltr="copilot --model gpt-5-mini --resume"
+
+alias cpltd="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini"
+alias cpltdr="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini --resume"
+
+alias copilotd="copilot --disable-mcp-server github-mcp-server"
+alias copilotdr="copilot --disable-mcp-server github-mcp-server --resume"
 
 ### copilot ###
 _copilot_zsh() {
