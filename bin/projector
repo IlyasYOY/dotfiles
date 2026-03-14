@@ -1,128 +1,551 @@
 #!/usr/bin/env bash
 
-# Helper functions
-
 is_git_repo() {
-  git rev-parse --git-dir >/dev/null 2>&1
+    git rev-parse --git-dir >/dev/null 2>&1
 }
 
 get_project_name() {
-  basename "$(git rev-parse --show-toplevel)"
+    basename "$(git rev-parse --show-toplevel)"
 }
 
 get_default_branch() {
-  if git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
-    git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
-  else
-    # Attempt to set the symbolic ref from remote
-    if git remote set-head origin --auto >/dev/null 2>&1; then
-      # Retry symbolic-ref now that it's set
-      git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
-    else
-      # Final fallback: detect from local remote branches
-      git branch -r | sed -n 's|origin/\(main\|master\).*|\1|p' | head -1
+    if git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
+        git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+        return 0
     fi
-  fi
+
+    if git remote set-head origin --auto >/dev/null 2>&1; then
+        git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+        return 0
+    fi
+
+    git branch -r | sed -n 's|origin/\(main\|master\).*|\1|p' | head -1
 }
 
 get_accumulated_prefix() {
-  local project_name="$1"
-  local current_dir="$(basename "$PWD")"
-  if [[ "$current_dir" == "$project_name" ]]; then
-    echo ""
-  else
-    local suffix="${current_dir#$project_name-}"
+    local project_name="$1"
+    local current_dir
+    local suffix
+
+    current_dir="$(basename "$PWD")"
+    if [[ "$current_dir" == "$project_name" ]]; then
+        echo ""
+        return 0
+    fi
+
+    suffix="${current_dir#"$project_name"-}"
     echo "${suffix}-"
-  fi
 }
 
-# Main logic
+get_main_worktree_path() {
+    dirname "$(git rev-parse --path-format=absolute --git-common-dir)"
+}
 
-if [[ $# -lt 1 ]]; then
-  echo "projector: A tool for managing git worktrees and branches in a project setup."
-  echo ""
-  echo "Usage: projector <command> [args]"
-  echo ""
-  echo "Commands:"
-  echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
-  echo "  sync                    Pull the latest changes from the default branch of the 'source' remote (if configured)."
-  echo "  feature <name>          Create a new git worktree for a feature branch (feature/<name>) and switch to it."
-  echo "                          The worktree path is derived from the project name and current directory."
-  echo ""
-  echo "Notes:"
-  echo "  - This script assumes you're in a git repository with 'origin' remote configured."
-  echo "  - For commands that change directories (e.g., 'feature'), source the script to persist the change:"
-  echo "    Example: source projector feature myfeature   # or: . projector feature myfeature"
-  echo "    Without sourcing, the directory change won't affect your current shell."
-  echo ""
-  echo "Examples:"
-  echo "  projector pull          # Update from origin's default branch"
-  echo "  source projector feature auth  # Create worktree for 'feature/auth' and switch to it"
-  exit 1
-fi
+get_branch_worktree_path() {
+    local branch_name="$1"
+    local line
+    local current_path=""
+    local current_branch=""
 
-command="$1"
-shift
+    while IFS= read -r line; do
+        case "$line" in
+            worktree\ *)
+                current_path="${line#worktree }"
+                current_branch=""
+                ;;
+            branch\ refs/heads/*)
+                current_branch="${line#branch refs/heads/}"
+                if [[ "$current_branch" == "$branch_name" ]]; then
+                    echo "$current_path"
+                    return 0
+                fi
+                ;;
+            "")
+                current_path=""
+                current_branch=""
+                ;;
+        esac
+    done < <(git worktree list --porcelain)
 
-if ! is_git_repo; then
-  echo "Error: Not in a git repository"
-  exit 1
-fi
+    return 1
+}
 
-case "$command" in
-  pull)
-    if [[ $# -ne 0 ]]; then
-      echo "Error: 'pull' takes no arguments"
-      exit 1
+# List worktrees as: <path>|<branch>
+list_worktrees() {
+    local line current_path="" current_branch=""
+
+    while IFS= read -r line; do
+        case "$line" in
+            worktree\ *)
+                current_path="${line#worktree }"
+                current_branch=""
+                ;;
+            branch\ refs/heads/*)
+                current_branch="${line#branch refs/heads/}"
+                ;;
+            "")
+                if [[ -n "$current_path" ]]; then
+                    printf '%s|%s\n' "$current_path" "$current_branch"
+                fi
+                current_path=""
+                current_branch=""
+                ;;
+        esac
+    done < <(git worktree list --porcelain)
+
+    # Handle trailing entry without blank line
+    if [[ -n "$current_path" ]]; then
+        printf '%s|%s\n' "$current_path" "$current_branch"
     fi
-    default_branch="$(get_default_branch)"
-    echo "Pulling from origin/$default_branch..."
-    git pull origin "$default_branch"
-    ;;
-  sync)
-    if [[ $# -ne 0 ]]; then
-      echo "Error: 'sync' takes no arguments"
-      exit 1
+}
+
+# Return 0 if <branch> is an ancestor of <default_branch> (i.e., merged)
+is_branch_merged() {
+    local branch="$1" default_branch="$2"
+    git merge-base --is-ancestor "${branch}" "${default_branch}" >/dev/null 2>&1
+}
+
+remove_worktree() {
+    local path="$1" dry_run="$2" force="$3"
+
+    if [[ "$dry_run" == "true" ]]; then
+        if [[ "$force" == "true" ]]; then
+            echo "Would remove worktree (force): $path"
+        else
+            echo "Would remove worktree: $path"
+        fi
+        return 0
     fi
-    if ! git remote | grep -q source; then
-      echo "Warning: No 'source' remote found, skipping sync"
-      exit 0
+
+    if [[ "$force" == "true" ]]; then
+        git worktree remove -f "$path" || return 1
+    else
+        git worktree remove "$path" || return 1
     fi
-    default_branch="$(get_default_branch)"
-    echo "Syncing from source/$default_branch..."
-    git pull source "$default_branch"
-    ;;
-  feature)
-    if [[ $# -ne 1 ]]; then
-      echo "Error: 'feature' requires exactly one argument: <name>"
-      exit 1
+}
+
+delete_branch() {
+    local branch="$1" force="$2" dry_run="$3"
+
+    if [[ "$dry_run" == "true" ]]; then
+        echo "Would delete branch: $branch (force=$force)"
+        return 0
     fi
-    name="$1"
+
+    if [[ "$force" == "true" ]]; then
+        git branch -D "$branch"
+    else
+        git branch -d "$branch"
+    fi
+}
+
+prompt_yes_no() {
+    local prompt_msg="$1"
+
+    if [[ "${ASSUME_YES:-false}" == "true" ]]; then
+        return 0
+    fi
+
+    read -r -p "$prompt_msg [y/N]: " ans
+    case "$ans" in
+        [yY]|[yY][eE][sS]) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# Return 0 if there are uncommitted changes in the worktree at <path>
+has_uncommitted_changes() {
+    local path="$1"
+    # Use porcelain to detect staged, unstaged and untracked changes
+    if [[ -n "$(git -C "$path" status --porcelain 2>/dev/null)" ]]; then
+        return 0
+    fi
+    return 1
+}
+
+create_prefixed_worktree() {
+    local branch_prefix="$1"
+    local name="$2"
+    local project_name
+    local accumulated_prefix
+    local worktree_path
+    local worktree_suffix
+    local branch_name
+    local current_branch
+    local existing_branch
+
     project_name="$(get_project_name)"
     accumulated_prefix="$(get_accumulated_prefix "$project_name")"
-    worktree_path="../${project_name}-${accumulated_prefix}${name}"
-    branch_name="feature/${name}"
+    branch_name="${branch_prefix}/${name}"
     current_branch="$(git branch --show-current)"
-    
+
+    if [[ -z "$current_branch" ]]; then
+        echo "Error: Unable to determine the current branch"
+        return 1
+    fi
+
+    worktree_suffix="${name}"
+    if [[ "$branch_prefix" != "feature" ]]; then
+        worktree_suffix="${branch_prefix}-${name}"
+    fi
+
+    worktree_path="../${project_name}-${accumulated_prefix}${worktree_suffix}"
+
     if [[ -d "$worktree_path" ]]; then
-      echo "Warning: Worktree directory '$worktree_path' already exists. Reusing it."
-      cd "$worktree_path"
-      exit 0
+        if ! git -C "$worktree_path" rev-parse --git-dir >/dev/null 2>&1; then
+            echo "Error: Directory '$worktree_path' already exists but is not a git worktree"
+            return 1
+        fi
+
+        existing_branch="$(git -C "$worktree_path" branch --show-current)"
+        if [[ "$existing_branch" != "$branch_name" ]]; then
+            echo "Error: Directory '$worktree_path' is on branch '$existing_branch', expected '$branch_name'"
+            return 1
+        fi
+
+        echo "Warning: Worktree directory '$worktree_path' already exists. Reusing it."
+        window_name="${project_name}-${branch_name//\//-}"
+        if [[ -n "$TMUX" ]] && command -v tmux >/dev/null 2>&1; then
+            tmux new-window -c "$worktree_path" -n "$window_name"
+            echo "Opened tmux window '$window_name' at $worktree_path"
+            return 0
+        fi
+        cd "$worktree_path" || return 1
+        return 0
     fi
-    
+
     if ! git show-ref --verify --quiet "refs/heads/$branch_name"; then
-      echo "Creating branch '$branch_name' from '$current_branch'..."
-      git branch "$branch_name" "$current_branch"
+        echo "Creating branch '$branch_name' from '$current_branch'..."
+        git branch "$branch_name" "$current_branch" || return 1
     fi
-    
+
     echo "Creating worktree '$worktree_path' for branch '$branch_name'..."
-    git worktree add "$worktree_path" "$branch_name"
-    cd "$worktree_path"
-    echo "Switched to worktree: $PWD"
-    ;;
-  *)
-    echo "Error: Unknown command '$command'"
-    echo "Available commands: pull, sync, feature <name>"
-    exit 1
-    ;;
-esac
+    git worktree add "$worktree_path" "$branch_name" || return 1
+    window_name="${project_name}-${branch_name//\//-}"
+    if [[ -n "$TMUX" ]] && command -v tmux >/dev/null 2>&1; then
+        tmux new-window -c "$worktree_path" -n "$window_name"
+        echo "Opened tmux window '$window_name' at $worktree_path"
+    else
+        cd "$worktree_path" || return 1
+        echo "Switched to worktree: $PWD"
+    fi
+}
+
+merge_current_branch() {
+    local source_branch
+    local default_branch
+    local target_worktree
+
+    source_branch="$(git branch --show-current)"
+    if [[ -z "$source_branch" ]]; then
+        echo "Error: Unable to determine the current branch"
+        return 1
+    fi
+
+    default_branch="$(get_default_branch)"
+    if [[ -z "$default_branch" ]]; then
+        echo "Error: Unable to determine the default branch"
+        return 1
+    fi
+
+    if [[ "$source_branch" == "$default_branch" ]]; then
+        echo "Error: Already on the default branch '$default_branch'"
+        return 1
+    fi
+
+    if ! target_worktree="$(get_branch_worktree_path "$default_branch")"; then
+        target_worktree="$(get_main_worktree_path)"
+    fi
+
+    echo "Switching to '$default_branch' worktree at '$target_worktree'..."
+    cd "$target_worktree" || return 1
+
+    if [[ "$(git branch --show-current)" != "$default_branch" ]]; then
+        git checkout "$default_branch" || return 1
+    fi
+
+    echo "Merging '$source_branch' into '$default_branch'..."
+    git merge "$source_branch"
+}
+
+print_usage() {
+    echo "projector: A tool for managing git worktrees and branches in a project setup."
+    echo ""
+    echo "Usage: projector <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
+    echo "  sync                    Pull the latest changes from the default branch of the 'source' remote (if configured)."
+    echo "  feature <name>          Create a new git worktree for a feature branch and switch to it."
+    echo "  fix <name>              Create a new git worktree for a fix branch and switch to it."
+    echo "  chore <name>            Create a new git worktree for a chore branch and switch to it."
+    echo "  refactor <name>         Create a new git worktree for a refactor branch and switch to it."
+    echo "  ci <name>               Create a new git worktree for a ci branch and switch to it."
+    echo "  docs <name>             Create a new git worktree for a docs branch and switch to it."
+    echo "  merge                   Switch to the default branch worktree and merge the current branch into it."
+    echo "  cleanup [flags]         Remove unused worktrees. See flags below."
+    echo ""
+    echo "Flags for cleanup:"
+    echo "  --dry-run               Show what would be removed without making changes."
+    echo "  -y, --yes               Assume yes for all prompts (non-interactive)."
+    echo "  --delete-branches       Also delete the branch refs when removing worktrees. (Branches are deleted by default.)"
+    echo "  --force                 Force removal even if worktree has uncommitted changes (dangerous)."
+    echo "  --only-created          Only operate on worktrees that match the projector naming convention (../<project>-*)."
+    echo ""
+    echo "Notes:"
+    echo "  - This script assumes you're in a git repository with 'origin' remote configured."
+    echo "  - For commands that change directories (for example, branch creation commands and 'merge'),"
+    echo "    source the script to persist the change in your current shell."
+    echo "    Example: source projector feature myfeature   # or: . projector feature myfeature"
+    echo "    Without sourcing, the directory change won't affect your current shell."
+    echo ""
+    echo "Examples:"
+    echo "  projector pull                  # Update from origin's default branch"
+    echo "  source projector feature auth   # Create worktree for 'feature/auth' and switch to it"
+    echo "  source projector fix typo       # Create worktree for 'fix/typo' and switch to it"
+    echo "  source projector merge          # Switch to the default branch worktree and merge the current branch"
+    echo "  source projector cleanup --dry-run   # Show what would be removed"
+}
+
+main() {
+    local command
+    local default_branch
+
+    if [[ $# -lt 1 ]]; then
+        print_usage
+        return 1
+    fi
+
+    command="$1"
+    shift
+
+    if ! is_git_repo; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    case "$command" in
+        pull)
+            if [[ $# -ne 0 ]]; then
+                echo "Error: 'pull' takes no arguments"
+                return 1
+            fi
+
+            default_branch="$(get_default_branch)"
+            if [[ -z "$default_branch" ]]; then
+                echo "Error: Unable to determine the default branch"
+                return 1
+            fi
+
+            echo "Pulling from origin/$default_branch..."
+            git pull origin "$default_branch"
+            ;;
+        sync)
+            if [[ $# -ne 0 ]]; then
+                echo "Error: 'sync' takes no arguments"
+                return 1
+            fi
+
+            if ! git remote | grep -q source; then
+                echo "Warning: No 'source' remote found, skipping sync"
+                return 0
+            fi
+
+            default_branch="$(get_default_branch)"
+            if [[ -z "$default_branch" ]]; then
+                echo "Error: Unable to determine the default branch"
+                return 1
+            fi
+
+            echo "Syncing from source/$default_branch..."
+            git pull source "$default_branch"
+            ;;
+        feature|fix|chore|refactor|ci|docs)
+            if [[ $# -ne 1 ]]; then
+                echo "Error: '$command' requires exactly one argument: <name>"
+                return 1
+            fi
+
+            create_prefixed_worktree "$command" "$1"
+            ;;
+        merge)
+            if [[ $# -ne 0 ]]; then
+                echo "Error: 'merge' takes no arguments"
+                return 1
+            fi
+
+            merge_current_branch
+            ;;
+        cleanup)
+            # Flags: --dry-run, -y|--yes, --delete-branches, --only-created
+            DRY_RUN="false"
+            ASSUME_YES="false"
+            DELETE_BRANCHES="true"
+            ONLY_CREATED="false"
+            FORCE="false"
+
+            while [[ $# -gt 0 ]]; do
+                case "$1" in
+                    --dry-run)
+                        DRY_RUN="true"
+                        ;;
+                    -y|--yes)
+                        ASSUME_YES="true"
+                        ;;
+                    --delete-branches)
+                        DELETE_BRANCHES="true"
+                        ;;
+                    --only-created)
+                        ONLY_CREATED="true"
+                        ;;
+                    --force)
+                        FORCE="true"
+                        ;;
+                    --help)
+                        print_usage
+                        return 0
+                        ;;
+                    *)
+                        echo "Error: Unknown option for cleanup: $1"
+                        return 1
+                        ;;
+                esac
+                shift
+            done
+
+            default_branch="$(get_default_branch)"
+            if [[ -z "$default_branch" ]]; then
+                echo "Error: Unable to determine the default branch"
+                return 1
+            fi
+
+            project_name="$(get_project_name)"
+            main_worktree="$(get_main_worktree_path)"
+
+            # Operate from main worktree to ensure git commands target the repository
+            cd "$main_worktree" || return 1
+
+            removed=0
+            skipped=0
+            would_remove=0
+
+            while IFS='|' read -r wt_path wt_branch; do
+                # Skip main worktree
+                if [[ "$wt_path" == "$main_worktree" ]]; then
+                    continue
+                fi
+
+                # Optionally only handle created worktrees matching naming convention
+                if [[ "$ONLY_CREATED" == "true" ]]; then
+                    base="$(basename "$wt_path")"
+                    if [[ "$base" != "${project_name}-"* && "$base" != "$project_name" ]]; then
+                        continue
+                    fi
+                fi
+
+                if [[ -z "$wt_branch" ]]; then
+                    echo "Skipping worktree without branch: $wt_path"
+                    ((skipped++))
+                    continue
+                fi
+
+                if [[ "$wt_branch" == "$default_branch" ]]; then
+                    echo "Skipping default branch worktree: $wt_path ($wt_branch)"
+                    ((skipped++))
+                    continue
+                fi
+
+                if is_branch_merged "$wt_branch" "$default_branch"; then
+                    if [[ "$DRY_RUN" == "true" ]]; then
+                        if [[ "$FORCE" == "true" ]]; then
+                            echo "Would remove merged worktree: $wt_path (branch: $wt_branch) (force)"
+                        else
+                            echo "Would remove merged worktree: $wt_path (branch: $wt_branch)"
+                        fi
+                        ((would_remove++))
+                    else
+                        # Skip worktrees that have uncommitted changes unless forced
+                        if has_uncommitted_changes "$wt_path"; then
+                            if [[ "$FORCE" == "true" ]]; then
+                                echo "Removing merged worktree (force, discarding uncommitted changes): $wt_path (branch: $wt_branch)"
+                                remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
+                                if [[ "$DELETE_BRANCHES" == "true" ]]; then
+                                    delete_branch "$wt_branch" "false" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
+                                fi
+                                ((removed++))
+                            else
+                                echo "Skipping worktree (uncommitted changes): $wt_path (branch: $wt_branch)"
+                                ((skipped++))
+                            fi
+                        else
+                            echo "Removing merged worktree: $wt_path (branch: $wt_branch)"
+                            remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
+                            if [[ "$DELETE_BRANCHES" == "true" ]]; then
+                                delete_branch "$wt_branch" "false" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
+                            fi
+                            ((removed++))
+                        fi
+                    fi
+                    continue
+                fi
+
+                # Not merged
+                if prompt_yes_no "Worktree at $wt_path on branch '$wt_branch' is not merged into '$default_branch'. Remove worktree?"; then
+                    if [[ "$DRY_RUN" == "true" ]]; then
+                        if [[ "$FORCE" == "true" ]]; then
+                            echo "Would remove unmerged worktree: $wt_path (branch: $wt_branch) (force)"
+                        else
+                            echo "Would remove unmerged worktree: $wt_path (branch: $wt_branch)"
+                        fi
+                        ((would_remove++))
+                    else
+                        # Skip unmerged worktrees that have uncommitted changes unless forced
+                        if has_uncommitted_changes "$wt_path"; then
+                            if [[ "$FORCE" == "true" ]]; then
+                                echo "Removing unmerged worktree (force, discarding uncommitted changes): $wt_path (branch: $wt_branch)"
+                                remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
+                                if [[ "$DELETE_BRANCHES" == "true" ]]; then
+                                    # Force delete if unmerged
+                                    delete_branch "$wt_branch" "true" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
+                                fi
+                                ((removed++))
+                            else
+                                echo "Skipping worktree (uncommitted changes): $wt_path (branch: $wt_branch)"
+                                ((skipped++))
+                            fi
+                        else
+                            echo "Removing unmerged worktree: $wt_path (branch: $wt_branch)"
+                            remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
+                            if [[ "$DELETE_BRANCHES" == "true" ]]; then
+                                # Force delete if unmerged
+                                delete_branch "$wt_branch" "true" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
+                            fi
+                            ((removed++))
+                        fi
+                    fi
+                else
+                    echo "Skipping worktree: $wt_path"
+                    ((skipped++))
+                fi
+
+            done < <(list_worktrees)
+
+            echo "Cleanup summary: removed=$removed skipped=$skipped would_remove=$would_remove"
+
+            ;;
+        *)
+            echo "Error: Unknown command '$command'"
+            echo "Available commands: pull, sync, feature <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, merge, cleanup"
+            return 1
+            ;;
+    esac
+}
+
+main "$@"
+_rc=$?
+
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+    return "$_rc"
+fi
+
+exit "$_rc"
