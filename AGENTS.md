@@ -11,7 +11,7 @@ This is a personal dotfiles repository containing configuration files for develo
 ### Lua
 
 ```bash
-# Run all first-pass CI checks
+# Run all first-pass CI checks (same command as CI)
 make check
 
 # Lint Lua files without auto-formatting
@@ -30,14 +30,15 @@ stylua config/nvim/lua/ilyasyoy/init.lua
 ### Shell Scripts
 
 ```bash
-# Check shell scripts/fragments
+# Check shell fragments, setup scripts, and shell-shebang files in bin/
 make check-shell
 
 # Fragments without shebangs are linted as bash
 shellcheck -s bash sh/aliases.sh sh/exports.sh
 
-# Run shell script
-bash sh/helpers.sh
+# Run setup scripts directly
+bash sh/setup/install.sh
+bash sh/setup/update.sh
 ```
 
 ## Code Style Guidelines
@@ -56,12 +57,17 @@ bash sh/helpers.sh
   - 80 column width
   - Unix line endings
   - Double quotes preferred
+  - Omit call parentheses where StyLua allows it
 - Use `luacheck` for linting
 - Follow Neovim Lua conventions
 - Use `vim.keymap.set()` for key mappings
 - Use descriptive keymap descriptions
 - Handle Vim options properly
 - Use local variables when possible
+- Keep plugin entrypoints in `config/nvim/plugin/*.lua`
+- Keep shared `vim.pack` specs and helpers in `config/nvim/lua/ilyasyoy/pack.lua`
+- Keep plugin configuration in `config/nvim/after/plugin/*.lua`
+- Prefer existing `pack.on_load`, `pack.wrap`, and `pack.lazy_user_command` helpers for lazy-loaded plugins
 
 ### Shell Scripts
 
@@ -72,6 +78,8 @@ bash sh/helpers.sh
 - Use `local` for function variables
 - Add comments for complex operations
 - Use consistent error handling
+- Keep the files sourced from `.zshrc`—`sh/helpers.sh`, `sh/exports.sh`, and `sh/aliases.sh`—safe for interactive shell startup
+- Put executable setup flows under `sh/setup/`
 
 ### Python
 
@@ -91,11 +99,16 @@ bash sh/helpers.sh
 - `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh)
 - `bin/` - Executable binaries
 - `config/nvim/` - Neovim configuration
+- `config/nvim/plugin/` - `vim.pack` entrypoints and lazy-load stubs
+- `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and helper functions
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
-- `config/nvim/after/plugin/` - Per-plugin Neovim configs
+- `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
+- `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
-- `.github/agents/` - GitHub Copilot subagent definitions
-- `config/copilot/` - Copilot instructions and agent definitions
+- `.github/agents/` - Repository-local subagent docs such as `luasnip.md`
+- `.github/workflows/` - CI workflows such as `check.yml`
+- `config/copilot/copilot-instructions.md` - Copilot CLI instructions symlinked into `~/.copilot/`
+- `config/copilot/agents/` - Copilot CLI agent definitions symlinked into `~/.copilot/agents`
 
 ### File Naming
 
@@ -125,9 +138,10 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `lu
 
 ## Testing Strategy
 
-- Write tests for new functionality
-- Run tests before committing changes
-- Ensure tests pass on all supported platforms
+- Run `make check` before committing changes
+- Use `make check-lua` or `make check-shell` for faster iteration on one area
+- Keep changes compatible with the checks run by `.github/workflows/check.yml`
+- Add targeted automated verification when introducing new executable logic or reproducible experiments
 
 ### Agent Experimentation
 
@@ -154,10 +168,9 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `lu
 
 ## Documentation
 
-- Update README.md for significant changes
+- Update `README.md`, `AGENTS.md`, or Copilot instructions when workflows or layout change
 - Document configuration options
 - Add inline comments for complex logic
-- Maintain changelog for releases
 
 ## Development Environment Setup
 
@@ -172,6 +185,6 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `lu
 - Node.js: LTS via fnm
 - Python: 3.8+ with virtual environments
 - Java: Latest LTS with SDKMAN
-- Neovim: 0.9+ with Lua support
+- Neovim: version with Lua support and built-in `vim.pack` support
 
 This document should be updated as coding standards evolve or new tools are adopted.
