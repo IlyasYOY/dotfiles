@@ -62,3 +62,17 @@ make install
 ```bash
 make update
 ```
+
+### Run local checks
+
+```bash
+make check
+make check-lua
+make check-shell
+```
+
+To reformat Lua files locally, run:
+
+```bash
+make format-lua
+```

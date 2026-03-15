@@ -11,10 +11,16 @@ This is a personal dotfiles repository containing configuration files for develo
 ### Lua
 
 ```bash
-# Lint Lua files
+# Run all first-pass CI checks
+make check
+
+# Lint Lua files without auto-formatting
+make check-lua
 luacheck .
+stylua --check .
 
 # Format Lua files
+make format-lua
 stylua .
 
 # Format specific file
@@ -24,8 +30,11 @@ stylua config/nvim/lua/ilyasyoy/init.lua
 ### Shell Scripts
 
 ```bash
-# Check shell scripts with shellcheck
-shellcheck sh/*.sh sh/setup/*.sh bin/*
+# Check shell scripts/fragments
+make check-shell
+
+# Fragments without shebangs are linted as bash
+shellcheck -s bash sh/aliases.sh sh/exports.sh
 
 # Run shell script
 bash sh/helpers.sh
