@@ -12,14 +12,9 @@ local function setup_keymaps()
         }
     )
 
-    vim.keymap.set(
-        "n",
-        "cc",
-        [[<cmd>Git commit --verbose <CR>]],
-        {
-            buffer = true,
-        }
-    )
+    vim.keymap.set("n", "cc", [[<cmd>Git commit --verbose <CR>]], {
+        buffer = true,
+    })
 end
 
 setup_keymaps()

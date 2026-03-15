@@ -34,8 +34,8 @@ function M.get_jdtls_config()
         cmd = {
             "jdtls",
             "--jvm-arg=-javaagent:"
-            .. get_install_path_for "jdtls"
-            .. "/lombok.jar",
+                .. get_install_path_for "jdtls"
+                .. "/lombok.jar",
         },
 
         root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
@@ -122,25 +122,25 @@ function M.get_jdtls_config()
 
         init_options = {
             bundles = vim.iter({
-                    core.string_split(
-                        vim.fn.glob(
-                            get_install_path_for "java-debug-adapter"
+                core.string_split(
+                    vim.fn.glob(
+                        get_install_path_for "java-debug-adapter"
                             .. "/extension/server/"
                             .. "com.microsoft.java.debug.plugin-*.jar",
-                            1
-                        ),
-                        "\n"
+                        1
                     ),
-                    core.string_split(
-                        vim.fn.glob(
-                            get_install_path_for "java-test"
+                    "\n"
+                ),
+                core.string_split(
+                    vim.fn.glob(
+                        get_install_path_for "java-test"
                             .. "/extension/server/"
                             .. "*.jar",
-                            1
-                        ),
-                        "\n"
+                        1
                     ),
-                })
+                    "\n"
+                ),
+            })
                 :flatten()
                 :totable(),
         },

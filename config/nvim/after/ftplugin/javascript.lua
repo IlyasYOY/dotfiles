@@ -149,9 +149,13 @@ local function setup_toggle()
     vim.api.nvim_buf_create_user_command(0, "JSToggleTest", function()
         local cwf = vim.fn.expand "%:."
         if string.find(cwf, ".*%.test.js$") then
-            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.test.js$", "%1.js"))
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)%.test.js$", "%1.js")
+            )
         elseif string.find(cwf, "%.js$") then
-            vim.fn.execute("edit " .. string.gsub(cwf, "(%w+)%.js$", "%1.test.js"))
+            vim.fn.execute(
+                "edit " .. string.gsub(cwf, "(%w+)%.js$", "%1.test.js")
+            )
         end
     end, {
         desc = "toggle between test and source code",

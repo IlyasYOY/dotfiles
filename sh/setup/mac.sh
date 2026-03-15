@@ -132,7 +132,11 @@ update_brew() {
 
     info "🍺 Updating Homebrew..."
 
-    brew update && success "Brew updated" || error "Failed to update Brew"
+    if brew update; then
+        success "Brew updated"
+    else
+        error "Failed to update Brew"
+    fi
 }
 
 update_brew_packages() {
@@ -143,7 +147,11 @@ update_brew_packages() {
 
     info "🍺 Updating Homebrew packages..."
 
-    brew upgrade && success "Brew packages upgraded" || error "Failed to upgrade packages"
+    if brew upgrade; then
+        success "Brew packages upgraded"
+    else
+        error "Failed to upgrade packages"
+    fi
 }
 
 update_brew_cask_packages() {
@@ -154,7 +162,11 @@ update_brew_cask_packages() {
 
     info "🍺 Updating Homebrew cask packages..."
 
-    brew upgrade --cask && success "Brew casks upgraded" || error "Failed to upgrade casks"
+    if brew upgrade --cask; then
+        success "Brew casks upgraded"
+    else
+        error "Failed to upgrade casks"
+    fi
 }
 
 update_mas_applications() {
@@ -165,6 +177,9 @@ update_mas_applications() {
 
     info "🍎 Updating App Store applications..."
 
-    mas upgrade && success "Mas updated" || error "Failed to update mas"
+    if mas upgrade; then
+        success "Mas updated"
+    else
+        error "Failed to update mas"
+    fi
 }
-

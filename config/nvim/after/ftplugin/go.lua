@@ -104,8 +104,7 @@ local function setup_linters()
             binary = fallback_binary
         end
 
-        -- the solution is borrowed from here:
-        -- https://github.com/nvimtools/none-ls.nvim/blob/a96172f673f720cd4f3572e1fcd08400ed3eb25d/lua/null-ls/builtins/diagnostics/golangci_lint.lua#L30-L42
+        -- This version detection mirrors the none-ls golangci-lint builtin.
         local version = vim.system({ binary, "version" }, { text = true })
             :wait().stdout
         if

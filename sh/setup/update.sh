@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-source $(dirname $0)/helpers.sh
-source $(dirname $0)/mac.sh
+# shellcheck disable=SC1091
+source "$(dirname "$0")/helpers.sh"
+# shellcheck disable=SC1091
+source "$(dirname "$0")/mac.sh"
 
 update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles"
@@ -29,7 +31,11 @@ update_repo() {
 
     if [ -d "$repo_path/.git" ]; then
         info "Updating repository: $repo_path"
-        git -C "$repo_path" pull && success "Updated $repo_path" || error "Failed to update $repo_path"
+        if git -C "$repo_path" pull; then
+            success "Updated $repo_path"
+        else
+            error "Failed to update $repo_path"
+        fi
     else 
         warning "$repo_path is not a git repo"
     fi
@@ -37,7 +43,11 @@ update_repo() {
 
 update_tmux_plugins() {
     info "Updating TMUX plugins..."
-    "$HOME_DIR/.tmux/plugins/tpm/bin/update_plugins" all && success "TMUX plugins updated" || error "Failed to update TMUX plugins"
+    if "$HOME_DIR/.tmux/plugins/tpm/bin/update_plugins" all; then
+        success "TMUX plugins updated"
+    else
+        error "Failed to update TMUX plugins"
+    fi
 }
 
 main() {

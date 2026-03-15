@@ -2,15 +2,15 @@
 
 set -euo pipefail
 
-# Configuration variables
-HOME_DIR="$HOME"
+# Configuration variables shared by setup scripts that source this file.
+export HOME_DIR="$HOME"
 PROJECTS_DIR="$HOME/Projects"
-WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
+export WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
 PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
-NOTES_DIR="$PERSONAL_PROJECTS_DIR/notes-wiki"
-LEGACY_NOTES_DIR="$PERSONAL_PROJECTS_DIR/Legacy-Notes"
+export NOTES_DIR="$PERSONAL_PROJECTS_DIR/notes-wiki"
+export LEGACY_NOTES_DIR="$PERSONAL_PROJECTS_DIR/Legacy-Notes"
 ZSHRC="$HOME/.zshrc"
-DOTFILES_DIR=$(realpath $(dirname $0)/../../)
+DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)
 
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
@@ -41,7 +41,7 @@ warning() {
 confirm_update() {
     local message=$1
 
-    read -p "$message [y/n]: " answer
+    read -r -p "$message [y/n]: " answer
 
     if [[ $answer == "y" || $answer == "Y" ]]; then
         return 0  # Success, proceed with update
@@ -70,9 +70,11 @@ add_block() {
 
     # Check if the block already exists
     if ! grep -qF "$marker" "$file"; then
-        printf "## start %s ##\n" "$marker" >> "$file"
-        printf "%b\n" "$content" >> "$file"
-        printf "## end %s ##\n" "$marker" >> "$file"
+        {
+            printf "## start %s ##\n" "$marker"
+            printf "%b\n" "$content"
+            printf "## end %s ##\n" "$marker"
+        } >> "$file"
 
         success "Added configuration block $marker to $file"
     else
@@ -99,9 +101,11 @@ clone_repo() {
     local dest="$2"
 
     if [ ! -d "$dest" ]; then
-        git clone "$repo" "$dest" \
-            && success "Repository cloned $repo to $dest" \
-            || error "Repository $repo cannot be cloned to $dest"
+        if git clone "$repo" "$dest"; then
+            success "Repository cloned $repo to $dest"
+        else
+            error "Repository $repo cannot be cloned to $dest"
+        fi
     else
         debug "Repository already exists: $dest"
     fi
@@ -112,9 +116,11 @@ mas_install() {
     local dependency_id="$1"
 
     if ! mas info "$dependency_id" >/dev/null; then
-        mas install "$dependency_id" \
-             && success "mas installed $dependency_id" \
-             || error "mas failed to install $dependency_id"
+        if mas install "$dependency_id"; then
+            success "mas installed $dependency_id"
+        else
+            error "mas failed to install $dependency_id"
+        fi
     else
         debug "mas $dependency_id already installed"
     fi
@@ -124,9 +130,11 @@ brew_install() {
     local dependency="$1"
 
     if ! brew ls --versions "$dependency" >/dev/null; then
-        brew install "$dependency" \
-             && success "brew installed $dependency" \
-             || error "brew failed to install $dependency"
+        if brew install "$dependency"; then
+            success "brew installed $dependency"
+        else
+            error "brew failed to install $dependency"
+        fi
     else
         debug "brew $dependency already installed"
     fi
@@ -136,11 +144,12 @@ brew_cask_install() {
     local dependency="$1"
 
     if ! brew list --cask "$dependency" >/dev/null 2>&1; then
-        brew install --cask "$dependency" \
-             && success "brew cask installed $dependency" \
-             || error "brew cask failed to install $dependency"
+        if brew install --cask "$dependency"; then
+            success "brew cask installed $dependency"
+        else
+            error "brew cask failed to install $dependency"
+        fi
     else
         debug "brew cask $dependency already installed"
     fi
 }
-

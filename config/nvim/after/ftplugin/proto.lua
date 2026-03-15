@@ -20,7 +20,7 @@ local function setup_linters()
         "ProtoLint",
         "Dispatch -compiler=make protolint lint -reporter=unix %:.",
         {
-            desc = "runs proto linter on current file"
+            desc = "runs proto linter on current file",
         }
     )
 
@@ -29,7 +29,7 @@ local function setup_linters()
         "ProtoLintBuf",
         "Dispatch -compiler=make buf lint %:.",
         {
-            desc = "runs proto linter on current file"
+            desc = "runs proto linter on current file",
         }
     )
 end

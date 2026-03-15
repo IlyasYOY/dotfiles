@@ -184,22 +184,10 @@ link("@tag.attribute", "Type")
 -- =============================================================================
 -- SEARCH AND VISUAL
 -- =============================================================================
-hi(
-    "Search",
-    { guifg = palette.search, guibg = palette.bg, gui = "reverse" }
-)
-hi(
-    "IncSearch",
-    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
-)
-hi(
-    "CurSearch",
-    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
-)
-hi(
-    "Visual",
-    { guifg = palette.visual, guibg = palette.elevated }
-)
+hi("Search", { guifg = palette.search, guibg = palette.bg, gui = "reverse" })
+hi("IncSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
+hi("CurSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
+hi("Visual", { guifg = palette.visual, guibg = palette.elevated })
 hi("VisualNOS", { guibg = palette.subtle })
 
 -- =============================================================================
@@ -238,10 +226,7 @@ hi("PmenuKindSel", { guifg = palette.bg, guibg = palette.fg, gui = "bold" })
 hi("PmenuSbar", { guibg = palette.subtle })
 hi("PmenuThumb", { guibg = palette.muted })
 
-hi(
-    "WildMenu",
-    { guifg = palette.search, guibg = palette.bg, gui = "bold" }
-)
+hi("WildMenu", { guifg = palette.search, guibg = palette.bg, gui = "bold" })
 hi("Directory", { guifg = palette.fg })
 hi("Title", { guifg = palette.fg })
 hi("Question", { guifg = palette.fg })
@@ -264,10 +249,7 @@ hi("SpellRare", { guisp = palette.error, gui = "undercurl" })
 -- =============================================================================
 -- ERROR AND TODO
 -- =============================================================================
-hi(
-    "Error",
-    { guifg = palette.error, guibg = palette.bg, gui = "bold,reverse" }
-)
+hi("Error", { guifg = palette.error, guibg = palette.bg, gui = "bold,reverse" })
 hi("ErrorMsg", { guibg = palette.error })
 hi("WarningMsg", { guifg = palette.fg })
 hi("Todo", { guifg = palette.search, gui = "bold,reverse" })
@@ -370,7 +352,10 @@ hi("FzfLuaPreviewTitle", { guifg = palette.fg, guibg = palette.elevated })
 hi("FzfLuaCursor", { guibg = palette.cursor })
 hi("FzfLuaCursorLine", { guibg = palette.subtle })
 hi("FzfLuaCursorLineNr", { guifg = palette.fg, guibg = palette.subtle })
-hi("FzfLuaSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
+hi(
+    "FzfLuaSearch",
+    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
+)
 hi("FzfLuaScrollBorderEmpty", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollBorderFull", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollFloatEmpty", { guibg = palette.subtle })

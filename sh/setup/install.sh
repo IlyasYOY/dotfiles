@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-source $(dirname $0)/helpers.sh
-source $(dirname $0)/mac.sh
+# shellcheck disable=SC1091
+source "$(dirname "$0")/helpers.sh"
+# shellcheck disable=SC1091
+source "$(dirname "$0")/mac.sh"
 
 setup_basic_directories() {
     info "📁 Creating basic directories..."
@@ -85,7 +87,7 @@ setup_node_version_manager() {
     brew_install fnm
 
     # fnm configuration
-    local fnm_config='eval "$(fnm env --use-on-cd --shell zsh)"'
+    local fnm_config="eval \"\$(fnm env --use-on-cd --shell zsh)\""
 
     add_block "$ZSHRC" \
         "ilyasyoy fnm config" \
@@ -97,6 +99,7 @@ setup_go_version_manager() {
     if [ ! -d "$HOME/.gvm" ]; then
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
         # Source GVM immediately
+        # shellcheck source=/dev/null
         [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
         success "GVM installed"

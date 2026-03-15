@@ -72,14 +72,14 @@ M.color_schemes = {
 }
 
 local function scheme_for_appearance(appearance)
-    if appearance:find 'Dark' then
-        return 'IlyasYOY Monochrome Dark'
+    if appearance:find "Dark" then
+        return "IlyasYOY Monochrome Dark"
     else
-        return 'IlyasYOY Monochrome Light'
+        return "IlyasYOY Monochrome Light"
     end
 end
 
-wezterm.on('window-config-reloaded', function(window, _)
+wezterm.on("window-config-reloaded", function(window, _)
     local overrides = window:get_config_overrides() or {}
     local appearance = window:get_appearance()
     local scheme = scheme_for_appearance(appearance)
@@ -102,12 +102,16 @@ M.native_macos_fullscreen_mode = true
 
 -- Try attaching to an existing tmux session; if none exist, create a new one named 'main'.
 wezterm.on("gui-startup", function(cmd)
-  local mux = wezterm.mux
-  local shell = os.getenv("SHELL") or "/bin/bash"
-  local session = "main"
-  mux.spawn_window{
-    args = {shell, "-lc", "tmux list-sessions >/dev/null 2>&1 && exec tmux attach || exec " .. shell},
-  }
+    local mux = wezterm.mux
+    local shell = os.getenv "SHELL" or "/bin/bash"
+    mux.spawn_window {
+        args = {
+            shell,
+            "-lc",
+            "tmux list-sessions >/dev/null 2>&1 && exec tmux attach || exec "
+                .. shell,
+        },
+    }
 end)
 
 return M

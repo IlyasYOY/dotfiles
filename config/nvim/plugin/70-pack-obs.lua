@@ -15,5 +15,9 @@ for _, command in ipairs {
     "ObsNvimMove",
     "ObsNvimBacklinks",
 } do
-    pack.lazy_user_command("obs", command, { nargs = "*", bang = true, range = true })
+    pack.lazy_user_command(
+        "obs",
+        command,
+        { nargs = "*", bang = true, range = true }
+    )
 end

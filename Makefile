@@ -1,4 +1,4 @@
-LUA_CHECK_PATHS := .
+LUA_FILES := $(shell git ls-files -- '*.lua')
 SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)
@@ -13,8 +13,8 @@ update:
 check: check-lua check-shell
 
 check-lua:
-	@luacheck $(LUA_CHECK_PATHS)
-	@stylua --check $(LUA_CHECK_PATHS)
+	@luacheck $(LUA_FILES)
+	@stylua --check $(LUA_FILES)
 
 check-shell:
 	@bin_shell_files=""; \
@@ -32,4 +32,4 @@ check-shell:
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
 
 format-lua:
-	@stylua $(LUA_CHECK_PATHS)
+	@stylua $(LUA_FILES)

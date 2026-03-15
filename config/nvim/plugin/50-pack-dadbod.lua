@@ -13,5 +13,9 @@ for _, command in ipairs {
     "DBUIExecuteQuery",
     "DBUIToggleDetails",
 } do
-    pack.lazy_user_command("dadbod", command, { nargs = "*", bang = true, range = true })
+    pack.lazy_user_command(
+        "dadbod",
+        command,
+        { nargs = "*", bang = true, range = true }
+    )
 end
