@@ -1,32 +1,25 @@
 local core = require "ilyasyoy.functions.core"
+local pack = require "ilyasyoy.pack"
 
 local function setup_linters()
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "JavaPMD",
-        function()
-            vim.cmd.Dispatch {
-                "-compiler=make",
-                "pmd check --no-cache --dir % -R " .. core.resolve_relative_to_dotfiles_dir "config/pmd.xml",
-            }
-        end,
-        {
-            desc = "runs pmd for current buffer",
+    vim.api.nvim_buf_create_user_command(0, "JavaPMD", function()
+        vim.cmd.Dispatch {
+            "-compiler=make",
+            "pmd check --no-cache --dir % -R "
+                .. core.resolve_relative_to_dotfiles_dir "config/pmd.xml",
         }
-    )
+    end, {
+        desc = "runs pmd for current buffer",
+    })
 
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "JavaCheckstyle",
-        function()
-            vim.cmd.Dispatch {
-                "checkstyle % -c " .. core.resolve_relative_to_dotfiles_dir "config/checkstyle.xml",
-            }
-        end,
-        {
-            desc = "runs checkstyle for current buffer",
+    vim.api.nvim_buf_create_user_command(0, "JavaCheckstyle", function()
+        vim.cmd.Dispatch {
+            "checkstyle % -c "
+                .. core.resolve_relative_to_dotfiles_dir "config/checkstyle.xml",
         }
-    )
+    end, {
+        desc = "runs checkstyle for current buffer",
+    })
 end
 
 local function setup_test()
@@ -121,7 +114,10 @@ local function setup_test()
         if vim.g.last_java_test_command then
             vim.cmd.Dispatch { vim.g.last_java_test_command }
         else
-            vim.notify("No previous Java test command to run", vim.log.levels.WARN)
+            vim.notify(
+                "No previous Java test command to run",
+                vim.log.levels.WARN
+            )
         end
     end, {
         desc = "run the last test command again",
@@ -158,7 +154,7 @@ local function setup_toggle()
     })
 end
 
-
+pack.load "jdtls"
 local jdtls = require "jdtls"
 
 local jdtls_config = require("ilyasyoy.functions.java").get_jdtls_config()

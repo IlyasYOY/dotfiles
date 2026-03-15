@@ -1,3 +1,5 @@
+local pack = require "ilyasyoy.pack"
+
 local function described(x, desc)
     return vim.tbl_extend("force", x, { desc = desc })
 end
@@ -81,6 +83,7 @@ local function lsp_attach(data)
     client.server_capabilities.semanticTokensProvider = nil
 
     if client.name == "jdtls" then
+        pack.load "dap"
         require("jdtls").setup_dap()
     end
 

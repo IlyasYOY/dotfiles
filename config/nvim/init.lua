@@ -3,4 +3,3 @@
 pcall(require, "ilyasyoy.hidden")
 
 require "ilyasyoy"
-require "ilyasyoy.pack"

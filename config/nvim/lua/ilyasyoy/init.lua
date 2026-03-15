@@ -1,5 +1,5 @@
 -- Make sure to setup `mapleader` and `maplocalleader` before
--- loading lazy.nvim so that mappings are correct.
+-- loading plugin entrypoints so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
@@ -18,12 +18,11 @@ vim.api.nvim_create_user_command("DiffOrig", function()
     vim.cmd "diffthis"
 end, { desc = "Diff current buffer with original file" })
 
-
 vim.cmd "source ~/.vimrc"
 
 vim.opt.completeopt = { "fuzzy", "popup", "menu" }
 
-vim.g.netrw_banner = 0    -- Now we won't have bloated top of the window
+vim.g.netrw_banner = 0 -- Now we won't have bloated top of the window
 vim.g.netrw_liststyle = 3 -- Now it will be a tree view
 vim.g.netrw_bufsettings = "nu nobl"
 

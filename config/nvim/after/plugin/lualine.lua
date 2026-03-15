@@ -5,6 +5,14 @@ local function is_jdtls_buffer()
     return 1 == string.find(buf_path, "jdt", 1, true)
 end
 
+local function fugitive_head()
+    if vim.fn.exists "*FugitiveHead" == 0 then
+        return ""
+    end
+
+    return vim.fn.FugitiveHead()
+end
+
 lualine.setup {
     options = {
         icons_enabled = false,
@@ -13,7 +21,14 @@ lualine.setup {
         lualine_a = {
             "lsp_status",
         },
-        lualine_b = { "FugitiveHead" },
+        lualine_b = {
+            {
+                fugitive_head,
+                cond = function()
+                    return fugitive_head() ~= ""
+                end,
+            },
+        },
         lualine_c = {
             {
                 "filename",

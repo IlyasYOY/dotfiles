@@ -1,5 +1,7 @@
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 
+local pack = require "ilyasyoy.pack"
+
 local function setup_test()
     vim.api.nvim_buf_create_user_command(0, "PythonTestAll", function(opts)
         local cmd = "pytest"
@@ -116,7 +118,10 @@ local function setup_test()
 
     vim.api.nvim_buf_create_user_command(0, "PythonTestLast", function(opts)
         if vim.g.last_python_test_command then
-            vim.cmd.Dispatch { "-compiler=pytest", vim.g.last_python_test_command }
+            vim.cmd.Dispatch {
+                "-compiler=pytest",
+                vim.g.last_python_test_command,
+            }
         else
             vim.notify(
                 "No previous Python test command to run",
@@ -157,6 +162,8 @@ local function setup_toggle()
     })
 
     vim.keymap.set("n", "<localleader>Dm", function()
+        pack.load "dap"
+        pack.load "dap_python"
         local dap_python = require "dap-python"
         dap_python.test_method()
     end)

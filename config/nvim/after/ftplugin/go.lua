@@ -3,6 +3,8 @@ vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 vim.bo.formatprg = "gofumpt"
 
+local pack = require "ilyasyoy.pack"
+
 vim.api.nvim_buf_set_keymap(
     0,
     "n",
@@ -72,6 +74,7 @@ local function setup_toggle()
 end
 
 vim.api.nvim_buf_create_user_command(0, "GoFzfLuaInGoMod", function()
+    pack.load "fzf_lua"
     local fzf = require "fzf-lua"
     fzf.live_grep {
         cwd = "~/go/pkg/mod",
@@ -81,6 +84,8 @@ end, {
 })
 
 vim.keymap.set("n", "<localleader>Dm", function()
+    pack.load "dap"
+    pack.load "dap_go"
     require("dap-go").debug_test()
 end, {
     buffer = true,
@@ -108,13 +113,13 @@ local function setup_linters()
             and (version:match "version v2.0." or version:match "version 2.0.")
         then
             command =
-            "run --fix=false --show-stats=false --output.tab.path=stdout"
+                "run --fix=false --show-stats=false --output.tab.path=stdout"
         elseif
             version
             and (version:match "version v2" or version:match "version 2")
         then
             command =
-            "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
+                "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
         end
 
         local core = require "ilyasyoy.functions.core"
