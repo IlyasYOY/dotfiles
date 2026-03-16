@@ -1,16 +1,11 @@
-local pack = require "ilyasyoy.pack"
-
-pack.on_load("obs", function()
-    local obs = require "obs"
-    obs.setup {
-        vault_home = "~/Projects/IlyasYOY/notes-wiki",
-        vault_name = "notes-wiki",
-        journal = {
-            daily_template_name = "daily",
-            weekly_template_name = "weekly",
-        },
-    }
-end)
+require("obs").setup {
+    vault_home = "~/Projects/IlyasYOY/notes-wiki",
+    vault_name = "notes-wiki",
+    journal = {
+        daily_template_name = "daily",
+        weekly_template_name = "weekly",
+    },
+}
 
 vim.keymap.set("n", "<leader>nn", "<cmd>ObsNvimFollowLink<cr>")
 vim.keymap.set("n", "<leader>nr", "<cmd>ObsNvimRandomNote<cr>")

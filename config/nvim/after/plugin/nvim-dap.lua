@@ -1,13 +1,11 @@
-local pack = require "ilyasyoy.pack"
+local dap_module = require "dap"
 
-pack.on_load("dap", function()
-    require("nvim-dap-virtual-text").setup()
-end)
+require("nvim-dap-virtual-text").setup()
 
 local function with_dap(callback)
-    return pack.wrap("dap", function()
-        return callback(require "dap")
-    end)
+    return function()
+        return callback(dap_module)
+    end
 end
 
 vim.keymap.set(

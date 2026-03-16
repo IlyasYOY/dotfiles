@@ -3,8 +3,6 @@ vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
 vim.bo.formatprg = "gofumpt"
 
-local pack = require "ilyasyoy.pack"
-
 vim.api.nvim_buf_set_keymap(
     0,
     "n",
@@ -74,7 +72,6 @@ local function setup_toggle()
 end
 
 vim.api.nvim_buf_create_user_command(0, "GoFzfLuaInGoMod", function()
-    pack.load "fzf_lua"
     local fzf = require "fzf-lua"
     fzf.live_grep {
         cwd = "~/go/pkg/mod",
@@ -84,8 +81,6 @@ end, {
 })
 
 vim.keymap.set("n", "<localleader>Dm", function()
-    pack.load "dap"
-    pack.load "dap_go"
     require("dap-go").debug_test()
 end, {
     buffer = true,

@@ -1,18 +1,14 @@
-local pack = require "ilyasyoy.pack"
 local core = require "ilyasyoy.functions.core"
+local fzf_lua = require "fzf-lua"
+local fzf_lua_utils = require "fzf-lua.utils"
 
-pack.on_load("fzf_lua", function()
-    local fzf = require "fzf-lua"
-    fzf.setup {}
-    fzf.register_ui_select()
-end)
+fzf_lua.setup {}
+fzf_lua.register_ui_select()
 
 local function with_fzf(callback)
-    return pack.wrap("fzf_lua", function()
-        local fzf = require "fzf-lua"
-        local fzf_utils = require "fzf-lua.utils"
-        return callback(fzf, fzf_utils)
-    end)
+    return function()
+        return callback(fzf_lua, fzf_lua_utils)
+    end
 end
 
 vim.keymap.set(

@@ -21,9 +21,9 @@ other macOS tools.
 
 ## Repository contents
 
-- `config/nvim` — full Neovim configuration with `vim.pack`, LSP/DAP,
-  Treesitter, snippets, `fzf-lua`, Git tooling, database tooling, and Copilot
-  integration.
+- `config/nvim` — full Neovim configuration with eager `vim.pack` plugin
+  registration in `lua/ilyasyoy/pack.lua`, plus LSP/DAP, Treesitter, snippets,
+  `fzf-lua`, Git tooling, database tooling, and Copilot integration.
 - `config/nvim-minimal` — minimal Neovim configuration for reproducing issues.
 - `sh` — shell helpers, aliases, exports, and setup/update scripts.
 - `config/wezterm`, `config/hammerspoon`, `config/gnupg`,

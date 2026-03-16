@@ -1,7 +1,4 @@
-local pack = require "ilyasyoy.pack"
+local dap_python = require "dap-python"
 
-pack.on_load("dap_python", function()
-    local dap_python = require "dap-python"
-    dap_python.setup "uv"
-    dap_python.test_runner = "pytest"
-end)
+dap_python.setup "uv"
+dap_python.test_runner = "pytest"

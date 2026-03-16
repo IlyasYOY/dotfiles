@@ -1,32 +1,28 @@
-local pack = require "ilyasyoy.pack"
-
-pack.on_load("copilot", function()
-    require("copilot").setup {
-        filetypes = {
-            ["*"] = false,
-            markdown = true,
-            lua = true,
-            gitcommit = true,
-            python = true,
-            go = true,
-            java = true,
-            make = true,
-            sh = true,
+require("copilot").setup {
+    filetypes = {
+        ["*"] = false,
+        markdown = true,
+        lua = true,
+        gitcommit = true,
+        python = true,
+        go = true,
+        java = true,
+        make = true,
+        sh = true,
+    },
+    panel = { enabled = true },
+    suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+            accept = "<M-l>",
+            accept_word = "<M-w>",
+            next = "<M-]>",
+            prev = "<M-[>",
+            dismiss = "<M-h>",
         },
-        panel = { enabled = true },
-        suggestion = {
-            enabled = true,
-            auto_trigger = true,
-            keymap = {
-                accept = "<M-l>",
-                accept_word = "<M-w>",
-                next = "<M-]>",
-                prev = "<M-[>",
-                dismiss = "<M-h>",
-            },
-        },
-    }
-end)
+    },
+}
 
 vim.keymap.set(
     "n",

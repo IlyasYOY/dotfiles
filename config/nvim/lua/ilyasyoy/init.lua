@@ -1,8 +1,10 @@
 -- Make sure to setup `mapleader` and `maplocalleader` before
--- loading plugin entrypoints so that mappings are correct.
+-- registering plugins so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
+
+require "ilyasyoy.pack"
 
 vim.o.autoread = true
 

@@ -1,13 +1,11 @@
-local pack = require "ilyasyoy.pack"
+local dapui_module = require "dapui"
 
-pack.on_load("dap", function()
-    require("dapui").setup()
-end)
+dapui_module.setup()
 
 local function with_dapui(callback)
-    return pack.wrap("dap", function()
-        return callback(require "dapui")
-    end)
+    return function()
+        return callback(dapui_module)
+    end
 end
 
 vim.keymap.set(

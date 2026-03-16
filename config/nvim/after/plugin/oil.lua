@@ -1,5 +1,3 @@
-local pack = require "ilyasyoy.pack"
-
 local function get_git_ignored_files_in(dir)
     local found = vim.fs.find(".git", {
         upward = true,
@@ -42,39 +40,38 @@ local function cached_get_git_ignored_files_in(dir)
     return val
 end
 
-pack.on_load("oil", function()
-    local oil = require "oil"
-    oil.setup {
-        keymaps = {
-            ["g?"] = "actions.show_help",
-            ["<CR>"] = "actions.select",
-            ["<C-v>"] = "actions.select_vsplit",
-            ["<C-s>"] = "actions.select_split",
-            ["<C-t>"] = "actions.select_tab",
-            ["<C-p>"] = "actions.preview",
-            ["<C-c>"] = "actions.close",
-            ["<C-r>"] = "actions.refresh",
-            ["-"] = "actions.parent",
-            ["_"] = "actions.open_cwd",
-            ["`"] = "actions.cd",
-            ["~"] = "actions.tcd",
-            ["gs"] = "actions.change_sort",
-            ["gx"] = "actions.open_external",
-            ["g."] = "actions.toggle_hidden",
-            ["g\\"] = "actions.toggle_trash",
-        },
-        use_default_keymaps = false,
-        view_options = {
-            show_hidden = true,
-            is_hidden_file = function(name, bufnr)
-                local ignored_files =
-                    cached_get_git_ignored_files_in(oil.get_current_dir())
-                return vim.tbl_contains(ignored_files, name)
-                    or vim.startswith(name, ".")
-            end,
-        },
-    }
-end)
+local oil = require "oil"
+
+oil.setup {
+    keymaps = {
+        ["g?"] = "actions.show_help",
+        ["<CR>"] = "actions.select",
+        ["<C-v>"] = "actions.select_vsplit",
+        ["<C-s>"] = "actions.select_split",
+        ["<C-t>"] = "actions.select_tab",
+        ["<C-p>"] = "actions.preview",
+        ["<C-c>"] = "actions.close",
+        ["<C-r>"] = "actions.refresh",
+        ["-"] = "actions.parent",
+        ["_"] = "actions.open_cwd",
+        ["`"] = "actions.cd",
+        ["~"] = "actions.tcd",
+        ["gs"] = "actions.change_sort",
+        ["gx"] = "actions.open_external",
+        ["g."] = "actions.toggle_hidden",
+        ["g\\"] = "actions.toggle_trash",
+    },
+    use_default_keymaps = false,
+    view_options = {
+        show_hidden = true,
+        is_hidden_file = function(name, bufnr)
+            local ignored_files =
+                cached_get_git_ignored_files_in(oil.get_current_dir())
+            return vim.tbl_contains(ignored_files, name)
+                or vim.startswith(name, ".")
+        end,
+    },
+}
 
 vim.keymap.set("n", "-", "<cmd>Oil<CR>")
 vim.keymap.set("n", "<leader>e", "<cmd>Oil<CR>")

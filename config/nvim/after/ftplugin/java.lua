@@ -1,5 +1,4 @@
 local core = require "ilyasyoy.functions.core"
-local pack = require "ilyasyoy.pack"
 
 local function setup_linters()
     vim.api.nvim_buf_create_user_command(0, "JavaPMD", function()
@@ -154,7 +153,6 @@ local function setup_toggle()
     })
 end
 
-pack.load "jdtls"
 local jdtls = require "jdtls"
 
 local jdtls_config = require("ilyasyoy.functions.java").get_jdtls_config()

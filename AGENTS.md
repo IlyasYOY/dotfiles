@@ -64,10 +64,9 @@ bash sh/setup/update.sh
 - Use descriptive keymap descriptions
 - Handle Vim options properly
 - Use local variables when possible
-- Keep plugin entrypoints in `config/nvim/plugin/*.lua`
-- Keep shared `vim.pack` specs and helpers in `config/nvim/lua/ilyasyoy/pack.lua`
+- Keep shared `vim.pack` specs and eager registration in `config/nvim/lua/ilyasyoy/pack.lua`
 - Keep plugin configuration in `config/nvim/after/plugin/*.lua`
-- Prefer existing `pack.on_load`, `pack.wrap`, and `pack.lazy_user_command` helpers for lazy-loaded plugins
+- Keep plugin loading eager unless a task explicitly asks to reintroduce lazy loading
 
 ### Shell Scripts
 
@@ -99,8 +98,7 @@ bash sh/setup/update.sh
 - `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh)
 - `bin/` - Executable binaries
 - `config/nvim/` - Neovim configuration
-- `config/nvim/plugin/` - `vim.pack` entrypoints and lazy-load stubs
-- `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and helper functions
+- `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections

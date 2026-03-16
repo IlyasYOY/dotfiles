@@ -1,9 +1,6 @@
-local pack = require "ilyasyoy.pack"
-
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "sql",
     callback = function(args)
-        pack.load "dadbod"
         vim.bo[args.buf].omnifunc = "vim_dadbod_completion#omni"
     end,
 })
