@@ -9,6 +9,8 @@ Delegate work to specialized subagents instead of doing everything in the main c
 - **`explore` agent**: Use for searching the codebase, understanding how things work, answering multi-part questions, tracing relationships across files. Batch all related questions into a single `explore` call.
 - **`task` agent**: Use for running commands (builds, tests, lints, installs) where you only need success/failure output. Keeps the main context clean.
 - **`general-purpose` agent**: Use for complex, multi-step tasks that require full tool access and high-quality reasoning (e.g., implementing a feature end-to-end).
+- If a subagent takes longer than expected, do not take over its work in the main agent just because it is slow. Stay in planner/orchestrator mode unless the user explicitly changes direction.
+- If a subagent appears stuck, do not duplicate its work in the main agent. The user may kill the subagent, and you should expect to be notified by the user or by the runtime when that happens.
 
 Never answer codebase questions from memory alone — always dispatch an `explore` agent to verify.
 
