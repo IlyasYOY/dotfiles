@@ -10,10 +10,52 @@ PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
 export NOTES_DIR="$PERSONAL_PROJECTS_DIR/notes-wiki"
 export LEGACY_NOTES_DIR="$PERSONAL_PROJECTS_DIR/Legacy-Notes"
 ZSHRC="$HOME/.zshrc"
+BASHRC="$HOME/.bashrc"
 DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)
 
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
+}
+
+is_linux() {
+    [[ "$(uname -s)" == "Linux" ]]
+}
+
+is_raspberry_pi() {
+    if ! is_linux; then
+        return 1
+    fi
+
+    local model_file
+    for model_file in /proc/device-tree/model /sys/firmware/devicetree/base/model; do
+        if [ -r "$model_file" ] && tr -d '\0' < "$model_file" | grep -qi "Raspberry Pi"; then
+            return 0
+        fi
+    done
+
+    if [ -r /etc/os-release ] && grep -qiE "raspbian|Raspberry Pi OS" /etc/os-release; then
+        return 0
+    fi
+
+    return 1
+}
+
+shell_rc_file() {
+    if is_raspberry_pi; then
+        printf "%s\n" "$BASHRC"
+        return 0
+    fi
+
+    printf "%s\n" "$ZSHRC"
+}
+
+shell_name() {
+    if is_raspberry_pi; then
+        printf "bash\n"
+        return 0
+    fi
+
+    printf "zsh\n"
 }
 
 info() {
@@ -38,6 +80,10 @@ warning() {
     printf "⚠️ \033[1;33m%s\033[0m\n" "$1"
 }
 
+warn() {
+    warning "$1"
+}
+
 confirm_update() {
     local message=$1
 
@@ -55,8 +101,8 @@ add_line() {
     local line="$1"
     local dest="$2"
 
-    if ! grep -qxF "$line" "$ZSHRC"; then
-        echo "$line" >> "$ZSHRC"
+    if ! grep -qxF "$line" "$dest"; then
+        echo "$line" >> "$dest"
         success "Line '$line' in file $dest"
     else
         debug "Line '$line' already exists in file $dest"
@@ -67,18 +113,37 @@ add_block() {
     local file="$1"
     local marker="$2"
     local content="$3"
+    local start_marker end_marker
+    start_marker="## start $marker ##"
+    end_marker="## end $marker ##"
 
-    # Check if the block already exists
-    if ! grep -qF "$marker" "$file"; then
+    if grep -qF "$start_marker" "$file"; then
+        python3 - <<'PY' "$file" "$start_marker" "$end_marker" "$content"
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+start_marker = sys.argv[2]
+end_marker = sys.argv[3]
+content = sys.argv[4]
+
+lines = path.read_text().splitlines()
+start = lines.index(start_marker)
+end = lines.index(end_marker, start + 1)
+
+replacement = [start_marker, *content.splitlines(), end_marker]
+updated = lines[:start] + replacement + lines[end + 1 :]
+path.write_text("\n".join(updated) + "\n")
+PY
+        success "Updated configuration block $marker in $file"
+    else
         {
-            printf "## start %s ##\n" "$marker"
+            printf "%s\n" "$start_marker"
             printf "%b\n" "$content"
-            printf "## end %s ##\n" "$marker"
+            printf "%s\n" "$end_marker"
         } >> "$file"
 
         success "Added configuration block $marker to $file"
-    else
-        debug "Configuration block $marker already exists in $file"
     fi
 }
 

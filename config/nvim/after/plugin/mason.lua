@@ -35,7 +35,6 @@ vim.defer_fn(function()
             "jsonlint",
             "kotlin-lsp",
             "lua-language-server",
-            "luacheck",
             "markdownlint",
             "mdsf",
             "prettier",
@@ -49,6 +48,8 @@ vim.defer_fn(function()
             "typescript-language-server",
             "yamllint",
         },
+        -- luacheck is installed outside Mason because its LuaRocks package
+        -- currently fails to resolve dependencies against Lua 5.5.
         start_delay = 0,
     }
 end, 0)

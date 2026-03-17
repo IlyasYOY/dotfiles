@@ -16,11 +16,6 @@
       "rev": "8e2a91828210d6043744468f6d7027d256a41f42",
       "src": "https://github.com/zbirenbaum/copilot.lua"
     },
-    "copilot.vim": {
-      "rev": "a12fd5672110c8aa7e3c8419e28c96943ca179be",
-      "src": "https://github.com/github/copilot.vim",
-      "version": "'release'"
-    },
     "fugitive-gitlab.vim": {
       "rev": "3584cf7e607ba7822f991d407a8d780e05aae287",
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
@@ -70,7 +65,7 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lspconfig": {
-      "rev": "1d13d2b0df9a0a02904c76d7ad6810f71d404406",
+      "rev": "dd261ad5266ab5bbec249d21efeceda98ff3e1a6",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -78,7 +73,7 @@
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
     "nvim-treesitter": {
-      "rev": "b9f9d692f1c7f0427502a3b84fa25d4bedb29ec1",
+      "rev": "ebc3201290b8372df2b3a1c23b71b9f007d972ff",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {
@@ -92,7 +87,7 @@
     },
     "obs.nvim": {
       "rev": "b7b86e08272f72c8daf7cfc58444595661ef1e37",
-      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/obs.nvim"
+      "src": "file:///home/ilyasyoy/Projects/IlyasYOY/obs.nvim"
     },
     "oil.nvim": {
       "rev": "0fcc83805ad11cf714a949c98c605ed717e0b83e",
@@ -104,7 +99,7 @@
     },
     "theme.nvim": {
       "rev": "73d9b21913e668fd85f9ef2f61129efcbd83509f",
-      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/theme.nvim"
+      "src": "file:///home/ilyasyoy/Projects/IlyasYOY/theme.nvim"
     },
     "undotree": {
       "rev": "6fa6b57cda8459e1e4b2ca34df702f55242f4e4d",

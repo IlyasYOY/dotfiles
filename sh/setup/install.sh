@@ -4,6 +4,8 @@
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
+# shellcheck disable=SC1091
+source "$(dirname "$0")/raspberry-pi.sh"
 
 setup_basic_directories() {
     info "📁 Creating basic directories..."
@@ -32,14 +34,21 @@ setup_links_to_config_files() {
     info "⚙️ Setting up config links..."
     local config_dir="$HOME/.config"
     mkdir -pv "$config_dir"
+    mkdir -pv "$HOME/.gnupg"
 
     # Main config links
     symlink "$DOTFILES_DIR/config/nvim" "$config_dir/nvim"
     symlink "$DOTFILES_DIR/config/nvim-minimal" "$config_dir/nvim-minimal"
-    symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
-    symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
+    if is_mac; then
+        symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
+        symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
+    fi
     symlink "$DOTFILES_DIR/config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
-    gpgconf --kill gpg-agent && gpgconf --launch gpg-agent && debug "restart gpg-agent"
+    if command -v gpgconf >/dev/null 2>&1; then
+        gpgconf --kill gpg-agent && gpgconf --launch gpg-agent && debug "restart gpg-agent"
+    else
+        debug "gpgconf is not available yet, skipping gpg-agent restart"
+    fi
 
 
     # Git config
@@ -50,23 +59,66 @@ setup_links_to_config_files() {
     symlink "$DOTFILES_DIR/config/.golangci.yml" "$HOME_DIR/.golangci.yml"
     symlink "$DOTFILES_DIR/config/.tmux.conf" "$HOME_DIR/.tmux.conf"
     symlink "$DOTFILES_DIR/config/.vimrc" "$HOME_DIR/.vimrc"
-    symlink "$DOTFILES_DIR/config/.amethyst.yml" "$HOME_DIR/.amethyst.yml"
+    if is_mac; then
+        symlink "$DOTFILES_DIR/config/.amethyst.yml" "$HOME_DIR/.amethyst.yml"
+    fi
+}
+
+setup_platform_dependencies() {
+    if is_mac; then
+        setup_mac_using_brew
+        setup_mac_using_brew_cask
+        setup_mac_using_app_store
+        return 0
+    fi
+
+    if is_raspberry_pi; then
+        setup_raspberry_pi
+        return 0
+    fi
+
+    warning "No platform-specific dependency bootstrap is configured for this host"
 }
 
 
 
-setup_zshrc() {
-    info "🐚 Configuring .zshrc..."
+setup_shell_rc() {
+    local rc_file
+    rc_file=$(shell_rc_file)
+
+    if is_raspberry_pi; then
+        info "🐚 Configuring .bashrc..."
+    else
+        info "🐚 Configuring .zshrc..."
+    fi
 
     local lines=(
         "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
-        'source <(fzf --zsh)'
         "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
         "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
         "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
     )
+
+    if is_raspberry_pi; then
+        lines=(
+            "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
+            "source <(fzf --bash)"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
+        )
+    else
+        lines=(
+            "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
+            "source <(fzf --zsh)"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
+            "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
+        )
+    fi
+
     for line in "${lines[@]}"; do
-        add_line "$line" "$ZSHRC"
+        add_line "$line" "$rc_file"
     done
 }
 
@@ -87,11 +139,66 @@ setup_node_version_manager() {
     brew_install fnm
 
     # fnm configuration
-    local fnm_config="eval \"\$(fnm env --use-on-cd --shell zsh)\""
+    local rc_file shell
+    rc_file=$(shell_rc_file)
+    shell=$(shell_name)
+    local fnm_config="eval \"\$(fnm env --use-on-cd --shell $shell)\""
 
-    add_block "$ZSHRC" \
+    add_block "$rc_file" \
         "ilyasyoy fnm config" \
         "$fnm_config"
+
+    if command -v fnm >/dev/null 2>&1; then
+        eval "$(fnm env --use-on-cd --shell "$shell")"
+    fi
+
+    if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+        if command -v fnm >/dev/null 2>&1; then
+            fnm install --lts --use
+            local node_version
+            node_version=$(fnm current)
+            if [ -n "$node_version" ]; then
+                fnm default "$node_version"
+            fi
+            success "Node.js and npm installed with fnm"
+        else
+            warning "fnm is not available in the current shell yet; install Node.js after opening a new shell"
+        fi
+    else
+        debug "Node.js and npm already installed"
+    fi
+}
+
+setup_copilot_cli() {
+    info "🤖 Installing GitHub Copilot CLI..."
+
+    if ! command -v npm >/dev/null 2>&1; then
+        warning "npm is not available in the current shell yet; install GitHub Copilot CLI after opening a new shell"
+        return 0
+    fi
+
+    local npm_ignore_scripts
+    npm_ignore_scripts=$(npm config get ignore-scripts 2>/dev/null || printf "false")
+
+    if npm list -g @github/copilot --depth=0 >/dev/null 2>&1; then
+        debug "GitHub Copilot CLI already installed with npm"
+        return 0
+    fi
+
+    if [ "$npm_ignore_scripts" = "true" ]; then
+        if npm_config_ignore_scripts=false npm install -g @github/copilot; then
+            success "GitHub Copilot CLI installed with npm"
+        else
+            error "Failed to install GitHub Copilot CLI with npm"
+        fi
+        return 0
+    fi
+
+    if npm install -g @github/copilot; then
+        success "GitHub Copilot CLI installed with npm"
+    else
+        error "Failed to install GitHub Copilot CLI with npm"
+    fi
 }
 
 setup_go_version_manager() {
@@ -108,14 +215,19 @@ setup_go_version_manager() {
     fi
 
     # GVM configuration
-    local gvm_config=$'_gvm_lazy_load() {\n    unset -f gvm\n    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"\n    "$@"\n}\ngvm() { _gvm_lazy_load gvm "$@" }'
+    local gvm_config=$'_gvm_lazy_load() {\n    unset -f gvm\n    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"\n    "$@"\n}\ngvm() { _gvm_lazy_load gvm "$@"; }'
 
-    add_block "$ZSHRC" \
+    add_block "$(shell_rc_file)" \
         "ilyasyoy gvm config" \
         "$gvm_config"
 }
 
 setup_oh_my_zsh() {
+    if ! is_mac; then
+        info "This is not mac, skipping Oh My Zsh installation"
+        return 0
+    fi
+
     info "🚀 Installing Oh My Zsh..."
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -174,23 +286,21 @@ setup_copilot() {
 
 main() {
     setup_basic_directories
+    setup_platform_dependencies
     setup_notes
     setup_links_to_config_files
-    setup_zshrc
+    setup_shell_rc
     setup_git_config
     setup_sdkman
     setup_go_version_manager
     setup_node_version_manager
+    setup_copilot_cli
     setup_oh_my_zsh
     setup_tmux_plugin_manger
     setup_my_project
     setup_pass
 
     setup_copilot
-
-    setup_mac_using_brew
-    setup_mac_using_brew_cask
-    setup_mac_using_app_store
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

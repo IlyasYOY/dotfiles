@@ -95,7 +95,7 @@ bash sh/setup/update.sh
 
 - `config/` - Application configurations
 - `sh/` - Shell scripts and utilities
-- `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh)
+- `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh, raspberry-pi.sh)
 - `bin/` - Executable binaries
 - `config/nvim/` - Neovim configuration
 - `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration

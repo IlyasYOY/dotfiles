@@ -63,6 +63,7 @@ setup_mac_using_brew() {
         gh
         go
         mas
+        luacheck
         neovim
         ollama
         openai-whisper
@@ -99,7 +100,6 @@ setup_mac_using_brew_cask() {
     local casks=(
         amethyst
         betterdisplay
-        copilot-cli
         discord
         google-chrome
         hammerspoon

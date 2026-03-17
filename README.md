@@ -9,15 +9,16 @@ for Go, Java, Lua, Python, and SQL.
 > [!WARNING]
 > This is a personal, opinionated setup that changes often. The bootstrap
 > scripts assume my project layout under `~/Projects/IlyasYOY`, clone a few
-> personal repositories, and install macOS-specific tooling. Review the
-> scripts before running them.
+> personal repositories, and still include macOS-specific tooling. Raspberry Pi
+> support is intentionally a smaller first-pass bootstrap. Review the scripts
+> before running them.
 
 ## Platform support
 
-This repository is primarily built for macOS. The editor and shell
-configuration can still be reused elsewhere, but the automation in
-`sh/setup/*.sh` is built around Homebrew, `mas`, Hammerspoon, Amethyst, and
-other macOS tools.
+This repository is primarily built for macOS, but `sh/setup/install.sh` now has
+an initial Raspberry Pi path as well. The macOS flow still includes Homebrew,
+`mas`, Hammerspoon, Amethyst, and other desktop tooling; the Raspberry Pi flow
+focuses on system bootstrap and a smaller CLI/dev tool base.
 
 ## Repository contents
 
@@ -38,11 +39,16 @@ other macOS tools.
 
 Before running the bootstrap script, make sure you have:
 
-- macOS
-- Homebrew
+- macOS or Raspberry Pi OS / Debian-based Linux on a Raspberry Pi
 - Git
 - `curl`
-- `zsh`
+- `zsh` on macOS or `bash` on Raspberry Pi
+
+On macOS, Homebrew is still expected to be available before running the
+bootstrap script.
+
+On Raspberry Pi, Homebrew is bootstrapped by the installer itself, but `git`,
+`curl`, `sudo`, and a Debian-compatible `apt` environment are still assumed.
 
 ## Installation
 
@@ -56,21 +62,52 @@ make install
 
 `make install` runs `sh/setup/install.sh`. It creates the expected project
 directories, links the core configs into `~/.config` and `$HOME`, appends
-shell startup lines to `~/.zshrc`, configures Git defaults, installs version
-managers (`SDKMAN`, `fnm`, `gvm`), sets up tmux plugins, bootstraps macOS
-packages/apps, and links Copilot config if `~/.copilot` already exists.
+shell startup lines to the active shell rc file (`~/.zshrc` on macOS,
+`~/.bashrc` on Raspberry Pi), configures Git defaults, installs version
+managers (`SDKMAN`, `fnm`, `gvm`), installs GitHub Copilot CLI with npm,
+sets up tmux plugins, and links Copilot config if `~/.copilot` already
+exists.
+
+On macOS, the installer still bootstraps the full Homebrew/App Store setup.
+
+On Raspberry Pi, the installer now:
+
+- runs `apt-get update` and `apt-get upgrade -y`
+- installs Homebrew and toolchain prerequisites with `apt` (including `bison`
+  for `gvm`)
+- configures the official `sing-box` apt repository and installs `sing-box`
+- installs Homebrew on Linux
+- installs `gh` with Homebrew
+- installs a minimal first-pass core CLI/dev set with Homebrew:
+  `fzf`, `luacheck`, `ripgrep`, `tree-sitter-cli`, `tmux`, `neovim`,
+  `python`, `rust`, and `wget`, plus `go` and `pass`
+- installs Node.js and `npm` with `fnm` when they are not already available,
+  then installs GitHub Copilot CLI with `npm install -g @github/copilot`
+- writes shell startup config to `~/.bashrc` instead of `~/.zshrc`
+
+GitHub Copilot CLI now uses the cross-platform npm install path from the
+official docs, so Node.js 22+ is required in the shell that runs the
+installer.
+
+`luacheck` is installed by the bootstrap scripts instead of Mason. Mason's
+LuaRocks package currently resolves against Lua 5.5 on newer systems, which
+breaks `luacheck` dependency resolution upstream, so the Neovim config no
+longer asks Mason to manage that tool.
 
 Main links created by the installer:
 
 - `config/nvim` -> `~/.config/nvim`
 - `config/nvim-minimal` -> `~/.config/nvim-minimal`
-- `config/wezterm` -> `~/.config/wezterm`
-- `config/hammerspoon` -> `~/.hammerspoon`
 - `config/gnupg/gpg-agent.conf` -> `~/.gnupg/gpg-agent.conf`
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
+
+macOS-only links created by the installer:
+
+- `config/wezterm` -> `~/.config/wezterm`
+- `config/hammerspoon` -> `~/.hammerspoon`
 - `config/.amethyst.yml` -> `~/.amethyst.yml`
 
 ## Maintenance

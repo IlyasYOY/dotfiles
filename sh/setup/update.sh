@@ -4,6 +4,8 @@
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
+# shellcheck disable=SC1091
+source "$(dirname "$0")/raspberry-pi.sh"
 
 update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles"
@@ -51,10 +53,16 @@ update_tmux_plugins() {
 }
 
 main() {
-    update_brew
-    update_brew_packages
-    update_brew_cask_packages
-    update_mas_applications
+    if is_mac; then
+        update_brew
+        update_brew_packages
+        update_brew_cask_packages
+        update_mas_applications
+    elif is_raspberry_pi; then
+        update_raspberry_pi_system
+        update_raspberry_pi_brew
+        update_raspberry_pi_brew_packages
+    fi
 
     update_local_repos
     update_tmux_plugins
