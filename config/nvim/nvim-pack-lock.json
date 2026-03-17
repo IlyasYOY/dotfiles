@@ -16,6 +16,10 @@
       "rev": "8e2a91828210d6043744468f6d7027d256a41f42",
       "src": "https://github.com/zbirenbaum/copilot.lua"
     },
+    "copilot.vim": {
+      "rev": "a12fd5672110c8aa7e3c8419e28c96943ca179be",
+      "src": "https://github.com/github/copilot.vim"
+    },
     "fugitive-gitlab.vim": {
       "rev": "3584cf7e607ba7822f991d407a8d780e05aae287",
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
