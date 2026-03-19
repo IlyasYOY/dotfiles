@@ -276,43 +276,43 @@ local function setup_bench()
         count = 0,
     })
 
-    vim.keymap.set("n", "<localleader>ba", "<cmd>GoBenchAll<cr>", {
+    vim.keymap.set("n", "<localleader>ma", "<cmd>GoBenchAll<cr>", {
         desc = "run all benchmarks",
         buffer = true,
     })
-    vim.keymap.set("n", "<localleader>bA", "<cmd>GoBenchAll!<cr>", {
+    vim.keymap.set("n", "<localleader>mA", "<cmd>GoBenchAll!<cr>", {
         desc = "run all benchmarks (skip tests)",
         buffer = true,
     })
 
-    vim.keymap.set("n", "<localleader>bp", "<cmd>GoBenchPackage<cr>", {
+    vim.keymap.set("n", "<localleader>mp", "<cmd>GoBenchPackage<cr>", {
         desc = "run package benchmarks",
         buffer = true,
     })
-    vim.keymap.set("n", "<localleader>bP", "<cmd>GoBenchPackage!<cr>", {
+    vim.keymap.set("n", "<localleader>mP", "<cmd>GoBenchPackage!<cr>", {
         desc = "run package benchmarks (skip tests)",
         buffer = true,
     })
 
-    vim.keymap.set("n", "<localleader>bf", "<cmd>GoBenchFile<cr>", {
+    vim.keymap.set("n", "<localleader>mf", "<cmd>GoBenchFile<cr>", {
         desc = "run file benchmarks",
         buffer = true,
     })
-    vim.keymap.set("n", "<localleader>bF", "<cmd>GoBenchFile!<cr>", {
+    vim.keymap.set("n", "<localleader>mF", "<cmd>GoBenchFile!<cr>", {
         desc = "run file benchmarks (skip tests)",
         buffer = true,
     })
 
-    vim.keymap.set("n", "<localleader>bb", "<cmd>GoBenchFunction<cr>", {
+    vim.keymap.set("n", "<localleader>mb", "<cmd>GoBenchFunction<cr>", {
         desc = "run benchmark under cursor",
         buffer = true,
     })
-    vim.keymap.set("n", "<localleader>bB", "<cmd>GoBenchFunction!<cr>", {
+    vim.keymap.set("n", "<localleader>mB", "<cmd>GoBenchFunction!<cr>", {
         desc = "run benchmark under cursor (skip tests)",
         buffer = true,
     })
 
-    vim.keymap.set("n", "<localleader>bl", "<cmd>GoBenchLast<cr>", {
+    vim.keymap.set("n", "<localleader>ml", "<cmd>GoBenchLast<cr>", {
         desc = "re‑run last benchmark command",
         buffer = true,
     })
