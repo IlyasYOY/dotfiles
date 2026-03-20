@@ -275,7 +275,7 @@ print_usage() {
     echo ""
     echo "Commands:"
     echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
-    echo "  sync                    Pull the latest changes from the default branch of the 'source' remote (if configured)."
+    echo "  sync                    Pull the latest changes from the default branch of the 'upstream' remote (if configured)."
     echo "  feature <name>          Create a new git worktree for a feature branch and switch to it."
     echo "  fix <name>              Create a new git worktree for a fix branch and switch to it."
     echo "  chore <name>            Create a new git worktree for a chore branch and switch to it."
@@ -346,8 +346,8 @@ main() {
                 return 1
             fi
 
-            if ! git remote | grep -q source; then
-                echo "Warning: No 'source' remote found, skipping sync"
+            if ! git remote | grep -q upstream; then
+                echo "Warning: No 'upstream' remote found, skipping sync"
                 return 0
             fi
 
@@ -357,8 +357,8 @@ main() {
                 return 1
             fi
 
-            echo "Syncing from source/$default_branch..."
-            git pull source "$default_branch"
+            echo "Syncing from upstream/$default_branch..."
+            git pull upstream "$default_branch"
             ;;
         feature|fix|chore|refactor|ci|docs)
             if [[ $# -ne 1 ]]; then
