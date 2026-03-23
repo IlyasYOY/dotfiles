@@ -1,28 +1,30 @@
 local ls = require "luasnip"
 
-vim.keymap.set("i", "<C-j>", function()
+ls.config.set_config {
+    update_events = "TextChanged,TextChangedI",
+}
+
+vim.keymap.set({ "i" }, "<C-j>", function()
     if ls.expandable() then
         vim.schedule(function()
             ls.expand()
         end)
     elseif ls.locally_jumpable(1) then
-        ls.expand_or_jump()
+        vim.schedule(function()
+            ls.jump(1)
+        end)
     else
         return "<C-j>"
     end
-end, {
-    expr = true,
-})
+end, { expr = true, silent = true })
 
-vim.keymap.set("i", "<C-k>", function()
+vim.keymap.set({ "i", "s" }, "<C-k>", function()
     if ls.jumpable(-1) then
         ls.jump(-1)
     else
         return "<C-k>"
     end
-end, {
-    expr = true,
-})
+end, { expr = true, silent = true })
 
 vim.keymap.set("i", "<C-l>", function()
     if ls.choice_active() then
