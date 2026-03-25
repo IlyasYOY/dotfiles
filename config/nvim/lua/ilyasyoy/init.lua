@@ -22,7 +22,7 @@ end, { desc = "Diff current buffer with original file" })
 
 vim.cmd "source ~/.vimrc"
 
-vim.opt.completeopt = { "fuzzy", "popup", "menu" }
+vim.opt.completeopt = { "popup", "menu" }
 
 vim.g.netrw_banner = 0 -- Now we won't have bloated top of the window
 vim.g.netrw_liststyle = 3 -- Now it will be a tree view
