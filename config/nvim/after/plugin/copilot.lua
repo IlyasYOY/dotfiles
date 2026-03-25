@@ -26,6 +26,12 @@ require("copilot").setup {
 
 vim.keymap.set(
     "n",
+    "<leader>aa",
+    "<cmd>Copilot toggle<CR>",
+    { desc = "Toggle Copilot" }
+)
+vim.keymap.set(
+    "n",
     "<leader>ae",
     "<cmd>Copilot enable<CR>",
     { desc = "Enable Copilot" }
@@ -35,6 +41,12 @@ vim.keymap.set(
     "<leader>ad",
     "<cmd>Copilot disable<CR>",
     { desc = "Disable Copilot" }
+)
+vim.keymap.set(
+    "n",
+    "<leader>as",
+    "<cmd>Copilot status<CR>",
+    { desc = "Status Copilot" }
 )
 vim.keymap.set(
     "n",
