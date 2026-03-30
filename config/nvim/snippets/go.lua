@@ -1,8 +1,11 @@
 local ls = require "luasnip"
 local fmt = require("luasnip.extras.fmt").fmt
+local postfix = require("luasnip.extras.postfix").postfix
+local rep = require("luasnip.extras").rep
 local t = ls.text_node
 local s = ls.snippet
 local i = ls.insert_node
+local f = ls.function_node
 
 local function in_func()
     local current_node = vim.treesitter.get_node()
@@ -35,6 +38,11 @@ end
 local in_test_fn = {
     show_condition = is_in_test_function,
     condition = is_in_test_function,
+}
+
+local in_fn = {
+    show_condition = in_func,
+    condition = in_func,
 }
 
 return {
@@ -114,4 +122,91 @@ func Test{}(t *testing.T) {{
         ),
         { show_condition = is_in_test_file, condition = is_in_test_file }
     ),
+    s(
+        "if",
+        fmt(
+            [[
+if {} {{
+    {}
+}}
+]],
+            { i(1, "condition"), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        "ife",
+        fmt(
+            [[
+if {} {{
+    {}
+}} else {{
+    {}
+}}
+]],
+            { i(1, "condition"), i(2), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        "for",
+        fmt(
+            [[
+for {} {{
+    {}
+}}
+]],
+            { i(1), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        { trig = "fori", dscr = "Index-based for loop" },
+        fmt(
+            [[
+for {} := 0; {} < {}; {}++ {{
+    {}
+}}
+]],
+            { i(1, "i"), rep(1), i(2, "n"), rep(1), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        { trig = "fork", dscr = "Range over keys" },
+        fmt(
+            [[
+for {} := range {} {{
+    {}
+}}
+]],
+            { i(1, "k"), i(2, "iter"), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        { trig = "forv", dscr = "Range over values" },
+        fmt(
+            [[
+for _, {} := range {} {{
+    {}
+}}
+]],
+            { i(1, "v"), i(2, "iter"), i(0) }
+        ),
+        in_fn
+    ),
+    s(
+        { trig = "forkv", dscr = "Range over key-value pairs" },
+        fmt(
+            [[
+for {}, {} := range {} {{
+    {}
+}}
+]],
+            { i(1, "k"), i(2, "v"), i(3, "iter"), i(0) }
+        ),
+        in_fn
+    ),
+    s("rt", fmt("return {}", { i(0) }), in_fn),
 }
