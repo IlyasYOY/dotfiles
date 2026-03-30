@@ -1,3 +1,7 @@
+if vim.g.copilot_disable then
+    return
+end
+
 require("copilot").setup {
     filetypes = {
         ["*"] = false,
