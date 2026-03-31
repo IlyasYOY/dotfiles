@@ -27,7 +27,6 @@ local M = {
 
             -- UI
             gh "nvim-lualine/lualine.nvim",
-            gh "mbbill/undotree",
 
             -- Snippets
             gh "L3MON4D3/LuaSnip",

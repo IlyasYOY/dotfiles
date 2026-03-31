@@ -39,12 +39,6 @@ local function lsp_attach(data)
     )
     vim.keymap.set(
         "n",
-        "grt",
-        vim.lsp.buf.type_definition,
-        described(bufopts, "go to type definition")
-    )
-    vim.keymap.set(
-        "n",
         "grT",
         vim.lsp.buf.typehierarchy,
         described(bufopts, "go to typehierarchy")
@@ -59,12 +53,6 @@ local function lsp_attach(data)
         "<localleader>d",
         vim.diagnostic.open_float,
         described(bufopts, "diagnostics")
-    )
-    vim.keymap.set(
-        "n",
-        "<localleader>lr",
-        "<cmd>LspRestart<cr>",
-        described(bufopts, "restart lsp")
     )
 
     local client = vim.lsp.get_client_by_id(data.data.client_id)

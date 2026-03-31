@@ -8,23 +8,14 @@ require "ilyasyoy.pack"
 
 vim.o.autoread = true
 
--- Useful for checking what changes have been made since opening the file and
--- mergin changes.
-vim.api.nvim_create_user_command("DiffOrig", function()
-    vim.cmd "vert new"
-    vim.cmd "set buftype=nofile"
-    vim.cmd "read ++edit #"
-    vim.cmd "0d_"
-    vim.cmd "diffthis"
-    vim.cmd "wincmd p"
-    vim.cmd "diffthis"
-end, { desc = "Diff current buffer with original file" })
+vim.cmd "packadd nvim.difftool"
+vim.cmd "packadd nvim.undotree"
 
 vim.cmd "source ~/.vimrc"
 
-vim.opt.completeopt = { "popup", "menu" }
+vim.opt.completeopt = { "popup", "menu", "preview" }
 
-vim.g.netrw_banner = 0 -- Now we won't have bloated top of the window
+vim.g.netrw_banner = 0    -- Now we won't have bloated top of the window
 vim.g.netrw_liststyle = 3 -- Now it will be a tree view
 vim.g.netrw_bufsettings = "nu nobl"
 
