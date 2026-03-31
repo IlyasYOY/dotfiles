@@ -1,11 +1,9 @@
 local ls = require "luasnip"
 local fmt = require("luasnip.extras.fmt").fmt
-local postfix = require("luasnip.extras.postfix").postfix
 local rep = require("luasnip.extras").rep
 local t = ls.text_node
 local s = ls.snippet
 local i = ls.insert_node
-local f = ls.function_node
 
 local function in_func()
     local current_node = vim.treesitter.get_node()
