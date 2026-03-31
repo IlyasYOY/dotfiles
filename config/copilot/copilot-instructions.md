@@ -33,7 +33,7 @@ Always identify independent tasks and run them simultaneously using separate sub
 
 After implementation is complete, run a final review of the delivered solution before replying to the user.
 
-- Use the **`code-review` agent** to inspect your branch diff or working-tree changes for real issues (bugs, security problems, logic mistakes).
+- Use the **`code-review` agent** (with GPT-5.4 model) to inspect your branch diff or working-tree changes for real issues (bugs, security problems, logic mistakes).
 - Fix any critical findings, then re-run relevant checks/tests.
 - In your final response, briefly summarize what was reviewed and whether any review findings were addressed.
 
