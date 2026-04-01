@@ -4,17 +4,16 @@ local M = {}
 --- @param secret_name string: The name of the secret to load.
 --- @return string: The loaded secret.
 function M.load_secret(secret_name)
-    local handle = io.popen("pass " .. secret_name)
-    if not handle then
+    local result = vim.system({ "pass", secret_name }, { text = true }):wait()
+    if result.code ~= 0 then
         error(
             "Failed to load secret '"
                 .. secret_name
-                .. "'. Error: handle cannot be created"
+                .. "'. Error: "
+                .. (result.stderr or "unknown")
         )
     end
-    local result = handle:read "*a"
-    handle:close()
-    return result:gsub("\n", "")
+    return (result.stdout or ""):gsub("\n", "")
 end
 
 return M

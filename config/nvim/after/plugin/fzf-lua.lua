@@ -121,7 +121,7 @@ vim.keymap.set(
     "n",
     "<leader>fL",
     with_fzf(function(fzf)
-        fzf.loclist()
+        fzf.loclist_stack()
     end),
     { desc = "find in loc list stack" }
 )
@@ -212,5 +212,6 @@ vim.keymap.set(
     "<leader>gfs",
     with_fzf(function(fzf)
         fzf.git_status()
-    end)
+    end),
+    { desc = "find git status" }
 )

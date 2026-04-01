@@ -7,22 +7,28 @@ local function get_git_ignored_files_in(dir)
         return {}
     end
 
-    local cmd = string.format(
-        'git -C %s ls-files --ignored --exclude-standard --others --directory | grep -v "/.*\\/"',
-        dir
-    )
-
-    local handle = io.popen(cmd)
-    if handle == nil then
-        return
+    local result = vim.system({
+        "git",
+        "-C",
+        dir,
+        "ls-files",
+        "--ignored",
+        "--exclude-standard",
+        "--others",
+        "--directory",
+    }, { text = true }):wait()
+    if result.code ~= 0 then
+        return {}
     end
 
     local ignored_files = {}
-    for line in handle:lines "*l" do
-        line = line:gsub("/$", "")
-        table.insert(ignored_files, line)
+    for line in (result.stdout or ""):gmatch "[^\n]+" do
+        -- filter out nested directories (keep only top-level entries)
+        local stripped = line:gsub("/$", "")
+        if not stripped:find "/" then
+            table.insert(ignored_files, stripped)
+        end
     end
-    handle:close()
 
     return ignored_files
 end
@@ -73,6 +79,16 @@ oil.setup {
     },
 }
 
-vim.keymap.set("n", "-", "<cmd>Oil<CR>")
-vim.keymap.set("n", "<leader>e", "<cmd>Oil<CR>")
-vim.keymap.set("n", "<leader>E", "<cmd>Oil --float<CR>")
+vim.keymap.set("n", "-", "<cmd>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set(
+    "n",
+    "<leader>e",
+    "<cmd>Oil<CR>",
+    { desc = "Open file explorer" }
+)
+vim.keymap.set(
+    "n",
+    "<leader>E",
+    "<cmd>Oil --float<CR>",
+    { desc = "Open floating file explorer" }
+)

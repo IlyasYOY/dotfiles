@@ -15,10 +15,6 @@ vim.cmd "source ~/.vimrc"
 
 vim.opt.completeopt = { "popup", "menu", "preview" }
 
-vim.g.netrw_banner = 0 -- Now we won't have bloated top of the window
-vim.g.netrw_liststyle = 3 -- Now it will be a tree view
-vim.g.netrw_bufsettings = "nu nobl"
-
 vim.cmd "highlight WinSeparator guibg=None"
 
 vim.o.spelllang = "ru_ru,en_us"
@@ -85,7 +81,7 @@ vim.keymap.set("v", "<leader>cP", function()
         path = path .. ":" .. start_line
     end
     vim.fn.setreg("+", path)
-    vim.notify("Copied: " .. path)
+    vim.notify("copied: " .. path)
 end, { desc = "Copy absolute file path with line numbers to clipboard" })
 
 -- Monotask integration

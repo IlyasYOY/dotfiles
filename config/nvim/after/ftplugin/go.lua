@@ -1,3 +1,8 @@
+local core = require "ilyasyoy.functions.core"
+local lint_helpers = require "ilyasyoy.functions.lint"
+local test_helpers = require "ilyasyoy.functions.test"
+local toggle_helper = require "ilyasyoy.functions.toggle_test"
+
 vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
@@ -49,28 +54,6 @@ vim.api.nvim_buf_create_user_command(
     { desc = "replace assert with suite assert" }
 )
 
-local function setup_toggle()
-    vim.api.nvim_buf_create_user_command(0, "GoToggleTest", function()
-        local cwf = vim.fn.expand "%:."
-        if string.find(cwf, "_test%.go$") then
-            vim.fn.execute(
-                "edit " .. string.gsub(cwf, "(%w+)_test%.go$", "%1.go")
-            )
-        elseif string.find(cwf, "%.go$") then
-            vim.fn.execute(
-                "edit " .. string.gsub(cwf, "(%w+)%.go$", "%1_test.go")
-            )
-        end
-    end, {
-        desc = "toggle between test and source code",
-    })
-
-    vim.keymap.set("n", "<localleader>ot", "<cmd>GoToggleTest<cr>", {
-        desc = "toggle between test and source code",
-        buffer = true,
-    })
-end
-
 vim.api.nvim_buf_create_user_command(0, "GoFzfLuaInGoMod", function()
     local fzf = require "fzf-lua"
     fzf.live_grep {
@@ -83,11 +66,12 @@ end, {
 vim.keymap.set("n", "<localleader>Dm", function()
     require("dap-go").debug_test()
 end, {
+    desc = "debug nearest test",
     buffer = true,
 })
 
 local function setup_linters()
-    vim.api.nvim_buf_create_user_command(0, "GoLangCiLint", function(opts)
+    local function build_go_lint_cmd(path)
         local command = "run --fix=false --out-format=tab"
         local binary = "golangci-lint"
         local fallback_binary = "bin/golangci-lint"
@@ -116,7 +100,6 @@ local function setup_linters()
                 "run --fix=false --show-stats=false --output.tab.path=stdout --path-mode=abs"
         end
 
-        local core = require "ilyasyoy.functions.core"
         local config_path = core.find_first_present_file {
             "./.golangci.pipeline.yaml",
             "./.golangci.pipeline.yml",
@@ -125,24 +108,40 @@ local function setup_linters()
             core.resolve_relative_to_dotfiles_dir "./config/.golangci.yml",
         }
 
-        vim.cmd.Dispatch {
-            "-compiler=make",
-            string.format(
-                "%s %s --config %s %s",
-                binary,
-                command,
-                config_path,
-                opts.fargs[1]
-            ),
-        }
-    end, {
-        nargs = 1,
-        desc = "runs golangci-lint for files specified in the first argument",
-    })
+        return string.format(
+            "%s %s --config %s %s",
+            binary,
+            command,
+            config_path,
+            path
+        )
+    end
 
-    vim.keymap.set("n", "<localleader>la", "<cmd>GoLangCiLint ./...<cr>")
-    vim.keymap.set("n", "<localleader>lf", "<cmd>GoLangCiLint %<cr>")
-    vim.keymap.set("n", "<localleader>lp", "<cmd>GoLangCiLint %:p:h<cr>")
+    lint_helpers.setup {
+        prefix = "GoLangCiLint",
+        var_name = "last_go_lint_command",
+        compiler = "make",
+        lang = "Go",
+        keymap_prefix = "<localleader>l",
+        all = {
+            cmd_fn = function()
+                return build_go_lint_cmd "./..."
+            end,
+            desc = "lint all packages",
+        },
+        package = {
+            cmd_fn = function()
+                return build_go_lint_cmd(vim.fn.expand "%:p:h")
+            end,
+            desc = "lint current package",
+        },
+        file = {
+            cmd_fn = function()
+                return build_go_lint_cmd(vim.fn.expand "%")
+            end,
+            desc = "lint current file",
+        },
+    }
 end
 
 --- Extract the Go build tags declared in the current buffer.
@@ -159,7 +158,6 @@ local function get_build_tags()
     local build_tags = {}
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
-    local core = require "ilyasyoy.functions.core"
     for _, line in ipairs(lines) do
         if core.string_has_prefix(line, "//go:build", true) then
             line = core.string_strip_prefix(line, "//go:build")
@@ -176,331 +174,146 @@ local function get_build_tags()
     return build_tags
 end
 
-local function setup_bench()
-    --- Run a benchmark command.
-    --- `path` is the argument that will be appended to the command
-    --- (e.g. "./...", a package directory, a file name, or a `-run`
-    --- pattern for a single benchmark).
-    --- `opts` is the table supplied by the user‑command (bang, count).
-    local function run_go_bench(path, names, opts)
-        local base = "go test -fullpath -bench=" .. names
-        local tags = get_build_tags()
-        if #tags > 0 then
-            base = base .. ' -tags "' .. table.concat(tags, " ") .. '"'
-        end
-
-        local cmd = { base }
-
-        -- `!` (bang) → add `-run=^$` to skip tests, run only benchmarks
-        if opts.bang then
-            table.insert(cmd, "-run=^$")
-        end
-
-        -- `count` → repeat the benchmark N times (`-count=N`)
-        if opts.count ~= 0 then
-            table.insert(cmd, "-count=" .. opts.count)
-        end
-
-        table.insert(cmd, path)
-
-        vim.g.last_bench_command = table.concat(cmd, " ")
-        vim.cmd.Dispatch { "-compiler=make", vim.g.last_bench_command }
+local function build_go_bench_cmd(path, names, opts)
+    local base = "go test -fullpath -bench=" .. names
+    local tags = get_build_tags()
+    if #tags > 0 then
+        base = base .. ' -tags "' .. table.concat(tags, " ") .. '"'
     end
 
-    vim.api.nvim_buf_create_user_command(0, "GoBenchAll", function(opts)
-        run_go_bench("./...", ".", opts)
-    end, {
-        desc = "run benchmarks for all packages",
-        bang = true,
-        count = 0,
-    })
+    local cmd = { base }
+    if opts.bang then
+        table.insert(cmd, "-run=^$")
+    end
+    if opts.count ~= 0 then
+        table.insert(cmd, "-count=" .. opts.count)
+    end
 
-    vim.api.nvim_buf_create_user_command(0, "GoBenchPackage", function(opts)
-        run_go_bench(vim.fn.expand "%:p:h", ".", opts)
-    end, {
-        desc = "run benchmarks for the current package",
-        bang = true,
-        count = 0,
-    })
+    table.insert(cmd, path)
+    return table.concat(cmd, " ")
+end
 
-    vim.api.nvim_buf_create_user_command(0, "GoBenchFile", function(opts)
-        run_go_bench(vim.fn.expand "%:.", ".", opts)
-    end, {
-        desc = "run benchmarks for the current file",
-        bang = true,
-        count = 0,
-    })
+local function setup_bench()
+    test_helpers.setup {
+        prefix = "GoBench",
+        var_name = "last_go_bench_command",
+        compiler = "make",
+        lang = "Go benchmark",
+        keymap_prefix = "<localleader>m",
+        all = {
+            cmd_fn = function(opts)
+                return build_go_bench_cmd("./...", ".", opts)
+            end,
+            desc = "run all benchmarks",
+            bang = true,
+            bang_desc = "run all benchmarks (skip tests)",
+            count = 0,
+        },
+        package = {
+            cmd_fn = function(opts)
+                return build_go_bench_cmd(vim.fn.expand "%:p:h", ".", opts)
+            end,
+            desc = "run package benchmarks",
+            bang = true,
+            bang_desc = "run package benchmarks (skip tests)",
+            count = 0,
+        },
+        file = {
+            cmd_fn = function(opts)
+                return build_go_bench_cmd(vim.fn.expand "%:.", ".", opts)
+            end,
+            desc = "run file benchmarks",
+            bang = true,
+            bang_desc = "run file benchmarks (skip tests)",
+            count = 0,
+        },
+        current = {
+            node_type = "function_declaration",
+            test_name_pattern = "^Benchmark",
+            cmd_fn = function(bench_name, opts)
+                local cwd = vim.fn.expand "%:p:h"
+                return build_go_bench_cmd(cwd, "^" .. bench_name .. "$", opts)
+            end,
+            keymap = "b",
+            desc = "run benchmark under cursor",
+            bang = true,
+            bang_desc = "run benchmark under cursor (skip tests)",
+            count = 0,
+        },
+    }
+end
 
-    --- Run a single benchmark under the cursor.
-    --- It extracts the benchmark name from the nearest function
-    --- declaration that starts with `Benchmark`.
-    vim.api.nvim_buf_create_user_command(0, "GoBenchFunction", function(opts)
-        local cwd = vim.fn.expand "%:p:h"
-        local node = vim.treesitter.get_node()
-        while node do
-            if node:type() == "function_declaration" then
-                local name_node = node:field("name")[1]
-                if name_node then
-                    local bufnr = vim.api.nvim_get_current_buf()
-                    local name = vim.treesitter.get_node_text(name_node, bufnr)
-                    if name:match "^Benchmark" then
-                        run_go_bench(cwd, "^" .. name .. "$", opts)
-                        return
-                    end
-                end
-            end
-            node = node:parent()
-        end
-        vim.notify(
-            "No benchmark function found under cursor",
-            vim.log.levels.WARN
-        )
-    end, {
-        desc = "run benchmark for the function under cursor",
-        bang = true,
-        count = 0,
-    })
+local function build_go_test_cmd(path, opts)
+    local base_go_test = "go test -fullpath"
+    local tags = get_build_tags()
+    if #tags > 0 then
+        base_go_test = base_go_test
+            .. ' -v -tags "'
+            .. table.concat(tags, " ")
+            .. '"'
+    end
 
-    vim.api.nvim_buf_create_user_command(0, "GoBenchLast", function(opts)
-        if vim.g.last_bench_command then
-            vim.cmd.Dispatch { "-compiler=make", vim.g.last_bench_command }
-        else
-            vim.notify(
-                "No previous benchmark command to run",
-                vim.log.levels.WARN
-            )
-        end
-    end, {
-        desc = "re‑run the last benchmark command",
-        bang = true,
-        count = 0,
-    })
+    local cmd_parts = { base_go_test }
+    if opts.bang then
+        table.insert(cmd_parts, "-short")
+    end
+    -- TODO: for now it works only for commands, I have to add the separate logic to support this in keymaps.
+    if opts.count ~= 0 then
+        table.insert(cmd_parts, "-count=" .. opts.count)
+        table.insert(cmd_parts, "-shuffle=on")
+    end
 
-    vim.keymap.set("n", "<localleader>ma", "<cmd>GoBenchAll<cr>", {
-        desc = "run all benchmarks",
-        buffer = true,
-    })
-    vim.keymap.set("n", "<localleader>mA", "<cmd>GoBenchAll!<cr>", {
-        desc = "run all benchmarks (skip tests)",
-        buffer = true,
-    })
-
-    vim.keymap.set("n", "<localleader>mp", "<cmd>GoBenchPackage<cr>", {
-        desc = "run package benchmarks",
-        buffer = true,
-    })
-    vim.keymap.set("n", "<localleader>mP", "<cmd>GoBenchPackage!<cr>", {
-        desc = "run package benchmarks (skip tests)",
-        buffer = true,
-    })
-
-    vim.keymap.set("n", "<localleader>mf", "<cmd>GoBenchFile<cr>", {
-        desc = "run file benchmarks",
-        buffer = true,
-    })
-    vim.keymap.set("n", "<localleader>mF", "<cmd>GoBenchFile!<cr>", {
-        desc = "run file benchmarks (skip tests)",
-        buffer = true,
-    })
-
-    vim.keymap.set("n", "<localleader>mb", "<cmd>GoBenchFunction<cr>", {
-        desc = "run benchmark under cursor",
-        buffer = true,
-    })
-    vim.keymap.set("n", "<localleader>mB", "<cmd>GoBenchFunction!<cr>", {
-        desc = "run benchmark under cursor (skip tests)",
-        buffer = true,
-    })
-
-    vim.keymap.set("n", "<localleader>ml", "<cmd>GoBenchLast<cr>", {
-        desc = "re‑run last benchmark command",
-        buffer = true,
-    })
+    table.insert(cmd_parts, path)
+    return table.concat(cmd_parts, " ")
 end
 
 local function setup_test()
-    --- Run a `go test` command for the given *path*.
-    --- The function builds the command line, adds the common flags
-    --- (`-short`, `-count=`) and finally dispatches it via `:Dispatch`.
-    --- @param path string   The path/argument that will be appended to the test
-    --- command. Typical values: "./...", cwd, or a file name.
-    --- @param opts table    Table supplied by the user‑command. It contains:
-    --- - `bang`  (boolean) – whether the command was invoked with `!`.
-    --- - `count` (integer) – the count supplied before the command
-    --- (e.g. `3GoTestFile`). A value of `0` means “no count”.
-    local function run_go_test(path, opts)
-        local base_go_test = "go test -fullpath"
-        local tags = get_build_tags()
-        if #tags > 0 then
-            -- I also add -v cause I want to see the output of hard tests as they go.
-            base_go_test = base_go_test
-                .. ' -v -tags "'
-                .. table.concat(tags, " ")
-                .. '"'
-        end
-
-        local cmd_parts = { base_go_test }
-        if opts.bang then
-            table.insert(cmd_parts, "-short")
-        end
-        -- TODO: for now it works only for commands, I have to add the separate logic to support this in keymaps.
-        if opts.count ~= 0 then
-            table.insert(cmd_parts, "-count=" .. opts.count)
-            table.insert(cmd_parts, "-shuffle=on")
-        end
-
-        table.insert(cmd_parts, path)
-
-        vim.g.last_test_command = table.concat(cmd_parts, " ")
-        vim.cmd.Dispatch { "-compiler=make", vim.g.last_test_command }
-    end
-
-    vim.api.nvim_buf_create_user_command(0, "GoTestAll", function(opts)
-        run_go_test("./...", opts)
-    end, {
-        desc = "run test for all packages",
-        bang = true,
-        count = 0,
-    })
-
-    vim.keymap.set(
-        "n",
-        "<localleader>ta",
-        "<cmd>GoTestAll<cr>",
-        { desc = "run test for all packages", buffer = true }
-    )
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tA",
-        "<cmd>GoTestAll!<cr>",
-        { desc = "run test for all packages short", buffer = true }
-    )
-
-    vim.api.nvim_buf_create_user_command(0, "GoTestPackage", function(opts)
-        run_go_test(vim.fn.expand "%:p:h", opts)
-    end, {
-        desc = "run test for a package",
-        bang = true,
-        count = 0,
-    })
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tp",
-        "<cmd>GoTestPackage<cr>",
-        { desc = "run test for a package", buffer = true }
-    )
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tP",
-        "<cmd>GoTestPackage!<cr>",
-        { desc = "run test for a package short", buffer = true }
-    )
-
-    vim.api.nvim_buf_create_user_command(0, "GoTestFile", function(opts)
-        run_go_test(vim.fn.expand "%:.", opts)
-    end, {
-        desc = "run test for a file",
-        bang = true,
-        count = 0,
-    })
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tt",
-        "<cmd>GoTestFunction<cr>",
-        { desc = "run test for a function", buffer = true }
-    )
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tT",
-        "<cmd>GoTestFunction!<cr>",
-        { desc = "run test for a function", buffer = true }
-    )
-
-    ---@param node TSNode
-    ---@return string?
-    local function get_test_name(node)
-        if node:type() == "function_declaration" then
-            local name_nodes = node:field "name"
-            if #name_nodes == 0 then
-                return
-            end
-
-            local name_node = name_nodes[1]
-            if not name_node then
-                return
-            end
-
-            local bufnr = vim.api.nvim_get_current_buf()
-            return vim.treesitter.get_node_text(name_node, bufnr)
-        end
-    end
-
-    vim.api.nvim_buf_create_user_command(0, "GoTestFunction", function(opts)
-        local cwf = vim.fn.expand "%:."
-        if not string.find(cwf, "_test%.go$") then
-            vim.notify "not a test file"
-            return
-        end
-
-        local test_name = nil
-        local node = vim.treesitter.get_node()
-        while node do
-            test_name = get_test_name(node)
-            if test_name then
-                break
-            end
-            node = node:parent()
-        end
-
-        if not test_name then
-            vim.notify "test function was not found"
-        elseif string.match(test_name, "^Test.+") then
-            local cwd = vim.fn.expand "%:p:h"
-            run_go_test(cwd .. " -run " .. test_name, opts)
-        end
-    end, {
-        desc = "run test for a function",
-        bang = true,
-        count = 0,
-    })
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tf",
-        "<cmd>GoTestFile<cr>",
-        { desc = "run test for a file", buffer = true }
-    )
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tF",
-        "<cmd>GoTestFile!<cr>",
-        { desc = "run test for a file short", buffer = true }
-    )
-
-    vim.api.nvim_buf_create_user_command(0, "GoTestLast", function(opts)
-        if vim.g.last_test_command then
-            vim.cmd.Dispatch { "-compiler=make", vim.g.last_test_command }
-        else
-            vim.notify("No previous test command to run", vim.log.levels.WARN)
-        end
-    end, {
-        desc = "run the last test command again",
-        bang = true,
-        count = 0,
-    })
-
-    vim.keymap.set(
-        "n",
-        "<localleader>tl",
-        "<cmd>GoTestLast<cr>",
-        { desc = "run the last test command again", buffer = true }
-    )
+    test_helpers.setup {
+        prefix = "Go",
+        var_name = "last_go_test_command",
+        compiler = "make",
+        lang = "Go",
+        all = {
+            cmd_fn = function(opts)
+                return build_go_test_cmd("./...", opts)
+            end,
+            desc = "run test for all packages",
+            bang = true,
+            bang_desc = "run test for all packages short",
+            count = 0,
+        },
+        package = {
+            cmd_fn = function(opts)
+                return build_go_test_cmd(vim.fn.expand "%:p:h", opts)
+            end,
+            desc = "run test for a package",
+            bang = true,
+            bang_desc = "run test for a package short",
+            count = 0,
+        },
+        file = {
+            cmd_fn = function(opts)
+                return build_go_test_cmd(vim.fn.expand "%:.", opts)
+            end,
+            desc = "run test for a file",
+            bang = true,
+            bang_desc = "run test for a file short",
+            count = 0,
+        },
+        current = {
+            test_file_pattern = "_test%.go$",
+            node_type = "function_declaration",
+            test_name_pattern = "^Test.+",
+            cmd_fn = function(test_name, opts)
+                local cwd = vim.fn.expand "%:p:h"
+                return build_go_test_cmd(cwd .. " -run " .. test_name, opts)
+            end,
+            desc = "run test for a function",
+            bang = true,
+            bang_desc = "run test for a function",
+            count = 0,
+        },
+    }
 end
 
 local function setup_build()
@@ -675,4 +488,19 @@ setup_bench()
 setup_test()
 setup_build()
 setup_lsp_actions()
-setup_toggle()
+
+toggle_helper.setup {
+    command = "GoToggleTest",
+    rules = {
+        {
+            detect = "_test%.go$",
+            gsub_pattern = "(%w+)_test%.go$",
+            gsub_replacement = "%1.go",
+        },
+        {
+            detect = "%.go$",
+            gsub_pattern = "(%w+)%.go$",
+            gsub_replacement = "%1_test.go",
+        },
+    },
+}

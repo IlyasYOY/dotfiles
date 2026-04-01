@@ -25,29 +25,6 @@ function M.resolve_relative_to_dotfiles_dir(path)
     return (plenary_path / path):expand()
 end
 
----Merges strings to a text blob
----@param strings string[] array of strings to merge
----@param separator string? a string to be used as separator, default is '\n'
----@return string
-local function string_merge(strings, separator)
-    if separator == nil then
-        separator = "\n"
-    end
-
-    local result = ""
-    for number, line in ipairs(strings) do
-        result = result .. line
-        -- add separator in case this is not last iteration
-        if number ~= #strings then
-            result = result .. separator
-        end
-    end
-
-    return result
-end
-
-M.string_merge = string_merge
-
 ---Splits string using separator.
 ---@param target string to split
 ---@param separator string

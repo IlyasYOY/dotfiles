@@ -1,4 +1,9 @@
 local ts = require "nvim-treesitter"
+local ts_select = require "nvim-treesitter-textobjects.select"
+local ts_moves = require "nvim-treesitter-textobjects.move"
+local ts_swaps = require "nvim-treesitter-textobjects.swap"
+local ts_context = require "treesitter-context"
+local ts_textobjects = require "nvim-treesitter-textobjects"
 
 ts.install {
     -- languages
@@ -63,7 +68,7 @@ vim.treesitter.language.register("typescript.tsc", "tsx")
 
 -- nvim-treesitter-textobjects
 vim.g.no_plugin_maps = true
-require("nvim-treesitter-textobjects").setup {
+ts_textobjects.setup {
     select = {
         lookahead = true,
         include_surrounding_whitespace = false,
@@ -74,74 +79,75 @@ require("nvim-treesitter-textobjects").setup {
 }
 
 local function setup_selects()
-    local ts_select = require "nvim-treesitter-textobjects.select"
+    local buf_opts = { buffer = true }
 
     vim.keymap.set({ "o", "x" }, "=r", function()
         ts_select.select_textobject("@assignment.rhs", "textobjects")
-    end)
+    end, buf_opts)
 
     vim.keymap.set({ "o", "x" }, "aa", function()
         ts_select.select_textobject("@parameter.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "o", "x" }, "ia", function()
         ts_select.select_textobject("@parameter.inner", "textobjects")
-    end)
+    end, buf_opts)
 
     vim.keymap.set({ "o", "x" }, "ai", function()
         ts_select.select_textobject("@conditional.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "o", "x" }, "ii", function()
         ts_select.select_textobject("@conditional.inner", "textobjects")
-    end)
+    end, buf_opts)
 
     vim.keymap.set({ "o", "x" }, "af", function()
         ts_select.select_textobject("@function.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "o", "x" }, "if", function()
         ts_select.select_textobject("@function.inner", "textobjects")
-    end)
+    end, buf_opts)
 
     vim.keymap.set({ "o", "x" }, "at", function()
         ts_select.select_textobject("@class.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "o", "x" }, "it", function()
         ts_select.select_textobject("@class.inner", "textobjects")
-    end)
+    end, buf_opts)
 end
 
 local function setup_moves()
-    local ts_moves = require "nvim-treesitter-textobjects.move"
+    local buf_opts = { buffer = true }
+
     vim.keymap.set({ "n", "o", "x" }, "]f", function()
         ts_moves.goto_next_start("@function.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "n", "o", "x" }, "]F", function()
         ts_moves.goto_next_end("@function.outer", "textobjects")
-    end)
+    end, buf_opts)
 
     vim.keymap.set({ "n", "o", "x" }, "[f", function()
         ts_moves.goto_previous_start("@function.outer", "textobjects")
-    end)
+    end, buf_opts)
     vim.keymap.set({ "n", "o", "x" }, "[F", function()
         ts_moves.goto_previous_end("@function.outer", "textobjects")
-    end)
+    end, buf_opts)
 end
 
 local function setup_swaps()
-    local ts_swaps = require "nvim-treesitter-textobjects.swap"
+    local buf_opts = { buffer = true }
 
     vim.keymap.set("n", "<leader>man", function()
         ts_swaps.swap_next "@parameter.inner"
-    end)
+    end, buf_opts)
     vim.keymap.set("n", "<leader>map", function()
         ts_swaps.swap_previous "@parameter.inner"
-    end)
+    end, buf_opts)
 
     vim.keymap.set("n", "<leader>mfn", function()
         ts_swaps.swap_next "@function.inner"
-    end)
+    end, buf_opts)
     vim.keymap.set("n", "<leader>mfp", function()
         ts_swaps.swap_previous "@function.inner"
-    end)
+    end, buf_opts)
 end
 
 local ts_group = vim.api.nvim_create_augroup("ilyasyoy-treesitter", {})
@@ -160,7 +166,9 @@ vim.api.nvim_create_autocmd("FileType", {
         "query",
         "ruby",
         "sql",
+        "javascript",
         "typescript",
+        "typescriptreact",
         "typst",
         "vim",
         "yaml",
@@ -185,8 +193,6 @@ vim.api.nvim_create_autocmd("FileType", {
     group = ts_group,
 })
 
--- nvim-treesitter-context
-local ts_context = require "treesitter-context"
 ts_context.setup {
     enable = true,
     max_lines = 1,
