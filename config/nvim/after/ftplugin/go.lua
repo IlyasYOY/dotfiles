@@ -481,6 +481,17 @@ local function setup_lsp_actions()
     end, {
         buffer = true,
     })
+
+    vim.keymap.set("n", "<localleader>at", function()
+        vim.lsp.buf.code_action {
+            apply = true,
+            filter = function(x)
+                return x.kind == "source.addTest"
+            end,
+        }
+    end, {
+        buffer = true,
+    })
 end
 
 setup_linters()
