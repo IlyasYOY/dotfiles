@@ -25,7 +25,7 @@ vim.diagnostic.config { virtual_text = true }
 
 -- Dev things
 
-vim.keymap.set("n", "<leader>D", function()
+vim.keymap.set("n", "<leader>d", function()
     vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostic" })
 

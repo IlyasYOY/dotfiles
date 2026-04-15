@@ -13,23 +13,27 @@
       "src": "https://github.com/copilotlsp-nvim/copilot-lsp"
     },
     "copilot.lua": {
-      "rev": "07aa57148ac28986bab9f55e87ee3d929e2726b1",
+      "rev": "ad7e729e9a6348f7da482be0271d452dbc4c8e2c",
       "src": "https://github.com/zbirenbaum/copilot.lua"
     },
     "copilot.vim": {
       "rev": "a12fd5672110c8aa7e3c8419e28c96943ca179be",
       "src": "https://github.com/github/copilot.vim"
     },
+    "debugmaster.nvim": {
+      "rev": "505d9a269d657ce8e0fa5601e0530f0d8798038c",
+      "src": "https://github.com/MironPascalCaseFan/debugmaster.nvim"
+    },
     "fugitive-gitlab.vim": {
       "rev": "3584cf7e607ba7822f991d407a8d780e05aae287",
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
     },
     "fzf-lua": {
-      "rev": "4deeecf611c0beba6455e6cf06e2c051a6169dd4",
+      "rev": "be79dead8b147acce0daa3fc15cf5f0f4d6f2232",
       "src": "https://github.com/ibhagwan/fzf-lua"
     },
     "lualine.nvim": {
-      "rev": "f5d2a8570f8b736ddb9bb4be504355bcd6e15ec8",
+      "rev": "a905eeebc4e63fdc48b5135d3bf8aea5618fb21c",
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "mason-tool-installer.nvim": {
@@ -69,7 +73,7 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lspconfig": {
-      "rev": "c588db330592fa477a70d2fee6ba20a57194bdc3",
+      "rev": "d10ce09e42bb0ca8600fd610c3bb58676e61208d",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -98,7 +102,7 @@
       "src": "https://github.com/stevearc/oil.nvim"
     },
     "plenary.nvim": {
-      "rev": "b9fd5226c2f76c951fc8ed5923d85e4de065e509",
+      "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "theme.nvim": {
