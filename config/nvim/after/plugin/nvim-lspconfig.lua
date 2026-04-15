@@ -2,6 +2,11 @@ local function described(x, desc)
     return vim.tbl_extend("force", x, { desc = desc })
 end
 
+local function toggle_codelens(bufnr)
+    local filter = { bufnr = bufnr }
+    vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled(filter), filter)
+end
+
 local function lsp_attach(data)
     local bufopts = { noremap = true, silent = true, buffer = data.buf }
     vim.lsp.completion.enable(true, data.data.client_id, data.buf)
@@ -59,6 +64,17 @@ local function lsp_attach(data)
     if not client then
         return
     end
+
+    vim.lsp.codelens.enable(true, { bufnr = data.buf })
+    vim.keymap.set("n", "<localleader>lcl", function()
+        toggle_codelens(data.buf)
+    end, described(bufopts, "toggle code lens"))
+    vim.keymap.set(
+        "n",
+        "grA",
+        vim.lsp.codelens.run,
+        described(bufopts, "run code lens")
+    )
 
     if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
         vim.keymap.set("n", "<localleader>lih", function()
