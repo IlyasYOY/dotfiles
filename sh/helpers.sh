@@ -23,27 +23,4 @@ convert-webp-to-png() {
     done
 }
 
-alias copilotr="copilot --resume"
-
-alias cplt="copilot --model gpt-5-mini"
-alias cpltr="copilot --model gpt-5-mini --resume"
-
-alias cpltd="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini"
-alias cpltdr="copilot --disable-mcp-server github-mcp-server --model gpt-5-mini --resume"
-
-alias copilotd="copilot --disable-mcp-server github-mcp-server"
-alias copilotdr="copilot --disable-mcp-server github-mcp-server --resume"
-
-if [ -n "${ZSH_VERSION:-}" ] && command -v zle >/dev/null 2>&1 && command -v bindkey >/dev/null 2>&1; then
-    _copilot_zsh() {
-        if [[ -n "$BUFFER" ]]; then
-            local _old=$BUFFER
-            BUFFER+="⌛"
-            zle -I && zle redisplay
-            BUFFER=$(command copilot --model gpt-5-mini --agent shell-command-generator -p "$_old")
-            zle end-of-line
-        fi
-    }
-    zle -N _copilot_zsh
-    bindkey '\ee' _copilot_zsh
-fi
+alias opncd="opencode"

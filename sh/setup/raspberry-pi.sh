@@ -139,6 +139,7 @@ setup_raspberry_pi_requested_tools() {
     fi
 
     brew_install gh
+    brew_install opencode
 }
 
 setup_raspberry_pi_core_dependencies() {

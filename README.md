@@ -24,14 +24,14 @@ focuses on system bootstrap and a smaller CLI/dev tool base.
 
 - `config/nvim` — full Neovim configuration with eager `vim.pack` plugin
   registration in `lua/ilyasyoy/pack.lua`, plus LSP/DAP, Treesitter, snippets,
-  `fzf-lua`, Git tooling, database tooling, and Copilot integration.
+  `fzf-lua`, Git tooling, and database tooling.
 - `config/nvim-minimal` — minimal Neovim configuration for reproducing issues.
 - `sh` — shell helpers, aliases, exports, and setup/update scripts.
 - `config/wezterm`, `config/hammerspoon`, `config/gnupg`,
   `config/.tmux.conf`, `config/.amethyst.yml`,
   `config/.vimrc` — terminal, desktop, and core CLI configuration tracked in
   the repository.
-- `config/copilot` — checked-in Copilot instructions and agent
+- `config/opencode` — checked-in OpenCode instructions and agent
   configuration.
 - `bin` — small personal utilities and executable helpers.
 
@@ -64,9 +64,8 @@ make install
 directories, links the core configs into `~/.config` and `$HOME`, appends
 shell startup lines to the active shell rc file (`~/.zshrc` on macOS,
 `~/.bashrc` on Raspberry Pi), configures Git defaults, installs version
-managers (`SDKMAN`, `fnm`, `gvm`), installs GitHub Copilot CLI with npm,
-sets up tmux plugins, and links Copilot config if `~/.copilot` already
-exists.
+managers (`SDKMAN`, `fnm`, `gvm`), sets up tmux plugins, installs OpenCode
+with Homebrew, and links OpenCode config into `~/.config/opencode`.
 
 On macOS, the installer still bootstraps the full Homebrew/App Store setup.
 
@@ -77,17 +76,12 @@ On Raspberry Pi, the installer now:
   for `gvm`)
 - configures the official `sing-box` apt repository and installs `sing-box`
 - installs Homebrew on Linux
-- installs `gh` with Homebrew
+- installs `gh` and `anomalyco/tap/opencode` with Homebrew
 - installs a minimal first-pass core CLI/dev set with Homebrew:
   `fzf`, `luacheck`, `ripgrep`, `tree-sitter-cli`, `tmux`, `neovim`,
   `python`, `rust`, and `wget`, plus `go` and `pass`
-- installs Node.js and `npm` with `fnm` when they are not already available,
-  then installs GitHub Copilot CLI with `npm install -g @github/copilot`
+- installs Node.js and `npm` with `fnm` when they are not already available
 - writes shell startup config to `~/.bashrc` instead of `~/.zshrc`
-
-GitHub Copilot CLI now uses the cross-platform npm install path from the
-official docs, so Node.js 22+ is required in the shell that runs the
-installer.
 
 `luacheck` is installed by the bootstrap scripts instead of Mason. Mason's
 LuaRocks package currently resolves against Lua 5.5 on newer systems, which
@@ -101,6 +95,8 @@ Main links created by the installer:
 - `config/gnupg/gpg-agent.conf` -> `~/.gnupg/gpg-agent.conf`
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
+- `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
+- `config/opencode/agents` -> `~/.config/opencode/agents`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 

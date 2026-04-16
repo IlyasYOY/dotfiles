@@ -85,12 +85,6 @@ local M = {
             gh "tpope/vim-rhubarb",
             gh "tpope/vim-fugitive",
         },
-        copilot = {
-            gh "zbirenbaum/copilot.lua",
-            -- This plugin is required for NES support.
-            -- I don't use NES, but I include it anyway.
-            gh "copilotlsp-nvim/copilot-lsp",
-        },
         obs = {
             ilyasyoy "obs.nvim",
         },
@@ -107,7 +101,6 @@ for _, group in ipairs {
     "jdtls",
     "dadbod",
     "git_tools",
-    "copilot",
     "obs",
 } do
     vim.pack.add(M.specs[group])

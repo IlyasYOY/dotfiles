@@ -1,4 +1,4 @@
-LUA_FILES := $(shell git ls-files -- '*.lua')
+LUA_FILES := $(wildcard $(shell git ls-files -- '*.lua'))
 SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)

@@ -149,7 +149,7 @@ setup_node_version_manager() {
         "$fnm_config"
 
     if command -v fnm >/dev/null 2>&1; then
-        eval "$(fnm env --use-on-cd --shell "$shell")"
+        eval "$(fnm env --shell bash)"
     fi
 
     if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
@@ -166,38 +166,6 @@ setup_node_version_manager() {
         fi
     else
         debug "Node.js and npm already installed"
-    fi
-}
-
-setup_copilot_cli() {
-    info "🤖 Installing GitHub Copilot CLI..."
-
-    if ! command -v npm >/dev/null 2>&1; then
-        warning "npm is not available in the current shell yet; install GitHub Copilot CLI after opening a new shell"
-        return 0
-    fi
-
-    local npm_ignore_scripts
-    npm_ignore_scripts=$(npm config get ignore-scripts 2>/dev/null || printf "false")
-
-    if npm list -g @github/copilot --depth=0 >/dev/null 2>&1; then
-        debug "GitHub Copilot CLI already installed with npm"
-        return 0
-    fi
-
-    if [ "$npm_ignore_scripts" = "true" ]; then
-        if npm_config_ignore_scripts=false npm install -g @github/copilot; then
-            success "GitHub Copilot CLI installed with npm"
-        else
-            error "Failed to install GitHub Copilot CLI with npm"
-        fi
-        return 0
-    fi
-
-    if npm install -g @github/copilot; then
-        success "GitHub Copilot CLI installed with npm"
-    else
-        error "Failed to install GitHub Copilot CLI with npm"
     fi
 }
 
@@ -267,21 +235,17 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
 }
 
-setup_copilot() {
-    info "🤖 Setting up Copilot..."
+setup_opencode() {
+    info "🤖 Setting up OpenCode..."
 
-    local copilot_config_dir="$HOME/.copilot"
-    if [ ! -d "$copilot_config_dir" ]; then
-        warn "⚠️ Copilot config directory is absent. Please ensure Copilot is installed before proceeding."
-        return
-    fi
+    local opencode_config_dir="$HOME/.config/opencode"
+    mkdir -pv "$opencode_config_dir"
 
-    info "🤖 Setting up Copilot instructions..."
-    symlink "$DOTFILES_DIR/config/copilot/copilot-instructions.md" "$copilot_config_dir/copilot-instructions.md"
+    info "🤖 Setting up OpenCode instructions..."
+    symlink "$DOTFILES_DIR/config/opencode/AGENTS.md" "$opencode_config_dir/AGENTS.md"
 
-
-    info "🤖 Setting up Copilot agents..."
-    symlink "$DOTFILES_DIR/config/copilot/agents" "$copilot_config_dir/agents"
+    info "🤖 Setting up OpenCode agents..."
+    symlink "$DOTFILES_DIR/config/opencode/agents" "$opencode_config_dir/agents"
 }
 
 main() {
@@ -294,13 +258,12 @@ main() {
     setup_sdkman
     setup_go_version_manager
     setup_node_version_manager
-    setup_copilot_cli
     setup_oh_my_zsh
     setup_tmux_plugin_manger
     setup_my_project
     setup_pass
 
-    setup_copilot
+    setup_opencode
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

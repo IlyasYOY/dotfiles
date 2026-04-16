@@ -50,6 +50,7 @@ setup_mac_using_brew() {
     info "🍺 Installing Homebrew packages..."
     local packages=(
         ast-grep
+        anomalyco/tap/opencode
         bat
         bison
         cmake
