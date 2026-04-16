@@ -1,9 +1,10 @@
-# OpenCode Personal Instructions
+# Codex Personal Instructions
 
 ## Working Style
 
-- Use the built-in `explore` subagent for codebase discovery and verification.
-- Use the built-in `general` subagent for isolated multi-step tasks that can run independently.
+- Use the built-in `explorer` subagent for read-heavy codebase discovery and verification.
+- Use the built-in `worker` subagent for execution-focused implementation and isolated multi-step tasks.
+- Use the built-in `default` subagent as a general-purpose fallback when neither `explorer` nor `worker` fits.
 - Never answer codebase questions from memory alone when the repository can be inspected directly.
 - Prefer running independent searches, reads, and subagent tasks in parallel.
 - Read multiple relevant files in the same turn when they are already known.

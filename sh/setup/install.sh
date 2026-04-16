@@ -235,17 +235,17 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
 }
 
-setup_opencode() {
-    info "🤖 Setting up OpenCode..."
+setup_codex() {
+    info "🤖 Setting up Codex..."
 
-    local opencode_config_dir="$HOME/.config/opencode"
-    mkdir -pv "$opencode_config_dir"
+    local codex_config_dir="$HOME/.codex"
+    mkdir -pv "$codex_config_dir"
 
-    info "🤖 Setting up OpenCode instructions..."
-    symlink "$DOTFILES_DIR/config/opencode/AGENTS.md" "$opencode_config_dir/AGENTS.md"
+    info "🤖 Setting up Codex instructions..."
+    symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
 
-    info "🤖 Setting up OpenCode agents..."
-    symlink "$DOTFILES_DIR/config/opencode/agents" "$opencode_config_dir/agents"
+    info "🤖 Setting up Codex agents..."
+    symlink "$DOTFILES_DIR/config/codex/agents" "$codex_config_dir/agents"
 }
 
 main() {
@@ -263,7 +263,7 @@ main() {
     setup_my_project
     setup_pass
 
-    setup_opencode
+    setup_codex
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

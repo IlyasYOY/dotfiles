@@ -50,9 +50,9 @@ setup_mac_using_brew() {
     info "🍺 Installing Homebrew packages..."
     local packages=(
         ast-grep
-        anomalyco/tap/opencode
         bat
         bison
+        codex
         cmake
         colima
         curl
@@ -100,6 +100,9 @@ setup_mac_using_brew_cask() {
     info "🍺 Installing Homebrew casks packages..."
     local casks=(
         amethyst
+        chatgpt
+        codex
+        codex-app
         betterdisplay
         discord
         google-chrome

@@ -31,7 +31,7 @@ focuses on system bootstrap and a smaller CLI/dev tool base.
   `config/.tmux.conf`, `config/.amethyst.yml`,
   `config/.vimrc` — terminal, desktop, and core CLI configuration tracked in
   the repository.
-- `config/opencode` — checked-in OpenCode instructions and agent
+- `config/codex` — checked-in Codex instructions and custom subagent
   configuration.
 - `bin` — small personal utilities and executable helpers.
 
@@ -64,8 +64,8 @@ make install
 directories, links the core configs into `~/.config` and `$HOME`, appends
 shell startup lines to the active shell rc file (`~/.zshrc` on macOS,
 `~/.bashrc` on Raspberry Pi), configures Git defaults, installs version
-managers (`SDKMAN`, `fnm`, `gvm`), sets up tmux plugins, installs OpenCode
-with Homebrew, and links OpenCode config into `~/.config/opencode`.
+managers (`SDKMAN`, `fnm`, `gvm`), sets up tmux plugins, installs Codex
+with Homebrew, and links Codex config into `~/.codex`.
 
 On macOS, the installer still bootstraps the full Homebrew/App Store setup.
 
@@ -76,7 +76,7 @@ On Raspberry Pi, the installer now:
   for `gvm`)
 - configures the official `sing-box` apt repository and installs `sing-box`
 - installs Homebrew on Linux
-- installs `gh` and `anomalyco/tap/opencode` with Homebrew
+- installs `gh` and `codex` with Homebrew
 - installs a minimal first-pass core CLI/dev set with Homebrew:
   `fzf`, `luacheck`, `ripgrep`, `tree-sitter-cli`, `tmux`, `neovim`,
   `python`, `rust`, and `wget`, plus `go` and `pass`
@@ -95,8 +95,8 @@ Main links created by the installer:
 - `config/gnupg/gpg-agent.conf` -> `~/.gnupg/gpg-agent.conf`
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
-- `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
-- `config/opencode/agents` -> `~/.config/opencode/agents`
+- `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
+- `config/codex/agents` -> `~/.codex/agents`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 

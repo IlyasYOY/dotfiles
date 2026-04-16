@@ -105,8 +105,8 @@ bash sh/setup/update.sh
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
 - `.github/agents/` - Repository-local subagent docs such as `luasnip.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
-- `config/opencode/AGENTS.md` - OpenCode instructions symlinked into `~/.config/opencode/AGENTS.md`
-- `config/opencode/agents/` - OpenCode agent definitions symlinked into `~/.config/opencode/agents`
+- `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
+- `config/codex/agents/` - Codex custom subagent TOML definitions symlinked into `~/.codex/agents`
 
 ### File Naming
 
@@ -166,7 +166,7 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `lu
 
 ## Documentation
 
-- Update `README.md`, `AGENTS.md`, or OpenCode instructions when workflows or layout change
+- Update `README.md`, `AGENTS.md`, or Codex instructions when workflows or layout change
 - Document configuration options
 - Add inline comments for complex logic
 

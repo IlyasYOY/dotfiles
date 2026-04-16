@@ -23,4 +23,4 @@ convert-webp-to-png() {
     done
 }
 
-alias opncd="opencode"
+alias cdx="codex"
