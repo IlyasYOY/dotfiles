@@ -65,7 +65,7 @@ local function lsp_attach(data)
         return
     end
 
-    vim.lsp.codelens.enable(true, { bufnr = data.buf })
+    vim.lsp.codelens.enable(false, { bufnr = data.buf })
     vim.keymap.set("n", "<localleader>lcl", function()
         toggle_codelens(data.buf)
     end, described(bufopts, "toggle code lens"))
