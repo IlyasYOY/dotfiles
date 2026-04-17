@@ -19,7 +19,6 @@ local M = {
             ilyasyoy "theme.nvim",
 
             -- Colors
-            gh "norcalli/nvim-colorizer.lua",
             gh "f-person/auto-dark-mode.nvim",
 
             -- Navigation & file management
