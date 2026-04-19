@@ -13,7 +13,7 @@
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
     },
     "fzf-lua": {
-      "rev": "83f7195972538beee3a40932b38ccd86c8cc0f06",
+      "rev": "8969c8c2b668502d54478e46745d6647ff346e15",
       "src": "https://github.com/ibhagwan/fzf-lua"
     },
     "lualine.nvim": {
