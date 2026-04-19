@@ -1,8 +1,8 @@
 local core = require "ilyasyoy.functions.core"
+local java_helpers = require "ilyasyoy.functions.java"
 local lint_helpers = require "ilyasyoy.functions.lint"
 local test_helpers = require "ilyasyoy.functions.test"
 local jdtls = require "jdtls"
-local jdtls_config = require("ilyasyoy.functions.java").get_jdtls_config()
 
 local function setup_linters()
     lint_helpers.setup_command {
@@ -63,7 +63,9 @@ local function setup_test()
 end
 
 local function setup_lsp()
-    jdtls.start_or_attach(jdtls_config)
+    if not java_helpers.start_or_attach(jdtls) then
+        return
+    end
 
     vim.keymap.set("n", "<localleader>oi", function()
         jdtls.organize_imports()

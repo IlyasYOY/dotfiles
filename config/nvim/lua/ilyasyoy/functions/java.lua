@@ -1,33 +1,75 @@
 local core = require "ilyasyoy.functions.core"
 
 local M = {}
+local supported_java_runtime_versions = { "8", "11", "17", "21", "23", "25" }
+local preferred_java_home_versions = { "21", "17", "11", "8", "23", "25" }
 
 local function get_install_path_for(package)
     return vim.fn.expand("$MASON/packages/" .. package)
 end
 
--- loads jdks from sdkman.
----@param version string java version to search for
--- This requires java to be installed using sdkman.
-local function get_java_dir(version)
-    local Path = require "plenary.path"
-
-    local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
-    local java_dirs = vim.fn.readdir(sdkman_dir, function(file)
-        if core.string_has_prefix(file, version, true) then
-            return 1
-        end
-    end)
-
-    local java_dir = java_dirs[1]
-    if not java_dir then
-        error(string.format("No %s java version was found", version))
+local function get_java_runtime_name(version)
+    if version == "8" then
+        return "JavaSE-1.8"
     end
 
-    return sdkman_dir .. java_dir
+    return "JavaSE-" .. version
+end
+
+local function get_installed_java_dirs()
+    local Path = require "plenary.path"
+    local sdkman_dir = Path.path.home .. "/.sdkman/candidates/java/"
+    local java_dirs = vim.fn.readdir(sdkman_dir)
+    local installed = {}
+
+    for _, version in ipairs(supported_java_runtime_versions) do
+        for _, java_dir in ipairs(java_dirs) do
+            if core.string_has_prefix(java_dir, version, true) then
+                installed[version] = sdkman_dir .. java_dir
+                break
+            end
+        end
+    end
+
+    return installed
+end
+
+local function get_preferred_java_home(installed_java_dirs)
+    for _, version in ipairs(preferred_java_home_versions) do
+        local java_dir = installed_java_dirs[version]
+        if java_dir then
+            return java_dir
+        end
+    end
+end
+
+local function build_java_runtimes(installed_java_dirs)
+    local runtimes = {}
+
+    for _, version in ipairs(supported_java_runtime_versions) do
+        local java_dir = installed_java_dirs[version]
+        if java_dir then
+            table.insert(runtimes, {
+                name = get_java_runtime_name(version),
+                path = java_dir,
+            })
+        end
+    end
+
+    return runtimes
 end
 
 function M.get_jdtls_config()
+    local installed_java_dirs = get_installed_java_dirs()
+    local java_home = get_preferred_java_home(installed_java_dirs)
+    if not java_home then
+        vim.notify_once(
+            "No supported SDKMAN Java runtimes were found; skipping jdtls setup",
+            vim.log.levels.WARN
+        )
+        return nil
+    end
+
     return {
         name = "jdtls",
 
@@ -42,7 +84,7 @@ function M.get_jdtls_config()
 
         settings = {
             java = {
-                home = get_java_dir "21",
+                home = java_home,
                 redhat = {
                     telemetry = { enabled = false },
                 },
@@ -90,32 +132,7 @@ function M.get_jdtls_config()
                     },
                 },
                 configuration = {
-                    runtimes = {
-                        {
-                            name = "JavaSE-1.8",
-                            path = get_java_dir "8",
-                        },
-                        {
-                            name = "JavaSE-11",
-                            path = get_java_dir "11",
-                        },
-                        {
-                            name = "JavaSE-17",
-                            path = get_java_dir "17",
-                        },
-                        {
-                            name = "JavaSE-21",
-                            path = get_java_dir "21",
-                        },
-                        {
-                            name = "JavaSE-23",
-                            path = get_java_dir "23",
-                        },
-                        {
-                            name = "JavaSE-25",
-                            path = get_java_dir "25",
-                        },
-                    },
+                    runtimes = build_java_runtimes(installed_java_dirs),
                 },
             },
         },
@@ -145,6 +162,16 @@ function M.get_jdtls_config()
                 :totable(),
         },
     }
+end
+
+function M.start_or_attach(jdtls)
+    local config = M.get_jdtls_config()
+    if not config then
+        return false
+    end
+
+    jdtls.start_or_attach(config)
+    return true
 end
 
 return M
