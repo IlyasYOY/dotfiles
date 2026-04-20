@@ -34,54 +34,92 @@ vim.keymap.set("n", "<localleader>sc", function()
     vim.notify("spell: " .. tostring(vim.opt_local.spell))
 end, { desc = "Toggle spell check" })
 
-vim.keymap.set("n", "<leader>cp", function()
-    local path = vim.fn.expand "%:."
-    path = "./" .. path
+local function get_current_path(absolute)
+    local path
+    local bufname = vim.api.nvim_buf_get_name(0)
+
+    if vim.bo.filetype == "oil" then
+        local ok, oil = pcall(require, "oil")
+        if ok then
+            path = oil.get_current_dir()
+        end
+    elseif
+        vim.startswith(bufname, "fugitive:")
+        and vim.fn.exists "*FugitivePath" == 1
+    then
+        path = vim.fn.FugitivePath(bufname)
+    else
+        path = vim.fn.expand "%:p"
+    end
+
+    if not path or path == "" then
+        return nil
+    end
+
+    path = vim.fs.normalize(path)
+    if absolute then
+        return path
+    end
+
+    local cwd = vim.fs.normalize(vim.fn.getcwd())
+    if path == cwd then
+        return "./."
+    end
+
+    local cwd_prefix = cwd .. "/"
+    if vim.startswith(path, cwd_prefix) then
+        local relative_path = path:sub(#cwd_prefix + 1)
+        return "./" .. relative_path
+    end
+
+    return path
+end
+
+local function copy_current_path(opts)
+    opts = opts or {}
+
+    if opts.with_line_numbers then
+        vim.api.nvim_feedkeys(
+            vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+            "nx", -- 'n' for normal mode, 'x' to update '<' and '>' marks correctly
+            false
+        )
+    end
+
+    local path = get_current_path(opts.absolute)
+    if not path then
+        vim.notify("nothing to copy", vim.log.levels.WARN)
+        return
+    end
+
+    if opts.with_line_numbers then
+        local start_line = vim.fn.line "'<"
+        local end_line = vim.fn.line "'>"
+        if start_line ~= end_line then
+            path = path .. ":" .. start_line .. "-" .. end_line
+        else
+            path = path .. ":" .. start_line
+        end
+    end
+
     vim.fn.setreg("+", path)
     vim.notify("copied: " .. path)
+end
+
+vim.keymap.set("n", "<leader>cp", function()
+    copy_current_path()
 end, { desc = "Copy relative file path to clipboard" })
 
 vim.keymap.set("n", "<leader>cP", function()
-    local abs_path = vim.fn.expand "%:p"
-    vim.fn.setreg("+", abs_path)
-    vim.notify("copied absolute path: " .. abs_path)
+    copy_current_path { absolute = true }
 end, { desc = "Copy absolute file path to clipboard" })
 
 vim.keymap.set("v", "<leader>cp", function()
-    vim.api.nvim_feedkeys(
-        vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
-        "nx", -- 'n' for normal mode, 'x' to update '<' and '>' marks correctly
-        false
-    )
-    local start_line = vim.fn.line "'<"
-    local end_line = vim.fn.line "'>"
-    local path = vim.fn.expand "%:."
-    if start_line ~= end_line then
-        path = path .. ":" .. start_line .. "-" .. end_line
-    else
-        path = path .. ":" .. start_line
-    end
-    path = "./" .. path
-    vim.fn.setreg("+", path)
-    vim.notify("copied: " .. path)
+    copy_current_path { with_line_numbers = true }
 end, { desc = "Copy relative file path with line numbers to clipboard" })
 
 vim.keymap.set("v", "<leader>cP", function()
-    vim.api.nvim_feedkeys(
-        vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
-        "nx",
-        false
-    )
-    local path = vim.fn.expand "%:p"
-    local start_line = vim.fn.line "'<"
-    local end_line = vim.fn.line "'>"
-    if start_line ~= end_line then
-        path = path .. ":" .. start_line .. "-" .. end_line
-    else
-        path = path .. ":" .. start_line
-    end
-    vim.fn.setreg("+", path)
-    vim.notify("copied: " .. path)
+    copy_current_path { absolute = true, with_line_numbers = true }
 end, { desc = "Copy absolute file path with line numbers to clipboard" })
 
 -- Monotask integration
