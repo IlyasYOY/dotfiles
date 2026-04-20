@@ -23,4 +23,29 @@ convert-webp-to-png() {
     done
 }
 
-alias cdx="codex"
+alias codexr="codex resume"
+alias codexrl="codex resume --last"
+
+codex-time-manager() {
+    local token
+
+    token="$(pass singularity/token/full)" || return
+
+    codex \
+        -c 'plugins."google-calendar@openai-curated".enabled=true' \
+        -c 'mcp_servers.singularity.command="node"' \
+        -c "mcp_servers.singularity.args=[\"$HOME/Projects/IlyasYOY/singularity-mcp-server-2.1.1/mcp.js\",\"--baseUrl\",\"https://api.singularity-app.com\",\"--accessToken\",\"$token\",\"-n\"]" \
+        -c 'mcp_servers.singularity.tools.listTasks.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.listProjects.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.getTask.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.listTimeStats.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.listHabits.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.listHabitProgress.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.getNote.approval_mode="approve"' \
+        -c 'mcp_servers.singularity.tools.listNotes.approval_mode="approve"' \
+        "$@"
+}
+
+codex-notes() {
+    codex-time-manager -C "$HOME/Projects/IlyasYOY/notes-wiki" 
+}
