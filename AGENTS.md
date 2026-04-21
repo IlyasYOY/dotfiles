@@ -4,7 +4,10 @@ This file contains instructions for agentic coding assistants operating in this 
 
 ## Repository Overview
 
-This is a personal dotfiles repository containing configuration files for development tools and environments. It includes Neovim setup, shell configurations, and language-specific tooling for Go, Java, Python, Lua, and SQL.
+This is a personal dotfiles and workstation bootstrap repository for day-to-day
+development. It includes Neovim and shell configuration, bootstrap/update
+scripts, Homebrew manifests, Codex instructions and skills, and terminal or
+desktop configuration for macOS plus a smaller Raspberry Pi bootstrap path.
 
 ## Build/Lint/Test Commands
 
@@ -16,12 +19,12 @@ make check
 
 # Lint Lua files without auto-formatting
 make check-lua
-luacheck .
-stylua --check .
+luacheck $(git ls-files -- '*.lua')
+stylua --check $(git ls-files -- '*.lua')
 
 # Format Lua files
 make format-lua
-stylua .
+stylua $(git ls-files -- '*.lua')
 
 # Format specific file
 stylua config/nvim/lua/ilyasyoy/init.lua
@@ -36,9 +39,13 @@ make check-shell
 # Fragments without shebangs are linted as bash
 shellcheck -s bash sh/aliases.sh sh/exports.sh
 
-# Run setup scripts directly
+# Run setup flows directly
 bash sh/setup/install.sh
 bash sh/setup/update.sh
+
+# Top-level helpers
+make install
+make update
 ```
 
 ## Code Style Guidelines
@@ -77,7 +84,9 @@ bash sh/setup/update.sh
 - Use `local` for function variables
 - Add comments for complex operations
 - Use consistent error handling
-- Keep the files sourced from `.zshrc`—`sh/helpers.sh`, `sh/exports.sh`, and `sh/aliases.sh`—safe for interactive shell startup
+- Keep the files sourced from the active shell rc file (`~/.zshrc` on macOS,
+  `~/.bashrc` on Raspberry Pi) — `sh/helpers.sh`, `sh/exports.sh`, and
+  `sh/aliases.sh` — safe for interactive shell startup
 - Put executable setup flows under `sh/setup/`
 
 ### Python
@@ -94,18 +103,23 @@ bash sh/setup/update.sh
 ### Directory Structure
 
 - `config/` - Application configurations
+- `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`, `Brewfile.raspberry-pi` - Platform package manifests used by bootstrap flows
 - `sh/` - Shell scripts and utilities
 - `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh, raspberry-pi.sh)
 - `bin/` - Executable binaries
+- `tests/` - Small reproducible tests and experiments that support repo changes
 - `config/nvim/` - Neovim configuration
+- `config/nvim-minimal/` - Minimal Neovim configuration for reproducing issues
 - `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
+- `config/alacritty/`, `config/wezterm/`, `config/hammerspoon/` - Terminal and desktop app configuration
 - `.agents/skills/` - Repository-local Codex skills such as
   `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
+- `config/codex/` - Checked-in Codex instructions and repo-managed custom skills
 - `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
 - `config/codex/skills/superpowers/` - Repo-managed custom Codex skills
   symlinked into `~/.codex/skills/superpowers`
@@ -145,6 +159,8 @@ covers the snippet structure, LuaSnip APIs, and the required workflow
 - Use `make check-lua` or `make check-shell` for faster iteration on one area
 - Keep changes compatible with the checks run by `.github/workflows/check.yml`
 - Add targeted automated verification when introducing new executable logic or reproducible experiments
+- For documentation-only changes, verify the edited instructions against the
+  live repo files and scripts they describe
 
 ### Agent Experimentation
 
@@ -179,8 +195,10 @@ covers the snippet structure, LuaSnip APIs, and the required workflow
 
 1. Clone repository: `git clone git@github.com:IlyasYOY/dotfiles.git`
 2. Run installation: `make install`
-3. Update components: `make update`
-4. Verify setup by checking linting passes
+3. Use the bootstrap scripts and Brewfiles in this repo as the source of truth
+   for platform-specific setup
+4. Update components later with `make update`
+5. Verify setup by running `make check`
 
 ## Tool Versions
 
@@ -189,5 +207,7 @@ covers the snippet structure, LuaSnip APIs, and the required workflow
 - Python: 3.8+ with virtual environments
 - Java: Latest LTS with SDKMAN
 - Neovim: version with Lua support and built-in `vim.pack` support
+- Codex: installed by the bootstrap flow and configured from
+  `config/codex/AGENTS.md` plus repo-managed skills
 
 This document should be updated as coding standards evolve or new tools are adopted.
