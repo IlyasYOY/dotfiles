@@ -243,9 +243,6 @@ setup_codex() {
 
     info "🤖 Setting up Codex instructions..."
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
-
-    info "🤖 Setting up Codex agents..."
-    symlink "$DOTFILES_DIR/config/codex/agents" "$codex_config_dir/agents"
 }
 
 main() {
