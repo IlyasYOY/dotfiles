@@ -106,6 +106,8 @@ bash sh/setup/update.sh
 - `.github/agents/` - Repository-local subagent docs such as `luasnip.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
 - `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
+- `config/codex/skills/superpowers/` - Repo-managed custom Codex skills
+  symlinked into `~/.codex/skills/superpowers`
 
 ### File Naming
 

@@ -31,8 +31,8 @@ focuses on system bootstrap and a smaller CLI/dev tool base.
   `config/.tmux.conf`, `config/.amethyst.yml`,
   `config/.vimrc` — terminal, desktop, and core CLI configuration tracked in
   the repository.
-- `config/codex` — checked-in Codex instructions and custom subagent
-  configuration.
+- `config/codex` — checked-in Codex instructions plus repo-managed custom
+  Codex skills.
 - `bin` — small personal utilities and executable helpers.
 
 ## Prerequisites
@@ -65,7 +65,8 @@ directories, links the core configs into `~/.config` and `$HOME`, appends
 shell startup lines to the active shell rc file (`~/.zshrc` on macOS,
 `~/.bashrc` on Raspberry Pi), configures Git defaults, installs version
 managers (`SDKMAN`, `fnm`, `gvm`), sets up tmux plugins, installs Codex
-with Homebrew, and links Codex config into `~/.codex`.
+with Homebrew, and links Codex config plus repo-managed custom skills into
+`~/.codex`.
 
 On macOS, the installer still bootstraps the full Homebrew/App Store setup.
 
@@ -96,6 +97,7 @@ Main links created by the installer:
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
+- `config/codex/skills/superpowers` -> `~/.codex/skills/superpowers`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 

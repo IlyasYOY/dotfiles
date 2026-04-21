@@ -239,10 +239,15 @@ setup_codex() {
     info "🤖 Setting up Codex..."
 
     local codex_config_dir="$HOME/.codex"
+    local codex_skills_dir="$codex_config_dir/skills"
     mkdir -pv "$codex_config_dir"
+    mkdir -pv "$codex_skills_dir"
 
     info "🤖 Setting up Codex instructions..."
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
+
+    info "🤖 Setting up Codex custom skills..."
+    symlink "$DOTFILES_DIR/config/codex/skills/superpowers" "$codex_skills_dir/superpowers"
 }
 
 main() {
