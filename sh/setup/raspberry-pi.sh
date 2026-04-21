@@ -126,45 +126,20 @@ setup_raspberry_pi_homebrew() {
     add_block "$(shell_rc_file)" "ilyasyoy linuxbrew config" "$brew_config"
 }
 
-setup_raspberry_pi_requested_tools() {
+setup_raspberry_pi_homebrew_dependencies() {
     if ! is_raspberry_pi; then
-        info "This is not Raspberry Pi, skipping Raspberry Pi requested tools"
+        info "This is not Raspberry Pi, skipping Raspberry Pi Homebrew dependencies"
         return 1
     fi
 
-    info "🍓 Installing Raspberry Pi requested tools..."
+    info "🍓 Installing Raspberry Pi Homebrew dependencies..."
 
     if ! load_linux_brew; then
-        error "Homebrew is required before installing Raspberry Pi requested tools"
-    fi
-
-    brew_install gh
-    brew_install codex
-}
-
-setup_raspberry_pi_core_dependencies() {
-    if ! is_raspberry_pi; then
-        info "This is not Raspberry Pi, skipping Raspberry Pi core dependencies"
+        error "Homebrew is required before installing Raspberry Pi Homebrew dependencies"
         return 1
     fi
 
-    info "🍓 Installing Raspberry Pi core dependencies with Homebrew..."
-
-    if ! load_linux_brew; then
-        error "Homebrew is required before installing Raspberry Pi core dependencies"
-    fi
-
-    brew_install fzf
-    brew_install neovim
-    brew_install python
-    brew_install ripgrep
-    brew_install rust
-    brew_install luacheck
-    brew_install tree-sitter-cli
-    brew_install tmux
-    brew_install wget
-    brew_install go
-    brew_install pass
+    brew_bundle_install "$DOTFILES_DIR/Brewfile.raspberry-pi" "Raspberry Pi Homebrew dependencies"
 }
 
 setup_raspberry_pi() {
@@ -177,8 +152,7 @@ setup_raspberry_pi() {
     setup_raspberry_pi_brew_prerequisites
     setup_raspberry_pi_sing_box
     setup_raspberry_pi_homebrew
-    setup_raspberry_pi_requested_tools
-    setup_raspberry_pi_core_dependencies
+    setup_raspberry_pi_homebrew_dependencies
 }
 
 update_raspberry_pi_system() {

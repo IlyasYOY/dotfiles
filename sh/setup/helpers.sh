@@ -177,44 +177,19 @@ clone_repo() {
 }
 
 
-mas_install() {
-    local dependency_id="$1"
+brew_bundle_install() {
+    local brewfile_path="$1"
+    local description="$2"
 
-    if ! mas info "$dependency_id" >/dev/null; then
-        if mas install "$dependency_id"; then
-            success "mas installed $dependency_id"
-        else
-            error "mas failed to install $dependency_id"
-        fi
-    else
-        debug "mas $dependency_id already installed"
+    if [ ! -f "$brewfile_path" ]; then
+        error "Brewfile not found: $brewfile_path"
+        return 1
     fi
-}
 
-brew_install() {
-    local dependency="$1"
-
-    if ! brew ls --versions "$dependency" >/dev/null; then
-        if brew install "$dependency"; then
-            success "brew installed $dependency"
-        else
-            error "brew failed to install $dependency"
-        fi
+    if brew bundle install --file "$brewfile_path" --jobs auto --no-upgrade; then
+        success "$description installed"
     else
-        debug "brew $dependency already installed"
-    fi
-}
-
-brew_cask_install() {
-    local dependency="$1"
-
-    if ! brew list --cask "$dependency" >/dev/null 2>&1; then
-        if brew install --cask "$dependency"; then
-            success "brew cask installed $dependency"
-        else
-            error "brew cask failed to install $dependency"
-        fi
-    else
-        debug "brew cask $dependency already installed"
+        error "Failed to install $description"
+        return 1
     fi
 }

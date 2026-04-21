@@ -69,6 +69,8 @@ with Homebrew, and links Codex config plus repo-managed custom skills into
 `~/.codex`.
 
 On macOS, the installer still bootstraps the full Homebrew/App Store setup.
+Homebrew-managed dependencies now live in repo-tracked Brewfiles:
+`Brewfile.mac`, `Brewfile.mac.cask`, and `Brewfile.mac.mas`.
 
 On Raspberry Pi, the installer now:
 
@@ -77,12 +79,18 @@ On Raspberry Pi, the installer now:
   for `gvm`)
 - configures the official `sing-box` apt repository and installs `sing-box`
 - installs Homebrew on Linux
+- installs Homebrew-managed dependencies from `Brewfile.raspberry-pi`
 - installs `gh` and `codex` with Homebrew
 - installs a minimal first-pass core CLI/dev set with Homebrew:
   `fzf`, `luacheck`, `ripgrep`, `tree-sitter-cli`, `tmux`, `neovim`,
-  `python`, `rust`, and `wget`, plus `go` and `pass`
+  `python`, `rust`, and `wget`, plus `go`, `pass`, and `fnm`
 - installs Node.js and `npm` with `fnm` when they are not already available
 - writes shell startup config to `~/.bashrc` instead of `~/.zshrc`
+
+The Homebrew install steps now use `brew bundle install --jobs auto
+--no-upgrade`, which allows multiple packages to install in parallel while
+keeping `make install` focused on missing dependencies instead of upgrading
+everything already on the machine.
 
 `luacheck` is installed by the bootstrap scripts instead of Mason. Mason's
 LuaRocks package currently resolves against Lua 5.5 on newer systems, which

@@ -136,8 +136,6 @@ setup_sdkman() {
 setup_node_version_manager() {
     info "⬢ Installing fnm (Fast Node Manager)..."
 
-    brew_install fnm
-
     # fnm configuration
     local rc_file shell
     rc_file=$(shell_rc_file)
@@ -148,22 +146,21 @@ setup_node_version_manager() {
         "ilyasyoy fnm config" \
         "$fnm_config"
 
-    if command -v fnm >/dev/null 2>&1; then
-        eval "$(fnm env --shell bash)"
+    if ! command -v fnm >/dev/null 2>&1; then
+        warning "fnm is not available in the current shell yet; install Node.js after opening a new shell"
+        return 0
     fi
 
+    eval "$(fnm env --shell bash)"
+
     if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-        if command -v fnm >/dev/null 2>&1; then
-            fnm install --lts --use
-            local node_version
-            node_version=$(fnm current)
-            if [ -n "$node_version" ]; then
-                fnm default "$node_version"
-            fi
-            success "Node.js and npm installed with fnm"
-        else
-            warning "fnm is not available in the current shell yet; install Node.js after opening a new shell"
+        fnm install --lts --use
+        local node_version
+        node_version=$(fnm current)
+        if [ -n "$node_version" ]; then
+            fnm default "$node_version"
         fi
+        success "Node.js and npm installed with fnm"
     else
         debug "Node.js and npm already installed"
     fi

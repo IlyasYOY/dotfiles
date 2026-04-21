@@ -9,35 +9,7 @@ setup_mac_using_app_store() {
     info "🍎 Installing App Store applications..."
 
     if confirm_update "Install App Store applications"; then
-        local apps=(
-            1035137927
-            1208561404
-            1289119450
-            1444383602
-            1445910651
-            1480933944
-            1571033540
-            302584613
-            310633997
-            408981434
-            409183694
-            409201541
-            409203825
-            424389933
-            424390742
-            434290957
-            441258766
-            634148309
-            6446814690
-            682658836
-            904280696
-            937984704
-            966085870
-        )
-
-        for app in "${apps[@]}"; do
-            mas_install "$app"
-        done
+        brew_bundle_install "$DOTFILES_DIR/Brewfile.mac.mas" "App Store applications"
     fi
 }
 
@@ -48,47 +20,7 @@ setup_mac_using_brew() {
     fi
 
     info "🍺 Installing Homebrew packages..."
-    local packages=(
-        ast-grep
-        bat
-        bison
-        codex
-        cmake
-        colima
-        curl
-        docker
-        docker-compose
-        fd
-        ffmpeg
-        fzf
-        gh
-        go
-        mas
-        luacheck
-        neovim
-        ollama
-        openai-whisper
-        openjdk
-        pass
-        pinentry-mac
-        pmd
-        pre-commit
-        pyenv
-        python
-        ripgrep
-        rust
-        scc
-        sqlite
-        syncthing
-        tmux
-        tree
-        typst
-        vim
-        wget
-    )
-    for pkg in "${packages[@]}"; do
-        brew_install "$pkg"
-    done
+    brew_bundle_install "$DOTFILES_DIR/Brewfile.mac" "Homebrew packages"
 }
 
 setup_mac_using_brew_cask() {
@@ -98,33 +30,7 @@ setup_mac_using_brew_cask() {
     fi
 
     info "🍺 Installing Homebrew casks packages..."
-    local casks=(
-        amethyst
-        chatgpt
-        codex
-        codex-app
-        betterdisplay
-        discord
-        google-chrome
-        hammerspoon
-        iina 
-        karabiner-elements
-        libreoffice
-        netnewswire
-        obsidian
-        syncthing
-        telegram
-        vial
-        wezterm
-
-        font-fontawesome
-        font-go-mono-nerd-font
-        font-roboto
-        font-roboto-mono-nerd-font
-    )
-    for cask in "${casks[@]}"; do
-        brew_cask_install "$cask"
-    done
+    brew_bundle_install "$DOTFILES_DIR/Brewfile.mac.cask" "Homebrew casks"
 }
 
 
