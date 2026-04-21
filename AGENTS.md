@@ -103,7 +103,8 @@ bash sh/setup/update.sh
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
-- `.github/agents/` - Repository-local subagent docs such as `luasnip.md`
+- `.agents/skills/` - Repository-local Codex skills such as
+  `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
 - `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
 - `config/codex/skills/superpowers/` - Repo-managed custom Codex skills
@@ -118,7 +119,10 @@ bash sh/setup/update.sh
 
 ### LuaSnip Snippets
 
-When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the `luasnip` subagent defined in `.github/agents/luasnip.md`. It has specialized knowledge of the snippet structure, LuaSnip APIs, and the required workflow (read → append → luacheck → stylua).
+When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the
+`$dotfiles-luasnip` repo-local skill in `.agents/skills/dotfiles-luasnip/`. It
+covers the snippet structure, LuaSnip APIs, and the required workflow
+(read -> append -> `luacheck` -> `stylua`).
 
 ## Git Workflow
 
