@@ -29,37 +29,76 @@ local function add_range(ranges, start_col, end_col)
     ranges[#ranges + 1] = { start_col, end_col }
 end
 
-local function wrap_bare_urls_in_text(text)
+local function split_trailing_punctuation(token)
+    local bare_token = token:gsub("[.,;:!?]+$", "")
+    return bare_token, token:sub(#bare_token + 1)
+end
+
+local function format_bare_link(token)
+    if token:match "^https?://" then
+        return "<" .. token .. ">"
+    end
+
+    return "[" .. token .. "](" .. token .. ")"
+end
+
+local function wrap_bare_links_in_text(text)
+    local chunks = {}
     local replacements = 0
-    local wrapped_text = text:gsub(
-        "https://[%w%._~:/%?#%[%]@!$&'()*+,;=%-]+",
-        function(url)
-            local bare_url = url:gsub("[.,;:!?]+$", "")
-            local trailing_punctuation = url:sub(#bare_url + 1)
-            if bare_url == "" then
-                return url
+    local idx = 1
+
+    while idx <= #text do
+        local start_col, end_col =
+            text:find("https?://[%w%._~:/%?#%[%]@!$&'()*+,;=%-]+", idx)
+        local match_type = "url"
+
+        local function consider_path(pattern)
+            local path_start, path_end = text:find(pattern, idx)
+            if path_start and (not start_col or path_start < start_col) then
+                start_col = path_start
+                end_col = path_end
+                match_type = "path"
             end
-
-            replacements = replacements + 1
-            return "<" .. bare_url .. ">" .. trailing_punctuation
         end
-    )
 
-    wrapped_text = wrapped_text:gsub(
-        "http://[%w%._~:/%?#%[%]@!$&'()*+,;=%-]+",
-        function(url)
-            local bare_url = url:gsub("[.,;:!?]+$", "")
-            local trailing_punctuation = url:sub(#bare_url + 1)
-            if bare_url == "" then
-                return url
+        consider_path "%./[%w%._%-%+/]+"
+        consider_path "%.%./[%w%._%-%+/]+"
+        consider_path "/[%w%._%-%+/]+"
+
+        if not start_col then
+            chunks[#chunks + 1] = text:sub(idx)
+            break
+        end
+
+        chunks[#chunks + 1] = text:sub(idx, start_col - 1)
+
+        local token = text:sub(start_col, end_col)
+        local bare_token, trailing_punctuation =
+            split_trailing_punctuation(token)
+
+        if bare_token == "" then
+            chunks[#chunks + 1] = token
+        else
+            local previous_char = start_col > 1
+                    and text:sub(start_col - 1, start_col - 1)
+                or ""
+            if
+                match_type == "path"
+                and previous_char ~= ""
+                and previous_char:match "[%w%]%)]"
+            then
+                chunks[#chunks + 1] = token
+            else
+                replacements = replacements + 1
+                chunks[#chunks + 1] = format_bare_link(bare_token)
+                    .. trailing_punctuation
             end
-
-            replacements = replacements + 1
-            return "<" .. bare_url .. ">" .. trailing_punctuation
         end
-    )
 
-    return wrapped_text, replacements
+        idx = end_col + 1
+    end
+
+    return table.concat(chunks), replacements
 end
 
 local function merge_ranges(ranges)
@@ -88,7 +127,7 @@ local function wrap_bare_links_in_line(line, protected_ranges)
     for _, range in ipairs(protected_ranges) do
         if next_col < range[1] then
             local wrapped_chunk, chunk_replacements =
-                wrap_bare_urls_in_text(line:sub(next_col, range[1] - 1))
+                wrap_bare_links_in_text(line:sub(next_col, range[1] - 1))
             chunks[#chunks + 1] = wrapped_chunk
             replacements = replacements + chunk_replacements
         end
@@ -99,7 +138,7 @@ local function wrap_bare_links_in_line(line, protected_ranges)
 
     if next_col <= #line then
         local wrapped_chunk, chunk_replacements =
-            wrap_bare_urls_in_text(line:sub(next_col))
+            wrap_bare_links_in_text(line:sub(next_col))
         chunks[#chunks + 1] = wrapped_chunk
         replacements = replacements + chunk_replacements
     end
@@ -360,9 +399,9 @@ local function setup_formatters()
         buffer = true,
         desc = "Wrap selected text with link ([]()), link valus is + register",
     })
-    vim.keymap.set("n", "<localleader>fL", wrap_bare_links_in_buffer, {
+    vim.keymap.set("n", "<localleader>L", wrap_bare_links_in_buffer, {
         buffer = true,
-        desc = "Wrap bare links in angle brackets",
+        desc = "Wrap bare URLs and file paths",
     })
 end
 
@@ -370,7 +409,7 @@ vim.api.nvim_buf_create_user_command(
     0,
     "MarkdownWrapBareLinks",
     wrap_bare_links_in_buffer,
-    { desc = "Wrap bare links in angle brackets" }
+    { desc = "Wrap bare URLs and file paths" }
 )
 
 vim.keymap.set("n", "gO", show_toc_side, {
