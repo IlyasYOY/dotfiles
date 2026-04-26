@@ -2,7 +2,7 @@
 
 This file is the Codex-specific overlay for this repository. Treat the root
 `AGENTS.md` as the source of truth for repository rules, commands, layout, and
-style. Use this file to bias day-to-day Codex behavior.
+style.
 
 ## Defaults
 
