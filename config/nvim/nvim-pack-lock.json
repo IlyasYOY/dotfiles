@@ -13,7 +13,7 @@
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
     },
     "fzf-lua": {
-      "rev": "f233cb2f4cf0bc56ae2b10d06f25345069fcf355",
+      "rev": "ffa44ee9470743a7697d28df3a1a216fdfe2b09d",
       "src": "https://github.com/ibhagwan/fzf-lua"
     },
     "lualine.nvim": {
@@ -53,7 +53,7 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lspconfig": {
-      "rev": "e146efacbafed3789ac568abcc5a981c5decaa58",
+      "rev": "8fde495949782bb61c2605174e231d145a048d8c",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
