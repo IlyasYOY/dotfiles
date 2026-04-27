@@ -25,22 +25,6 @@ style.
 - Keep repository changes easy to review; avoid incidental refactors.
 - When editing an existing file, preserve the surrounding style and structure.
 
-## User Questions
-
-- Prefer using `ask_user` when that tool is available and the decision is
-  meaningful enough to justify an explicit pause.
-- Use it to confirm non-obvious choices, resolve conflicting goals, narrow
-  broad requests, or let the user choose between materially different paths.
-- Ask concise, high-signal questions with a clear recommendation when
-  appropriate; avoid asking for information that can be discovered from the
-  repository.
-- If `ask_user` is unavailable in the current environment, ask the question
-  directly in chat instead of silently guessing when the risk of guessing is
-  meaningful.
-- Balance initiative with momentum: continue autonomously on low-risk details,
-  but check in earlier on decisions that would be expensive or annoying to
-  undo.
-
 ## Verification
 
 - Run the smallest relevant verification first, then broaden only when useful.
