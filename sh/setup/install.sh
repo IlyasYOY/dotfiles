@@ -259,6 +259,9 @@ setup_pi() {
 
     info "🥧 Setting up pi extensions..."
     symlink "$DOTFILES_DIR/config/pi/extensions" "$pi_agent_dir/extensions"
+
+    info "🥧 Setting up pi themes..."
+    symlink "$DOTFILES_DIR/config/pi/themes" "$pi_agent_dir/themes"
 }
 
 main() {
