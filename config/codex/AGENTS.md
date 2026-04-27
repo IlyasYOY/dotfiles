@@ -1,8 +1,7 @@
 # Codex Personal Instructions
 
 This file is the Codex-specific overlay for this repository. Treat the root
-`AGENTS.md` as the source of truth for repository rules, commands, layout, and
-style.
+`AGENTS.md` as the source of truth for repository rules, commands, layout, and style.
 
 ## Defaults
 
