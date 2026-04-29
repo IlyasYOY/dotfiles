@@ -235,13 +235,15 @@ setup_pass() {
 setup_codex() {
     info "🤖 Setting up Codex..."
 
-    local codex_config_dir="$HOME/.codex"
-    local codex_skills_dir="$codex_config_dir/skills"
-    mkdir -pv "$codex_config_dir"
-    mkdir -pv "$codex_skills_dir"
-
     info "🤖 Setting up Codex instructions..."
+    local codex_config_dir="$HOME/.codex"
+    mkdir -pv "$codex_config_dir"
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
+
+    info "🤖 Setting up Codex skills..."
+    local codex_skills_dir="$codex_config_dir/skills"
+    mkdir -pv "$codex_skills_dir"
+    symlink "$DOTFILES_DIR/config/codex/skills" "$codex_skills_dir/IlyasYOY"
 }
 
 setup_pi() {
