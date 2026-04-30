@@ -2,107 +2,83 @@ local gh = function(x)
     return "https://github.com/" .. x
 end
 
+local function is_dir(path)
+    return vim.fn.isdirectory(path) == 1
+end
+
 -- Dev plugins: use local path if it exists, else fall back to GitHub.
-local function ilyasyoy(name)
-    local local_path = vim.fn.expand("~/Projects/IlyasYOY/" .. name)
-    if vim.fn.isdirectory(local_path) == 1 then
-        return { src = "file://" .. local_path, name = name }
-    else
+local function ilyasyoy(name, opts)
+    opts = opts or {}
+    local local_path =
+        vim.fn.expand(opts.path or ("~/Projects/IlyasYOY/" .. name))
+
+    if not is_dir(local_path) then
         return gh("IlyasYOY/" .. name)
     end
+
+    if opts.live then
+        vim.opt.runtimepath:prepend(local_path)
+
+        local after = local_path .. "/after"
+        if is_dir(after) then
+            vim.opt.runtimepath:append(after)
+        end
+
+        return { dev = true, live = true, name = name, path = local_path }
+    end
+
+    return { src = "file://" .. local_path, name = name }
+end
+
+local function pack_specs(specs)
+    return vim.iter(specs)
+        :filter(function(spec)
+            return not (type(spec) == "table" and spec.live)
+        end)
+        :totable()
 end
 
 local M = {
     specs = {
-        core = {
-            -- Dev (own) plugins
-            ilyasyoy "theme.nvim",
+        ilyasyoy "theme.nvim",
+        ilyasyoy("ts-pack.nvim", { live = true }),
 
-            -- Colors
-            gh "f-person/auto-dark-mode.nvim",
-
-            -- Navigation & file management
-            gh "christoomey/vim-tmux-navigator",
-
-            -- UI
-            gh "nvim-lualine/lualine.nvim",
-
-            -- Snippets
-            gh "L3MON4D3/LuaSnip",
-
-            -- LSP
-            gh "neovim/nvim-lspconfig",
-
-            -- Mason (LSP/tool installer)
-            gh "williamboman/mason.nvim",
-            gh "WhoIsSethDaniel/mason-tool-installer.nvim",
-
-            -- Treesitter
-            gh "nvim-treesitter/nvim-treesitter",
-            {
-                src = gh "nvim-treesitter/nvim-treesitter-textobjects",
-                version = "main",
-            },
-            gh "nvim-treesitter/nvim-treesitter-context",
-
-            -- Utilities
-            gh "nvim-lua/plenary.nvim",
-
-            -- Text manipulation
-            gh "tpope/vim-abolish",
+        gh "f-person/auto-dark-mode.nvim",
+        gh "christoomey/vim-tmux-navigator",
+        gh "nvim-lualine/lualine.nvim",
+        gh "L3MON4D3/LuaSnip",
+        gh "neovim/nvim-lspconfig",
+        gh "williamboman/mason.nvim",
+        gh "WhoIsSethDaniel/mason-tool-installer.nvim",
+        gh "nvim-treesitter/nvim-treesitter",
+        {
+            src = gh "nvim-treesitter/nvim-treesitter-textobjects",
+            version = "main",
         },
-        fzf_lua = {
-            gh "ibhagwan/fzf-lua",
-        },
-        oil = {
-            gh "stevearc/oil.nvim",
-        },
-        dap = {
-            gh "mfussenegger/nvim-dap",
-            gh "theHamsta/nvim-dap-virtual-text",
-            gh "rcarriga/nvim-dap-ui",
-            gh "nvim-neotest/nvim-nio",
-        },
-        dap_go = {
-            gh "leoluz/nvim-dap-go",
-        },
-        dap_python = {
-            gh "mfussenegger/nvim-dap-python",
-        },
-        jdtls = {
-            gh "mfussenegger/nvim-jdtls",
-        },
-        dadbod = {
-            gh "tpope/vim-dadbod",
-            gh "kristijanhusak/vim-dadbod-completion",
-            gh "kristijanhusak/vim-dadbod-ui",
-        },
-        git_tools = {
-            gh "tpope/vim-dispatch",
-            gh "shumphrey/fugitive-gitlab.vim",
-            gh "tommcdo/vim-fubitive",
-            gh "tpope/vim-rhubarb",
-            gh "tpope/vim-fugitive",
-        },
-        obs = {
-            ilyasyoy "obs.nvim",
-        },
+        gh "nvim-treesitter/nvim-treesitter-context",
+        gh "nvim-lua/plenary.nvim",
+        gh "tpope/vim-abolish",
+        gh "ibhagwan/fzf-lua",
+        gh "stevearc/oil.nvim",
+        gh "mfussenegger/nvim-dap",
+        gh "theHamsta/nvim-dap-virtual-text",
+        gh "rcarriga/nvim-dap-ui",
+        gh "nvim-neotest/nvim-nio",
+        gh "leoluz/nvim-dap-go",
+        gh "mfussenegger/nvim-dap-python",
+        gh "mfussenegger/nvim-jdtls",
+        gh "tpope/vim-dadbod",
+        gh "kristijanhusak/vim-dadbod-completion",
+        gh "kristijanhusak/vim-dadbod-ui",
+        gh "tpope/vim-dispatch",
+        gh "shumphrey/fugitive-gitlab.vim",
+        gh "tommcdo/vim-fubitive",
+        gh "tpope/vim-rhubarb",
+        gh "tpope/vim-fugitive",
+        ilyasyoy "obs.nvim",
     },
 }
 
-for _, group in ipairs {
-    "core",
-    "fzf_lua",
-    "oil",
-    "dap",
-    "dap_go",
-    "dap_python",
-    "jdtls",
-    "dadbod",
-    "git_tools",
-    "obs",
-} do
-    vim.pack.add(M.specs[group])
-end
+vim.pack.add(pack_specs(M.specs))
 
 return M
