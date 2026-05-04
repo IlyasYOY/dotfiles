@@ -6,6 +6,11 @@
       "version": "839741fef4dab5128952334624905c82b40c7133"
     },
     "bash": {
+      "data": {
+        "filetype": [
+          "sh"
+        ]
+      },
       "rev": "a06c2e4415e9bc0346c6b86d401879ffb44058f7",
       "src": "https://github.com/tree-sitter/tree-sitter-bash",
       "version": "a06c2e4415e9bc0346c6b86d401879ffb44058f7"
@@ -31,6 +36,11 @@
       "version": "f6bf6e35eb0b95fbadea4bb39cb9709507fcb181"
     },
     "diff": {
+      "data": {
+        "filetype": [
+          "gitdiff"
+        ]
+      },
       "rev": "2520c3f934b3179bb540d23e0ef45f75304b5fed",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-diff",
       "version": "2520c3f934b3179bb540d23e0ef45f75304b5fed"
@@ -50,17 +60,32 @@
       "src": "https://github.com/rydesun/tree-sitter-dot",
       "version": "80327abbba6f47530edeb0df9f11bd5d5c93c14d"
     },
+    "dtd": {
+      "rev": "5000ae8f22d11fbe93939b05c1e37cf21117162d",
+      "src": "https://github.com/tree-sitter-grammars/tree-sitter-xml",
+      "version": "5000ae8f22d11fbe93939b05c1e37cf21117162d"
+    },
     "fennel": {
       "rev": "3f0f6b24d599e92460b969aabc4f4c5a914d15a0",
       "src": "https://github.com/alexmozaidze/tree-sitter-fennel",
       "version": "3f0f6b24d599e92460b969aabc4f4c5a914d15a0"
     },
     "git_config": {
+      "data": {
+        "filetype": [
+          "gitconfig"
+        ]
+      },
       "rev": "0fbc9f99d5a28865f9de8427fb0672d66f9d83a5",
       "src": "https://github.com/the-mikedavis/tree-sitter-git-config",
       "version": "0fbc9f99d5a28865f9de8427fb0672d66f9d83a5"
     },
     "git_rebase": {
+      "data": {
+        "filetype": [
+          "gitrebase"
+        ]
+      },
       "rev": "760ba8e34e7a68294ffb9c495e1388e030366188",
       "src": "https://github.com/the-mikedavis/tree-sitter-git-rebase",
       "version": "760ba8e34e7a68294ffb9c495e1388e030366188"
@@ -116,11 +141,25 @@
       "version": "e2f56b4d0df08f6ed5df8bae266f9e75b340a9ab"
     },
     "javascript": {
+      "data": {
+        "filetype": [
+          "javascriptreact",
+          "ecma",
+          "ecmascript",
+          "jsx",
+          "js"
+        ]
+      },
       "rev": "58404d8cf191d69f2674a8fd507bd5776f46cb11",
       "src": "https://github.com/tree-sitter/tree-sitter-javascript",
       "version": "58404d8cf191d69f2674a8fd507bd5776f46cb11"
     },
     "json": {
+      "data": {
+        "filetype": [
+          "jsonc"
+        ]
+      },
       "rev": "001c28d7a29832b06b0e831ec77845553c89b56d",
       "src": "https://github.com/tree-sitter/tree-sitter-json",
       "version": "001c28d7a29832b06b0e831ec77845553c89b56d"
@@ -146,11 +185,21 @@
       "version": "873612aadd3f684dd4e631bdf42ea8990c57634e"
     },
     "make": {
+      "data": {
+        "filetype": [
+          "automake"
+        ]
+      },
       "rev": "70613f3d812cbabbd7f38d104d60a409c4008b43",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-make",
       "version": "70613f3d812cbabbd7f38d104d60a409c4008b43"
     },
     "markdown": {
+      "data": {
+        "filetype": [
+          "pandoc"
+        ]
+      },
       "rev": "f969cd3ae3f9fbd4e43205431d0ae286014c05b5",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-markdown",
       "version": "f969cd3ae3f9fbd4e43205431d0ae286014c05b5"
@@ -176,6 +225,12 @@
       "version": "d65a18ce7c2242801f702770114ad08056c7f8c9"
     },
     "python": {
+      "data": {
+        "filetype": [
+          "py",
+          "gyp"
+        ]
+      },
       "rev": "293fdc02038ee2bf0e2e206711b69c90ac0d413f",
       "src": "https://github.com/tree-sitter/tree-sitter-python",
       "version": "v0.25.0"
@@ -206,6 +261,11 @@
       "version": "851e9cb257ba7c66cc8c14214a31c44d2f1e954e"
     },
     "ssh_config": {
+      "data": {
+        "filetype": [
+          "sshconfig"
+        ]
+      },
       "rev": "71d2693deadaca8cdc09e38ba41d2f6042da1616",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-ssh-config",
       "version": "71d2693deadaca8cdc09e38ba41d2f6042da1616"
@@ -215,17 +275,38 @@
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-toml",
       "version": "64b56832c2cffe41758f28e05c756a3a98d16f41"
     },
+    "tsv": {
+      "rev": "f6bf6e35eb0b95fbadea4bb39cb9709507fcb181",
+      "src": "https://github.com/tree-sitter-grammars/tree-sitter-csv",
+      "version": "f6bf6e35eb0b95fbadea4bb39cb9709507fcb181"
+    },
     "tsx": {
+      "data": {
+        "filetype": [
+          "typescriptreact",
+          "typescript.tsx"
+        ]
+      },
       "rev": "75b3874edb2dc714fb1fd77a32013d0f8699989f",
       "src": "https://github.com/tree-sitter/tree-sitter-typescript",
       "version": "75b3874edb2dc714fb1fd77a32013d0f8699989f"
     },
     "typescript": {
+      "data": {
+        "filetype": [
+          "ts"
+        ]
+      },
       "rev": "75b3874edb2dc714fb1fd77a32013d0f8699989f",
       "src": "https://github.com/tree-sitter/tree-sitter-typescript",
       "version": "75b3874edb2dc714fb1fd77a32013d0f8699989f"
     },
     "typst": {
+      "data": {
+        "filetype": [
+          "typ"
+        ]
+      },
       "rev": "46cf4ded12ee974a70bf8457263b67ad7ee0379d",
       "src": "https://github.com/uben0/tree-sitter-typst",
       "version": "46cf4ded12ee974a70bf8457263b67ad7ee0379d"
@@ -241,6 +322,13 @@
       "version": "f061895a0eff1d5b90e4fb60d21d87be3267031a"
     },
     "xml": {
+      "data": {
+        "filetype": [
+          "xsd",
+          "xslt",
+          "svg"
+        ]
+      },
       "rev": "5000ae8f22d11fbe93939b05c1e37cf21117162d",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-xml",
       "version": "5000ae8f22d11fbe93939b05c1e37cf21117162d"

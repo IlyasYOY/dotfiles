@@ -50,7 +50,6 @@ local M = {
         gh "neovim/nvim-lspconfig",
         gh "williamboman/mason.nvim",
         gh "WhoIsSethDaniel/mason-tool-installer.nvim",
-        gh "nvim-treesitter/nvim-treesitter",
         {
             src = gh "nvim-treesitter/nvim-treesitter-textobjects",
             version = "main",

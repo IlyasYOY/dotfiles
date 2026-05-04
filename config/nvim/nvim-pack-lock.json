@@ -60,10 +60,6 @@
       "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
-    "nvim-treesitter": {
-      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
-    },
     "nvim-treesitter-context": {
       "rev": "b0c45cefe2c8f7b55fc46f34e563bc428ef99636",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
@@ -88,10 +84,6 @@
     "theme.nvim": {
       "rev": "73d9b21913e668fd85f9ef2f61129efcbd83509f",
       "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/theme.nvim"
-    },
-    "ts-pack.nvim": {
-      "rev": "eb559071569a7d5f922081194545627cad566164",
-      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/ts-pack.nvim"
     },
     "vim-abolish": {
       "rev": "dcbfe065297d31823561ba787f51056c147aa682",
