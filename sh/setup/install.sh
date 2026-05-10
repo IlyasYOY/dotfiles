@@ -69,6 +69,15 @@ setup_platform_dependencies() {
         setup_mac_using_brew
         setup_mac_using_brew_cask
         setup_mac_using_app_store
+
+        if confirm_update "Apply macOS defaults"; then
+            setup_mac_defaults
+
+            if confirm_update "Restart macOS UI services"; then
+                restart_mac_ui_services
+            fi
+        fi
+
         return 0
     fi
 

@@ -33,6 +33,83 @@ setup_mac_using_brew_cask() {
     brew_bundle_install "$DOTFILES_DIR/Brewfile.mac.cask" "Homebrew casks"
 }
 
+write_mac_default() {
+    local domain="$1"
+    local key="$2"
+    shift 2
+
+    if defaults write "$domain" "$key" "$@"; then
+        return 0
+    fi
+
+    warning "Failed to write macOS default: $domain $key"
+    return 1
+}
+
+setup_mac_defaults() {
+    if ! is_mac; then
+        info "This is not mac, skipping macOS defaults"
+        return 0
+    fi
+
+    info "⚙️ Applying macOS defaults..."
+
+    local mac_defaults_failed=0
+    local current_reduce_transparency
+
+    write_mac_default NSGlobalDomain AppleLanguages -array "en-RU" "ru-RU" || mac_defaults_failed=1
+    write_mac_default NSGlobalDomain AppleLocale -string "en_RU" || mac_defaults_failed=1
+    write_mac_default NSGlobalDomain AppleInterfaceStyleSwitchesAutomatically -bool true || mac_defaults_failed=1
+    write_mac_default NSGlobalDomain AppleShowAllExtensions -bool true || mac_defaults_failed=1
+    write_mac_default NSGlobalDomain ApplePressAndHoldEnabled -bool false || mac_defaults_failed=1
+
+    write_mac_default com.apple.finder ShowStatusBar -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.finder FXPreferredViewStyle -string "clmv" || mac_defaults_failed=1
+    write_mac_default com.apple.finder ShowExternalHardDrivesOnDesktop -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.finder ShowHardDrivesOnDesktop -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.finder ShowMountedServersOnDesktop -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.finder ShowRemovableMediaOnDesktop -bool true || mac_defaults_failed=1
+
+    write_mac_default com.apple.dock autohide -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.dock tilesize -int 64 || mac_defaults_failed=1
+
+    write_mac_default com.apple.menuextra.clock IsAnalog -bool true || mac_defaults_failed=1
+    write_mac_default com.apple.menuextra.clock ShowDate -int 2 || mac_defaults_failed=1
+    write_mac_default com.apple.menuextra.clock ShowDayOfWeek -bool false || mac_defaults_failed=1
+    write_mac_default com.apple.menuextra.clock TimeAnnouncementsEnabled -bool false || mac_defaults_failed=1
+
+    if current_reduce_transparency=$(defaults read com.apple.universalaccess reduceTransparency 2>/dev/null) &&
+        [ "$current_reduce_transparency" = "1" ]; then
+        debug "macOS default already set: com.apple.universalaccess reduceTransparency"
+    else
+        write_mac_default com.apple.universalaccess reduceTransparency -bool true || mac_defaults_failed=1
+    fi
+
+    if [ "$mac_defaults_failed" -eq 0 ]; then
+        success "macOS defaults applied"
+    else
+        warning "Some macOS defaults could not be applied"
+    fi
+
+    return 0
+}
+
+restart_mac_ui_services() {
+    if ! is_mac; then
+        info "This is not mac, skipping macOS UI restart"
+        return 0
+    fi
+
+    info "🔄 Restarting macOS UI services..."
+
+    local service
+    for service in Dock Finder SystemUIServer; do
+        killall "$service" >/dev/null 2>&1 || true
+    done
+
+    success "macOS UI services restarted"
+}
+
 
 update_brew() {
     if ! is_mac; then 
