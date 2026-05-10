@@ -4,6 +4,21 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+vim.g.firenvim_config = {
+    globalSettings = {
+        alt = "all",
+    },
+    localSettings = {
+        [".*"] = {
+            takeover = "never",
+        },
+    },
+}
+
+if vim.g.started_by_firenvim then
+    vim.o.guifont = "GoMono Nerd Font:h18"
+end
+
 require "ilyasyoy.pack"
 
 vim.o.autoread = true

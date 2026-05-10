@@ -38,12 +38,34 @@ local function pack_specs(specs)
         :totable()
 end
 
+local function install_firenvim(ev)
+    local data = ev.data
+    if data.spec.name ~= "firenvim" then
+        return
+    end
+
+    if data.kind ~= "install" and data.kind ~= "update" then
+        return
+    end
+
+    if not data.active then
+        vim.cmd.packadd "firenvim"
+    end
+
+    vim.fn["firenvim#install"](0)
+end
+
+vim.api.nvim_create_autocmd("PackChanged", {
+    callback = install_firenvim,
+})
+
 local M = {
     specs = {
         ilyasyoy "theme.nvim",
         ilyasyoy("ts-pack.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
 
+        gh "glacambre/firenvim",
         gh "f-person/auto-dark-mode.nvim",
         gh "christoomey/vim-tmux-navigator",
         gh "nvim-lualine/lualine.nvim",

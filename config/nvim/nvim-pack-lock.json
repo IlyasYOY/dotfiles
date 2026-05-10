@@ -8,6 +8,10 @@
       "rev": "e300259ec777a40b4b9e3c8e6ade203e78d15881",
       "src": "https://github.com/f-person/auto-dark-mode.nvim"
     },
+    "firenvim": {
+      "rev": "ab0e51bfa4e01191d0bfd1eee15388ac816e702e",
+      "src": "https://github.com/glacambre/firenvim"
+    },
     "fugitive-gitlab.vim": {
       "rev": "3584cf7e607ba7822f991d407a8d780e05aae287",
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
