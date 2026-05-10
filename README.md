@@ -108,6 +108,12 @@ brew bundle install --file <brewfile> --jobs auto --no-upgrade
 That keeps `make install` focused on missing dependencies instead of upgrading
 everything already on the machine.
 
+Setup debug logs are hidden by default. To include them, run:
+
+```bash
+make install VERBOSE=1
+```
+
 `luacheck` is installed by the bootstrap scripts instead of Mason. Mason's
 LuaRocks package currently resolves against Lua 5.5 on newer systems, which
 breaks `luacheck` dependency resolution upstream, so the Neovim config no
@@ -186,6 +192,12 @@ make update
   local repositories, and tmux plugins.
 - On Raspberry Pi it updates apt packages, Homebrew, Homebrew packages, tracked
   local repositories, and tmux plugins.
+
+Update debug logs are hidden by default. To include them, run:
+
+```bash
+make update VERBOSE=1
+```
 
 ## Local checks
 

@@ -58,6 +58,17 @@ shell_name() {
     printf "zsh\n"
 }
 
+is_verbose() {
+    case "${VERBOSE:-0}" in
+        1|true|TRUE|True|yes|YES|Yes|y|Y)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 info() {
     printf "\n\033[1;34m%s\033[0m\n" "$1"
 }
@@ -67,6 +78,10 @@ success() {
 }
 
 debug() {
+    if ! is_verbose; then
+        return 0
+    fi
+
     printf "\033[1;37m%s\033[0m\n" "$1"
 }
 
