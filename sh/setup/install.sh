@@ -258,26 +258,6 @@ setup_codex() {
     symlink "$DOTFILES_DIR/config/codex/skills" "$codex_skills_dir/IlyasYOY"
 }
 
-setup_pi() {
-    info "🥧 Setting up pi..."
-
-    local pi_agent_dir="$HOME/.pi/agent"
-    mkdir -pv "$pi_agent_dir"
-
-    info "🥧 Setting up pi instructions..."
-    symlink "$DOTFILES_DIR/config/pi/AGENTS.md" "$pi_agent_dir/AGENTS.md"
-    symlink "$DOTFILES_DIR/config/pi/APPEND_SYSTEM.md" "$pi_agent_dir/APPEND_SYSTEM.md"
-
-    info "🥧 Setting up pi skills..."
-    symlink "$DOTFILES_DIR/config/pi/skills" "$pi_agent_dir/skills"
-
-    info "🥧 Setting up pi extensions..."
-    symlink "$DOTFILES_DIR/config/pi/extensions" "$pi_agent_dir/extensions"
-
-    info "🥧 Setting up pi themes..."
-    symlink "$DOTFILES_DIR/config/pi/themes" "$pi_agent_dir/themes"
-}
-
 main() {
     setup_basic_directories
     setup_platform_dependencies
@@ -294,7 +274,6 @@ main() {
     setup_pass
 
     setup_codex
-    setup_pi
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"
