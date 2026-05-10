@@ -42,6 +42,7 @@ local M = {
     specs = {
         ilyasyoy "theme.nvim",
         ilyasyoy("ts-pack.nvim", { live = true }),
+        ilyasyoy("obs.nvim", { live = true }),
 
         gh "f-person/auto-dark-mode.nvim",
         gh "christoomey/vim-tmux-navigator",
@@ -74,7 +75,6 @@ local M = {
         gh "tommcdo/vim-fubitive",
         gh "tpope/vim-rhubarb",
         gh "tpope/vim-fugitive",
-        ilyasyoy "obs.nvim",
     },
 }
 
