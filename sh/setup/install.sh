@@ -15,19 +15,21 @@ setup_basic_directories() {
 setup_my_project() {
     info "👨💻 Setting up personal projects..."
 
-    clone_repo "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim"
-    clone_repo "git@github.com:IlyasYOY/coredor.nvim.git" "$PERSONAL_PROJECTS_DIR/coredor.nvim"
-    clone_repo "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim"
-    clone_repo "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim"
-    clone_repo "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask"
-    clone_repo "git@github.com:IlyasYOY/exectest.git" "$PERSONAL_PROJECTS_DIR/monotask"
+    clone_repos_parallel \
+        "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim" \
+        "git@github.com:IlyasYOY/coredor.nvim.git" "$PERSONAL_PROJECTS_DIR/coredor.nvim" \
+        "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
+        "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim" \
+        "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask"
+    clone_repo "git@github.com:IlyasYOY/exectest.git" "$PERSONAL_PROJECTS_DIR/monotask" || true
 }
 
 setup_notes() {
     info "📝 Setting up notes..."
 
-    clone_repo "git@github.com:IlyasYOY/notes-wiki.git" "$NOTES_DIR"
-    clone_repo "git@github.com:IlyasYOY/Legacy-Notes.git" "$LEGACY_NOTES_DIR"
+    clone_repos_parallel \
+        "git@github.com:IlyasYOY/notes-wiki.git" "$NOTES_DIR" \
+        "git@github.com:IlyasYOY/Legacy-Notes.git" "$LEGACY_NOTES_DIR"
 }
 
 setup_links_to_config_files() {
@@ -227,9 +229,10 @@ setup_tmux_plugin_manger() {
 
     local tpm_dir="$HOME/.tmux/plugins/tpm"
     if [ ! -d "$tpm_dir" ]; then
-        clone_repo "https://github.com/tmux-plugins/tpm" "$tpm_dir"
-        "$tpm_dir/bin/install_plugins"
-        success "TPM installed"
+        if clone_repo "https://github.com/tmux-plugins/tpm" "$tpm_dir"; then
+            "$tpm_dir/bin/install_plugins"
+            success "TPM installed"
+        fi
     else
         debug "TPM already installed"
     fi
@@ -238,7 +241,7 @@ setup_tmux_plugin_manger() {
 setup_pass() {
     info "💻🔐 pass password-store..."
 
-    clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/"
+    clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" || true
 }
 
 setup_codex() {

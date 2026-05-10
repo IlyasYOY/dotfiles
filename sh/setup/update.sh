@@ -8,24 +8,22 @@ source "$(dirname "$0")/mac.sh"
 source "$(dirname "$0")/raspberry-pi.sh"
 
 update_local_repos() {
-    update_repo "$PERSONAL_PROJECTS_DIR/dotfiles"
+    update_repo "$PERSONAL_PROJECTS_DIR/dotfiles" || true
 
-    update_repo "$PERSONAL_PROJECTS_DIR/detailederror"
-    update_repo "$PERSONAL_PROJECTS_DIR/ffmpeg-video-chapters-parser"
-    update_repo "$PERSONAL_PROJECTS_DIR/IlyasYOY"
-    update_repo "$PERSONAL_PROJECTS_DIR/go-retry"
-    update_repo "$PERSONAL_PROJECTS_DIR/httpservertest"
-    update_repo "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
-    update_repo "$PERSONAL_PROJECTS_DIR/remotion-projects"
-
-    update_repo "$PERSONAL_PROJECTS_DIR/git-link.nvim"
-    update_repo "$PERSONAL_PROJECTS_DIR/obs.nvim"
-    update_repo "$PERSONAL_PROJECTS_DIR/theme.nvim"
-    update_repo "$PERSONAL_PROJECTS_DIR/monotask"
-
-    update_repo "$NOTES_DIR"
-
-    update_repo "$HOME/.password-store"
+    update_repos_parallel \
+        "$PERSONAL_PROJECTS_DIR/detailederror" \
+        "$PERSONAL_PROJECTS_DIR/ffmpeg-video-chapters-parser" \
+        "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
+        "$PERSONAL_PROJECTS_DIR/go-retry" \
+        "$PERSONAL_PROJECTS_DIR/httpservertest" \
+        "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot" \
+        "$PERSONAL_PROJECTS_DIR/remotion-projects" \
+        "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
+        "$PERSONAL_PROJECTS_DIR/obs.nvim" \
+        "$PERSONAL_PROJECTS_DIR/theme.nvim" \
+        "$PERSONAL_PROJECTS_DIR/monotask" \
+        "$NOTES_DIR" \
+        "$HOME/.password-store"
 }
 
 update_repo() {
@@ -37,8 +35,9 @@ update_repo() {
             success "Updated $repo_path"
         else
             error "Failed to update $repo_path"
+            return 1
         fi
-    else 
+    else
         warning "$repo_path is not a git repo"
     fi
 }

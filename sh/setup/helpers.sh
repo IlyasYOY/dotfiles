@@ -185,10 +185,197 @@ clone_repo() {
             success "Repository cloned $repo to $dest"
         else
             error "Repository $repo cannot be cloned to $dest"
+            return 1
         fi
     else
         debug "Repository already exists: $dest"
     fi
+}
+
+git_parallel_jobs() {
+    local parallel_jobs="${GIT_PARALLEL_JOBS:-4}"
+    local is_valid=0
+
+    case "$parallel_jobs" in
+        ""|*[!0-9]*)
+            parallel_jobs=4
+            is_valid=1
+            ;;
+    esac
+
+    if [ "$parallel_jobs" -eq 0 ]; then
+        parallel_jobs=4
+        is_valid=1
+    fi
+
+    printf "%s\n" "$parallel_jobs"
+    return "$is_valid"
+}
+
+git_parallel_log_label() {
+    local label="$1"
+    local safe_label
+
+    safe_label=$(printf "%s" "$label" | tr -c "[:alnum:]_.-" "-")
+    if [ -n "$safe_label" ]; then
+        printf "%s\n" "$safe_label"
+    else
+        printf "task\n"
+    fi
+}
+
+git_parallel_log_dir() {
+    local task_kind="$1"
+    local tmp_dir="${TMPDIR:-/tmp}"
+
+    tmp_dir="${tmp_dir%/}"
+    mktemp -d "$tmp_dir/dotfiles-git-$task_kind.XXXXXX"
+}
+
+git_parallel_wait_for_slot() {
+    local parallel_jobs="$1"
+    local running_jobs
+
+    while true; do
+        running_jobs=$(jobs -rp | wc -l | tr -d "[:space:]")
+        if [ "$running_jobs" -lt "$parallel_jobs" ]; then
+            return 0
+        fi
+
+        sleep 0.2
+    done
+}
+
+git_parallel_start_task() {
+    local task_index="$1"
+    local task_label="$2"
+    local log_dir="$3"
+    local task_command="$4"
+    local task_prefix safe_label log_file status_file label_file
+    shift 4
+
+    task_prefix=$(printf "%03d" "$task_index")
+    safe_label=$(git_parallel_log_label "$task_label")
+    log_file="$log_dir/$task_prefix-$safe_label.log"
+    status_file="$log_dir/$task_prefix-$safe_label.status"
+    label_file="$log_dir/$task_prefix-$safe_label.label"
+
+    printf "%s\n" "$task_label" > "$label_file"
+
+    (
+        set +e
+        "$task_command" "$@" > "$log_file" 2>&1
+        task_status=$?
+        printf "%s\n" "$task_status" > "$status_file"
+        exit 0
+    ) &
+}
+
+git_parallel_finish_tasks() {
+    local log_dir="$1"
+    local task_count="$2"
+    local failed_count=0
+    local task_index task_prefix label_file log_file status_file
+    local task_label task_status
+
+    if ! wait; then
+        warning "One or more parallel git workers exited unexpectedly"
+    fi
+
+    for ((task_index = 1; task_index <= task_count; task_index++)); do
+        task_prefix=$(printf "%03d" "$task_index")
+        label_file=$(find "$log_dir" -name "$task_prefix-*.label" -print -quit)
+        log_file=$(find "$log_dir" -name "$task_prefix-*.log" -print -quit)
+        status_file=$(find "$log_dir" -name "$task_prefix-*.status" -print -quit)
+        task_label="task $task_index"
+        task_status=1
+
+        if [ -n "$label_file" ]; then
+            read -r task_label < "$label_file" || task_label="task $task_index"
+        fi
+
+        if [ -n "$status_file" ]; then
+            read -r task_status < "$status_file" || task_status=1
+        fi
+
+        if [ "$task_status" -eq 0 ]; then
+            success "$task_label"
+        else
+            failed_count=$((failed_count + 1))
+            error "$task_label failed (log: $log_file)"
+            if [ -n "$log_file" ] && [ -s "$log_file" ]; then
+                sed "s/^/    /" "$log_file"
+            fi
+        fi
+    done
+
+    if [ "$failed_count" -eq 0 ]; then
+        debug "Parallel git task logs: $log_dir"
+        rm -rf "$log_dir"
+    else
+        warning "$failed_count parallel git task(s) failed; logs kept in $log_dir"
+    fi
+
+    return 0
+}
+
+clone_repos_parallel() {
+    local parallel_jobs log_dir task_count repo dest label
+
+    if [ "$#" -eq 0 ]; then
+        return 0
+    fi
+
+    if [ $(( $# % 2 )) -ne 0 ]; then
+        error "clone_repos_parallel expects repository/destination pairs"
+        return 1
+    fi
+
+    if ! parallel_jobs=$(git_parallel_jobs); then
+        warning "Invalid GIT_PARALLEL_JOBS=${GIT_PARALLEL_JOBS:-}, using $parallel_jobs"
+    fi
+    log_dir=$(git_parallel_log_dir "clone")
+    task_count=0
+
+    info "Cloning repositories in parallel (jobs: $parallel_jobs)"
+
+    while [ "$#" -gt 0 ]; do
+        repo="$1"
+        dest="$2"
+        shift 2
+
+        task_count=$((task_count + 1))
+        label="clone $(basename "$dest")"
+        git_parallel_wait_for_slot "$parallel_jobs"
+        git_parallel_start_task "$task_count" "$label" "$log_dir" clone_repo "$repo" "$dest"
+    done
+
+    git_parallel_finish_tasks "$log_dir" "$task_count"
+}
+
+update_repos_parallel() {
+    local parallel_jobs log_dir task_count repo_path label
+
+    if [ "$#" -eq 0 ]; then
+        return 0
+    fi
+
+    if ! parallel_jobs=$(git_parallel_jobs); then
+        warning "Invalid GIT_PARALLEL_JOBS=${GIT_PARALLEL_JOBS:-}, using $parallel_jobs"
+    fi
+    log_dir=$(git_parallel_log_dir "update")
+    task_count=0
+
+    info "Updating repositories in parallel (jobs: $parallel_jobs)"
+
+    for repo_path in "$@"; do
+        task_count=$((task_count + 1))
+        label="update $(basename "$repo_path")"
+        git_parallel_wait_for_slot "$parallel_jobs"
+        git_parallel_start_task "$task_count" "$label" "$log_dir" update_repo "$repo_path"
+    done
+
+    git_parallel_finish_tasks "$log_dir" "$task_count"
 }
 
 
