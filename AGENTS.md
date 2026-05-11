@@ -2,6 +2,13 @@
 
 This file contains instructions for agentic coding assistants operating in this repository. It provides build/lint/test commands and code style guidelines to ensure consistent development practices.
 
+## Agent Operating Rules
+
+- Do not make commits unless the user explicitly asks for one.
+- Explain what changed, why it changed, and how it was verified.
+- Preserve user changes already present in the worktree. If unrelated files are
+  dirty, leave them alone.
+
 ## Repository Overview
 
 This is a personal dotfiles and workstation bootstrap repository for day-to-day
@@ -30,6 +37,9 @@ stylua $(git ls-files -- '*.lua')
 stylua config/nvim/lua/ilyasyoy/init.lua
 ```
 
+CI runs Lua 5.4, installs `luacheck` with LuaRocks, installs
+`shellcheck`, and pins StyLua to `v2.4.0` before running `make check`.
+
 ### Shell Scripts
 
 ```bash
@@ -46,6 +56,10 @@ bash sh/setup/update.sh
 # Top-level helpers
 make install
 make update
+
+# Show setup/update debug logs
+make install VERBOSE=1
+make update VERBOSE=1
 ```
 
 ## Code Style Guidelines
@@ -72,13 +86,19 @@ make update
 - Handle Vim options properly
 - Use local variables when possible
 - Keep shared `vim.pack` specs and eager registration in `config/nvim/lua/ilyasyoy/pack.lua`
+- Keep `config/nvim/nvim-pack-lock.json` and `config/nvim/ts-pack-lock.json`
+  under version control when plugin or Treesitter lock state changes
 - Keep plugin configuration in `config/nvim/after/plugin/*.lua`
 - Keep plugin loading eager unless a task explicitly asks to reintroduce lazy loading
+- `pack.lua` may prefer local plugin checkouts under
+  `~/Projects/IlyasYOY/<plugin>` before falling back to GitHub; preserve that
+  workflow unless the task says otherwise
 
 ### Shell Scripts
 
-- Use `#!/usr/bin/env bash`
-- Set `set -euo pipefail` for robustness
+- Use `#!/usr/bin/env bash` for executable bash scripts
+- Set `set -euo pipefail` in executable setup scripts and new standalone
+  scripts when it will not break sourced interactive usage
 - Use descriptive function names
 - Quote variables properly
 - Use `local` for function variables
@@ -87,7 +107,12 @@ make update
 - Keep the files sourced from the active shell rc file (`~/.zshrc` on macOS,
   `~/.bashrc` on Raspberry Pi) — `sh/helpers.sh`, `sh/exports.sh`, and
   `sh/aliases.sh` — safe for interactive shell startup
+- Treat `sh/aliases.sh` and `sh/exports.sh` as shell fragments linted with
+  `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and shell-shebang
+  files in `bin/` are linted as scripts by `make check-shell`
 - Put executable setup flows under `sh/setup/`
+- Keep bootstrap helpers and platform-specific setup behavior in
+  `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
 
 ### Python
 
@@ -109,13 +134,20 @@ make update
 - `bin/` - Executable binaries
 - `tests/` - Small reproducible tests and experiments that support repo changes
 - `config/nvim/` - Neovim configuration
+- `config/nvim/nvim-pack-lock.json`, `config/nvim/ts-pack-lock.json` - Lock
+  files for `vim.pack` plugins and Treesitter parsers
 - `config/nvim-minimal/` - Minimal Neovim configuration for reproducing issues
 - `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
-- `config/alacritty/`, `config/wezterm/`, `config/hammerspoon/` - Terminal and desktop app configuration
+- `config/alacritty/`, `config/wezterm/`, `config/hammerspoon/`,
+  `config/gnupg/`, `config/.tmux.conf`, `config/.vimrc`,
+  `config/.amethyst.yml` - Terminal, desktop, GnuPG, tmux, and Vim
+  configuration
+- `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
+  Go lint configuration linked by setup
 - `.agents/skills/` - Repository-local Codex skills such as
   `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
