@@ -156,7 +156,7 @@ def decode_subscription(raw_subscription: str) -> list[str]:
     decode_errors: list[str] = []
 
     for decoder_name, decoder in (
-        ("base64", base64.b64decode),
+        ("base64", lambda value: base64.b64decode(value, validate=True)),
         ("urlsafe base64", base64.urlsafe_b64decode),
     ):
         try:
@@ -691,7 +691,10 @@ def print_outbound_summary(config: dict[str, object] | None) -> None:
         print("  outbound:     no VLESS outbound found")
         return
 
-    print("  outbound:     vless-out")
+    tag = outbound.get("tag")
+    if not isinstance(tag, str) or not tag:
+        tag = "(unknown)"
+    print(f"  outbound:     {tag}")
     print(f"  server:       {outbound.get('server', '(unknown)')}")
     print(f"  port:         {outbound.get('server_port', '(unknown)')}")
     print(f"  security:     {detect_outbound_security(outbound)}")

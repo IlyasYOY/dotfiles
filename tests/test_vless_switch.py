@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import importlib.machinery
 import importlib.util
+import io
 import sys
 import unittest
 from pathlib import Path
@@ -39,6 +41,47 @@ class VlessSwitchTest(unittest.TestCase):
             vless_switch.decode_subscription(encoded),
             ["vless://uuid@example.com:443?type=tcp&security=tls#node"],
         )
+
+    def test_decode_subscription_prefers_urlsafe_decoder_when_needed(self):
+        raw_entries = "\n".join(
+            [
+                "vmess://ignored",
+                "vless://uuid@example.com:443?type=tcp&security=tls#node",
+            ]
+        )
+        urlsafeb64 = base64.urlsafe_b64encode(raw_entries.encode("utf-8")).decode(
+            "ascii"
+        )
+        self.assertTrue("-" in urlsafeb64 or "_" in urlsafeb64)
+
+        calls: dict[str, object] = {}
+        original_b64decode = vless_switch.base64.b64decode
+        original_urlsafe_b64decode = vless_switch.base64.urlsafe_b64decode
+
+        def fake_b64decode(data: str, *args: object, **kwargs: object) -> bytes:
+            calls.setdefault("base64_validate_calls", []).append(
+                kwargs.get("validate", False)
+            )
+            return original_b64decode(data, *args, **kwargs)
+
+        def fake_urlsafe_b64decode(data: str) -> bytes:
+            calls["urlsafe_called"] = True
+            return original_urlsafe_b64decode(data)
+
+        vless_switch.base64.b64decode = fake_b64decode  # type: ignore[assignment]
+        vless_switch.base64.urlsafe_b64decode = fake_urlsafe_b64decode  # type: ignore[assignment]
+
+        try:
+            self.assertEqual(
+                vless_switch.decode_subscription(urlsafeb64),
+                ["vless://uuid@example.com:443?type=tcp&security=tls#node"],
+            )
+        finally:
+            vless_switch.base64.b64decode = original_b64decode
+            vless_switch.base64.urlsafe_b64decode = original_urlsafe_b64decode
+
+        self.assertIn(True, calls["base64_validate_calls"])
+        self.assertTrue(calls["urlsafe_called"])
 
     def test_parse_reality_entry(self):
         entry = vless_switch.parse_entry(
@@ -95,6 +138,24 @@ class VlessSwitchTest(unittest.TestCase):
                 "outbound": "direct",
             },
         )
+
+    def test_print_outbound_summary_reports_actual_tag(self):
+        config = {
+            "outbounds": [
+                {
+                    "type": "vless",
+                    "tag": "my-vless-out",
+                    "server": "example.com",
+                    "server_port": 443,
+                }
+            ]
+        }
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            vless_switch.print_outbound_summary(config)
+
+        self.assertIn("  outbound:     my-vless-out", output.getvalue())
 
     def test_unsupported_transport_is_rejected(self):
         entry = vless_switch.parse_entry(
