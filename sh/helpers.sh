@@ -24,6 +24,7 @@ convert-webp-to-png() {
 }
 
 alias codexr="codex resume"
+alias codex-spark="codex --model gpt-5.3-codex-spark"
 alias codexrl="codex resume --last"
 
 codex-notes() {
