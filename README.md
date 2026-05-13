@@ -32,10 +32,9 @@ hardware.
   Treesitter, LSP/DAP, snippets, `fzf-lua`, Git tooling, and database helpers.
 - `config/nvim-minimal` — minimal Neovim setup for reproducing issues.
 - `sh` — shared shell helpers plus install and update entrypoints.
-- `config/wezterm`, `config/alacritty`, `config/hammerspoon`,
-  `config/gnupg`, `config/.tmux.conf`, `config/.amethyst.yml`,
-  `config/.vimrc` — terminal, desktop, and CLI configuration tracked in the
-  repo.
+- `config/wezterm`, `config/hammerspoon`, `config/gnupg`,
+  `config/.tmux.conf`, `config/.amethyst.yml`, `config/.vimrc` — terminal,
+  desktop, and CLI configuration tracked in the repo.
 - `config/codex` — checked-in Codex instructions and repo-managed custom
   skills.
 - `.agents/skills` — repository-local Codex skills used when working in this

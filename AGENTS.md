@@ -142,10 +142,9 @@ make update VERBOSE=1
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
-- `config/alacritty/`, `config/wezterm/`, `config/hammerspoon/`,
-  `config/gnupg/`, `config/.tmux.conf`, `config/.vimrc`,
-  `config/.amethyst.yml` - Terminal, desktop, GnuPG, tmux, and Vim
-  configuration
+- `config/wezterm/`, `config/hammerspoon/`, `config/gnupg/`,
+  `config/.tmux.conf`, `config/.vimrc`, `config/.amethyst.yml` - Terminal,
+  desktop, GnuPG, tmux, and Vim configuration
 - `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
   Go lint configuration linked by setup
 - `.agents/skills/` - Repository-local Codex skills such as
