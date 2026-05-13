@@ -1,0 +1,1028 @@
+#!/usr/bin/env python3
+
+"""Switch a Raspberry Pi sing-box service to a VLESS subscription node."""
+
+from __future__ import annotations
+
+import argparse
+import base64
+import binascii
+import ipaddress
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+DEFAULT_CONFIG_PATH = "/etc/sing-box/config.json"
+DEFAULT_SERVICE_NAME = "sing-box"
+DEFAULT_SING_BOX_BINARY = "sing-box"
+USER_AGENT = "vless-switch/1.0"
+
+TUN_ADDRESSES = (
+    "172.19.0.1/30",
+    "fdfe:dcba:9876::1/126",
+)
+BASE_ROUTE_EXCLUDE_ADDRESSES = (
+    "127.0.0.0/8",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "169.254.0.0/16",
+    "100.64.0.0/10",
+    "::1/128",
+    "fc00::/7",
+    "fe80::/10",
+)
+SUPPORTED_SECURITY = {"none", "tls", "reality"}
+
+
+class VlessSwitchError(Exception):
+    """Raised when the requested VPN operation cannot be completed."""
+
+
+@dataclass(frozen=True)
+class VlessEntry:
+    """A parsed VLESS entry from a subscription."""
+
+    uri: str
+    label: str
+    uuid: str
+    host: str
+    port: int
+    security: str
+    transport: str
+    alpn: tuple[str, ...]
+    flow: str = ""
+    sni: str = ""
+    public_key: str = ""
+    short_id: str = ""
+    fingerprint: str = ""
+
+    @property
+    def display_security(self) -> str:
+        return self.security or "none"
+
+    @property
+    def server_name(self) -> str:
+        return self.sni or self.host
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Switch sing-box between direct traffic and a selected VLESS node."
+    )
+    parser.add_argument(
+        "--config-path",
+        default=DEFAULT_CONFIG_PATH,
+        help=f"live sing-box config path (default: {DEFAULT_CONFIG_PATH})",
+    )
+    parser.add_argument(
+        "--service-name",
+        default=DEFAULT_SERVICE_NAME,
+        help=f"systemd service name (default: {DEFAULT_SERVICE_NAME})",
+    )
+    parser.add_argument(
+        "--sing-box-binary",
+        default=DEFAULT_SING_BOX_BINARY,
+        help=f"sing-box binary used for validation (default: {DEFAULT_SING_BOX_BINARY})",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers.add_parser(
+        "check",
+        help="print service status, config validity, current outbound, IP, and geo",
+    )
+
+    connect_parser = subparsers.add_parser(
+        "connect",
+        help="fetch a subscription, choose a VLESS node, and deploy sing-box config",
+    )
+    connect_parser.add_argument("subscription_url", help="VLESS subscription URL")
+    connect_parser.add_argument(
+        "--pick",
+        type=int,
+        help="choose a 1-based subscription entry without prompting",
+    )
+    connect_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="validate the generated config without writing files or restarting services",
+    )
+
+    subparsers.add_parser(
+        "disconnect",
+        help="stop sing-box so traffic goes direct again",
+    )
+
+    return parser.parse_args(argv)
+
+
+def is_effective_root() -> bool:
+    return not hasattr(os, "geteuid") or os.geteuid() == 0
+
+
+def require_root(action: str) -> None:
+    if is_effective_root():
+        return
+
+    raise VlessSwitchError(f"{action} requires root privileges. Run it with sudo.")
+
+
+def pad_base64(value: str) -> str:
+    return value + "=" * (-len(value) % 4)
+
+
+def fetch_subscription(url: str) -> str:
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            return response.read().decode("utf-8").strip()
+    except (OSError, UnicodeDecodeError, urllib.error.URLError) as exc:
+        raise VlessSwitchError(f"Failed to fetch subscription URL: {exc}") from exc
+
+
+def decode_subscription(raw_subscription: str) -> list[str]:
+    raw_subscription = "".join(raw_subscription.split())
+    decode_errors: list[str] = []
+
+    for decoder_name, decoder in (
+        ("base64", base64.b64decode),
+        ("urlsafe base64", base64.urlsafe_b64decode),
+    ):
+        try:
+            decoded_bytes = decoder(pad_base64(raw_subscription))
+            decoded = decoded_bytes.decode("utf-8")
+            break
+        except (binascii.Error, UnicodeDecodeError, ValueError) as exc:
+            decode_errors.append(f"{decoder_name}: {exc}")
+    else:
+        raise VlessSwitchError(
+            "Failed to decode subscription content as base64: "
+            + "; ".join(decode_errors)
+        )
+
+    entries = [line.strip() for line in decoded.splitlines() if line.strip()]
+    vless_entries = [line for line in entries if line.startswith("vless://")]
+    if not vless_entries:
+        raise VlessSwitchError("Subscription did not contain any vless:// entries.")
+
+    return vless_entries
+
+
+def first_query_value(query: dict[str, list[str]], *keys: str) -> str:
+    for key in keys:
+        values = query.get(key)
+        if values:
+            return values[0]
+    return ""
+
+
+def split_query_values(query: dict[str, list[str]], *keys: str) -> tuple[str, ...]:
+    values: list[str] = []
+    for key in keys:
+        for raw_value in query.get(key, []):
+            for part in raw_value.split(","):
+                value = part.strip()
+                if value:
+                    values.append(value)
+        if values:
+            break
+    return tuple(values)
+
+
+def parse_entry(uri: str) -> VlessEntry:
+    parsed = urllib.parse.urlparse(uri)
+    if parsed.scheme != "vless":
+        raise VlessSwitchError(f"Unsupported URI scheme in entry: {uri}")
+
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise VlessSwitchError(f"Invalid port in VLESS URI {uri!r}: {exc}") from exc
+
+    uuid = urllib.parse.unquote(parsed.username or "")
+    host = parsed.hostname or ""
+    if not uuid:
+        raise VlessSwitchError(f"VLESS URI is missing a UUID: {uri}")
+    if not host:
+        raise VlessSwitchError(f"VLESS URI is missing a host: {uri}")
+    if port is None:
+        raise VlessSwitchError(f"VLESS URI is missing a port: {uri}")
+
+    query = urllib.parse.parse_qs(parsed.query)
+    label = urllib.parse.unquote(parsed.fragment) if parsed.fragment else "(no label)"
+
+    return VlessEntry(
+        uri=uri,
+        label=label,
+        uuid=uuid,
+        host=host,
+        port=port,
+        security=first_query_value(query, "security").lower() or "none",
+        transport=first_query_value(query, "type").lower() or "tcp",
+        alpn=split_query_values(query, "alpn"),
+        flow=first_query_value(query, "flow"),
+        sni=first_query_value(query, "sni", "serverName", "servername"),
+        public_key=first_query_value(query, "pbk", "publicKey", "public_key"),
+        short_id=first_query_value(query, "sid", "shortId", "short_id"),
+        fingerprint=first_query_value(query, "fp", "fingerprint", "client-fingerprint"),
+    )
+
+
+def unsupported_reason(entry: VlessEntry) -> str:
+    if entry.transport != "tcp":
+        return f"type={entry.transport!r} is unsupported; expected type='tcp'"
+
+    if entry.security not in SUPPORTED_SECURITY:
+        supported = ", ".join(sorted(SUPPORTED_SECURITY))
+        return f"security={entry.security!r} is unsupported; expected one of: {supported}"
+
+    if entry.security == "reality" and not entry.public_key:
+        return "security='reality' requires pbk/publicKey/public_key"
+
+    return ""
+
+
+def ensure_supported_entry(entry: VlessEntry) -> None:
+    reason = unsupported_reason(entry)
+    if reason:
+        raise VlessSwitchError(f"Selected VLESS entry is unsupported: {reason}.")
+
+
+def render_entry(index: int, entry: VlessEntry) -> None:
+    details = [
+        f"host={entry.host}:{entry.port}",
+        f"security={entry.display_security}",
+        f"type={entry.transport}",
+    ]
+    if entry.alpn:
+        details.append(f"alpn={','.join(entry.alpn)}")
+    if entry.flow:
+        details.append(f"flow={entry.flow}")
+    if entry.sni:
+        details.append(f"sni={entry.sni}")
+    if entry.short_id:
+        details.append(f"sid={entry.short_id}")
+    if entry.fingerprint:
+        details.append(f"fp={entry.fingerprint}")
+
+    reason = unsupported_reason(entry)
+    if reason:
+        details.append(f"unsupported={reason}")
+
+    print(f"[{index:02d}] {entry.label}")
+    print(f"     {' '.join(details)}")
+
+
+def choose_entry(entries: list[VlessEntry], picked_index: int | None) -> VlessEntry:
+    if picked_index is not None:
+        zero_based_index = picked_index - 1
+        if zero_based_index < 0 or zero_based_index >= len(entries):
+            raise VlessSwitchError(
+                f"Pick index {picked_index} is out of range 1..{len(entries)}."
+            )
+        return entries[zero_based_index]
+
+    print(f"Found {len(entries)} VLESS entries.\n")
+    for index, entry in enumerate(entries, start=1):
+        render_entry(index, entry)
+
+    while True:
+        try:
+            choice = input(f"\nChoose an entry [1-{len(entries)}] (default 1): ").strip()
+        except EOFError as exc:
+            raise VlessSwitchError(
+                "No interactive input is available. Re-run with --pick N."
+            ) from exc
+
+        if not choice:
+            return entries[0]
+        if choice.isdigit():
+            zero_based_index = int(choice) - 1
+            if 0 <= zero_based_index < len(entries):
+                return entries[zero_based_index]
+        print("Invalid choice. Please enter a valid entry number.", file=sys.stderr)
+
+
+def print_selected_entry(entry: VlessEntry) -> None:
+    print("Selected VLESS entry:")
+    print(f"  label:       {entry.label}")
+    print(f"  host:        {entry.host}")
+    print(f"  port:        {entry.port}")
+    print(f"  security:    {entry.display_security}")
+    print(f"  type:        {entry.transport}")
+    print(f"  server_name: {entry.server_name}")
+    if entry.alpn:
+        print(f"  alpn:        {', '.join(entry.alpn)}")
+    if entry.flow:
+        print(f"  flow:        {entry.flow}")
+    if entry.short_id:
+        print(f"  short_id:    {entry.short_id}")
+    if entry.fingerprint:
+        print(f"  fingerprint: {entry.fingerprint}")
+
+
+def build_tls_settings(entry: VlessEntry) -> dict[str, object] | None:
+    if entry.security == "none":
+        return None
+
+    tls: dict[str, object] = {
+        "enabled": True,
+        "server_name": entry.server_name,
+    }
+    if entry.alpn:
+        tls["alpn"] = list(entry.alpn)
+
+    if entry.security == "reality":
+        reality: dict[str, object] = {
+            "enabled": True,
+            "public_key": entry.public_key,
+        }
+        if entry.short_id:
+            reality["short_id"] = entry.short_id
+        tls["reality"] = reality
+
+        utls: dict[str, object] = {"enabled": True}
+        if entry.fingerprint:
+            utls["fingerprint"] = entry.fingerprint
+        tls["utls"] = utls
+    elif entry.fingerprint:
+        tls["utls"] = {
+            "enabled": True,
+            "fingerprint": entry.fingerprint,
+        }
+
+    return tls
+
+
+def detected_ssh_client_ip() -> str:
+    for variable_name in ("SSH_CLIENT", "SSH_CONNECTION"):
+        value = os.environ.get(variable_name, "")
+        if not value:
+            continue
+
+        candidate = value.split()[0]
+        try:
+            ipaddress.ip_address(candidate)
+        except ValueError:
+            continue
+        return candidate
+
+    return ""
+
+
+def host_route_for_ip(address: str) -> str:
+    parsed_address = ipaddress.ip_address(address)
+    if parsed_address.version == 4:
+        return f"{parsed_address}/32"
+    return f"{parsed_address}/128"
+
+
+def route_exclude_addresses(ssh_client_ip: str = "") -> list[str]:
+    addresses = list(BASE_ROUTE_EXCLUDE_ADDRESSES)
+    if ssh_client_ip:
+        addresses.append(host_route_for_ip(ssh_client_ip))
+
+    return list(dict.fromkeys(addresses))
+
+
+def build_direct_route_rules(excluded_addresses: list[str]) -> list[dict[str, object]]:
+    return [
+        {
+            "network": "tcp",
+            "source_port": 22,
+            "action": "route",
+            "outbound": "direct",
+        },
+        {
+            "network": "tcp",
+            "port": 22,
+            "action": "route",
+            "outbound": "direct",
+        },
+        {
+            "ip_cidr": excluded_addresses,
+            "action": "route",
+            "outbound": "direct",
+        },
+    ]
+
+
+def build_config(entry: VlessEntry, ssh_client_ip: str = "") -> dict[str, object]:
+    ensure_supported_entry(entry)
+
+    excluded_addresses = route_exclude_addresses(ssh_client_ip)
+    outbound: dict[str, object] = {
+        "type": "vless",
+        "tag": "vless-out",
+        "server": entry.host,
+        "server_port": entry.port,
+        "uuid": entry.uuid,
+    }
+    if entry.flow:
+        outbound["flow"] = entry.flow
+
+    tls_settings = build_tls_settings(entry)
+    if tls_settings is not None:
+        outbound["tls"] = tls_settings
+
+    return {
+        "log": {
+            "level": "info",
+        },
+        "inbounds": [
+            {
+                "type": "tun",
+                "tag": "sbtun",
+                "interface_name": "sbtun",
+                "address": list(TUN_ADDRESSES),
+                "auto_route": True,
+                "strict_route": True,
+                "route_exclude_address": excluded_addresses,
+                "stack": "system",
+            }
+        ],
+        "outbounds": [
+            outbound,
+            {
+                "type": "direct",
+                "tag": "direct",
+            },
+            {
+                "type": "block",
+                "tag": "block",
+            },
+        ],
+        "route": {
+            "auto_detect_interface": True,
+            "rules": build_direct_route_rules(excluded_addresses),
+            "final": "vless-out",
+        },
+    }
+
+
+def render_config(config: dict[str, object]) -> str:
+    return json.dumps(config, indent=2, ensure_ascii=False) + "\n"
+
+
+def resolve_command(command: str, purpose: str) -> str:
+    resolved = shutil.which(command)
+    if not resolved:
+        raise VlessSwitchError(f"Cannot find {command!r} in PATH; needed to {purpose}.")
+    return resolved
+
+
+def command_output(completed: subprocess.CompletedProcess[str]) -> str:
+    output_parts = []
+    stdout = completed.stdout.strip()
+    stderr = completed.stderr.strip()
+    if stdout:
+        output_parts.append(stdout)
+    if stderr:
+        output_parts.append(stderr)
+    return "\n".join(output_parts)
+
+
+def run_command(
+    command: list[str],
+    action: str,
+    input_text: str | None = None,
+) -> subprocess.CompletedProcess[str]:
+    try:
+        completed = subprocess.run(
+            command,
+            input=input_text,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        raise VlessSwitchError(f"Failed to {action}: {exc}") from exc
+
+    if completed.returncode != 0:
+        output = command_output(completed)
+        suffix = f"\n{output}" if output else ""
+        raise VlessSwitchError(
+            f"Failed to {action} (exit code {completed.returncode}).{suffix}"
+        )
+    return completed
+
+
+def validate_rendered_config(config_text: str, sing_box_binary: str) -> None:
+    sing_box_path = resolve_command(sing_box_binary, "validate generated config")
+    run_command(
+        [sing_box_path, "check", "-c", "/dev/stdin"],
+        f"validate generated config with {sing_box_path}",
+        input_text=config_text,
+    )
+
+
+def validate_config_file(config_path: Path, sing_box_binary: str) -> None:
+    sing_box_path = resolve_command(sing_box_binary, "validate generated config")
+    run_command(
+        [sing_box_path, "check", "-c", str(config_path)],
+        f"validate generated config with {sing_box_path}",
+    )
+
+
+def read_config_text(config_path: Path) -> str:
+    try:
+        return config_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise VlessSwitchError(f"Failed to read current config {config_path}: {exc}") from exc
+
+
+def load_current_config(config_path: Path) -> tuple[dict[str, object] | None, str]:
+    if not config_path.exists():
+        return None, "config file is missing"
+    if not config_path.is_file():
+        return None, "config path is not a file"
+
+    try:
+        loaded = json.loads(read_config_text(config_path))
+    except json.JSONDecodeError as exc:
+        return None, f"config is not valid JSON: {exc}"
+    except VlessSwitchError as exc:
+        return None, str(exc)
+
+    if not isinstance(loaded, dict):
+        return None, "config root is not a JSON object"
+
+    return loaded, ""
+
+
+def find_vless_outbound(config: dict[str, object]) -> dict[str, object] | None:
+    outbounds = config.get("outbounds")
+    if not isinstance(outbounds, list):
+        return None
+
+    fallback: dict[str, object] | None = None
+    for outbound in outbounds:
+        if not isinstance(outbound, dict) or outbound.get("type") != "vless":
+            continue
+        if outbound.get("tag") == "vless-out":
+            return outbound
+        if fallback is None:
+            fallback = outbound
+
+    return fallback
+
+
+def detect_outbound_security(outbound: dict[str, object]) -> str:
+    tls = outbound.get("tls")
+    if not isinstance(tls, dict) or not tls.get("enabled"):
+        return "none"
+
+    reality = tls.get("reality")
+    if isinstance(reality, dict) and reality.get("enabled"):
+        return "reality"
+    return "tls"
+
+
+def validate_existing_config(
+    config_path: Path,
+    sing_box_binary: str,
+) -> tuple[bool, str]:
+    if not config_path.exists():
+        return False, "config file is missing"
+    if not config_path.is_file():
+        return False, "config path is not a file"
+
+    sing_box_path = shutil.which(sing_box_binary)
+    if not sing_box_path:
+        return False, f"cannot find {sing_box_binary!r} in PATH"
+
+    completed = subprocess.run(
+        [sing_box_path, "check", "-c", str(config_path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return completed.returncode == 0, command_output(completed)
+
+
+def current_service_status(service_name: str) -> str:
+    systemctl_path = shutil.which("systemctl")
+    if not systemctl_path:
+        return "unavailable (systemctl not found)"
+
+    completed = subprocess.run(
+        [systemctl_path, "is-active", service_name],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    status = completed.stdout.strip() or completed.stderr.strip()
+    if status:
+        return status
+    return f"exit-{completed.returncode}"
+
+
+def fetch_public_ipv4() -> str:
+    request = urllib.request.Request(
+        "https://api4.ipify.org",
+        headers={"User-Agent": USER_AGENT},
+    )
+    with urllib.request.urlopen(request, timeout=10) as response:
+        return response.read().decode("utf-8").strip()
+
+
+def fetch_ip_location(ip_address: str) -> str:
+    request = urllib.request.Request(
+        f"https://ipwho.is/{urllib.parse.quote(ip_address)}",
+        headers={"User-Agent": USER_AGENT},
+    )
+    with urllib.request.urlopen(request, timeout=10) as response:
+        response_text = response.read().decode("utf-8")
+
+    try:
+        payload = json.loads(response_text)
+    except json.JSONDecodeError as exc:
+        raise ValueError("IP location lookup returned invalid JSON.") from exc
+
+    if not isinstance(payload, dict):
+        raise ValueError("IP location lookup returned an unexpected response type.")
+
+    if payload.get("success") is False:
+        message = payload.get("message")
+        if isinstance(message, str) and message.strip():
+            raise ValueError(f"IP location lookup failed: {message.strip()}")
+        raise ValueError("IP location lookup failed.")
+
+    location_parts: list[str] = []
+    for key in ("city", "region", "country"):
+        value = payload.get(key)
+        if not isinstance(value, str):
+            continue
+
+        normalized_value = value.strip()
+        if normalized_value and normalized_value not in location_parts:
+            location_parts.append(normalized_value)
+
+    connection = payload.get("connection")
+    if isinstance(connection, dict):
+        org = connection.get("org")
+        if isinstance(org, str) and org.strip():
+            location_parts.append(org.strip())
+
+    if not location_parts:
+        raise ValueError("IP location lookup returned no location fields.")
+
+    return ", ".join(location_parts)
+
+
+def print_outbound_summary(config: dict[str, object] | None) -> None:
+    if config is None:
+        print("  outbound:     no VLESS outbound found")
+        return
+
+    outbound = find_vless_outbound(config)
+    if outbound is None:
+        print("  outbound:     no VLESS outbound found")
+        return
+
+    print("  outbound:     vless-out")
+    print(f"  server:       {outbound.get('server', '(unknown)')}")
+    print(f"  port:         {outbound.get('server_port', '(unknown)')}")
+    print(f"  security:     {detect_outbound_security(outbound)}")
+
+    flow = outbound.get("flow")
+    if flow:
+        print(f"  flow:         {flow}")
+
+    tls = outbound.get("tls")
+    if not isinstance(tls, dict):
+        return
+
+    server_name = tls.get("server_name")
+    if server_name:
+        print(f"  server_name:  {server_name}")
+
+    alpn = tls.get("alpn")
+    if isinstance(alpn, list) and alpn:
+        print(f"  alpn:         {', '.join(str(value) for value in alpn)}")
+
+    utls = tls.get("utls")
+    if isinstance(utls, dict):
+        fingerprint = utls.get("fingerprint")
+        if fingerprint:
+            print(f"  fingerprint:  {fingerprint}")
+
+    reality = tls.get("reality")
+    if isinstance(reality, dict):
+        public_key = reality.get("public_key")
+        short_id = reality.get("short_id")
+        if public_key:
+            print(f"  public_key:   {public_key}")
+        if short_id:
+            print(f"  short_id:     {short_id}")
+
+
+def handle_check(args: argparse.Namespace) -> int:
+    config_path = Path(args.config_path)
+    config, config_load_error = load_current_config(config_path)
+    config_valid, config_validation_output = validate_existing_config(
+        config_path, args.sing_box_binary
+    )
+
+    public_ip = ""
+    public_ip_error = ""
+    try:
+        public_ip = fetch_public_ipv4()
+    except (OSError, UnicodeDecodeError, urllib.error.URLError) as exc:
+        public_ip_error = str(exc)
+
+    ip_location = ""
+    ip_location_error = ""
+    if public_ip:
+        try:
+            ip_location = fetch_ip_location(public_ip)
+        except (OSError, UnicodeDecodeError, urllib.error.URLError, ValueError) as exc:
+            ip_location_error = str(exc)
+
+    print("Current VPN state:")
+    print(f"  service:      {current_service_status(args.service_name)}")
+    print(f"  config:       {config_path}")
+    if config_valid:
+        print("  config_valid: yes")
+    else:
+        reason = config_validation_output or config_load_error or "unknown validation error"
+        print(f"  config_valid: no ({reason})")
+
+    print_outbound_summary(config)
+
+    if public_ip:
+        print(f"  public_ipv4:  {public_ip}")
+    else:
+        print(f"  public_ipv4:  unavailable ({public_ip_error})")
+
+    if ip_location:
+        print(f"  geo:          {ip_location}")
+    elif public_ip:
+        reason = ip_location_error or "lookup returned no location data"
+        print(f"  geo:          unavailable ({reason})")
+    else:
+        print("  geo:          unavailable (public IPv4 unavailable)")
+
+    return 0
+
+
+def backup_config(config_path: Path) -> Path | None:
+    if not config_path.exists():
+        return None
+
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")
+    backup_path = config_path.with_name(f"{config_path.name}.bak.{timestamp}")
+    try:
+        shutil.copy2(config_path, backup_path)
+    except OSError as exc:
+        raise VlessSwitchError(
+            f"Failed to back up {config_path} to {backup_path}: {exc}"
+        ) from exc
+    return backup_path
+
+
+def write_temp_config(config_path: Path, config_text: str) -> Path:
+    try:
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        raise VlessSwitchError(f"Failed to create {config_path.parent}: {exc}") from exc
+
+    original_stat = None
+    if config_path.exists():
+        try:
+            original_stat = config_path.stat()
+        except OSError as exc:
+            raise VlessSwitchError(f"Failed to stat {config_path}: {exc}") from exc
+
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=config_path.parent,
+            prefix=f".{config_path.name}.tmp.",
+            delete=False,
+        ) as temp_file:
+            temp_file.write(config_text)
+            temp_file.flush()
+            os.fsync(temp_file.fileno())
+            temp_path = Path(temp_file.name)
+    except OSError as exc:
+        raise VlessSwitchError(
+            f"Failed to create temporary config in {config_path.parent}: {exc}"
+        ) from exc
+
+    try:
+        if original_stat is None:
+            os.chmod(temp_path, 0o644)
+        else:
+            os.chmod(temp_path, original_stat.st_mode & 0o777)
+            if hasattr(os, "chown"):
+                os.chown(temp_path, original_stat.st_uid, original_stat.st_gid)
+    except OSError as exc:
+        temp_path.unlink(missing_ok=True)
+        raise VlessSwitchError(f"Failed to prepare temporary config {temp_path}: {exc}") from exc
+
+    return temp_path
+
+
+def fsync_parent(path: Path) -> None:
+    if not hasattr(os, "O_DIRECTORY"):
+        return
+
+    try:
+        parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    except OSError:
+        return
+
+    try:
+        os.fsync(parent_fd)
+    finally:
+        os.close(parent_fd)
+
+
+def ensure_service_active(service_name: str) -> None:
+    systemctl_path = resolve_command("systemctl", "check sing-box service status")
+    completed = subprocess.run(
+        [systemctl_path, "is-active", service_name],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode == 0 and completed.stdout.strip() == "active":
+        return
+
+    status = subprocess.run(
+        [systemctl_path, "status", "--no-pager", "--lines", "20", service_name],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    output = command_output(status) or command_output(completed)
+    suffix = f"\n{output}" if output else ""
+    raise VlessSwitchError(f"Service {service_name!r} is not active after restart.{suffix}")
+
+
+def restore_backup(config_path: Path, backup_path: Path, service_name: str) -> None:
+    try:
+        backup_text = backup_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise VlessSwitchError(f"Failed to read backup config {backup_path}: {exc}") from exc
+
+    rollback_temp = write_temp_config(config_path, backup_text)
+    try:
+        os.replace(rollback_temp, config_path)
+        fsync_parent(config_path)
+    except OSError as exc:
+        rollback_temp.unlink(missing_ok=True)
+        raise VlessSwitchError(
+            f"Failed to restore backup {backup_path} to {config_path}: {exc}"
+        ) from exc
+
+    systemctl_path = resolve_command("systemctl", "restart sing-box after rollback")
+    run_command(
+        [systemctl_path, "restart", service_name],
+        f"restart {service_name} after rollback",
+    )
+    time.sleep(1)
+    ensure_service_active(service_name)
+
+
+def deploy_config(
+    config_text: str,
+    config_path_value: str,
+    sing_box_binary: str,
+    service_name: str,
+) -> Path | None:
+    config_path = Path(config_path_value)
+    if config_path.exists() and not config_path.is_file():
+        raise VlessSwitchError(f"Expected {config_path} to be a file.")
+
+    systemctl_path = resolve_command("systemctl", "restart sing-box")
+    temp_path = write_temp_config(config_path, config_text)
+    backup_path: Path | None = None
+    replaced_config = False
+
+    try:
+        validate_config_file(temp_path, sing_box_binary)
+        backup_path = backup_config(config_path)
+
+        try:
+            os.replace(temp_path, config_path)
+            replaced_config = True
+            fsync_parent(config_path)
+        except OSError as exc:
+            raise VlessSwitchError(
+                f"Failed to atomically replace {config_path} with {temp_path}: {exc}"
+            ) from exc
+
+        run_command([systemctl_path, "restart", service_name], f"restart {service_name}")
+        time.sleep(1)
+        ensure_service_active(service_name)
+        return backup_path
+    except VlessSwitchError as exc:
+        if backup_path is not None and replaced_config:
+            try:
+                restore_backup(config_path, backup_path, service_name)
+            except VlessSwitchError as rollback_exc:
+                raise VlessSwitchError(
+                    f"Deployment failed: {exc}\nRollback also failed: {rollback_exc}\n"
+                    f"Manual recovery target: {backup_path}"
+                ) from rollback_exc
+            raise VlessSwitchError(
+                f"Deployment failed: {exc}\nRolled back to {backup_path}."
+            ) from exc
+        raise
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+def handle_connect(args: argparse.Namespace) -> int:
+    if not args.dry_run:
+        require_root("Changing live VPN state")
+
+    raw_subscription = fetch_subscription(args.subscription_url)
+    entries = [parse_entry(uri) for uri in decode_subscription(raw_subscription)]
+    selected_entry = choose_entry(entries, args.pick)
+    ensure_supported_entry(selected_entry)
+
+    ssh_client_ip = detected_ssh_client_ip()
+    config = build_config(selected_entry, ssh_client_ip=ssh_client_ip)
+    config_text = render_config(config)
+
+    print_selected_entry(selected_entry)
+    if ssh_client_ip:
+        print(f"  active_ssh:   {ssh_client_ip} excluded from VPN routes")
+
+    if args.dry_run:
+        validate_rendered_config(config_text, args.sing_box_binary)
+        print("\nDry run succeeded: generated config validated; no files were changed.")
+        return 0
+
+    backup_path = deploy_config(
+        config_text=config_text,
+        config_path_value=args.config_path,
+        sing_box_binary=args.sing_box_binary,
+        service_name=args.service_name,
+    )
+
+    print("\nVPN connected:")
+    if backup_path is None:
+        print("  backup:  none (first config)")
+    else:
+        print(f"  backup:  {backup_path}")
+    print(f"  config:  {args.config_path}")
+    print(f"  service: {args.service_name} is active")
+    return 0
+
+
+def handle_disconnect(args: argparse.Namespace) -> int:
+    require_root("Changing live VPN state")
+    systemctl_path = resolve_command("systemctl", "stop sing-box")
+    run_command([systemctl_path, "stop", args.service_name], f"stop {args.service_name}")
+
+    status = current_service_status(args.service_name)
+    if status not in {"inactive", "failed"}:
+        raise VlessSwitchError(
+            f"Expected {args.service_name} to stop cleanly, but systemctl reports {status!r}."
+        )
+
+    print("VPN disconnected:")
+    print(f"  service: {args.service_name} is {status}")
+    print("  traffic: should now go directly without sing-box")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+
+    try:
+        if args.command == "check":
+            return handle_check(args)
+        if args.command == "connect":
+            return handle_connect(args)
+        if args.command == "disconnect":
+            return handle_disconnect(args)
+    except VlessSwitchError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        print("Interrupted.", file=sys.stderr)
+        return 130
+
+    print(f"Error: unknown command {args.command!r}", file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

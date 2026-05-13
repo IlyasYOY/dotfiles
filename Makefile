@@ -1,17 +1,18 @@
 LUA_FILES := $(wildcard $(shell git ls-files -- '*.lua'))
+PYTHON_FILES := $(shell git ls-files -- '*.py') $(wildcard tests/test_*.py) bin/vless-switch
 SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)
 VERBOSE ?= 0
 
-.PHONY: install update check check-lua check-shell format-lua
+.PHONY: install update check check-lua check-python check-shell format-lua
 install:
 	@VERBOSE=$(VERBOSE) ./sh/setup/install.sh
 
 update:
 	@VERBOSE=$(VERBOSE) ./sh/setup/update.sh
 
-check: check-lua check-shell
+check: check-lua check-shell check-python
 
 check-lua:
 	@luacheck $(LUA_FILES)
@@ -31,6 +32,10 @@ check-shell:
 		shellcheck $(SHELL_SCRIPT_FILES) $$bin_shell_files; \
 	fi
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
+
+check-python:
+	@python3 -m py_compile $(PYTHON_FILES)
+	@python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)
