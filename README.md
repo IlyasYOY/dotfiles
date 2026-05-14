@@ -78,8 +78,9 @@ make install
    `~/.bashrc` on Raspberry Pi.
 6. Configures Git defaults.
 7. Installs and configures `SDKMAN`, `gvm`, and `fnm`.
-8. Sets up tmux TPM, clones the password store, and links Codex instructions
-   plus repo-managed skills into `~/.codex`.
+8. Sets up tmux TPM, clones the password store, links Codex instructions
+   plus repo-managed skills into `~/.codex`, and configures Codex BEL
+   notifications for tmux.
 
 On macOS, the installer uses:
 
@@ -126,9 +127,13 @@ Main links created by the installer:
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
-- `config/codex/skills/superpowers` -> `~/.codex/skills/superpowers`
+- `config/codex/skills` -> `~/.codex/skills/IlyasYOY`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
+
+The installer also updates `~/.codex/config.toml` in place so Codex emits BEL
+notifications for completed turns and approval prompts. This preserves other
+Codex-managed settings.
 
 macOS-only links created by the installer:
 

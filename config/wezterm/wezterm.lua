@@ -94,6 +94,7 @@ M.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 
 M.hide_tab_bar_if_only_one_tab = true
 M.window_decorations = "RESIZE"
+M.audible_bell = "SystemBeep"
 
 M.send_composed_key_when_left_alt_is_pressed = false
 M.send_composed_key_when_right_alt_is_pressed = false

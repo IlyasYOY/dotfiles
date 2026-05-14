@@ -1,5 +1,5 @@
 LUA_FILES := $(wildcard $(shell git ls-files -- '*.lua'))
-PYTHON_FILES := $(shell git ls-files -- '*.py') $(wildcard tests/test_*.py) bin/vless-switch
+PYTHON_FILES := $(shell git ls-files -- '*.py') $(wildcard bin/*.py) $(wildcard tests/test_*.py) bin/vless-switch
 SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)
