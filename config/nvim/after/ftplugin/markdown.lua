@@ -340,6 +340,119 @@ local function collect_treesitter_protected_ranges(bufnr)
     return merge_ranges_by_line(markdown_ranges, inline_ranges)
 end
 
+local function find_parent(node, type_name)
+    while node do
+        if node:type() == type_name then
+            return node
+        end
+
+        node = node:parent()
+    end
+end
+
+local function list_item_markers(list_item)
+    local list_marker
+    local task_marker
+
+    for child in list_item:iter_children() do
+        local type_name = child:type()
+        if type_name == "list_marker_minus" then
+            list_marker = child
+        elseif
+            type_name == "task_list_marker_unchecked"
+            or type_name == "task_list_marker_checked"
+        then
+            task_marker = child
+        end
+    end
+
+    return list_marker, task_marker
+end
+
+local function get_markdown_node_at_cursor(bufnr)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    row = row - 1
+
+    local node = vim.treesitter.get_node {
+        bufnr = bufnr,
+        pos = { row, col },
+        lang = "markdown",
+    }
+
+    if node or col == 0 then
+        return node
+    end
+
+    return vim.treesitter.get_node {
+        bufnr = bufnr,
+        pos = { row, col - 1 },
+        lang = "markdown",
+    }
+end
+
+local function make_current_line_list_item(bufnr)
+    local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+    local line = vim.api.nvim_buf_get_lines(bufnr, row, row + 1, false)[1] or ""
+    local indent = line:match "^%s*" or ""
+
+    vim.api.nvim_buf_set_text(bufnr, row, #indent, row, #indent, { "- " })
+end
+
+local function toggle_markdown_task_item()
+    local bufnr = 0
+
+    local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "markdown")
+    if not ok then
+        vim.notify(
+            "No markdown Treesitter parser available",
+            vim.log.levels.WARN
+        )
+        return
+    end
+
+    parser:parse()
+
+    local list_item =
+        find_parent(get_markdown_node_at_cursor(bufnr), "list_item")
+    if not list_item then
+        make_current_line_list_item(bufnr)
+        return
+    end
+
+    local list_marker, task_marker = list_item_markers(list_item)
+    if not list_marker then
+        return
+    end
+
+    local cursor_row = vim.api.nvim_win_get_cursor(0)[1] - 1
+    local list_marker_row = list_marker:range()
+    if list_marker_row ~= cursor_row then
+        make_current_line_list_item(bufnr)
+        return
+    end
+
+    local task_type = task_marker and task_marker:type()
+    if task_type == "task_list_marker_checked" then
+        local sr, sc, er, ec = task_marker:range()
+        local line = vim.api.nvim_buf_get_lines(bufnr, sr, sr + 1, false)[1]
+            or ""
+        local trailing_space = line:sub(ec + 1):match "^%s*" or ""
+        vim.api.nvim_buf_set_text(bufnr, sr, sc, er, ec + #trailing_space, {
+            "",
+        })
+        return
+    end
+
+    if task_type == "task_list_marker_unchecked" then
+        local sr, sc, er, ec = task_marker:range()
+        vim.api.nvim_buf_set_text(bufnr, sr, sc, er, ec, { "[x]" })
+        return
+    end
+
+    local sr, sc, er, ec = list_marker:range()
+    vim.api.nvim_buf_set_text(bufnr, sr, sc, er, ec, { "- [ ] " })
+end
+
 local function wrap_bare_links_in_buffer()
     local bufnr = vim.api.nvim_get_current_buf()
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -402,6 +515,10 @@ local function setup_formatters()
     vim.keymap.set("n", "<localleader>L", wrap_bare_links_in_buffer, {
         buffer = true,
         desc = "Wrap bare URLs and file paths",
+    })
+    vim.keymap.set("n", "<localleader>t", toggle_markdown_task_item, {
+        buffer = true,
+        desc = "Toggle markdown task item",
     })
 end
 
