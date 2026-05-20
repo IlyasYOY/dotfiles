@@ -131,9 +131,9 @@ Main links created by the installer:
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 
-The installer also updates `~/.codex/config.toml` in place so Codex emits BEL
-notifications for completed turns and approval prompts. This preserves other
-Codex-managed settings.
+The installer also updates managed settings in `~/.codex/config.toml` in place,
+including Codex TUI alternate-screen mode and BEL notifications for completed
+turns and approval prompts. This preserves other Codex-managed settings.
 
 macOS-only links created by the installer:
 

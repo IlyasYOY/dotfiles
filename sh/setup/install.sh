@@ -251,7 +251,24 @@ setup_codex() {
     local codex_config_dir="$HOME/.codex"
     mkdir -pv "$codex_config_dir"
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
-    python3 "$DOTFILES_DIR/bin/codex_configure_notifications.py" "$codex_config_dir/config.toml"
+
+    info "🤖 Setting up Codex rules..."
+    local codex_rules_dir="$codex_config_dir/rules"
+    mkdir -pv "$codex_rules_dir"
+    symlink "$DOTFILES_DIR/config/codex/rules/default.rules" "$codex_rules_dir/default.rules"
+
+    local codex_tui_config
+    codex_tui_config=$(cat <<'EOF'
+notifications = ["agent-turn-complete", "approval-requested"]
+notification_method = "bel"
+notification_condition = "always"
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "tui" \
+        "ilyasyoy codex tui config" \
+        "$codex_tui_config"
 
     info "🤖 Setting up Codex skills..."
     local codex_skills_dir="$codex_config_dir/skills"

@@ -1,0 +1,41 @@
+prefix_rule(
+    pattern = ["git", ["add", "pull", "commit", "push", "tag"]],
+    decision = "prompt",
+    justification = "Git index and remote operations modify protected state.",
+)
+
+prefix_rule(
+    pattern = ["gh"],
+    decision = "prompt",
+    justification = "GitHub CLI uses network and may read or modify remote GitHub state.",
+)
+
+prefix_rule(
+    pattern = [["npx", "npm"]],
+    decision = "prompt",
+    justification = "npm may run arbitrary code.",
+)
+
+prefix_rule(
+    pattern = ["make"],
+    decision = "prompt",
+    justification = "make may run arbitrary code.",
+)
+
+prefix_rule(
+    pattern = ["go", ["test", "run", "get", "install", "mod"]],
+    decision = "prompt",
+    justification = "Go dependency/tool installation uses network and writes outside normal source edits.",
+)
+
+prefix_rule(
+    pattern = ["codex", "mcp", "add"],
+    decision = "prompt",
+    justification = "Adding MCP servers writes Codex configuration and may use network access.",
+)
+
+prefix_rule(
+    pattern = [["ps", "pkill", "kill"]],
+    decision = "prompt",
+    justification = "Process inspection or control crosses the sandbox boundary.",
+)
