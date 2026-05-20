@@ -1,9 +1,9 @@
 ---
-name: conventional-commit
-description: Draft or create Conventional Commit messages from staged Git changes. Use when the user asks for a commit message, conventional commit, commit title/body, or asks Codex to commit local work while preserving the repository's recent commit style.
+name: git-commit
+description: Draft or create one Conventional Commit from staged Git changes. Use when Codex needs a commit message, commit title/body, or local commit for an already staged change while preserving the repository's recent commit style.
 ---
 
-# Conventional Commit
+# Git Commit
 
 ## Overview
 
@@ -55,7 +55,7 @@ If the user asks only for a message, do not commit.
 Run the helper from the repository root:
 
 ```bash
-python3 -B config/codex/skills/conventional-commit/scripts/commit_context.py --repo . --limit 12
+python3 -B config/codex/skills/git-commit/scripts/commit_context.py --repo . --limit 12
 ```
 
 Useful options:
