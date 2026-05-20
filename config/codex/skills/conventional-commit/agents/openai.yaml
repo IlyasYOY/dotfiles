@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conventional Commit"
+  short_description: "Draft commits from staged changes"
+  default_prompt: "Use $conventional-commit to draft a conventional commit message for the staged changes."
