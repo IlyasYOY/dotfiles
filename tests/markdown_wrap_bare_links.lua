@@ -1,5 +1,6 @@
 local repo_root = vim.fn.getcwd()
 
+vim.g.maplocalleader = ","
 vim.opt.runtimepath:prepend(repo_root .. "/config/nvim")
 vim.cmd "filetype plugin on"
 
@@ -9,12 +10,17 @@ local function assert_lines(expected, message)
 end
 
 local function open_markdown_buffer(lines)
-    vim.cmd.enew()
+    vim.cmd "enew!"
     vim.bo.buftype = ""
     vim.bo.bufhidden = "wipe"
     vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
     vim.cmd "file test.md"
     vim.cmd "setfiletype markdown"
+end
+
+local function toggle_list_item(row)
+    vim.api.nvim_win_set_cursor(0, { row, 0 })
+    vim.cmd "normal ,t"
 end
 
 open_markdown_buffer {
@@ -45,6 +51,40 @@ vim.cmd "MarkdownWrapBareLinks"
 assert_lines(
     first_pass,
     "MarkdownWrapBareLinks should be idempotent on a second pass"
+)
+
+open_markdown_buffer { "Buy milk" }
+
+toggle_list_item(1)
+assert_lines({ "- Buy milk" }, "Toggle should turn plain text into a list item")
+
+toggle_list_item(1)
+assert_lines(
+    { "- [ ] Buy milk" },
+    "Toggle should turn a list item into an unchecked task"
+)
+
+toggle_list_item(1)
+assert_lines(
+    { "- [x] Buy milk" },
+    "Toggle should turn an unchecked task into a checked task"
+)
+
+toggle_list_item(1)
+assert_lines(
+    { "Buy milk" },
+    "Toggle should turn a checked task back into plain text"
+)
+
+open_markdown_buffer { "  Buy milk" }
+
+toggle_list_item(1)
+toggle_list_item(1)
+toggle_list_item(1)
+toggle_list_item(1)
+assert_lines(
+    { "  Buy milk" },
+    "Toggle should preserve indentation when removing a list marker"
 )
 
 vim.cmd.qall { bang = true }

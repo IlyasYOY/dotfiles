@@ -398,7 +398,16 @@ local function make_current_line_list_item(bufnr)
     vim.api.nvim_buf_set_text(bufnr, row, #indent, row, #indent, { "- " })
 end
 
-local function toggle_markdown_task_item()
+local function first_nonblank_col(line)
+    local first_nonblank = line:find "%S"
+    if not first_nonblank then
+        return nil
+    end
+
+    return first_nonblank - 1
+end
+
+local function toggle_markdown_list_item()
     local bufnr = 0
 
     local ok, parser = pcall(vim.treesitter.get_parser, bufnr, "markdown")
@@ -433,13 +442,23 @@ local function toggle_markdown_task_item()
 
     local task_type = task_marker and task_marker:type()
     if task_type == "task_list_marker_checked" then
-        local sr, sc, er, ec = task_marker:range()
+        local sr, _, er, ec = task_marker:range()
         local line = vim.api.nvim_buf_get_lines(bufnr, sr, sr + 1, false)[1]
             or ""
+        local marker_start_col = first_nonblank_col(line)
+        if not marker_start_col then
+            return
+        end
+
         local trailing_space = line:sub(ec + 1):match "^%s*" or ""
-        vim.api.nvim_buf_set_text(bufnr, sr, sc, er, ec + #trailing_space, {
-            "",
-        })
+        vim.api.nvim_buf_set_text(
+            bufnr,
+            sr,
+            marker_start_col,
+            er,
+            ec + #trailing_space,
+            { "" }
+        )
         return
     end
 
@@ -449,8 +468,14 @@ local function toggle_markdown_task_item()
         return
     end
 
-    local sr, sc, er, ec = list_marker:range()
-    vim.api.nvim_buf_set_text(bufnr, sr, sc, er, ec, { "- [ ] " })
+    local sr, _, er, ec = list_marker:range()
+    local line = vim.api.nvim_buf_get_lines(bufnr, sr, sr + 1, false)[1] or ""
+    local marker_start_col = first_nonblank_col(line)
+    if not marker_start_col then
+        return
+    end
+
+    vim.api.nvim_buf_set_text(bufnr, sr, marker_start_col, er, ec, { "- [ ] " })
 end
 
 local function wrap_bare_links_in_buffer()
@@ -516,9 +541,9 @@ local function setup_formatters()
         buffer = true,
         desc = "Wrap bare URLs and file paths",
     })
-    vim.keymap.set("n", "<localleader>t", toggle_markdown_task_item, {
+    vim.keymap.set("n", "<localleader>t", toggle_markdown_list_item, {
         buffer = true,
-        desc = "Toggle markdown task item",
+        desc = "Toggle markdown list item",
     })
 end
 
