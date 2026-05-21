@@ -11,6 +11,20 @@ local sn = ls.snippet_node
 local record_separator = string.char(30)
 local field_separator = string.char(31)
 
+local commit_types = {
+    "feat",
+    "fix",
+    "refactor",
+    "chore",
+    "docs",
+    "test",
+    "style",
+    "perf",
+    "ci",
+    "build",
+    "revert",
+}
+
 local function run_git(path, args)
     local cmd = { "git", "-C", path }
     vim.list_extend(cmd, args)
@@ -69,6 +83,120 @@ local function current_git_root()
     end
 
     return nil
+end
+
+local function add_scope(scopes, seen, scope)
+    scope = vim.trim(scope or "")
+
+    if scope == "" or seen[scope] then
+        return
+    end
+
+    seen[scope] = true
+    table.insert(scopes, scope)
+end
+
+local function path_scope(path)
+    if vim.startswith(path, "config/nvim/") then
+        return "nvim"
+    elseif vim.startswith(path, "config/nvim-minimal/") then
+        return "nvim"
+    elseif vim.startswith(path, "config/codex/") then
+        return "codex"
+    elseif vim.startswith(path, "config/hammerspoon/") then
+        return "hammerspoon"
+    elseif vim.startswith(path, "config/wezterm/") then
+        return "wezterm"
+    elseif vim.startswith(path, "sh/setup/") then
+        return "setup"
+    elseif vim.startswith(path, "sh/") then
+        return "shell"
+    elseif vim.startswith(path, ".github/workflows/") then
+        return "ci"
+    elseif vim.startswith(path, "bin/") then
+        return "bin"
+    elseif vim.startswith(path, "tests/") then
+        return "test"
+    elseif path == "README.md" or path == "AGENTS.md" then
+        return "docs"
+    end
+
+    return nil
+end
+
+local function add_staged_scopes(root, scopes, seen)
+    local files = run_git(root, { "diff", "--cached", "--name-only" })
+    if not files then
+        return
+    end
+
+    for _, path in ipairs(vim.split(files, "\n", { trimempty = true })) do
+        add_scope(scopes, seen, path_scope(path))
+    end
+end
+
+local function add_history_scopes(root, scopes, seen)
+    local subjects = run_git(root, { "log", "--format=%s", "--max-count=200" })
+    if not subjects then
+        return
+    end
+
+    for _, subject in ipairs(vim.split(subjects, "\n", { trimempty = true })) do
+        add_scope(scopes, seen, string.match(subject, "^[a-z]+%(([^)]+)%)!?:"))
+    end
+end
+
+local function git_scopes()
+    local root = current_git_root()
+    if not root then
+        return {}
+    end
+
+    local scopes = {}
+    local seen = {}
+
+    add_staged_scopes(root, scopes, seen)
+    add_history_scopes(root, scopes, seen)
+
+    return scopes
+end
+
+local function commit_type_choice()
+    local choices = {}
+
+    for _, commit_type in ipairs(commit_types) do
+        table.insert(choices, t(commit_type))
+    end
+
+    return c(1, choices)
+end
+
+local function scope_node(scope)
+    if scope == "" then
+        return sn(nil, { t "" })
+    end
+
+    return sn(nil, { t("(" .. scope .. ")") })
+end
+
+local function manual_scope_node()
+    return sn(nil, { t "(", i(1, "scope"), t ")" })
+end
+
+local function commit_scope_choice()
+    local choices = {}
+
+    for _, scope in ipairs(git_scopes()) do
+        table.insert(choices, scope_node(scope))
+    end
+
+    table.insert(choices, scope_node "")
+
+    if #choices == 1 then
+        table.insert(choices, manual_scope_node())
+    end
+
+    return sn(nil, { c(1, choices) })
 end
 
 local function add_author(authors, seen, name, email)
@@ -182,6 +310,14 @@ local function coauthor_choice()
 end
 
 return {
+    s(
+        { trig = "cc", dscr = "Insert a conventional commit header" },
+        fmt("{}{}: {}", {
+            commit_type_choice(),
+            d(2, commit_scope_choice),
+            i(0, "summary"),
+        })
+    ),
     s(
         { trig = "coauth", dscr = "Insert a Co-authored-by trailer" },
         fmt("Co-authored-by: {}\n{}", {
