@@ -132,8 +132,9 @@ Main links created by the installer:
 - `config/.vimrc` -> `~/.vimrc`
 
 The installer also updates managed settings in `~/.codex/config.toml` in place,
-including Codex TUI alternate-screen mode and BEL notifications for completed
-turns and approval prompts. This preserves other Codex-managed settings.
+including BEL notifications for completed turns and approval prompts, plus
+disabling default Codex app integrations. This preserves other Codex-managed
+settings.
 
 macOS-only links created by the installer:
 

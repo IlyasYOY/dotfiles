@@ -270,6 +270,17 @@ EOF
         "ilyasyoy codex tui config" \
         "$codex_tui_config"
 
+    local codex_default_apps_config
+    codex_default_apps_config=$(cat <<'EOF'
+enabled = false
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "apps._default" \
+        "ilyasyoy codex default apps config" \
+        "$codex_default_apps_config"
+
     info "🤖 Setting up Codex skills..."
     local codex_skills_dir="$codex_config_dir/skills"
     mkdir -pv "$codex_skills_dir"
