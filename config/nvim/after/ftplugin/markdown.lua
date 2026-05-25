@@ -508,6 +508,126 @@ local function wrap_bare_links_in_buffer()
     )
 end
 
+local function markdown_buffer_text(bufnr)
+    return table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), "\n")
+        .. "\n"
+end
+
+local function markdown_pdf_output_path(path)
+    return path .. ".pdf"
+end
+
+local function preprocess_markdown_pdf_content(content, context)
+    local hook = vim.g.markdown_pdf_preprocess
+    if hook == nil then
+        return content
+    end
+
+    if type(hook) ~= "function" then
+        vim.notify(
+            "vim.g.markdown_pdf_preprocess must be a function",
+            vim.log.levels.ERROR
+        )
+        return nil
+    end
+
+    local ok, preprocessed_content = pcall(hook, content, context)
+    if not ok then
+        vim.notify(
+            "Markdown PDF preprocess hook failed: "
+                .. tostring(preprocessed_content),
+            vim.log.levels.ERROR
+        )
+        return nil
+    end
+
+    if type(preprocessed_content) ~= "string" then
+        vim.notify(
+            "Markdown PDF preprocess hook must return a string",
+            vim.log.levels.ERROR
+        )
+        return nil
+    end
+
+    return preprocessed_content
+end
+
+local function generate_markdown_pdf()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local input_path = vim.api.nvim_buf_get_name(bufnr)
+
+    if input_path == "" then
+        vim.notify(
+            "Cannot generate PDF for a Markdown buffer without a file path",
+            vim.log.levels.WARN
+        )
+        return
+    end
+
+    if vim.fn.executable "pandoc" == 0 then
+        vim.notify(
+            "pandoc is required to generate Markdown PDFs",
+            vim.log.levels.ERROR
+        )
+        return
+    end
+
+    if vim.fn.executable "typst" == 0 then
+        vim.notify(
+            "typst is required to render Markdown PDFs",
+            vim.log.levels.ERROR
+        )
+        return
+    end
+
+    local output_path = markdown_pdf_output_path(input_path)
+    local cwd = vim.fs.dirname(input_path)
+    local content =
+        preprocess_markdown_pdf_content(markdown_buffer_text(bufnr), {
+            bufnr = bufnr,
+            input_path = input_path,
+            output_path = output_path,
+            cwd = cwd,
+        })
+    if not content then
+        return
+    end
+
+    local result = vim.system({
+        "pandoc",
+        "--from=gfm",
+        "--to=pdf",
+        "--standalone",
+        "--pdf-engine=typst",
+        "--toc",
+        "--toc-depth=3",
+        "--resource-path=.",
+        "--output",
+        output_path,
+        "-",
+    }, {
+        cwd = cwd,
+        stdin = content,
+        text = true,
+    }):wait()
+
+    if result.code == 0 then
+        vim.notify("Generated " .. output_path, vim.log.levels.INFO)
+        return
+    end
+
+    local details =
+        vim.trim((result.stderr or "") .. "\n" .. (result.stdout or ""))
+    if details == "" then
+        details = "pandoc exited with code " .. result.code
+    end
+
+    vim.notify(
+        "Failed to generate Markdown PDF: " .. details,
+        vim.log.levels.ERROR
+    )
+end
+
 local function setup_formatters()
     vim.keymap.set("v", "<localleader>fi", function()
         return "c*<C-r>-*<Esc>"
@@ -552,6 +672,13 @@ vim.api.nvim_buf_create_user_command(
     "MarkdownWrapBareLinks",
     wrap_bare_links_in_buffer,
     { desc = "Wrap bare URLs and file paths" }
+)
+
+vim.api.nvim_buf_create_user_command(
+    0,
+    "MarkdownPdf",
+    generate_markdown_pdf,
+    { desc = "Generate a PDF next to the current Markdown file" }
 )
 
 vim.keymap.set("n", "gO", show_toc_side, {

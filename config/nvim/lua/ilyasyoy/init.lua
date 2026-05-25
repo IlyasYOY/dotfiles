@@ -22,6 +22,7 @@ end
 require "ilyasyoy.pack"
 
 vim.o.autoread = true
+vim.o.exrc = true
 
 vim.cmd "packadd nvim.difftool"
 vim.cmd "packadd nvim.undotree"
