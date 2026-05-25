@@ -45,6 +45,12 @@ vim.keymap.set(
 )
 vim.keymap.set(
     "n",
+    "<leader>nD",
+    "<cmd>ObsNvimDailyNote!<cr>",
+    { desc = "Daily note calendar" }
+)
+vim.keymap.set(
+    "n",
     "<leader>nw",
     "<cmd>ObsNvimWeeklyNote<cr>",
     { desc = "Weekly note" }
