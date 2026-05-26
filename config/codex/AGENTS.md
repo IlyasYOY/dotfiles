@@ -9,3 +9,4 @@
   - Read-only Git inspection such as `git status`, `git diff`, and `git log` can run normally.
   - Request approval before running GitHub CLI (`gh ...`) because it uses network access and may read or modify remote GitHub state.
   - Request approval before process inspection or control commands such as `ps`, `pkill`, and `kill`.
+- Before boundary-crossing work, identify commands needing approval: Git index writes, commits, remote/network operations, browser or Remotion renders, process inspection/control, protected Codex paths, and destructive Git. Ask before the first attempt and batch related approvals when safe.
