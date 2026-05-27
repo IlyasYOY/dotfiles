@@ -79,3 +79,24 @@ vim.keymap.set(
     "<cmd>ObsNvimBacklinks<cr>",
     { desc = "Show backlinks" }
 )
+
+local obs_group = vim.api.nvim_create_augroup("ilyasyoy-obs", {})
+
+vim.api.nvim_create_autocmd("FileType", {
+    group = obs_group,
+    pattern = "markdown",
+    callback = function(args)
+        vim.keymap.set("n", "]l", function()
+            vim.cmd(vim.v.count1 .. "ObsNvimNextLink!")
+        end, { buffer = args.buf, desc = "Next link" })
+        vim.keymap.set("n", "[l", function()
+            vim.cmd(vim.v.count1 .. "ObsNvimPrevLink!")
+        end, { buffer = args.buf, desc = "Previous link" })
+        vim.keymap.set("n", "]L", function()
+            vim.cmd(vim.v.count1 .. "ObsNvimNextLink")
+        end, { buffer = args.buf, desc = "Next wiki link" })
+        vim.keymap.set("n", "[L", function()
+            vim.cmd(vim.v.count1 .. "ObsNvimPrevLink")
+        end, { buffer = args.buf, desc = "Previous wiki link" })
+    end,
+})
