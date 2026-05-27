@@ -64,6 +64,34 @@ end, {
     desc = "Toggle Full Debug ui",
 })
 
+local dap_group = vim.api.nvim_create_augroup("ilyasyoy-dap", {})
+
+vim.api.nvim_create_autocmd("FileType", {
+    group = dap_group,
+    pattern = "go",
+    callback = function(args)
+        vim.keymap.set("n", "<localleader>Dm", function()
+            require("dap-go").debug_test()
+        end, {
+            desc = "debug nearest test",
+            buffer = args.buf,
+        })
+    end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    group = dap_group,
+    pattern = "python",
+    callback = function(args)
+        vim.keymap.set("n", "<localleader>Dm", function()
+            dap_python.test_method()
+        end, {
+            desc = "debug nearest test",
+            buffer = args.buf,
+        })
+    end,
+})
+
 dap.listeners.before.attach.dapui_config = function()
     dapui.open()
 end

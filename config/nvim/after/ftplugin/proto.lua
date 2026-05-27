@@ -14,25 +14,4 @@ local function setup_commands()
     )
 end
 
-local function setup_linters()
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "ProtoLint",
-        "Dispatch -compiler=make protolint lint -reporter=unix %:.",
-        {
-            desc = "runs proto linter on current file",
-        }
-    )
-
-    vim.api.nvim_buf_create_user_command(
-        0,
-        "ProtoLintBuf",
-        "Dispatch -compiler=make buf lint %:.",
-        {
-            desc = "runs proto linter on current file",
-        }
-    )
-end
-
 setup_commands()
-setup_linters()

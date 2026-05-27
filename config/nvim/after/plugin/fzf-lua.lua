@@ -215,3 +215,19 @@ vim.keymap.set(
     end),
     { desc = "find git status" }
 )
+
+local fzf_lua_group = vim.api.nvim_create_augroup("ilyasyoy-fzf-lua", {})
+
+vim.api.nvim_create_autocmd("FileType", {
+    group = fzf_lua_group,
+    pattern = "go",
+    callback = function()
+        vim.api.nvim_buf_create_user_command(0, "GoFzfLuaInGoMod", function()
+            fzf_lua.live_grep {
+                cwd = "~/go/pkg/mod",
+            }
+        end, {
+            desc = "find files in go mod",
+        })
+    end,
+})
