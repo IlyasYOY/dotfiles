@@ -11,17 +11,17 @@ update_local_repos() {
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles" || true
 
     update_repos_parallel \
+        "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
         "$PERSONAL_PROJECTS_DIR/detailederror" \
         "$PERSONAL_PROJECTS_DIR/ffmpeg-video-chapters-parser" \
-        "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
+        "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
         "$PERSONAL_PROJECTS_DIR/go-retry" \
         "$PERSONAL_PROJECTS_DIR/httpservertest" \
-        "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot" \
-        "$PERSONAL_PROJECTS_DIR/remotion-projects" \
-        "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
-        "$PERSONAL_PROJECTS_DIR/obs.nvim" \
-        "$PERSONAL_PROJECTS_DIR/theme.nvim" \
         "$PERSONAL_PROJECTS_DIR/monotask" \
+        "$PERSONAL_PROJECTS_DIR/obs.nvim" \
+        "$PERSONAL_PROJECTS_DIR/remotion-projects" \
+        "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot" \
+        "$PERSONAL_PROJECTS_DIR/theme.nvim" \
         "$NOTES_DIR" \
         "$HOME/.password-store"
 }
