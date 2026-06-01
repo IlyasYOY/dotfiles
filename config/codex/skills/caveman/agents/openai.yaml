@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caveman"
+  short_description: "Use terse token-efficient replies"
+  default_prompt: "Use $caveman to switch to ultra-compressed communication mode."
