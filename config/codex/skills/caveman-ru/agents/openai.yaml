@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caveman RU"
+  short_description: "Use terse Russian token-efficient replies"
+  default_prompt: "Use $caveman-ru to switch to terse Russian communication mode."
