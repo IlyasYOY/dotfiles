@@ -28,7 +28,25 @@ alias codex-spark="codex --model gpt-5.3-codex-spark"
 alias codexrl="codex resume --last"
 
 codex-notes() {
-    codex -C "$HOME/Projects/IlyasYOY/notes-wiki" 
+    codex -C "$HOME/Projects/IlyasYOY/notes-wiki"
+}
+
+nvim-notes() {
+    local notes_dir="${ILYASYOY_NOTES_DIR:-$HOME/Projects/IlyasYOY/notes-wiki}"
+
+    if [ ! -d "$notes_dir" ]; then
+        printf "nvim-notes: notes directory not found: %s\n" "$notes_dir" >&2
+        return 1
+    fi
+
+    (
+        cd "$notes_dir" || exit
+        if [ "$#" -eq 0 ]; then
+            nvim .
+        else
+            nvim "$@"
+        fi
+    )
 }
 
 if [ -n "${ZSH_VERSION:-}" ] && case $- in *i*) true ;; *) false ;; esac; then
