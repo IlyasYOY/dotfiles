@@ -132,9 +132,10 @@ Main links created by the installer:
 - `config/.vimrc` -> `~/.vimrc`
 
 The installer also updates managed settings in `~/.codex/config.toml` in place,
-including stable model, reasoning, sandbox, notice, TUI, feature, and trusted
-project defaults, plus disabling default Codex app integrations. This preserves
-runtime-generated, account-specific, desktop, and other Codex-managed settings.
+including stable model, reasoning, sandbox, writable personal repo roots,
+notice, TUI, feature, and trusted project defaults, plus disabling default Codex
+app integrations. This preserves runtime-generated, account-specific, desktop,
+and other Codex-managed settings.
 
 macOS-only links created by the installer:
 

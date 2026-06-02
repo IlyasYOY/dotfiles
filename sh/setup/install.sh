@@ -287,8 +287,12 @@ EOF
         "$codex_notice_config"
 
     local codex_sandbox_config
-    codex_sandbox_config=$(cat <<'EOF'
+    codex_sandbox_config=$(cat <<EOF
 network_access = false
+writable_roots = [
+    "$DOTFILES_DIR",
+    "$NOTES_DIR",
+]
 EOF
 )
     add_toml_table_block \
