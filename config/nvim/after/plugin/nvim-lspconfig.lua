@@ -89,14 +89,20 @@ local function lsp_attach(data)
     end
 
     if client.name == "tinymist" then
-        vim.api.nvim_buf_create_user_command(0, "TypstPreview", function()
-            vim.lsp.buf.execute_command {
-                command = "tinymist.startDefaultPreview",
-                arguments = {},
+        vim.api.nvim_buf_create_user_command(
+            data.buf,
+            "TypstPreview",
+            function()
+                client:exec_cmd({
+                    title = "preview",
+                    command = "tinymist.startDefaultPreview",
+                    arguments = {},
+                }, { bufnr = data.buf })
+            end,
+            {
+                desc = "Start typst preview using tinymist",
             }
-        end, {
-            desc = "Start typst preview using tinymist",
-        })
+        )
     end
 end
 
