@@ -1,6 +1,9 @@
 require("obs").setup {
     vault_home = "~/Projects/IlyasYOY/notes-wiki",
     vault_name = "notes-wiki",
+    templater = {
+        note_template_name = "zettel",
+    },
     journal = {
         daily_template_name = "daily",
         weekly_template_name = "weekly",
@@ -64,6 +67,18 @@ vim.keymap.set(
 vim.keymap.set(
     "n",
     "<leader>nT",
+    "<cmd>ObsNvimTags<cr>",
+    { desc = "Browse tags" }
+)
+vim.keymap.set(
+    "n",
+    "<leader>nt",
+    "<cmd>ObsNvimTag<cr>",
+    { desc = "Follow tag" }
+)
+vim.keymap.set(
+    "n",
+    "<leader>nat",
     "<cmd>ObsNvimTemplate<cr>",
     { desc = "Apply template" }
 )
