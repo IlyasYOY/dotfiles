@@ -79,8 +79,8 @@ make install
 6. Configures Git defaults.
 7. Installs and configures `SDKMAN`, `gvm`, and `fnm`.
 8. Sets up tmux TPM, clones the password store, links Codex instructions
-   plus repo-managed skills into `~/.codex`, and configures Codex BEL
-   notifications for tmux.
+   plus repo-managed skills into `~/.codex`, and applies stable Codex config
+   defaults including TUI BEL notifications for tmux.
 
 On macOS, the installer uses:
 
@@ -132,9 +132,9 @@ Main links created by the installer:
 - `config/.vimrc` -> `~/.vimrc`
 
 The installer also updates managed settings in `~/.codex/config.toml` in place,
-including BEL notifications for completed turns and approval prompts, plus
-disabling default Codex app integrations. This preserves other Codex-managed
-settings.
+including stable model, reasoning, sandbox, notice, TUI, feature, and trusted
+project defaults, plus disabling default Codex app integrations. This preserves
+runtime-generated, account-specific, desktop, and other Codex-managed settings.
 
 macOS-only links created by the installer:
 

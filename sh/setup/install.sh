@@ -252,16 +252,65 @@ setup_codex() {
     mkdir -pv "$codex_config_dir"
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
 
+    local codex_root_config
+    codex_root_config=$(cat <<'EOF'
+model = "gpt-5.5"
+personality = "pragmatic"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+service_tier = "default"
+EOF
+)
+    add_toml_root_block \
+        "$codex_config_dir/config.toml" \
+        "ilyasyoy codex root config" \
+        "$codex_root_config"
+
     info "🤖 Setting up Codex rules..."
     local codex_rules_dir="$codex_config_dir/rules"
     mkdir -pv "$codex_rules_dir"
     symlink "$DOTFILES_DIR/config/codex/rules/default.rules" "$codex_rules_dir/default.rules"
 
+    local codex_notice_config
+    codex_notice_config=$(cat <<'EOF'
+hide_rate_limit_model_nudge = true
+fast_default_opt_out = true
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "notice" \
+        "ilyasyoy codex notice config" \
+        "$codex_notice_config"
+
+    local codex_sandbox_config
+    codex_sandbox_config=$(cat <<'EOF'
+network_access = false
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "sandbox_workspace_write" \
+        "ilyasyoy codex sandbox config" \
+        "$codex_sandbox_config"
+
     local codex_tui_config
     codex_tui_config=$(cat <<'EOF'
-notifications = ["agent-turn-complete", "approval-requested"]
+notifications = [
+    "task_complete",
+    "exec_approval_request",
+    "apply_patch_approval_request",
+    "request_permissions",
+    "request_user_input",
+]
 notification_method = "bel"
 notification_condition = "always"
+status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
+session_picker_view = "comfortable"
+pet = "disabled"
 EOF
 )
     add_toml_table_block \
@@ -280,6 +329,38 @@ EOF
         "apps._default" \
         "ilyasyoy codex default apps config" \
         "$codex_default_apps_config"
+
+    local codex_features_config
+    codex_features_config=$(cat <<'EOF'
+js_repl = false
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "features" \
+        "ilyasyoy codex features config" \
+        "$codex_features_config"
+
+    local codex_trusted_project_config
+    codex_trusted_project_config=$(cat <<'EOF'
+trust_level = "trusted"
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "projects.\"$DOTFILES_DIR\"" \
+        "ilyasyoy codex trusted dotfiles project" \
+        "$codex_trusted_project_config"
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "projects.\"$NOTES_DIR\"" \
+        "ilyasyoy codex trusted notes project" \
+        "$codex_trusted_project_config"
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "projects.\"$PERSONAL_PROJECTS_DIR\"" \
+        "ilyasyoy codex trusted personal projects" \
+        "$codex_trusted_project_config"
 
     info "🤖 Setting up Codex skills..."
     local codex_skills_dir="$codex_config_dir/skills"

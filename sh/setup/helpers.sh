@@ -162,6 +162,143 @@ PY
     fi
 }
 
+add_toml_root_block() {
+    local file="$1"
+    local marker="$2"
+    local content="$3"
+    local start_marker end_marker content_file tmp_file
+    start_marker="## start $marker ##"
+    end_marker="## end $marker ##"
+
+    mkdir -p "$(dirname "$file")"
+    touch "$file"
+    content_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-root-content.XXXXXX")
+    tmp_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-root.XXXXXX")
+    printf "%s\n" "$content" > "$content_file"
+
+    awk \
+        -v start_marker="$start_marker" \
+        -v end_marker="$end_marker" \
+        -v content_file="$content_file" \
+        '
+        BEGIN {
+            while ((getline line < content_file) > 0) {
+                content_count++
+                content_lines[content_count] = line
+            }
+            close(content_file)
+
+            for (idx = 1; idx <= content_count; idx++) {
+                line = content_lines[idx]
+                if (line ~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
+                    key = line
+                    sub(/^[[:space:]]*/, "", key)
+                    sub(/[[:space:]]*=.*/, "", key)
+                    managed_keys[key] = 1
+                }
+            }
+        }
+
+        function trim(value) {
+            sub(/^[[:space:]]*/, "", value)
+            sub(/[[:space:]]*$/, "", value)
+            return value
+        }
+
+        function header_name(line) {
+            sub(/[[:space:]]*#.*/, "", line)
+            line = trim(line)
+
+            if (line !~ /^\[[^][]+\]$/) {
+                return ""
+            }
+
+            sub(/^\[/, "", line)
+            sub(/\]$/, "", line)
+            return line
+        }
+
+        function line_key(line) {
+            if (line !~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
+                return ""
+            }
+
+            sub(/^[[:space:]]*/, "", line)
+            sub(/[[:space:]]*=.*/, "", line)
+            return line
+        }
+
+        function print_block() {
+            print start_marker
+
+            for (idx = 1; idx <= content_count; idx++) {
+                print content_lines[idx]
+            }
+
+            print end_marker
+            block_written = 1
+        }
+
+        $0 == start_marker {
+            skip_block = 1
+            next
+        }
+
+        skip_block {
+            if ($0 == end_marker) {
+                skip_block = 0
+            }
+
+            next
+        }
+
+        {
+            if (header_name($0) != "") {
+                if (!block_written) {
+                    if (printed_any && previous_line != "") {
+                        print ""
+                    }
+
+                    print_block()
+                }
+
+                in_table = 1
+                print
+                printed_any = 1
+                previous_line = $0
+                next
+            }
+
+            if (!in_table && line_key($0) in managed_keys) {
+                next
+            }
+
+            print
+            printed_any = 1
+            previous_line = $0
+        }
+
+        END {
+            if (!block_written) {
+                if (printed_any && previous_line != "") {
+                    print ""
+                }
+
+                print_block()
+            }
+        }
+        ' "$file" > "$tmp_file"
+
+    if cmp -s "$file" "$tmp_file"; then
+        rm -f "$content_file" "$tmp_file"
+        debug "Configuration block $marker already exists in $file"
+    else
+        mv "$tmp_file" "$file"
+        rm -f "$content_file"
+        success "Configured TOML block $marker in $file"
+    fi
+}
+
 add_toml_table_block() {
     local file="$1"
     local table="$2"
