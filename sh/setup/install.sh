@@ -304,11 +304,8 @@ EOF
     local codex_tui_config
     codex_tui_config=$(cat <<'EOF'
 notifications = [
-    "task_complete",
-    "exec_approval_request",
-    "apply_patch_approval_request",
-    "request_permissions",
-    "request_user_input",
+    "agent-turn-complete",
+    "approval-requested",
 ]
 notification_method = "bel"
 notification_condition = "always"
