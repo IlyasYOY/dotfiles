@@ -262,6 +262,7 @@ sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 service_tier = "default"
+suppress_unstable_features_warning = true
 EOF
 )
     add_toml_root_block \
@@ -303,10 +304,7 @@ EOF
 
     local codex_tui_config
     codex_tui_config=$(cat <<'EOF'
-notifications = [
-    "agent-turn-complete",
-    "approval-requested",
-]
+notifications = true
 notification_method = "bel"
 notification_condition = "always"
 status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
@@ -334,6 +332,7 @@ EOF
     local codex_features_config
     codex_features_config=$(cat <<'EOF'
 js_repl = false
+default_mode_request_user_input = true
 EOF
 )
     add_toml_table_block \
