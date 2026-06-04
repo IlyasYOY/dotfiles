@@ -3,6 +3,10 @@ local core = require "ilyasyoy.functions.core"
 local M = {}
 local supported_java_runtime_versions = { "8", "11", "17", "21", "23", "25" }
 local preferred_java_home_versions = { "21", "17", "11", "8", "23", "25" }
+local excluded_java_test_bundles = {
+    "com.microsoft.java.test.runner-jar-with-dependencies.jar",
+    "jacocoagent.jar",
+}
 
 local function get_install_path_for(package)
     return vim.fn.expand("$MASON/packages/" .. package)
@@ -59,6 +63,35 @@ local function build_java_runtimes(installed_java_dirs)
     return runtimes
 end
 
+local function build_bundles()
+    local bundles = core.string_split(
+        vim.fn.glob(
+            get_install_path_for "java-debug-adapter"
+                .. "/extension/server/"
+                .. "com.microsoft.java.debug.plugin-*.jar",
+            1
+        ),
+        "\n"
+    )
+
+    local java_test_bundles = core.string_split(
+        vim.fn.glob(
+            get_install_path_for "java-test" .. "/extension/server/" .. "*.jar",
+            1
+        ),
+        "\n"
+    )
+
+    for _, bundle in ipairs(java_test_bundles) do
+        local filename = vim.fn.fnamemodify(bundle, ":t")
+        if not vim.tbl_contains(excluded_java_test_bundles, filename) then
+            table.insert(bundles, bundle)
+        end
+    end
+
+    return bundles
+end
+
 function M.get_jdtls_config()
     local installed_java_dirs = get_installed_java_dirs()
     local java_home = get_preferred_java_home(installed_java_dirs)
@@ -80,7 +113,17 @@ function M.get_jdtls_config()
                 .. "/lombok.jar",
         },
 
-        root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
+        root_dir = vim.fs.root(0, {
+            "mvnw",
+            "gradlew",
+            "settings.gradle",
+            "settings.gradle.kts",
+            ".git",
+        })
+            or vim.fs.root(
+                0,
+                { "build.xml", "pom.xml", "build.gradle", "build.gradle.kts" }
+            ),
 
         settings = {
             java = {
@@ -138,28 +181,7 @@ function M.get_jdtls_config()
         },
 
         init_options = {
-            bundles = vim.iter({
-                core.string_split(
-                    vim.fn.glob(
-                        get_install_path_for "java-debug-adapter"
-                            .. "/extension/server/"
-                            .. "com.microsoft.java.debug.plugin-*.jar",
-                        1
-                    ),
-                    "\n"
-                ),
-                core.string_split(
-                    vim.fn.glob(
-                        get_install_path_for "java-test"
-                            .. "/extension/server/"
-                            .. "*.jar",
-                        1
-                    ),
-                    "\n"
-                ),
-            })
-                :flatten()
-                :totable(),
+            bundles = build_bundles(),
         },
     }
 end
