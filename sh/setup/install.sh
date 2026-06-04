@@ -142,6 +142,13 @@ setup_sdkman() {
     else
         debug "SDKMAN already installed"
     fi
+
+    local sdkman_config
+    sdkman_config=$'export SDKMAN_DIR="$HOME/.sdkman"\n[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"'
+
+    add_block "$(shell_rc_file)" \
+        "ilyasyoy sdkman config" \
+        "$sdkman_config"
 }
 
 setup_node_version_manager() {
