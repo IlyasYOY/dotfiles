@@ -180,7 +180,9 @@ vim.api.nvim_create_autocmd("FileType", {
         setup_moves()
         setup_swaps()
 
-        vim.opt_local.indentexpr = "v:lua.require'ts-pack.indent'.expr()"
+        if vim.bo.filetype ~= "markdown" then
+            vim.opt_local.indentexpr = "v:lua.require'ts-pack.indent'.expr()"
+        end
 
         vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
         vim.opt_local.foldmethod = "expr"
