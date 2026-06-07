@@ -1,3 +1,5 @@
+tap "lujstn/tap"
+
 brew "bison"
 brew "cmake"
 brew "colima"
@@ -22,6 +24,7 @@ brew "openjdk"
 brew "pandoc"
 brew "pass"
 brew "pinentry-mac"
+brew "lujstn/tap/pinentry-touchid"
 brew "pmd"
 brew "pyenv"
 brew "python"

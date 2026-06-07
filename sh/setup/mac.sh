@@ -46,6 +46,20 @@ write_mac_default() {
     return 1
 }
 
+setup_mac_pinentry_defaults() {
+    if ! is_mac; then
+        return 0
+    fi
+
+    info "🔐 Configuring pinentry defaults..."
+
+    if write_mac_default org.gpgtools.common DisableKeychain -bool yes; then
+        success "Pinentry defaults configured"
+    else
+        warning "Some pinentry defaults could not be applied"
+    fi
+}
+
 setup_mac_defaults() {
     if ! is_mac; then
         info "This is not mac, skipping macOS defaults"

@@ -46,6 +46,7 @@ setup_links_to_config_files() {
         symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
     fi
     symlink "$DOTFILES_DIR/config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+    setup_mac_pinentry_defaults
     if command -v gpgconf >/dev/null 2>&1; then
         gpgconf --kill gpg-agent && gpgconf --launch gpg-agent && debug "restart gpg-agent"
     else
