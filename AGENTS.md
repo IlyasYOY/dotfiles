@@ -23,7 +23,11 @@ desktop configuration for macOS plus a smaller Raspberry Pi bootstrap path.
 ```bash
 # Run all first-pass CI checks (same command as CI)
 make check
+```
 
+`make check` runs Lua, shell, and Python checks.
+
+```bash
 # Lint Lua files without auto-formatting
 make check-lua
 luacheck $(git ls-files -- '*.lua')
@@ -39,6 +43,7 @@ stylua config/nvim/lua/ilyasyoy/init.lua
 
 CI runs Lua 5.4, installs `luacheck` with LuaRocks, installs
 `shellcheck`, and pins StyLua to `v2.4.0` before running `make check`.
+Python checks use the system `python3` available on the CI runner.
 
 ### Shell Scripts
 
@@ -60,6 +65,19 @@ make update
 # Show setup/update debug logs
 make install VERBOSE=1
 make update VERBOSE=1
+```
+
+### Python
+
+```bash
+# Compile Python utilities and run Python unit tests
+make check-python
+
+# Run the Python tests directly
+python3 -m unittest discover -s tests -p 'test_*.py'
+
+# Run a focused test module
+python3 -m unittest tests.test_vless_switch
 ```
 
 ## Code Style Guidelines
@@ -88,7 +106,10 @@ make update VERBOSE=1
 - Keep shared `vim.pack` specs and eager registration in `config/nvim/lua/ilyasyoy/pack.lua`
 - Keep `config/nvim/nvim-pack-lock.json` and `config/nvim/ts-pack-lock.json`
   under version control when plugin or Treesitter lock state changes
-- Keep plugin configuration in `config/nvim/after/plugin/*.lua`
+- Keep plugin-level configuration in `config/nvim/after/plugin/*.lua`,
+  including LSP, DAP, Fugitive, Dispatch, FZF, Treesitter, and Obsidian setup
+- Keep `config/nvim/after/ftplugin/*.lua` focused on buffer-local options,
+  filetype-specific mappings, and commands
 - Keep plugin loading eager unless a task explicitly asks to reintroduce lazy loading
 - `pack.lua` may prefer local plugin checkouts under
   `~/Projects/IlyasYOY/<plugin>` before falling back to GitHub; preserve that
@@ -113,6 +134,10 @@ make update VERBOSE=1
 - Put executable setup flows under `sh/setup/`
 - Keep bootstrap helpers and platform-specific setup behavior in
   `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
+- Keep clone/update parallelism in the shared setup helpers and respect
+  `GIT_PARALLEL_JOBS` when changing personal repository bootstrap behavior
+- Keep macOS GnuPG Touch ID pinentry behavior coordinated across
+  `Brewfile.mac`, `config/gnupg/gpg-agent.conf`, and `sh/setup/mac.sh`
 
 ### Python
 
@@ -122,6 +147,10 @@ make update VERBOSE=1
 - Handle exceptions appropriately
 - Use virtual environments
 - Keep imports organized (standard library, third-party, local)
+- Keep Python CLI utilities in `bin/` importable without side effects so
+  `tests/test_*.py` can load and exercise them directly
+- Prefer standard-library dependencies for personal utility scripts unless
+  the bootstrap manifests already install the required tool
 
 ## File Organization
 
@@ -131,29 +160,36 @@ make update VERBOSE=1
 - `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`, `Brewfile.raspberry-pi` - Platform package manifests used by bootstrap flows
 - `sh/` - Shell scripts and utilities
 - `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh, raspberry-pi.sh)
-- `bin/` - Executable binaries
-- `tests/` - Small reproducible tests and experiments that support repo changes
+- `bin/` - Executable personal utilities, including Python CLIs such as
+  `vless-switch` and `ilyasyoy-ffmpeg-parse-chapters`
+- `tests/` - Small reproducible tests and experiments that support repo
+  changes, including Python unit tests and focused Lua repro scripts
 - `config/nvim/` - Neovim configuration
 - `config/nvim/nvim-pack-lock.json`, `config/nvim/ts-pack-lock.json` - Lock
   files for `vim.pack` plugins and Treesitter parsers
 - `config/nvim-minimal/` - Minimal Neovim configuration for reproducing issues
 - `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
+- `config/nvim/lua/ilyasyoy/functions/` - Shared Neovim Lua helpers for core
+  mappings, Java, password-store, tests, and Treesitter behavior
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
-- `config/nvim/snippets/` - LuaSnip snippets (go, java, lua, markdown)
+- `config/nvim/snippets/` - LuaSnip snippets (gitcommit, go, java, lua, markdown)
+- `config/nvim/spell/` - Checked-in custom spell files used by Neovim
 - `config/wezterm/`, `config/hammerspoon/`, `config/gnupg/`,
   `config/.tmux.conf`, `config/.vimrc`, `config/.amethyst.yml` - Terminal,
   desktop, GnuPG, tmux, and Vim configuration
 - `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
   Go lint configuration linked by setup
 - `.agents/skills/` - Repository-local Codex skills such as
-  `dotfiles-luasnip/SKILL.md`
+  `dotfiles-luasnip/SKILL.md` and `ai-session-coach/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
 - `config/codex/` - Checked-in Codex instructions and repo-managed custom skills
 - `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
-- `config/codex/skills/superpowers/` - Repo-managed custom Codex skills
-  symlinked into `~/.codex/skills/superpowers`
+- `config/codex/rules/default.rules` - Repo-managed Codex rules symlinked
+  into `~/.codex/rules/default.rules`
+- `config/codex/skills/` - Repo-managed custom Codex skills symlinked into
+  `~/.codex/skills/IlyasYOY`
 
 ### File Naming
 
@@ -168,6 +204,8 @@ When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the
 `$dotfiles-luasnip` repo-local skill in `.agents/skills/dotfiles-luasnip/`. It
 covers the snippet structure, LuaSnip APIs, and the required workflow
 (read -> append -> `luacheck` -> `stylua`).
+Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
+`lua.lua`, and `markdown.lua`.
 
 ## Git Workflow
 
@@ -188,6 +226,8 @@ covers the snippet structure, LuaSnip APIs, and the required workflow
 
 - Run `make check` before committing changes
 - Use `make check-lua` or `make check-shell` for faster iteration on one area
+- Use `make check-python` for Python utilities, especially changes to
+  `bin/vless-switch`
 - Keep changes compatible with the checks run by `.github/workflows/check.yml`
 - Add targeted automated verification when introducing new executable logic or reproducible experiments
 - For documentation-only changes, verify the edited instructions against the
@@ -230,6 +270,21 @@ covers the snippet structure, LuaSnip APIs, and the required workflow
    for platform-specific setup
 4. Update components later with `make update`
 5. Verify setup by running `make check`
+
+## Codex Configuration
+
+- `sh/setup/install.sh` links `config/codex/AGENTS.md` to
+  `~/.codex/AGENTS.md`, `config/codex/rules/default.rules` to
+  `~/.codex/rules/default.rules`, and `config/codex/skills` to
+  `~/.codex/skills/IlyasYOY`
+- Stable Codex defaults are managed as marked TOML blocks in
+  `~/.codex/config.toml` using helpers in `sh/setup/helpers.sh`; preserve the
+  managed-block pattern when changing model, sandbox, TUI, feature, app, or
+  trusted-project defaults
+- Keep checked-in custom skills under `config/codex/skills/<skill>/` with
+  `SKILL.md` and optional `agents/openai.yaml` metadata
+- Use the local `git-commit` and `git-commit-split` skills only when the user
+  asks for commit help; do not create commits without explicit approval
 
 ## Tool Versions
 
