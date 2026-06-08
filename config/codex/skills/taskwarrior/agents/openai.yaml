@@ -1,0 +1,4 @@
+interface:
+  display_name: "Taskwarrior"
+  short_description: "Use Taskwarrior from Codex"
+  default_prompt: "Use $taskwarrior to inspect and update my Taskwarrior tasks safely."
