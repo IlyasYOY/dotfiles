@@ -181,7 +181,7 @@ end
 ---
 --- @param opts { var_name: string, compiler: string?, cmd: string }
 local function dispatch_test(opts)
-    vim.g[opts.var_name] = opts.cmd
+    vim.g[opts.var_name] = { cmd = opts.cmd, compiler = opts.compiler }
     if opts.compiler then
         vim.cmd.Dispatch {
             "-compiler=" .. opts.compiler,
@@ -192,6 +192,17 @@ local function dispatch_test(opts)
     end
 end
 
+--- @param test_command string|{ cmd: string, compiler: string? }|nil
+--- @param default_compiler string?
+--- @return string?, string?
+local function resolve_test_command(test_command, default_compiler)
+    if type(test_command) == "table" then
+        return test_command.cmd, test_command.compiler
+    end
+
+    return test_command, default_compiler
+end
+
 --- Create a `*TestLast` command and keymap for the current buffer.
 ---
 --- @param opts { command: string, var_name: string, compiler: string?, lang: string, keymap: string? }
@@ -199,13 +210,14 @@ local function setup_test_last_command(opts)
     vim.api.nvim_buf_create_user_command(0, opts.command, function()
         local last = vim.g[opts.var_name]
         if last then
-            if opts.compiler then
+            local cmd, compiler = resolve_test_command(last, opts.compiler)
+            if compiler then
                 vim.cmd.Dispatch {
-                    "-compiler=" .. opts.compiler,
-                    last,
+                    "-compiler=" .. compiler,
+                    cmd,
                 }
             else
-                vim.cmd.Dispatch { last }
+                vim.cmd.Dispatch { cmd }
             end
         else
             vim.notify(
@@ -227,7 +239,7 @@ end
 
 --- @class TestScopeOpts
 --- @field cmd? string
---- @field cmd_fn? fun(opts: table): string?
+--- @field cmd_fn? fun(opts: table): string|{ cmd: string, compiler: string? }?
 --- @field desc? string
 --- @field bang? boolean
 --- @field bang_desc? string
@@ -239,6 +251,7 @@ end
 --- @field test_file_pattern? string
 --- @field node_type? string
 --- @field get_name_fn? fun(): string?
+--- @field cmd_fn? fun(name: string, opts: table): string|{ cmd: string, compiler: string? }?
 --- @field test_name_pattern? string
 
 --- @class TestSetupOpts
@@ -265,16 +278,18 @@ local function setup_test(opts)
         local desc = scope.desc or ("run test " .. suffix:lower())
 
         vim.api.nvim_buf_create_user_command(0, command, function(cmd_opts)
-            local cmd
+            local test_command
             if scope.cmd_fn then
-                cmd = scope.cmd_fn(cmd_opts)
+                test_command = scope.cmd_fn(cmd_opts)
             else
-                cmd = scope.cmd
+                test_command = scope.cmd
             end
+            local cmd, compiler =
+                resolve_test_command(test_command, opts.compiler)
             if cmd then
                 dispatch_test {
                     var_name = opts.var_name,
-                    compiler = opts.compiler,
+                    compiler = compiler,
                     cmd = cmd,
                 }
             end
@@ -341,16 +356,18 @@ local function setup_test(opts)
                 return
             end
 
-            local cmd
+            local test_command
             if cur.cmd_fn then
-                cmd = cur.cmd_fn(name, cmd_opts)
+                test_command = cur.cmd_fn(name, cmd_opts)
             else
-                cmd = cur.cmd
+                test_command = cur.cmd
             end
+            local cmd, compiler =
+                resolve_test_command(test_command, opts.compiler)
             if cmd then
                 dispatch_test {
                     var_name = opts.var_name,
-                    compiler = opts.compiler,
+                    compiler = compiler,
                     cmd = cmd,
                 }
             end
@@ -824,33 +841,131 @@ local function find_js_test_name()
     end
 end
 
+local js_dependency_fields = {
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+}
+
+---@return table?
+local function read_nearest_package_json()
+    local paths = vim.fs.find("package.json", {
+        upward = true,
+        path = vim.fn.expand "%:p:h",
+        limit = 1,
+    })
+    local package_json_path = paths[1]
+    if not package_json_path then
+        return
+    end
+
+    local ok_read, lines = pcall(vim.fn.readfile, package_json_path)
+    if not ok_read then
+        return
+    end
+
+    local ok_decode, parsed = pcall(vim.json.decode, table.concat(lines, "\n"))
+    if ok_decode and type(parsed) == "table" then
+        return parsed
+    end
+end
+
+---@param package_json table
+---@param runner string
+---@return boolean
+local function package_json_mentions_runner(package_json, runner)
+    for _, field in ipairs(js_dependency_fields) do
+        local dependencies = package_json[field]
+        if type(dependencies) == "table" and dependencies[runner] then
+            return true
+        end
+    end
+
+    local scripts = package_json.scripts
+    if type(scripts) == "table" then
+        for _, script in pairs(scripts) do
+            if type(script) == "string" and script:find(runner, 1, true) then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+---@return "jest"|"vitest"
+local function find_js_test_runner()
+    local package_json = read_nearest_package_json()
+    if not package_json then
+        return "jest"
+    end
+
+    if package_json_mentions_runner(package_json, "vitest") then
+        return "vitest"
+    end
+    if package_json_mentions_runner(package_json, "jest") then
+        return "jest"
+    end
+    return "jest"
+end
+
+---@param scope "all"|"package"|"file"|"current"
+---@param value string?
+---@return { cmd: string, compiler: string? }
+local function build_js_test_command(scope, value)
+    local runner = find_js_test_runner()
+    local base_command = "npx jest"
+    local compiler = "jest"
+    if runner == "vitest" then
+        base_command = "npx vitest run"
+        compiler = nil
+    end
+
+    if scope == "all" then
+        return { cmd = base_command .. " .", compiler = compiler }
+    end
+    if scope == "current" then
+        return {
+            cmd = base_command .. " -t " .. vim.fn.shellescape(value),
+            compiler = compiler,
+        }
+    end
+
+    return {
+        cmd = base_command .. " " .. vim.fn.shellescape(value),
+        compiler = compiler,
+    }
+end
+
 local function setup_javascript_test()
     setup_test {
         prefix = "JS",
         var_name = "last_js_test_command",
-        compiler = "jest",
-        lang = "JavaScript",
+        lang = "JavaScript/TypeScript",
         all = {
-            cmd = "npx jest .",
+            cmd_fn = function()
+                return build_js_test_command "all"
+            end,
             desc = "run test for all packages",
         },
         package = {
             cmd_fn = function()
-                return "npx jest " .. vim.fn.expand "%:.:h"
+                return build_js_test_command("package", vim.fn.expand "%:.:h")
             end,
             desc = "run test for a package",
         },
         file = {
             cmd_fn = function()
-                return "npx jest " .. vim.fn.expand "%"
+                return build_js_test_command("file", vim.fn.expand "%:.")
             end,
             desc = "run test for a file",
         },
         current = {
-            test_file_pattern = "test%.js$",
+            test_file_pattern = "%.test%.[jt]sx?$",
             get_name_fn = find_js_test_name,
             cmd_fn = function(name)
-                return "npx jest -t '" .. name .. "'"
+                return build_js_test_command("current", name)
             end,
             desc = "run test for a function",
         },
@@ -1001,7 +1116,12 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("FileType", {
     group = dispatch_group,
-    pattern = "javascript",
+    pattern = {
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+    },
     callback = setup_javascript_test,
 })
 
