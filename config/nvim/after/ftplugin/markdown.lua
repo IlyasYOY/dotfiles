@@ -247,6 +247,32 @@ local function collect_scanner_protected_ranges(lines)
     return ranges_by_line
 end
 
+local function collect_yaml_frontmatter_protected_ranges(lines)
+    if lines[1] ~= "---" then
+        return nil
+    end
+
+    local frontmatter_end_line
+    for idx = 2, #lines do
+        if lines[idx] == "---" or lines[idx] == "..." then
+            frontmatter_end_line = idx
+            break
+        end
+    end
+
+    if not frontmatter_end_line then
+        return nil
+    end
+
+    local ranges_by_line = {}
+    for idx = 1, frontmatter_end_line do
+        local line = lines[idx] or ""
+        ranges_by_line[idx] = { { 1, math.max(#line, 1) } }
+    end
+
+    return ranges_by_line
+end
+
 local function add_node_ranges_by_line(ranges_by_line, node)
     local start_row, start_col, end_row, end_col = node:range()
 
@@ -482,8 +508,17 @@ local function wrap_bare_links_in_buffer()
     local bufnr = vim.api.nvim_get_current_buf()
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local updated_lines = vim.deepcopy(lines)
-    local protected_ranges_by_line = collect_treesitter_protected_ranges(bufnr)
-        or collect_scanner_protected_ranges(lines)
+    local syntax_protected_ranges_by_line = collect_treesitter_protected_ranges(
+        bufnr
+    ) or collect_scanner_protected_ranges(lines)
+    local yaml_frontmatter_ranges_by_line =
+        collect_yaml_frontmatter_protected_ranges(lines)
+    local protected_ranges_by_line = yaml_frontmatter_ranges_by_line
+            and merge_ranges_by_line(
+                yaml_frontmatter_ranges_by_line,
+                syntax_protected_ranges_by_line
+            )
+        or syntax_protected_ranges_by_line
     local replacements = 0
 
     for idx, line in ipairs(lines) do

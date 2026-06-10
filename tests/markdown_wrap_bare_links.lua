@@ -53,6 +53,28 @@ assert_lines(
     "MarkdownWrapBareLinks should be idempotent on a second pass"
 )
 
+open_markdown_buffer {
+    "---",
+    "url: https://example.com",
+    "file: ./notes/today.md",
+    "closing: ../docs/plan.md",
+    "...",
+    "",
+    "See https://example.com and ./notes/today.md.",
+}
+
+vim.cmd "MarkdownWrapBareLinks"
+
+assert_lines({
+    "---",
+    "url: https://example.com",
+    "file: ./notes/today.md",
+    "closing: ../docs/plan.md",
+    "...",
+    "",
+    "See <https://example.com> and [./notes/today.md](./notes/today.md).",
+}, "MarkdownWrapBareLinks should skip YAML frontmatter")
+
 open_markdown_buffer { "Buy milk" }
 
 toggle_list_item(1)
