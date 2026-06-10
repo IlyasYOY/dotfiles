@@ -31,6 +31,7 @@ end
 -- =============================================================================
 local palette = {
     bg = "#000000",
+    black = "#000000",
     fg = "#dadada",
     elevated = "#1c1c1c",
     subtle = "#303030",
@@ -185,8 +186,8 @@ link("@tag.attribute", "Type")
 -- SEARCH AND VISUAL
 -- =============================================================================
 hi("Search", { guifg = palette.search, guibg = palette.bg, gui = "reverse" })
-hi("IncSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
-hi("CurSearch", { guifg = palette.visual, guibg = palette.bg, gui = "reverse" })
+hi("IncSearch", { guifg = palette.black, guibg = palette.visual })
+hi("CurSearch", { guifg = palette.black, guibg = palette.visual })
 hi("Visual", { guifg = palette.visual, guibg = palette.elevated })
 hi("VisualNOS", { guibg = palette.subtle })
 
@@ -297,7 +298,7 @@ hi("LineNr", { guifg = palette.muted })
 -- =============================================================================
 -- QUICKFIX
 -- =============================================================================
-hi("QuickFixLine", { guifg = palette.search, gui = "reverse" })
+hi("QuickFixLine", { guifg = palette.black, guibg = palette.visual })
 hi("qfFileName", { gui = "bold" })
 
 -- =============================================================================
@@ -352,10 +353,7 @@ hi("FzfLuaPreviewTitle", { guifg = palette.fg, guibg = palette.elevated })
 hi("FzfLuaCursor", { guibg = palette.cursor })
 hi("FzfLuaCursorLine", { guibg = palette.subtle })
 hi("FzfLuaCursorLineNr", { guifg = palette.fg, guibg = palette.subtle })
-hi(
-    "FzfLuaSearch",
-    { guifg = palette.visual, guibg = palette.bg, gui = "reverse" }
-)
+hi("FzfLuaSearch", { guifg = palette.black, guibg = palette.visual })
 hi("FzfLuaScrollBorderEmpty", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollBorderFull", { guifg = palette.muted, guibg = palette.bg })
 hi("FzfLuaScrollFloatEmpty", { guibg = palette.subtle })
