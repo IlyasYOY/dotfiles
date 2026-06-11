@@ -2,8 +2,13 @@ local core = require "ilyasyoy.functions.core"
 local fzf_lua = require "fzf-lua"
 local fzf_lua_utils = require "fzf-lua.utils"
 
-fzf_lua.setup {}
-fzf_lua.register_ui_select()
+fzf_lua.setup {
+    ui_select = {
+        winopts = {
+            split = "botright 12new",
+        },
+    },
+}
 
 local function with_fzf(callback)
     return function()
