@@ -725,18 +725,110 @@ local function setup_java_linters()
     }
 end
 
+local java_gradle_markers = {
+    "gradlew",
+    "settings.gradle",
+    "settings.gradle.kts",
+    "build.gradle",
+    "build.gradle.kts",
+}
+
+local java_maven_markers = {
+    "mvnw",
+    "pom.xml",
+}
+
+local function java_root_command(root, command)
+    return "cd " .. vim.fn.shellescape(root) .. " && " .. command
+end
+
+local function java_project_file(root, filename)
+    return root .. "/" .. filename
+end
+
+local function get_java_test_runner()
+    local gradle_root = vim.fs.root(0, java_gradle_markers)
+    if gradle_root then
+        local executable = "gradle"
+        if
+            vim.fn.filereadable(java_project_file(gradle_root, "gradlew")) == 1
+        then
+            executable = "./gradlew"
+        end
+
+        return {
+            name = "gradle",
+            root = gradle_root,
+            executable = executable,
+        }
+    end
+
+    local maven_root = vim.fs.root(0, java_maven_markers)
+    if maven_root then
+        local executable = "mvn"
+        if vim.fn.filereadable(java_project_file(maven_root, "mvnw")) == 1 then
+            executable = "./mvnw"
+        end
+
+        return {
+            name = "maven",
+            root = maven_root,
+            executable = executable,
+        }
+    end
+
+    vim.notify(
+        "No Gradle or Maven project root found for Java tests",
+        vim.log.levels.WARN
+    )
+end
+
+local function build_java_test_command(class_name, method_name)
+    local runner = get_java_test_runner()
+    if not runner then
+        return nil
+    end
+
+    local command
+    if runner.name == "gradle" then
+        command = runner.executable .. " test --console=plain"
+        if class_name then
+            local filter = class_name
+            if method_name then
+                filter = filter .. "." .. method_name
+            end
+            command = command .. " --tests " .. vim.fn.shellescape(filter)
+        end
+    else
+        command = runner.executable
+        if class_name then
+            local filter = class_name
+            if method_name then
+                filter = filter .. "#" .. method_name
+            end
+            command = command .. " -Dtest=" .. vim.fn.shellescape(filter)
+        end
+        command = command .. " test"
+    end
+
+    return java_root_command(runner.root, command)
+end
+
 local function setup_java_test()
     setup_test {
         prefix = "Java",
         var_name = "last_java_test_command",
         lang = "Java",
         all = {
-            cmd = "./gradlew test --console=plain",
+            cmd_fn = function()
+                return build_java_test_command()
+            end,
             desc = "run test for all packages",
         },
         file = {
             cmd_fn = function()
-                return "./gradlew test --tests " .. vim.fn.expand "%:t:r"
+                local class_name = vim.fn.expand "%:t:r"
+                return build_java_test_command(class_name)
             end,
             desc = "run test for a file",
         },
@@ -744,10 +836,8 @@ local function setup_java_test()
             test_file_pattern = "Tests?%.java$",
             node_type = "method_declaration",
             cmd_fn = function(name)
-                return "./gradlew test --tests "
-                    .. vim.fn.expand "%:t:r"
-                    .. "."
-                    .. name
+                local class_name = vim.fn.expand "%:t:r"
+                return build_java_test_command(class_name, name)
             end,
             desc = "run test for a function",
         },
