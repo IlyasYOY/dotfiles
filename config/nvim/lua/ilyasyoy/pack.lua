@@ -65,6 +65,7 @@ local M = {
         ilyasyoy("ts-pack.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
 
+        gh "jamessan/vim-gnupg",
         gh "glacambre/firenvim",
         gh "f-person/auto-dark-mode.nvim",
         gh "christoomey/vim-tmux-navigator",

@@ -113,6 +113,10 @@
       "rev": "3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0",
       "src": "https://github.com/tpope/vim-fugitive"
     },
+    "vim-gnupg": {
+      "rev": "f9b608f29003dfde6450931dc0f495a912973a88",
+      "src": "https://github.com/jamessan/vim-gnupg"
+    },
     "vim-rhubarb": {
       "rev": "5496d7c94581c4c9ad7430357449bb57fc59f501",
       "src": "https://github.com/tpope/vim-rhubarb"
