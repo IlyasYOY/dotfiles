@@ -5,18 +5,6 @@ vim.keymap.set(
     { desc = "Open fugitive UI window", silent = true }
 )
 
-vim.keymap.set(
-    "n",
-    "<leader>gps",
-    ":Git push<CR>",
-    { desc = "Pushes changes to remote" }
-)
-vim.keymap.set(
-    "n",
-    "<leader>gpl",
-    ":Git pull<CR>",
-    { desc = "Pulls changes from remote" }
-)
 
 vim.keymap.set(
     "n",
