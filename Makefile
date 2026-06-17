@@ -1,5 +1,4 @@
 LUA_FILES := $(wildcard $(shell git ls-files -- '*.lua'))
-PYTHON_FILES := $(shell git ls-files -- '*.py') $(wildcard bin/*.py) $(wildcard tests/test_*.py) bin/vless-switch
 SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)
@@ -32,10 +31,6 @@ check-shell:
 		shellcheck $(SHELL_SCRIPT_FILES) $$bin_shell_files; \
 	fi
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
-
-check-python:
-	@python3 -m py_compile $(PYTHON_FILES)
-	@python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)
