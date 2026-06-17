@@ -12,6 +12,8 @@ changes, oriented around the repository's recent commit style.
 
 Only run `git commit` when the user explicitly asks to commit and approval for
 the Git operation has been granted. Otherwise, return the message for review.
+Treat `$git-commit staged` as a request to draft a message for staged changes
+only; do not create a commit unless the user also explicitly says to commit.
 
 ## Workflow
 

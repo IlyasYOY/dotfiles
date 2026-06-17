@@ -14,7 +14,16 @@ that change.
 
 ## Workflow
 
-1. Inventory before staging:
+1. State Git intent before grouping or staging:
+   - Restate the requested scope as `staged`, `unstaged`, `all changes`, or
+     `plan only`.
+   - Treat `git-commit-split unstaged` literally: limit the workflow to
+     unstaged changes unless the user explicitly includes staged or untracked
+     work.
+   - If the prompt does not explicitly permit commits, return a grouping plan
+     first and wait for explicit commit permission before staging.
+
+2. Inventory before staging:
    - Run `git status --short --untracked-files=all`.
    - Inspect `git diff --cached --name-status`, `git diff --name-status`,
      `git diff --stat`, and relevant full diffs.
@@ -23,7 +32,7 @@ that change.
    - Identify generated artifacts such as logs, caches, build output, or local
      editor files. Do not commit them unless clearly intentional.
 
-2. Build semantic groups:
+3. Build semantic groups:
    - Group by behavior or purpose, not by path alone.
    - Keep tests with the behavior they validate.
    - Keep docs with the feature, setup flow, or interface they document.
@@ -32,7 +41,7 @@ that change.
    - If one file contains changes for multiple groups, plan partial staging
      explicitly and verify the cached diff before committing.
 
-3. Decide whether to commit:
+4. Decide whether to commit:
    - If the user asked only to categorize or plan, return the grouping plan and
      do not mutate the index.
    - If the user explicitly asked to commit, proceed group by group after any
@@ -40,7 +49,7 @@ that change.
    - Ask a concise question only when the grouping depends on intent that cannot
      be discovered from the repo.
 
-4. Stage and commit one group at a time:
+5. Stage and commit one group at a time:
    - Stage only the paths or hunks for the current group.
    - Inspect `git diff --cached --name-status`, `git diff --cached --stat`,
      and the cached diff before committing.
@@ -51,7 +60,7 @@ that change.
    - Run `git status --short --untracked-files=all` after each commit to confirm
      the next group is isolated.
 
-5. Verify and report:
+6. Verify and report:
    - Run targeted checks that match the changed areas when practical.
    - Prefer non-mutating checks before committing; never run formatters that
      rewrite files unless the user asked for formatting.

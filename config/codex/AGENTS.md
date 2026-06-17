@@ -11,6 +11,20 @@
   - Request approval before process inspection or control commands such as `ps`, `pkill`, and `kill`.
 - Before boundary-crossing work, identify commands needing approval: Git index writes, commits, remote/network operations, browser or Remotion renders, process inspection/control, protected Codex paths, and destructive Git. Ask before the first attempt and batch related approvals when safe.
 
+## Git Intent
+
+- Before staging or committing, classify the user's Git request and state the
+  interpreted scope:
+  - `draft/message only`: inspect only the requested diff and do not stage or
+    commit.
+  - `staged`: preserve existing staged content and do not include unstaged
+    changes unless the user explicitly expands scope.
+  - `unstaged`: inspect unstaged changes and request approval before staging.
+  - `all changes` or `commit all`: report staged, unstaged, and untracked
+    state before any `git add -A`.
+- Any Git index write or commit requires approval when the environment requires
+  it.
+
 ## Personal Project Routing
 
 Canonical personal repositories:
