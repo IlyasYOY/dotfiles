@@ -7,9 +7,9 @@
     },
     "bash": {
       "data": {
-        "filetype": [
-          "sh"
-        ]
+        "filetype": {
+          "1": "sh"
+        }
       },
       "rev": "a06c2e4415e9bc0346c6b86d401879ffb44058f7",
       "src": "https://github.com/tree-sitter/tree-sitter-bash",
@@ -37,9 +37,9 @@
     },
     "diff": {
       "data": {
-        "filetype": [
-          "gitdiff"
-        ]
+        "filetype": {
+          "1": "gitdiff"
+        }
       },
       "rev": "2520c3f934b3179bb540d23e0ef45f75304b5fed",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-diff",
@@ -72,9 +72,9 @@
     },
     "git_config": {
       "data": {
-        "filetype": [
-          "gitconfig"
-        ]
+        "filetype": {
+          "1": "gitconfig"
+        }
       },
       "rev": "0fbc9f99d5a28865f9de8427fb0672d66f9d83a5",
       "src": "https://github.com/the-mikedavis/tree-sitter-git-config",
@@ -82,9 +82,9 @@
     },
     "git_rebase": {
       "data": {
-        "filetype": [
-          "gitrebase"
-        ]
+        "filetype": {
+          "1": "gitrebase"
+        }
       },
       "rev": "760ba8e34e7a68294ffb9c495e1388e030366188",
       "src": "https://github.com/the-mikedavis/tree-sitter-git-rebase",
@@ -142,13 +142,13 @@
     },
     "javascript": {
       "data": {
-        "filetype": [
-          "javascriptreact",
-          "ecma",
-          "ecmascript",
-          "jsx",
-          "js"
-        ]
+        "filetype": {
+          "1": "javascriptreact",
+          "2": "ecma",
+          "3": "ecmascript",
+          "4": "jsx",
+          "5": "js"
+        }
       },
       "rev": "58404d8cf191d69f2674a8fd507bd5776f46cb11",
       "src": "https://github.com/tree-sitter/tree-sitter-javascript",
@@ -156,9 +156,9 @@
     },
     "json": {
       "data": {
-        "filetype": [
-          "jsonc"
-        ]
+        "filetype": {
+          "1": "jsonc"
+        }
       },
       "rev": "001c28d7a29832b06b0e831ec77845553c89b56d",
       "src": "https://github.com/tree-sitter/tree-sitter-json",
@@ -186,9 +186,9 @@
     },
     "make": {
       "data": {
-        "filetype": [
-          "automake"
-        ]
+        "filetype": {
+          "1": "automake"
+        }
       },
       "rev": "70613f3d812cbabbd7f38d104d60a409c4008b43",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-make",
@@ -196,9 +196,9 @@
     },
     "markdown": {
       "data": {
-        "filetype": [
-          "pandoc"
-        ]
+        "filetype": {
+          "1": "pandoc"
+        }
       },
       "rev": "f969cd3ae3f9fbd4e43205431d0ae286014c05b5",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-markdown",
@@ -226,10 +226,10 @@
     },
     "python": {
       "data": {
-        "filetype": [
-          "py",
-          "gyp"
-        ]
+        "filetype": {
+          "1": "py",
+          "2": "gyp"
+        }
       },
       "rev": "293fdc02038ee2bf0e2e206711b69c90ac0d413f",
       "src": "https://github.com/tree-sitter/tree-sitter-python",
@@ -262,9 +262,9 @@
     },
     "ssh_config": {
       "data": {
-        "filetype": [
-          "sshconfig"
-        ]
+        "filetype": {
+          "1": "sshconfig"
+        }
       },
       "rev": "71d2693deadaca8cdc09e38ba41d2f6042da1616",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-ssh-config",
@@ -282,10 +282,10 @@
     },
     "tsx": {
       "data": {
-        "filetype": [
-          "typescriptreact",
-          "typescript.tsx"
-        ]
+        "filetype": {
+          "1": "typescriptreact",
+          "2": "typescript.tsx"
+        }
       },
       "rev": "75b3874edb2dc714fb1fd77a32013d0f8699989f",
       "src": "https://github.com/tree-sitter/tree-sitter-typescript",
@@ -293,9 +293,9 @@
     },
     "typescript": {
       "data": {
-        "filetype": [
-          "ts"
-        ]
+        "filetype": {
+          "1": "ts"
+        }
       },
       "rev": "75b3874edb2dc714fb1fd77a32013d0f8699989f",
       "src": "https://github.com/tree-sitter/tree-sitter-typescript",
@@ -303,9 +303,9 @@
     },
     "typst": {
       "data": {
-        "filetype": [
-          "typ"
-        ]
+        "filetype": {
+          "1": "typ"
+        }
       },
       "rev": "46cf4ded12ee974a70bf8457263b67ad7ee0379d",
       "src": "https://github.com/uben0/tree-sitter-typst",
@@ -323,11 +323,11 @@
     },
     "xml": {
       "data": {
-        "filetype": [
-          "xsd",
-          "xslt",
-          "svg"
-        ]
+        "filetype": {
+          "1": "xsd",
+          "2": "xslt",
+          "3": "svg"
+        }
       },
       "rev": "5000ae8f22d11fbe93939b05c1e37cf21117162d",
       "src": "https://github.com/tree-sitter-grammars/tree-sitter-xml",
