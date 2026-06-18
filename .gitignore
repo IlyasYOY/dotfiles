@@ -17,6 +17,7 @@ Session.vim
 .DS_Store
 
 config/nvim/lua/ilyasyoy/hidden.lua
+config/hammerspoon/hidden.lua
 
 config/nvim-minimal/lazy-lock.json
 .aider*
