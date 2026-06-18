@@ -1,18 +1,18 @@
 " Vim compiler file
-" Compiler:     Codex review
+" Compiler:     OpenCode review
 
 if exists("current_compiler") | finish | endif
-let current_compiler = "codexreview"
+let current_compiler = "opencodereview"
 
 let s:cpo_save = &cpo
 set cpo&vim
 
-CompilerSet makeprg=codex\ review
+CompilerSet makeprg=opencode\ run\ --command\ review
 
 let s:errorformat = [
-            \ "%W%*[^P]P%n%*[^ ] %m %*[^/]%f:%l-%e",
-            \ "%W%*[^P]P%n%*[^ ] %m %*[^/]%f:%l",
-            \ "%C  %m",
+            \ "%f:%l: %t%*[^:]: %m",
+            \ "%f:%l: %m",
+            \ "%-GNO FINDINGS",
             \ "%-G%.%#",
             \ ]
 execute "CompilerSet errorformat=" .. escape(join(s:errorformat, ","), ' \|"')

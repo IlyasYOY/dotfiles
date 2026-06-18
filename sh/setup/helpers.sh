@@ -162,292 +162,154 @@ PY
     fi
 }
 
-add_toml_root_block() {
-    local file="$1"
-    local marker="$2"
-    local content="$3"
-    local start_marker end_marker content_file tmp_file
-    start_marker="## start $marker ##"
-    end_marker="## end $marker ##"
+configure_opencode_json() {
+    local default_config="$1"
+    local dest_config="$2"
+    local dest_dir
 
-    mkdir -p "$(dirname "$file")"
-    touch "$file"
-    content_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-root-content.XXXXXX")
-    tmp_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-root.XXXXXX")
-    printf "%s\n" "$content" > "$content_file"
+    dest_dir=$(dirname "$dest_config")
+    mkdir -p "$dest_dir"
 
-    awk \
-        -v start_marker="$start_marker" \
-        -v end_marker="$end_marker" \
-        -v content_file="$content_file" \
-        '
-        BEGIN {
-            while ((getline line < content_file) > 0) {
-                content_count++
-                content_lines[content_count] = line
-            }
-            close(content_file)
-
-            for (idx = 1; idx <= content_count; idx++) {
-                line = content_lines[idx]
-                if (line ~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
-                    key = line
-                    sub(/^[[:space:]]*/, "", key)
-                    sub(/[[:space:]]*=.*/, "", key)
-                    managed_keys[key] = 1
-                }
-            }
-        }
-
-        function trim(value) {
-            sub(/^[[:space:]]*/, "", value)
-            sub(/[[:space:]]*$/, "", value)
-            return value
-        }
-
-        function header_name(line) {
-            sub(/[[:space:]]*#.*/, "", line)
-            line = trim(line)
-
-            if (line !~ /^\[[^][]+\]$/) {
-                return ""
-            }
-
-            sub(/^\[/, "", line)
-            sub(/\]$/, "", line)
-            return line
-        }
-
-        function line_key(line) {
-            if (line !~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
-                return ""
-            }
-
-            sub(/^[[:space:]]*/, "", line)
-            sub(/[[:space:]]*=.*/, "", line)
-            return line
-        }
-
-        function print_block() {
-            print start_marker
-
-            for (idx = 1; idx <= content_count; idx++) {
-                print content_lines[idx]
-            }
-
-            print end_marker
-            block_written = 1
-        }
-
-        $0 == start_marker {
-            skip_block = 1
-            next
-        }
-
-        skip_block {
-            if ($0 == end_marker) {
-                skip_block = 0
-            }
-
-            next
-        }
-
-        {
-            if (header_name($0) != "") {
-                if (!block_written) {
-                    if (printed_any && previous_line != "") {
-                        print ""
-                    }
-
-                    print_block()
-                }
-
-                in_table = 1
-                print
-                printed_any = 1
-                previous_line = $0
-                next
-            }
-
-            if (!in_table && line_key($0) in managed_keys) {
-                next
-            }
-
-            print
-            printed_any = 1
-            previous_line = $0
-        }
-
-        END {
-            if (!block_written) {
-                if (printed_any && previous_line != "") {
-                    print ""
-                }
-
-                print_block()
-            }
-        }
-        ' "$file" > "$tmp_file"
-
-    if cmp -s "$file" "$tmp_file"; then
-        rm -f "$content_file" "$tmp_file"
-        debug "Configuration block $marker already exists in $file"
-    else
-        mv "$tmp_file" "$file"
-        rm -f "$content_file"
-        success "Configured TOML block $marker in $file"
+    if [ ! -e "$dest_config" ] && [ ! -L "$dest_config" ]; then
+        symlink "$default_config" "$dest_config"
+        return 0
     fi
-}
 
-add_toml_table_block() {
-    local file="$1"
-    local table="$2"
-    local marker="$3"
-    local content="$4"
-    local start_marker end_marker content_file tmp_file
-    start_marker="## start $marker ##"
-    end_marker="## end $marker ##"
-
-    mkdir -p "$(dirname "$file")"
-    touch "$file"
-    content_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-block-content.XXXXXX")
-    tmp_file=$(mktemp "${TMPDIR:-/tmp}/dotfiles-toml-block.XXXXXX")
-    printf "%s\n" "$content" > "$content_file"
-
-    awk \
-        -v table="$table" \
-        -v start_marker="$start_marker" \
-        -v end_marker="$end_marker" \
-        -v content_file="$content_file" \
-        '
-        BEGIN {
-            while ((getline line < content_file) > 0) {
-                content_count++
-                content_lines[content_count] = line
-            }
-            close(content_file)
-
-            for (idx = 1; idx <= content_count; idx++) {
-                line = content_lines[idx]
-                if (line ~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
-                    key = line
-                    sub(/^[[:space:]]*/, "", key)
-                    sub(/[[:space:]]*=.*/, "", key)
-                    managed_keys[key] = 1
-                }
-            }
-        }
-
-        function trim(value) {
-            sub(/^[[:space:]]*/, "", value)
-            sub(/[[:space:]]*$/, "", value)
-            return value
-        }
-
-        function header_name(line) {
-            sub(/[[:space:]]*#.*/, "", line)
-            line = trim(line)
-
-            if (line !~ /^\[[^][]+\]$/) {
-                return ""
-            }
-
-            sub(/^\[/, "", line)
-            sub(/\]$/, "", line)
-            return line
-        }
-
-        function line_key(line) {
-            if (line !~ /^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=/) {
-                return ""
-            }
-
-            sub(/^[[:space:]]*/, "", line)
-            sub(/[[:space:]]*=.*/, "", line)
-            return line
-        }
-
-        function print_block() {
-            print start_marker
-
-            for (idx = 1; idx <= content_count; idx++) {
-                print content_lines[idx]
-            }
-
-            print end_marker
-        }
-
-        $0 == start_marker {
-            skip_block = 1
-            next
-        }
-
-        skip_block {
-            if ($0 == end_marker) {
-                skip_block = 0
-            }
-
-            next
-        }
-
-        {
-            current_header = header_name($0)
-
-            if (current_header != "") {
-                in_target_table = current_header == table
-
-                print
-
-                if (in_target_table) {
-                    target_seen = 1
-                    block_written = 1
-                    print_block()
-                }
-
-                next
-            }
-
-            if (in_target_table && line_key($0) in managed_keys) {
-                next
-            }
-
-            print
-        }
-
-        END {
-            if (!target_seen) {
-                if (NR > 0) {
-                    print ""
-                }
-
-                print "[" table "]"
-                print_block()
-            }
-        }
-        ' "$file" > "$tmp_file"
-
-    if cmp -s "$file" "$tmp_file"; then
-        rm -f "$content_file" "$tmp_file"
-        debug "Configuration block $marker already exists in $file"
-    else
-        mv "$tmp_file" "$file"
-        rm -f "$content_file"
-        success "Configured TOML block $marker in $file"
+    if [ -L "$dest_config" ]; then
+        if [ "$(readlink "$dest_config")" = "$default_config" ]; then
+            debug "OpenCode config already links to $default_config"
+        else
+            warning "$dest_config is a symlink to another target; leaving it unchanged"
+        fi
+        return 0
     fi
+
+    if [ ! -r "$dest_config" ]; then
+        warning "$dest_config is not readable; leaving it unchanged"
+        return 0
+    fi
+
+    python3 - <<'PY' "$default_config" "$dest_config"
+from __future__ import annotations
+
+import json
+import shutil
+import sys
+import time
+from pathlib import Path
+from typing import Any
+
+
+def deep_fill(existing: dict[str, Any], defaults: dict[str, Any]) -> bool:
+    changed = False
+
+    for key, default_value in defaults.items():
+        if key not in existing:
+            existing[key] = default_value
+            changed = True
+            continue
+
+        existing_value = existing[key]
+        if isinstance(existing_value, dict) and isinstance(default_value, dict):
+            changed = deep_fill(existing_value, default_value) or changed
+
+    return changed
+
+
+default_path = Path(sys.argv[1])
+dest_path = Path(sys.argv[2])
+
+try:
+    defaults = json.loads(default_path.read_text())
+except OSError as exc:
+    print(f"warning: cannot read {default_path}: {exc}", file=sys.stderr)
+    sys.exit(0)
+except json.JSONDecodeError as exc:
+    print(f"warning: {default_path} is not strict JSON: {exc}", file=sys.stderr)
+    sys.exit(0)
+
+if not isinstance(defaults, dict):
+    print(f"warning: {default_path} is not a JSON object", file=sys.stderr)
+    sys.exit(0)
+
+try:
+    config = json.loads(dest_path.read_text())
+except OSError as exc:
+    print(f"warning: cannot read {dest_path}: {exc}", file=sys.stderr)
+    sys.exit(0)
+except json.JSONDecodeError as exc:
+    print(f"warning: {dest_path} is not strict JSON: {exc}", file=sys.stderr)
+    sys.exit(0)
+
+if not isinstance(config, dict):
+    print(f"warning: {dest_path} is not a JSON object; leaving it unchanged", file=sys.stderr)
+    sys.exit(0)
+
+if not deep_fill(config, defaults):
+    print(f"debug: {dest_path} already contains OpenCode defaults")
+    sys.exit(0)
+
+timestamp = time.strftime("%Y%m%d%H%M%S")
+backup_path = dest_path.with_name(f"{dest_path.name}.{timestamp}.bak")
+shutil.copy2(dest_path, backup_path)
+dest_path.write_text(json.dumps(config, indent=2) + "\n")
+print(f"updated: {dest_path} (backup: {backup_path})")
+PY
 }
 
 symlink() {
     local target="$1"
     local link="$2"
 
-    if [ ! -e "$link" ]; then
-        ln -sv "$target" "$link"
-        success "Added symlink $link to $target"
-    elif [ -L "$link" ] && [ "$(readlink "$link")" = "$target" ]; then
-        debug "Symlink already exists: $link"
-    else
-        warning "$link exists but is not a symlink to $target"
+    if [ -L "$link" ]; then
+        if [ "$(readlink "$link")" = "$target" ]; then
+            debug "Symlink already exists: $link"
+        else
+            warning "$link is a symlink to another target; leaving it unchanged"
+        fi
+        return 0
     fi
+
+    if [ -e "$link" ]; then
+        warning "$link exists but is not a symlink to $target"
+        return 0
+    fi
+
+    ln -sv "$target" "$link"
+    success "Added symlink $link to $target"
+}
+
+replace_managed_symlink() {
+    local new_target="$1"
+    local link="$2"
+    local managed_prefix="$3"
+    local managed_suffix="$4"
+
+    if [ -L "$link" ]; then
+        local current_target
+        current_target=$(readlink "$link")
+
+        if [ "$current_target" = "$new_target" ]; then
+            debug "Symlink already exists: $link"
+            return 0
+        fi
+
+        case "$current_target" in
+            "$managed_prefix"/*"$managed_suffix")
+                if [ ! -e "$current_target" ]; then
+                    rm -f "$link"
+                    ln -sv "$new_target" "$link"
+                    success "Migrated symlink $link from $current_target to $new_target"
+                    return 0
+                fi
+                ;;
+        esac
+
+        warning "$link is a symlink to another target; leaving it unchanged"
+        return 0
+    fi
+
+    symlink "$new_target" "$link"
 }
 
 clone_repo() {

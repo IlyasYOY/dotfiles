@@ -1,4 +1,0 @@
-interface:
-  display_name: "Git Commit Split"
-  short_description: "Group worktree changes into commits"
-  default_prompt: "Use $git-commit-split to group local changes and create semantic commits."

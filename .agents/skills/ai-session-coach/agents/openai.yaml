@@ -1,4 +1,0 @@
-interface:
-  display_name: "AI Session Coach"
-  short_description: "Analyze Codex sessions for workflow improvements"
-  default_prompt: "Use $ai-session-coach to analyze all unarchived Codex sessions through per-project sub-agents and suggest 5 workflow improvements. Ask before archiving the exact snapshot."

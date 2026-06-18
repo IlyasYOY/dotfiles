@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "share": "disabled",
+  "autoupdate": false,
+  "permission": {
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "rm *": "deny",
+      "rm -rf *": "deny"
+    },
+    "webfetch": "ask",
+    "websearch": "ask",
+    "skill": "ask"
+  },
+  "command": {
+    "shell-command": {
+      "template": "$ARGUMENTS",
+      "description": "Generate one shell command",
+      "agent": "shell-command",
+      "subtask": false
+    }
+  },
+  "agent": {
+    "shell-command": {
+      "description": "Generate one shell command from the user's request",
+      "mode": "subagent",
+      "hidden": true,
+      "permission": {
+        "*": "deny",
+        "bash": "deny",
+        "edit": "deny",
+        "webfetch": "deny",
+        "websearch": "deny",
+        "skill": "deny"
+      },
+      "prompt": "Convert the user's request into exactly one shell command. Return only the command text. Do not use markdown. Do not explain. Do not run tools or execute the command. The command must be safe for the user to review before pressing Enter."
+    }
+  }
+}
