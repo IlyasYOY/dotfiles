@@ -33,7 +33,6 @@ vim.defer_fn(function()
             "java-test",
             "jdtls",
             "jsonlint",
-            "kotlin-lsp",
             "lua-language-server",
             "markdownlint",
             "mdsf",
