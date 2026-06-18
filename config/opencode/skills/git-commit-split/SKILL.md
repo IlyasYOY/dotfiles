@@ -1,6 +1,6 @@
 ---
 name: git-commit-split
-description: Split a dirty Git worktree into multiple semantically coherent Conventional Commits. Use when Codex needs to inspect staged, unstaged, deleted, renamed, or untracked changes; categorize local changes; group them by functional intent; stage each group; create one commit per behavior/config/docs/test change; or cleanly report remaining uncommitted artifacts.
+description: Split a dirty Git worktree into multiple semantically coherent Conventional Commits. Use when an agent needs to inspect staged, unstaged, deleted, renamed, or untracked changes; categorize local changes; group them by functional intent; stage each group; create one commit per behavior/config/docs/test change; or cleanly report remaining uncommitted artifacts.
 ---
 
 # Git Commit Split

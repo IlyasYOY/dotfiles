@@ -406,20 +406,20 @@ vim.keymap.set("v", "<leader>cP", function()
     copy_current_path { absolute = true, with_line_numbers = true }
 end, { desc = "Copy absolute file path with line numbers to clipboard" })
 
--- Codex review integration
-local function run_codex_review(args)
+-- OpenCode review integration
+local function run_opencode_review(args)
     args = args or ""
-    local cmd = "codex review"
+    local cmd = "opencode run --command review"
     if args ~= "" then
         cmd = cmd .. " " .. args
     end
 
     if vim.fn.exists ":Dispatch" == 2 then
-        vim.cmd.Dispatch { "-compiler=codexreview", cmd }
+        vim.cmd.Dispatch { "-compiler=opencodereview", cmd }
         return
     end
 
-    vim.cmd.compiler "codexreview"
+    vim.cmd.compiler "opencodereview"
     if args == "" then
         vim.cmd.make()
     else
@@ -427,11 +427,11 @@ local function run_codex_review(args)
     end
 end
 
-vim.api.nvim_create_user_command("CodexReview", function(opts)
-    run_codex_review(opts.args)
+vim.api.nvim_create_user_command("OpenCodeReview", function(opts)
+    run_opencode_review(opts.args)
 end, {
     nargs = "*",
-    desc = "Run codex review and populate quickfix",
+    desc = "Run OpenCode review and populate quickfix",
 })
 
 -- Monotask integration

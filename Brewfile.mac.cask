@@ -1,8 +1,6 @@
 cask "amethyst"
 cask "betterdisplay"
 cask "chatgpt"
-cask "codex"
-cask "codex-app"
 cask "discord"
 cask "font-fontawesome"
 cask "font-go-mono-nerd-font"

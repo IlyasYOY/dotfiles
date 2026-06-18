@@ -252,128 +252,32 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" || true
 }
 
-setup_codex() {
-    info "🤖 Setting up Codex..."
+setup_opencode() {
+    info "🤖 Setting up OpenCode..."
 
-    info "🤖 Setting up Codex instructions..."
-    local codex_config_dir="$HOME/.codex"
-    mkdir -pv "$codex_config_dir"
-    symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
+    local opencode_config_dir="$HOME/.config/opencode"
+    mkdir -pv "$opencode_config_dir"
 
-    local codex_root_config
-    codex_root_config=$(cat <<'EOF'
-model = "gpt-5.5"
-personality = "pragmatic"
-model_reasoning_effort = "xhigh"
-plan_mode_reasoning_effort = "xhigh"
-sandbox_mode = "workspace-write"
-approval_policy = "on-request"
-approvals_reviewer = "auto_review"
-service_tier = "default"
-suppress_unstable_features_warning = true
-EOF
-)
-    add_toml_root_block \
-        "$codex_config_dir/config.toml" \
-        "ilyasyoy codex root config" \
-        "$codex_root_config"
+    symlink \
+        "$DOTFILES_DIR/config/opencode/AGENTS.md" \
+        "$opencode_config_dir/AGENTS.md"
+    configure_opencode_json \
+        "$DOTFILES_DIR/config/opencode/opencode.json" \
+        "$opencode_config_dir/opencode.json"
+    symlink "$DOTFILES_DIR/config/opencode/commands" "$opencode_config_dir/commands"
 
-    info "🤖 Setting up Codex rules..."
-    local codex_rules_dir="$codex_config_dir/rules"
-    mkdir -pv "$codex_rules_dir"
-    symlink "$DOTFILES_DIR/config/codex/rules/default.rules" "$codex_rules_dir/default.rules"
+    info "🤖 Setting up OpenCode skills..."
+    local opencode_skills_dir="$opencode_config_dir/skills"
+    mkdir -pv "$opencode_skills_dir"
 
-    local codex_notice_config
-    codex_notice_config=$(cat <<'EOF'
-hide_rate_limit_model_nudge = true
-fast_default_opt_out = true
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "notice" \
-        "ilyasyoy codex notice config" \
-        "$codex_notice_config"
-
-    local codex_sandbox_config
-    codex_sandbox_config=$(cat <<EOF
-network_access = false
-writable_roots = [
-    "$DOTFILES_DIR",
-    "$NOTES_DIR",
-]
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "sandbox_workspace_write" \
-        "ilyasyoy codex sandbox config" \
-        "$codex_sandbox_config"
-
-    local codex_tui_config
-    codex_tui_config=$(cat <<'EOF'
-notifications = true
-notification_method = "bel"
-notification_condition = "always"
-status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
-session_picker_view = "comfortable"
-pet = "disabled"
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "tui" \
-        "ilyasyoy codex tui config" \
-        "$codex_tui_config"
-
-    local codex_default_apps_config
-    codex_default_apps_config=$(cat <<'EOF'
-enabled = false
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "apps._default" \
-        "ilyasyoy codex default apps config" \
-        "$codex_default_apps_config"
-
-    local codex_features_config
-    codex_features_config=$(cat <<'EOF'
-js_repl = false
-default_mode_request_user_input = true
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "features" \
-        "ilyasyoy codex features config" \
-        "$codex_features_config"
-
-    local codex_trusted_project_config
-    codex_trusted_project_config=$(cat <<'EOF'
-trust_level = "trusted"
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "projects.\"$DOTFILES_DIR\"" \
-        "ilyasyoy codex trusted dotfiles project" \
-        "$codex_trusted_project_config"
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "projects.\"$NOTES_DIR\"" \
-        "ilyasyoy codex trusted notes project" \
-        "$codex_trusted_project_config"
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "projects.\"$PERSONAL_PROJECTS_DIR\"" \
-        "ilyasyoy codex trusted personal projects" \
-        "$codex_trusted_project_config"
-
-    info "🤖 Setting up Codex skills..."
-    local codex_skills_dir="$codex_config_dir/skills"
-    mkdir -pv "$codex_skills_dir"
-    symlink "$DOTFILES_DIR/config/codex/skills" "$codex_skills_dir/IlyasYOY"
+    local skill
+    for skill in caveman caveman-ru git-commit git-commit-split hammerspoon; do
+        replace_managed_symlink \
+            "$DOTFILES_DIR/config/opencode/skills/$skill" \
+            "$opencode_skills_dir/$skill" \
+            "$DOTFILES_DIR/config" \
+            "/skills/$skill"
+    done
 }
 
 main() {
@@ -391,7 +295,7 @@ main() {
     setup_my_project
     setup_pass
 
-    setup_codex
+    setup_opencode
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

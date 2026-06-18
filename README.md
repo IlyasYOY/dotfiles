@@ -3,7 +3,7 @@
 Personal dotfiles and workstation bootstrap for my day-to-day development
 setup.
 
-It is centered on Neovim, shell tooling, tmux, terminal apps, Codex
+It is centered on Neovim, shell tooling, tmux, terminal apps, OpenCode
 configuration, and language support for Go, Java, Lua, Python, and SQL.
 
 > [!WARNING]
@@ -35,9 +35,9 @@ hardware.
 - `config/wezterm`, `config/hammerspoon`, `config/gnupg`,
   `config/.tmux.conf`, `config/.amethyst.yml`, `config/.vimrc` — terminal,
   desktop, and CLI configuration tracked in the repo.
-- `config/codex` — checked-in Codex instructions and repo-managed custom
-  skills.
-- `.agents/skills` — repository-local Codex skills used when working in this
+- `config/opencode` — checked-in OpenCode instructions, global config, and
+  command prompts that load the portable skill set.
+- `.agents/skills` — repository-local agent skills used when working in this
   checkout.
 - `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`,
   `Brewfile.raspberry-pi` — package manifests used by the bootstrap scripts.
@@ -78,14 +78,15 @@ make install
    `~/.bashrc` on Raspberry Pi.
 6. Configures Git defaults.
 7. Installs and configures `SDKMAN`, `gvm`, and `fnm`.
-8. Sets up tmux TPM, clones the password store, links Codex instructions
-   plus repo-managed skills into `~/.codex`, and applies stable Codex config
-   defaults including TUI BEL notifications for tmux.
+8. Sets up tmux TPM, clones the password store, and links OpenCode
+   instructions, config, commands, and portable skills into
+   `~/.config/opencode`.
 
 On macOS, the installer uses:
 
-- `Brewfile.mac` for formulae
-- `Brewfile.mac.cask` for casks, including `codex`
+- `Brewfile.mac` for formulae, including the standard Homebrew `opencode`
+  formula
+- `Brewfile.mac.cask` for casks
 - `Brewfile.mac.mas` for App Store installs
 
 On Raspberry Pi, the installer:
@@ -126,16 +127,27 @@ Main links created by the installer:
 - `config/gnupg/gpg-agent.conf` -> `~/.gnupg/gpg-agent.conf`
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
-- `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
-- `config/codex/skills` -> `~/.codex/skills/IlyasYOY`
+- `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
+- `config/opencode/opencode.json` -> `~/.config/opencode/opencode.json`
+- `config/opencode/commands` -> `~/.config/opencode/commands`
+- portable skills from `config/opencode/skills` ->
+  `~/.config/opencode/skills/<skill>`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 
-The installer also updates managed settings in `~/.codex/config.toml` in place,
-including stable model, reasoning, sandbox, writable personal repo roots,
-notice, TUI, feature, and trusted project defaults, plus disabling default Codex
-app integrations. This preserves runtime-generated, account-specific, desktop,
-and other Codex-managed settings.
+OpenCode uses `config/opencode/opencode.json` as a global config with cautious
+permissions for file edits, shell commands, web fetch/search, and skills. The
+OpenCode skill links intentionally include only portable skills such as
+`caveman`, `git-commit`, and `hammerspoon`.
+
+If the OpenCode config path is missing, the installer links the repo default.
+If a strict JSON object already exists there, the installer writes a timestamped
+backup and fills only missing defaults, preserving all existing user settings.
+JSONC, invalid JSON, non-object JSON, and symlinks to other targets are left
+unchanged with a warning.
+
+Future setup no longer manages Codex. The installer intentionally does not
+uninstall Codex or delete existing local sessions, config, or app state.
 
 macOS-only links created by the installer:
 
@@ -159,11 +171,9 @@ try to use it unchanged.
   and update personal repositories such as `notes-wiki`, `obs.nvim`,
   `theme.nvim`, `git-link.nvim`, `monotask`, and `password-store`. Remove,
   replace, or comment those entries if you do not own those repositories.
-- Secrets and external services: `sh/helpers.sh` defines `codex-time-manager`,
-  which expects `pass singularity/token/full`, a local Singularity MCP checkout
-  at `~/Projects/IlyasYOY/singularity-mcp-server-2.1.1`, and Google Calendar
-  integration inside Codex. If you do not use that exact setup, retarget or
-  remove those helpers.
+- Secrets and external services: the bootstrap clones a personal password-store
+  repository and shell helpers assume that store is available. If you do not use
+  that exact setup, remove or replace those entries.
 - Java setup: Neovim Java support looks for SDKMAN-managed JDKs in
   `~/.sdkman/candidates/java/`. The current helper supports JDK `8`, `11`,
   `17`, `21`, `23`, and `25`, and prefers `21` when available. If none of

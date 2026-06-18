@@ -1,4 +1,0 @@
-interface:
-  display_name: "Hammerspoon"
-  short_description: "Build Hammerspoon Lua config from docs"
-  default_prompt: "Use $hammerspoon to update my Hammerspoon config using the official API docs."

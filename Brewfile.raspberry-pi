@@ -1,4 +1,4 @@
-cask "codex"
+
 brew "fnm"
 brew "fzf"
 brew "gh"
@@ -9,6 +9,7 @@ brew "pass"
 brew "python"
 brew "ripgrep"
 brew "rust"
+brew "opencode"
 brew "tree-sitter-cli"
 brew "tmux"
 brew "wget"

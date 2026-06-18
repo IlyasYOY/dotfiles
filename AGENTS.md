@@ -13,7 +13,7 @@ This file contains instructions for agentic coding assistants operating in this 
 
 This is a personal dotfiles and workstation bootstrap repository for day-to-day
 development. It includes Neovim and shell configuration, bootstrap/update
-scripts, Homebrew manifests, Codex instructions and skills, and terminal or
+scripts, Homebrew manifests, OpenCode instructions and skills, and terminal or
 desktop configuration for macOS plus a smaller Raspberry Pi bootstrap path.
 
 ## Build/Lint/Test Commands
@@ -181,15 +181,11 @@ python3 -m unittest tests.test_vless_switch
   desktop, GnuPG, tmux, and Vim configuration
 - `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
   Go lint configuration linked by setup
-- `.agents/skills/` - Repository-local Codex skills such as
-  `dotfiles-luasnip/SKILL.md` and `ai-session-coach/SKILL.md`
+- `.agents/skills/` - Repository-local agent skills such as
+  `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
-- `config/codex/` - Checked-in Codex instructions and repo-managed custom skills
-- `config/codex/AGENTS.md` - Codex instructions symlinked into `~/.codex/AGENTS.md`
-- `config/codex/rules/default.rules` - Repo-managed Codex rules symlinked
-  into `~/.codex/rules/default.rules`
-- `config/codex/skills/` - Repo-managed custom Codex skills symlinked into
-  `~/.codex/skills/IlyasYOY`
+- `config/opencode/` - Checked-in OpenCode instructions, global config, and
+  command prompts symlinked into `~/.config/opencode`
 
 ### File Naming
 
@@ -258,7 +254,7 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 
 ## Documentation
 
-- Update `README.md`, `AGENTS.md`, or Codex instructions when workflows or layout change
+- Update `README.md`, `AGENTS.md`, or agent instructions when workflows or layout change
 - Document configuration options
 - Add inline comments for complex logic
 
@@ -271,20 +267,22 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 4. Update components later with `make update`
 5. Verify setup by running `make check`
 
-## Codex Configuration
+## OpenCode Configuration
 
-- `sh/setup/install.sh` links `config/codex/AGENTS.md` to
-  `~/.codex/AGENTS.md`, `config/codex/rules/default.rules` to
-  `~/.codex/rules/default.rules`, and `config/codex/skills` to
-  `~/.codex/skills/IlyasYOY`
-- Stable Codex defaults are managed as marked TOML blocks in
-  `~/.codex/config.toml` using helpers in `sh/setup/helpers.sh`; preserve the
-  managed-block pattern when changing model, sandbox, TUI, feature, app, or
-  trusted-project defaults
-- Keep checked-in custom skills under `config/codex/skills/<skill>/` with
-  `SKILL.md` and optional `agents/openai.yaml` metadata
+- `sh/setup/install.sh` links `config/opencode/AGENTS.md`,
+  `config/opencode/opencode.json`, and `config/opencode/commands` into
+  `~/.config/opencode`
+- OpenCode skill links are individual portable skills under
+  `~/.config/opencode/skills/<skill>` from `config/opencode/skills/<skill>`
+- Keep `config/opencode/opencode.json` valid JSON. OpenCode-specific command
+  prompts live in `config/opencode/commands/*.md`.
+- When installing OpenCode config, preserve existing user settings: symlink the
+  repo default only when the destination is missing, and otherwise fill only
+  missing defaults in strict JSON object configs after writing a backup.
+- Future setup should not uninstall Codex or delete existing local Codex
+  sessions, config, or app state.
 - Use the local `git-commit` and `git-commit-split` skills only when the user
-  asks for commit help; do not create commits without explicit approval
+  asks for commit help; do not create commits without explicit approval.
 
 ## Tool Versions
 
@@ -293,7 +291,8 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 - Python: 3.8+ with virtual environments
 - Java: Latest LTS with SDKMAN
 - Neovim: version with Lua support and built-in `vim.pack` support
-- Codex: installed by the bootstrap flow and configured from
-  `config/codex/AGENTS.md` plus repo-managed skills
+- OpenCode: installed by the bootstrap flow and configured from
+  `config/opencode/AGENTS.md`, `config/opencode/opencode.json`, and
+  repo-managed skills
 
 This document should be updated as coding standards evolve or new tools are adopted.

@@ -101,8 +101,8 @@ local function path_scope(path)
         return "nvim"
     elseif vim.startswith(path, "config/nvim-minimal/") then
         return "nvim"
-    elseif vim.startswith(path, "config/codex/") then
-        return "codex"
+    elseif vim.startswith(path, "config/opencode/") then
+        return "opencode"
     elseif vim.startswith(path, "config/hammerspoon/") then
         return "hammerspoon"
     elseif vim.startswith(path, "config/wezterm/") then

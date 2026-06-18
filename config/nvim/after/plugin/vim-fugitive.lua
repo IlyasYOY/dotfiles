@@ -5,7 +5,6 @@ vim.keymap.set(
     { desc = "Open fugitive UI window", silent = true }
 )
 
-
 vim.keymap.set(
     "n",
     "<leader>gy",

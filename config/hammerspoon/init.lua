@@ -1,7 +1,6 @@
 for _, app in ipairs {
     { shortcut = "1", name = "WezTerm" },
     { shortcut = "2", name = "Zen" },
-    { shortcut = "3", name = "Codex" },
     { shortcut = "4", name = "Final Cut Pro" },
 
     { shortcut = "7", name = "Calendar" },
