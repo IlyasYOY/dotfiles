@@ -3,15 +3,27 @@
   "share": "disabled",
   "autoupdate": false,
   "permission": {
-    "edit": "ask",
+    "edit": {
+      "*": "ask",
+      "~/Projects/IlyasYOY/dotfiles/**": "allow",
+      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+    },
+    "read": {
+      "~/Projects/IlyasYOY/dotfiles/**": "allow",
+      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+    },
+    "external_directory": {
+      "~/Projects/IlyasYOY/dotfiles/**": "allow",
+      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+    },
     "bash": {
       "*": "ask",
       "rm *": "deny",
       "rm -rf *": "deny"
     },
     "webfetch": "ask",
-    "websearch": "ask",
-    "skill": "ask"
+    "websearch": "allow",
+    "skill": "allow"
   },
   "command": {
     "shell-command": {
