@@ -4,11 +4,18 @@ local f = ls.function_node
 local M = {}
 
 local date_format = "%Y-%m-%d"
+local time_format = "%H:%M"
 local seconds_in_day = 60 * 60 * 24
 
 function M.current_date()
     return f(function()
         return os.date(date_format)
+    end)
+end
+
+function M.current_time()
+    return f(function()
+        return os.date(time_format)
     end)
 end
 
