@@ -18,12 +18,10 @@
     },
     "bash": {
       "*": "ask",
-      "rm *": "deny",
-      "rm -rf *": "deny"
+      "rm -rf /": "deny"
     },
     "webfetch": "ask",
-    "websearch": "allow",
-    "skill": "allow"
+    "websearch": "allow"
   },
   "command": {
     "shell-command": {
