@@ -3,8 +3,9 @@
 Personal dotfiles and workstation bootstrap for my day-to-day development
 setup.
 
-It is centered on Neovim, shell tooling, tmux, terminal apps, OpenCode
-configuration, and language support for Go, Java, Lua, Python, and SQL.
+It is centered on Neovim, shell tooling, tmux, terminal apps, Codex and
+OpenCode configuration, and language support for Go, Java, Lua, Python, and
+SQL.
 
 > [!WARNING]
 > This is a personal, opinionated setup that changes often. The bootstrap
@@ -35,8 +36,12 @@ hardware.
 - `config/wezterm`, `config/hammerspoon`, `config/gnupg`,
   `config/.tmux.conf`, `config/.amethyst.yml`, `config/.vimrc` — terminal,
   desktop, and CLI configuration tracked in the repo.
+- `config/agent/skills` — shared portable skills linked into both Codex and
+  OpenCode. Any immediate child directory with `SKILL.md` is installed.
+- `config/codex` — Codex instructions, rules, and Codex-only skills that read
+  local Codex session state.
 - `config/opencode` — checked-in OpenCode instructions, global config, and
-  command prompts that load the portable skill set.
+  command prompts that load the shared portable skill set.
 - `.agents/skills` — repository-local agent skills used when working in this
   checkout.
 - `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`,
@@ -78,15 +83,15 @@ make install
    `~/.bashrc` on Raspberry Pi.
 6. Configures Git defaults.
 7. Installs and configures `SDKMAN`, `gvm`, and `fnm`.
-8. Sets up tmux TPM, clones the password store, and links OpenCode
-   instructions, config, commands, and portable skills into
+8. Sets up tmux TPM, clones the password store, and links Codex and OpenCode
+   instructions, config, commands, rules, and skills into `~/.codex` and
    `~/.config/opencode`.
 
 On macOS, the installer uses:
 
 - `Brewfile.mac` for formulae, including the standard Homebrew `opencode`
   formula
-- `Brewfile.mac.cask` for casks
+- `Brewfile.mac.cask` for casks, including the Codex desktop casks
 - `Brewfile.mac.mas` for App Store installs
 
 On Raspberry Pi, the installer:
@@ -127,18 +132,32 @@ Main links created by the installer:
 - `config/gnupg/gpg-agent.conf` -> `~/.gnupg/gpg-agent.conf`
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
+- `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
+- `config/codex/rules/default.rules` -> `~/.codex/rules/default.rules`
+- shared portable skills from `config/agent/skills/<skill>/SKILL.md` ->
+  `~/.codex/skills/IlyasYOY/<skill>` and
+  `~/.config/opencode/skills/<skill>`
+- Codex-only skills from `config/codex/skills/<skill>/SKILL.md` ->
+  `~/.codex/skills/IlyasYOY/<skill>`
 - `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
 - `config/opencode/opencode.json` -> `~/.config/opencode/opencode.json`
 - `config/opencode/commands` -> `~/.config/opencode/commands`
-- portable skills from `config/opencode/skills` ->
-  `~/.config/opencode/skills/<skill>`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 
+Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, and
+managed TOML blocks in `~/.codex/config.toml`. Shared portable skills such as
+`caveman`, `git-commit`, and `hammerspoon` are linked from
+`config/agent/skills`. Codex-only skills such as `ai-session-coach` and
+`session-hardener` stay under `config/codex/skills` because they read
+`~/.codex/state_5.sqlite` and rollout files. Setup discovers installable skills
+from immediate child directories that contain `SKILL.md`.
+
 OpenCode uses `config/opencode/opencode.json` as a global config with cautious
 permissions for file edits, shell commands, web fetch/search, and skills. The
-OpenCode skill links intentionally include only portable skills such as
-`caveman`, `git-commit`, and `hammerspoon`.
+OpenCode skill links intentionally include only shared portable skills from
+`config/agent/skills`; Codex session-history skills are not installed into
+OpenCode.
 
 If the OpenCode config path is missing, the installer links the repo default.
 If a strict JSON object already exists there, the installer writes a timestamped
@@ -146,8 +165,9 @@ backup and fills only missing defaults, preserving all existing user settings.
 JSONC, invalid JSON, non-object JSON, and symlinks to other targets are left
 unchanged with a warning.
 
-Future setup no longer manages Codex. The installer intentionally does not
-uninstall Codex or delete existing local sessions, config, or app state.
+The installer manages Codex config links and repo-owned skill links, but it
+does not delete Codex sessions, auth, app state, plugins, memories, or OpenCode
+state.
 
 macOS-only links created by the installer:
 
@@ -221,11 +241,13 @@ make update VERBOSE=1
 make check
 make check-lua
 make check-shell
+make check-python
 make format-lua
 ```
 
-- `make check` runs the first-pass validation for Lua and shell files and is
-  the same check target used by CI.
+- `make check` runs the first-pass validation for Lua, shell, and Python files
+  and is the same check target used by CI.
 - `make check-lua` runs the Lua lint and formatting checks.
 - `make check-shell` runs `shellcheck` for shell scripts and shell fragments.
+- `make check-python` compiles Python utilities and runs unittest discovery.
 - `make format-lua` formats Lua files with `stylua`.

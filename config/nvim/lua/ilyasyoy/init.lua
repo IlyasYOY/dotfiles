@@ -406,6 +406,34 @@ vim.keymap.set("v", "<leader>cP", function()
     copy_current_path { absolute = true, with_line_numbers = true }
 end, { desc = "Copy absolute file path with line numbers to clipboard" })
 
+-- Codex review integration
+local function run_codex_review(args)
+    args = args or ""
+    local cmd = "codex review"
+    if args ~= "" then
+        cmd = cmd .. " " .. args
+    end
+
+    if vim.fn.exists ":Dispatch" == 2 then
+        vim.cmd.Dispatch { "-compiler=codexreview", cmd }
+        return
+    end
+
+    vim.cmd.compiler "codexreview"
+    if args == "" then
+        vim.cmd.make()
+    else
+        vim.cmd.make { args }
+    end
+end
+
+vim.api.nvim_create_user_command("CodexReview", function(opts)
+    run_codex_review(opts.args)
+end, {
+    nargs = "*",
+    desc = "Run Codex review and populate quickfix",
+})
+
 -- OpenCode review integration
 local function run_opencode_review(args)
     args = args or ""

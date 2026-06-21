@@ -57,7 +57,7 @@ If the user asks only for a message, do not commit.
 Run the helper from the repository root:
 
 ```bash
-python3 -B config/opencode/skills/git-commit/scripts/commit_context.py --repo . --limit 12
+python3 -B config/agent/skills/git-commit/scripts/commit_context.py --repo . --limit 12
 ```
 
 Useful options:

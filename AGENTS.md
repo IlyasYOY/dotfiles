@@ -13,8 +13,9 @@ This file contains instructions for agentic coding assistants operating in this 
 
 This is a personal dotfiles and workstation bootstrap repository for day-to-day
 development. It includes Neovim and shell configuration, bootstrap/update
-scripts, Homebrew manifests, OpenCode instructions and skills, and terminal or
-desktop configuration for macOS plus a smaller Raspberry Pi bootstrap path.
+scripts, Homebrew manifests, Codex and OpenCode instructions and skills, and
+terminal or desktop configuration for macOS plus a smaller Raspberry Pi
+bootstrap path.
 
 ## Build/Lint/Test Commands
 
@@ -77,7 +78,7 @@ make check-python
 python3 -m unittest discover -s tests -p 'test_*.py'
 
 # Run a focused test module
-python3 -m unittest tests.test_vless_switch
+python3 -m unittest tests.test_codex_session_skills
 ```
 
 ## Code Style Guidelines
@@ -181,6 +182,11 @@ python3 -m unittest tests.test_vless_switch
   desktop, GnuPG, tmux, and Vim configuration
 - `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
   Go lint configuration linked by setup
+- `config/agent/skills/` - Shared portable skills linked into both Codex and
+  OpenCode; any immediate child directory with `SKILL.md` is installed
+- `config/codex/` - Codex instructions, rules, and Codex-only skills
+- `config/codex/skills/` - Codex-only skills that can read local Codex session
+  state, such as `ai-session-coach` and `session-hardener`
 - `.agents/skills/` - Repository-local agent skills such as
   `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
@@ -267,20 +273,35 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 4. Update components later with `make update`
 5. Verify setup by running `make check`
 
-## OpenCode Configuration
+## Agent Configuration
+
+- `config/agent/skills/<skill>/SKILL.md` is the source marker for portable
+  skills shared by Codex and OpenCode.
+- `config/codex/skills/<skill>/SKILL.md` is Codex-only. Do not install
+  `ai-session-coach` or `session-hardener` into OpenCode because they read
+  `~/.codex/state_5.sqlite` and Codex rollout files.
+- Setup discovers only immediate child directories containing `SKILL.md`; do
+  not add hard-coded skill-name lists to `sh/setup/install.sh`.
+- `sh/setup/install.sh` links `config/codex/AGENTS.md` to
+  `~/.codex/AGENTS.md`, `config/codex/rules/default.rules` to
+  `~/.codex/rules/default.rules`, and skills into
+  `~/.codex/skills/IlyasYOY/<skill>`.
+- If `~/.codex/skills/IlyasYOY` is a legacy repo-managed symlink, setup should
+  replace it with a directory of per-skill symlinks while preserving unknown
+  user-created entries.
 
 - `sh/setup/install.sh` links `config/opencode/AGENTS.md`,
   `config/opencode/opencode.json`, and `config/opencode/commands` into
   `~/.config/opencode`
 - OpenCode skill links are individual portable skills under
-  `~/.config/opencode/skills/<skill>` from `config/opencode/skills/<skill>`
+  `~/.config/opencode/skills/<skill>` from `config/agent/skills/<skill>`
 - Keep `config/opencode/opencode.json` valid JSON. OpenCode-specific command
   prompts live in `config/opencode/commands/*.md`.
 - When installing OpenCode config, preserve existing user settings: symlink the
   repo default only when the destination is missing, and otherwise fill only
   missing defaults in strict JSON object configs after writing a backup.
-- Future setup should not uninstall Codex or delete existing local Codex
-  sessions, config, or app state.
+- Setup should not uninstall Codex or delete existing local Codex sessions,
+  auth, app state, plugins, memories, or OpenCode state.
 - Use the local `git-commit` and `git-commit-split` skills only when the user
   asks for commit help; do not create commits without explicit approval.
 
@@ -291,8 +312,10 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 - Python: 3.8+ with virtual environments
 - Java: Latest LTS with SDKMAN
 - Neovim: version with Lua support and built-in `vim.pack` support
+- Codex: installed on macOS by the bootstrap flow and configured from
+  `config/codex`
 - OpenCode: installed by the bootstrap flow and configured from
   `config/opencode/AGENTS.md`, `config/opencode/opencode.json`, and
-  repo-managed skills
+  shared portable skills in `config/agent/skills`
 
 This document should be updated as coding standards evolve or new tools are adopted.

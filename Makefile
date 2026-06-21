@@ -32,5 +32,15 @@ check-shell:
 	fi
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
 
+check-python:
+	@python3 -m py_compile \
+		bin/ilyasyoy-ffmpeg-parse-chapters \
+		bin/vless-switch \
+		config/agent/skills/git-commit/scripts/commit_context.py \
+		config/codex/skills/ai-session-coach/scripts/archive_sessions.py \
+		config/codex/skills/ai-session-coach/scripts/collect_sessions.py \
+		config/codex/skills/session-hardener/scripts/collect_current_session.py
+	@python3 -m unittest discover -s tests -p 'test_*.py'
+
 format-lua:
 	@stylua $(LUA_FILES)

@@ -1,0 +1,83 @@
+prefix_rule(
+    pattern = ["git", ["add", "commit", "tag", "switch", "checkout", "merge", "rebase", "stash", "restore", "reset", "clean"]],
+    decision = "prompt",
+    justification = "Git local state operations can modify protected or hard-to-revert repository state.",
+)
+
+prefix_rule(
+    pattern = ["git", ["fetch", "pull", "push", "clone", "submodule"]],
+    decision = "prompt",
+    justification = "Git network and submodule operations can cross the sandbox boundary or change remote/local repository state.",
+)
+
+prefix_rule(
+    pattern = ["gh"],
+    decision = "prompt",
+    justification = "GitHub CLI uses network and may read or modify remote GitHub state.",
+)
+
+prefix_rule(
+    pattern = [["npx", "npm"]],
+    decision = "prompt",
+    justification = "npm may run arbitrary code.",
+)
+
+prefix_rule(
+    pattern = [["pnpm", "yarn", "bun", "corepack"]],
+    decision = "prompt",
+    justification = "JavaScript package managers may run arbitrary install scripts and use network access.",
+)
+
+prefix_rule(
+    pattern = [["uv", "pip", "pip3"]],
+    decision = "prompt",
+    justification = "Python package managers may install code, use network access, and write outside the workspace.",
+)
+
+prefix_rule(
+    pattern = [["python", "python3"], "-m", "pip"],
+    decision = "prompt",
+    justification = "Python pip module invocations may install code, use network access, and write outside the workspace.",
+)
+
+prefix_rule(
+    pattern = ["make"],
+    decision = "prompt",
+    justification = "make may run arbitrary code.",
+)
+
+prefix_rule(
+    pattern = ["go", "test"],
+    decision = "prompt",
+    justification = "Go tests execute project code and may touch caches or external dependencies.",
+)
+
+prefix_rule(
+    pattern = ["go", ["run", "get", "install", "mod"]],
+    decision = "prompt",
+    justification = "Go dependency/tool commands may use network access and write outside normal source edits.",
+)
+
+prefix_rule(
+    pattern = [["curl", "wget", "ssh", "scp", "rsync"]],
+    decision = "prompt",
+    justification = "Network and transfer tools can exfiltrate data or access untrusted destinations.",
+)
+
+prefix_rule(
+    pattern = ["codex", "mcp", ["add", "remove", "login"]],
+    decision = "prompt",
+    justification = "Changing MCP configuration writes Codex configuration and may use network access.",
+)
+
+prefix_rule(
+    pattern = ["codex", "plugin", ["install", "uninstall"]],
+    decision = "prompt",
+    justification = "Plugin installation changes Codex configuration and may execute or fetch third-party code.",
+)
+
+prefix_rule(
+    pattern = [["ps", "pgrep", "lsof", "pkill", "kill"]],
+    decision = "prompt",
+    justification = "Process inspection or control crosses the sandbox boundary.",
+)

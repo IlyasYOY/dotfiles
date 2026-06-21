@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Hardener"
+  short_description: "Find 3 durable post-session repo fixes"
+  default_prompt: "Use $session-hardener to review the current AI coding session and find three repo-hardening improvements."
