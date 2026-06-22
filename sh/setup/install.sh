@@ -417,6 +417,7 @@ setup_opencode() {
     mkdir -pv "$opencode_skills_dir"
 
     link_managed_skill_tree "$DOTFILES_DIR/config/agent/skills" "$opencode_skills_dir"
+    link_managed_skill_tree "$DOTFILES_DIR/config/opencode/skills" "$opencode_skills_dir"
 }
 
 main() {

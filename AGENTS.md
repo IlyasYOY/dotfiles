@@ -275,13 +275,19 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 
 ## Agent Configuration
 
+<!-- Skill source markers -->
 - `config/agent/skills/<skill>/SKILL.md` is the source marker for portable
   skills shared by Codex and OpenCode.
 - `config/codex/skills/<skill>/SKILL.md` is Codex-only. Do not install
   `ai-session-coach` or `session-hardener` into OpenCode because they read
   `~/.codex/state_5.sqlite` and Codex rollout files.
+- `config/opencode/skills/<skill>/SKILL.md` is OpenCode-only. Do not install
+  OpenCode session-hardener into Codex because it reads
+  `~/.local/share/opencode/opencode.db` and OpenCode log files.
 - Setup discovers only immediate child directories containing `SKILL.md`; do
   not add hard-coded skill-name lists to `sh/setup/install.sh`.
+
+<!-- Codex setup -->
 - `sh/setup/install.sh` links `config/codex/AGENTS.md` to
   `~/.codex/AGENTS.md`, `config/codex/rules/default.rules` to
   `~/.codex/rules/default.rules`, and skills into
@@ -290,11 +296,13 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
   replace it with a directory of per-skill symlinks while preserving unknown
   user-created entries.
 
+<!-- OpenCode setup -->
 - `sh/setup/install.sh` links `config/opencode/AGENTS.md`,
   `config/opencode/opencode.json`, and `config/opencode/commands` into
   `~/.config/opencode`
-- OpenCode skill links are individual portable skills under
-  `~/.config/opencode/skills/<skill>` from `config/agent/skills/<skill>`
+- OpenCode skill links are individual skills under
+  `~/.config/opencode/skills/<skill>` from both `config/agent/skills/<skill>`
+  (shared) and `config/opencode/skills/<skill>` (OpenCode-only).
 - Keep `config/opencode/opencode.json` valid JSON. OpenCode-specific command
   prompts live in `config/opencode/commands/*.md`.
 - When installing OpenCode config, preserve existing user settings: symlink the

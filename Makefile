@@ -39,7 +39,8 @@ check-python:
 		config/agent/skills/git-commit/scripts/commit_context.py \
 		config/codex/skills/ai-session-coach/scripts/archive_sessions.py \
 		config/codex/skills/ai-session-coach/scripts/collect_sessions.py \
-		config/codex/skills/session-hardener/scripts/collect_current_session.py
+		config/codex/skills/session-hardener/scripts/collect_current_session.py \
+		config/opencode/skills/session-hardener/scripts/collect_current_session.py
 	@python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
