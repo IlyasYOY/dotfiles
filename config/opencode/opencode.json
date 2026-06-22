@@ -4,21 +4,38 @@
   "autoupdate": false,
   "permission": {
     "edit": {
-      "*": "ask",
-      "~/Projects/IlyasYOY/dotfiles/**": "allow",
-      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+      "*": "allow",
+      ".git/**": "deny"
     },
     "read": {
+      "*": "allow",
       "~/Projects/IlyasYOY/dotfiles/**": "allow",
       "~/Projects/IlyasYOY/notes-wiki/**": "allow"
     },
     "external_directory": {
-      "~/Projects/IlyasYOY/dotfiles/**": "allow",
-      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+      "~/Projects/**": "allow"
     },
     "bash": {
       "*": "ask",
-      "rm -rf /": "deny"
+      "rm -rf /": "deny",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git blame*": "allow",
+      "git branch*": "allow",
+      "git tag*": "allow",
+      "git remote*": "allow",
+      "git stash list*": "allow",
+      "git rev-parse*": "allow",
+      "git rev-list*": "allow",
+      "git ls-files*": "allow",
+      "git ls-tree*": "allow",
+      "git describe*": "allow",
+      "git reflog*": "allow",
+      "git shortlog*": "allow",
+      "git grep*": "allow",
+      "git worktree list*": "allow"
     },
     "webfetch": "ask",
     "websearch": "allow"
