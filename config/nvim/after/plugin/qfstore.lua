@@ -25,11 +25,13 @@ local function store_with_collision_check(name, loclist)
                     loclist = loclist,
                 }
                 if ok then
-                    vim.notify(string.format(
-                        "qfstore: stored %d items as '%s'",
-                        res,
-                        name
-                    ))
+                    vim.notify(
+                        string.format(
+                            "qfstore: stored %d items as '%s'",
+                            res,
+                            name
+                        )
+                    )
                 else
                     vim.notify("qfstore: " .. res, vim.log.levels.ERROR)
                 end
