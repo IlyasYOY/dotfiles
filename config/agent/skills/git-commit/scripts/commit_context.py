@@ -17,6 +17,12 @@ COMMIT_RE = re.compile(
     r"^(?P<type>[a-z]+)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?: (?P<summary>.+)$"
 )
 
+JIRA_PREFIX_RE = re.compile(
+    r"^(?P<ticket>[A-Z][A-Z0-9_]*-\d+):\s+"
+)
+
+BRANCH_TICKET_RE = re.compile(r"([A-Z][A-Z0-9_]*-\d+)")
+
 
 def run_git(repo: Path, args: list[str]) -> str:
     result = subprocess.run(
@@ -54,24 +60,36 @@ def split_records(raw: str) -> list[tuple[str, str, str]]:
 
 
 def recent_commits(repo: Path, limit: int) -> list[dict[str, Any]]:
-    raw = run_git(repo, [f"--no-pager", "log", f"-n{limit}", "--format=%H%x00%s%x00%b%x1e"])
+    raw = run_git(repo, ["--no-pager", "log", f"-n{limit}", "--format=%H%x00%s%x00%b%x1e"])
     commits: list[dict[str, Any]] = []
     for commit_hash, subject, body in split_records(raw):
-        match = COMMIT_RE.match(subject)
+        jira_match = JIRA_PREFIX_RE.match(subject)
+        jira_ticket = jira_match.group("ticket") if jira_match else None
+        candidate = subject[jira_match.end() :] if jira_match else subject
+        match = COMMIT_RE.match(candidate)
         commits.append(
             {
                 "hash": commit_hash,
                 "subject": subject,
                 "body": body,
                 "has_body": bool(body.strip()),
+                "jira_ticket": jira_ticket,
                 "conventional": bool(match),
                 "type": match.group("type") if match else None,
                 "scope": match.group("scope") if match else None,
                 "breaking": bool(match and match.group("breaking")),
-                "summary": match.group("summary") if match else subject,
+                "summary": match.group("summary") if match else candidate,
             }
         )
     return commits
+
+
+def detect_branch_ticket(repo: Path) -> str | None:
+    branch = run_git(repo, ["rev-parse", "--abbrev-ref", "HEAD"])
+    if branch == "HEAD":
+        return None
+    match = BRANCH_TICKET_RE.search(branch)
+    return match.group(1) if match else None
 
 
 def parse_name_status(raw: str) -> list[dict[str, str]]:
@@ -114,7 +132,9 @@ def top_items(counter: Counter[str], limit: int = 5) -> list[dict[str, Any]]:
     return [{"value": value, "count": count} for value, count in counter.most_common(limit)]
 
 
-def style_summary(commits: list[dict[str, Any]]) -> dict[str, Any]:
+def style_summary(
+    commits: list[dict[str, Any]], branch_ticket: str | None = None
+) -> dict[str, Any]:
     type_counts: Counter[str] = Counter(
         commit["type"] for commit in commits if commit["type"]
     )
@@ -125,6 +145,28 @@ def style_summary(commits: list[dict[str, Any]]) -> dict[str, Any]:
     body_count = sum(1 for commit in commits if commit["has_body"])
     subjects = [commit["subject"] for commit in commits]
     notes: list[str] = []
+
+    jira_prefix_count = sum(1 for commit in commits if commit.get("jira_ticket"))
+    ticket_counts: Counter[str] = Counter(
+        commit["jira_ticket"]
+        for commit in commits
+        if commit.get("jira_ticket")
+    )
+    top_tickets = top_items(ticket_counts)
+
+    if jira_prefix_count:
+        common_tickets = ", ".join(item["value"] for item in top_tickets[:2])
+        notes.append(
+            f"Jira ticket prefix used in {jira_prefix_count}/{len(commits)}"
+            f" recent commits (e.g., {common_tickets})."
+            " Include the ticket prefix in the commit title."
+        )
+        if branch_ticket:
+            notes.append(f"Detected branch ticket: {branch_ticket}.")
+        elif top_tickets:
+            notes.append(
+                f"Most recent ticket: {top_tickets[0]['value']}."
+            )
 
     if commits and conventional_count >= max(1, round(len(commits) * 0.7)):
         notes.append("Recent history mostly uses Conventional Commit titles.")
@@ -149,6 +191,9 @@ def style_summary(commits: list[dict[str, Any]]) -> dict[str, Any]:
         "commit_count": len(commits),
         "conventional_count": conventional_count,
         "body_count": body_count,
+        "jira_prefix_count": jira_prefix_count,
+        "top_tickets": top_tickets,
+        "branch_ticket": branch_ticket,
         "top_types": top_items(type_counts),
         "top_scopes": top_items(scope_counts),
         "recent_subjects": subjects[: min(6, len(subjects))],
@@ -161,10 +206,12 @@ def build_context(args: argparse.Namespace) -> dict[str, Any]:
     commits = recent_commits(repo, args.limit)
     diff = diff_context(repo, args.diff_source)
     reason = args.reason.strip() if args.reason else ""
+    branch_ticket = args.ticket or detect_branch_ticket(repo)
     return {
         "repo": str(repo),
         "diff": diff,
-        "style": style_summary(commits),
+        "style": style_summary(commits, branch_ticket),
+        "branch_ticket": branch_ticket,
         "reason": {
             "provided": bool(reason),
             "text": reason,
@@ -188,12 +235,23 @@ def render_markdown(context: dict[str, Any]) -> str:
     diff = context["diff"]
     style = context["style"]
     reason = context["reason"]
+    branch_ticket = context.get("branch_ticket")
     paths = "\n".join(
         f"- {change['status']} {change['path']}" for change in diff["changes"]
     )
     if not paths:
         paths = "- No changed files found"
     stat = diff["stat"] or "No diff stat available"
+
+    jira_section = ""
+    if style["jira_prefix_count"]:
+        jira_section = f"""
+## Jira Prefix
+
+- Usage: {style["jira_prefix_count"]}/{style["commit_count"]} recent commits
+- Common tickets: {", ".join(item["value"] for item in style["top_tickets"][:3]) or "none"}
+- Branch ticket: {branch_ticket or "not detected"}
+"""
 
     return f"""# Commit Context
 
@@ -213,7 +271,7 @@ def render_markdown(context: dict[str, Any]) -> str:
 ```text
 {stat}
 ```
-
+{jira_section}
 ## Recent Commit Style
 
 - Commits analyzed: {style["commit_count"]}
@@ -269,6 +327,11 @@ def parse_args() -> argparse.Namespace:
         "--reason",
         default="",
         help="Explicit reason for the change, if already known from context.",
+    )
+    parser.add_argument(
+        "--ticket",
+        default="",
+        help="The ticket prefix to use (e.g., ISSUE-12345). Auto-detected from branch otherwise.",
     )
     parser.add_argument(
         "--json",

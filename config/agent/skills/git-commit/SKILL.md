@@ -24,10 +24,12 @@ only; do not create a commit unless the user also explicitly says to commit.
 2. Analyze recent project commits before drafting:
    - Prefer `scripts/commit_context.py --repo . --limit 12`.
    - If the script is unavailable, read recent commits with `git log`.
-3. Draft a short Conventional Commit title:
-   - Format: `<type>(<scope>): <summary>` or `<type>: <summary>`.
-   - Keep the summary short, specific, lowercase, and imperative.
-   - Use a scope only when recent history and changed paths make it clear.
+ 3. Draft a short Conventional Commit title:
+    - Format: `<type>(<scope>): <summary>` or `<type>: <summary>`.
+    - **If recent commits use a ticket prefix** (e.g., `ISSUE-12345: chore: ...`),
+      include it: `{ticket}: <type>(<scope>): <summary>`.
+    - Keep the summary short, specific, lowercase, and imperative.
+    - Use a scope only when recent history and changed paths make it clear.
 4. Write a body that explains why the change was done:
    - The body should explain motivation, not repeat the file list.
    - If the reason is already clear from the user request, conversation, or
@@ -67,4 +69,6 @@ Useful options:
 - `--limit N` controls how many recent commits are analyzed.
 - `--reason "..."` records an explicit reason so the helper does not flag the
   reason as missing.
+- `--ticket "TICKET-123"` overrides the Jira ticket prefix auto-detected from
+  the branch name.
 - `--json` emits structured output for automation.
