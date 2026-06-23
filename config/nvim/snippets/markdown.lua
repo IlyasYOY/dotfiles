@@ -9,6 +9,7 @@ local c = ls.choice_node
 return {
     s("checkbox", fmt("- {} {}", { c(1, { t "[ ]", t "[x]" }), i(0, "Todo") })),
     s("time", { ilyasyoy_snippets.current_time(), i(0) }),
+    s("время", { ilyasyoy_snippets.current_time(), i(0) }),
     s("todaylink", fmt("[[{}]]", ilyasyoy_snippets.current_date())),
     s("tomorrowlink", fmt("[[{}]]", ilyasyoy_snippets.tomorrow_date())),
     s("yesterdaylink", fmt("[[{}]]", ilyasyoy_snippets.yesterday_date())),

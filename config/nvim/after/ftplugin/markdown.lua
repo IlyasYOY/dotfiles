@@ -35,11 +35,7 @@ local function split_trailing_punctuation(token)
 end
 
 local function format_bare_link(token)
-    if token:match "^https?://" then
-        return "<" .. token .. ">"
-    end
-
-    return "[" .. token .. "](" .. token .. ")"
+    return "<" .. token .. ">"
 end
 
 local function wrap_bare_links_in_text(text)
