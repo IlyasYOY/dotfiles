@@ -2,7 +2,7 @@
 
 - Do not make commits unless the user explicitly asks for one.
 - Explain what changed, why it changed, and how it was verified.
-- Never add `//nolint`, `//nolint:...`, or any other linter suppression directive without explicit user approval. Fix the issue instead.
+- Use the question tool to ask me clarifying questions before you make changes.
 
 ## Python Scripts
 
