@@ -47,10 +47,20 @@ only; do not create a commit unless the user also explicitly says to commit.
 When the user explicitly asks to commit:
 
 1. Confirm the final commit title and body.
-2. Request approval before running any Git index or commit operation if the
+2. Ask whether to run the project's quality checks before committing:
+   - Prefer `request_user_input` when it is available, with choices to run
+     checks or skip them.
+   - Recommend running checks unless the user already ran the relevant checks
+     in the current turn.
+   - Use documented project commands from sources such as `AGENTS.md`,
+     `README.md`, `Makefile`, package scripts, or CI config.
+   - If `request_user_input` is unavailable, ask a concise plain-text question.
+   - If the user chooses checks and they fail, stop before committing and report
+     the failure.
+3. Request approval before running any Git index or commit operation if the
    environment requires it.
-3. Run `git commit` with the approved message.
-4. Report the commit hash and the exact message used.
+4. Run `git commit` with the approved message.
+5. Report the commit hash and the exact message used.
 
 If the user asks only for a message, do not commit.
 
