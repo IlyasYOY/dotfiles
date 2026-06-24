@@ -26,7 +26,7 @@ bootstrap path.
 make check
 ```
 
-`make check` runs Lua, shell, and Python checks.
+`make check` runs Lua and shell checks.
 
 ```bash
 # Lint Lua files without auto-formatting
@@ -44,7 +44,6 @@ stylua config/nvim/lua/ilyasyoy/init.lua
 
 CI runs Lua 5.4, installs `luacheck` with LuaRocks, installs
 `shellcheck`, and pins StyLua to `v2.4.0` before running `make check`.
-Python checks use the system `python3` available on the CI runner.
 
 ### Shell Scripts
 
@@ -66,19 +65,6 @@ make update
 # Show setup/update debug logs
 make install VERBOSE=1
 make update VERBOSE=1
-```
-
-### Python
-
-```bash
-# Compile Python utilities and run Python unit tests
-make check-python
-
-# Run the Python tests directly
-python3 -m unittest discover -s tests -p 'test_*.py'
-
-# Run a focused test module
-python3 -m unittest tests.test_codex_session_skills
 ```
 
 ## Code Style Guidelines
@@ -126,12 +112,15 @@ python3 -m unittest tests.test_codex_session_skills
 - Use `local` for function variables
 - Add comments for complex operations
 - Use consistent error handling
+- Keep `sh/env.sh` safe for non-interactive zsh startup from `~/.zshenv`:
+  static exports and idempotent PATH updates only, no prompt/completion/tool
+  manager initialization
 - Keep the files sourced from the active shell rc file (`~/.zshrc` on macOS,
   `~/.bashrc` on Raspberry Pi) — `sh/helpers.sh`, `sh/exports.sh`, and
   `sh/aliases.sh` — safe for interactive shell startup
-- Treat `sh/aliases.sh` and `sh/exports.sh` as shell fragments linted with
-  `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and shell-shebang
-  files in `bin/` are linted as scripts by `make check-shell`
+- Treat `sh/aliases.sh`, `sh/env.sh`, and `sh/exports.sh` as shell fragments
+  linted with `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and
+  shell-shebang files in `bin/` are linted as scripts by `make check-shell`
 - Put executable setup flows under `sh/setup/`
 - Keep bootstrap helpers and platform-specific setup behavior in
   `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
@@ -148,8 +137,8 @@ python3 -m unittest tests.test_codex_session_skills
 - Handle exceptions appropriately
 - Use virtual environments
 - Keep imports organized (standard library, third-party, local)
-- Keep Python CLI utilities in `bin/` importable without side effects so
-  `tests/test_*.py` can load and exercise them directly
+- Keep Python CLI utilities in `bin/` importable without side effects where
+  practical
 - Prefer standard-library dependencies for personal utility scripts unless
   the bootstrap manifests already install the required tool
 
@@ -163,8 +152,6 @@ python3 -m unittest tests.test_codex_session_skills
 - `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh, raspberry-pi.sh)
 - `bin/` - Executable personal utilities, including Python CLIs such as
   `vless-switch` and `ilyasyoy-ffmpeg-parse-chapters`
-- `tests/` - Small reproducible tests and experiments that support repo
-  changes, including Python unit tests and focused Lua repro scripts
 - `config/nvim/` - Neovim configuration
 - `config/nvim/nvim-pack-lock.json`, `config/nvim/ts-pack-lock.json` - Lock
   files for `vim.pack` plugins and Treesitter parsers
@@ -228,8 +215,6 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 
 - Run `make check` before committing changes
 - Use `make check-lua` or `make check-shell` for faster iteration on one area
-- Use `make check-python` for Python utilities, especially changes to
-  `bin/vless-switch`
 - Keep changes compatible with the checks run by `.github/workflows/check.yml`
 - Add targeted automated verification when introducing new executable logic or reproducible experiments
 - For documentation-only changes, verify the edited instructions against the

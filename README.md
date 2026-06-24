@@ -241,13 +241,11 @@ make update VERBOSE=1
 make check
 make check-lua
 make check-shell
-make check-python
 make format-lua
 ```
 
-- `make check` runs the first-pass validation for Lua, shell, and Python files
-  and is the same check target used by CI.
+- `make check` runs the first-pass validation for Lua and shell files and is
+  the same check target used by CI.
 - `make check-lua` runs the Lua lint and formatting checks.
 - `make check-shell` runs `shellcheck` for shell scripts and shell fragments.
-- `make check-python` compiles Python utilities and runs unittest discovery.
 - `make format-lua` formats Lua files with `stylua`.

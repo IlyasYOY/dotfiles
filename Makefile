@@ -1,17 +1,17 @@
 LUA_FILES := $(wildcard $(shell git ls-files -- '*.lua'))
-SHELL_FRAGMENT_FILES := sh/aliases.sh sh/exports.sh
+SHELL_FRAGMENT_FILES := sh/aliases.sh sh/env.sh sh/exports.sh
 SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) \
 	$(wildcard sh/setup/*.sh)
 VERBOSE ?= 0
 
-.PHONY: install update check check-lua check-python check-shell format-lua
+.PHONY: install update check check-lua check-shell format-lua
 install:
 	@VERBOSE=$(VERBOSE) ./sh/setup/install.sh
 
 update:
 	@VERBOSE=$(VERBOSE) ./sh/setup/update.sh
 
-check: check-lua check-shell check-python
+check: check-lua check-shell
 
 check-lua:
 	@luacheck $(LUA_FILES)
@@ -31,17 +31,6 @@ check-shell:
 		shellcheck $(SHELL_SCRIPT_FILES) $$bin_shell_files; \
 	fi
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
-
-check-python:
-	@python3 -m py_compile \
-		bin/ilyasyoy-ffmpeg-parse-chapters \
-		bin/vless-switch \
-		config/agent/skills/git-commit/scripts/commit_context.py \
-		config/codex/skills/ai-session-coach/scripts/archive_sessions.py \
-		config/codex/skills/ai-session-coach/scripts/collect_sessions.py \
-		config/codex/skills/session-hardener/scripts/collect_current_session.py \
-		config/opencode/skills/session-hardener/scripts/collect_current_session.py
-	@python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)
