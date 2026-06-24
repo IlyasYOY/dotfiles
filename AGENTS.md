@@ -112,15 +112,12 @@ make update VERBOSE=1
 - Use `local` for function variables
 - Add comments for complex operations
 - Use consistent error handling
-- Keep `sh/env.sh` safe for non-interactive zsh startup from `~/.zshenv`:
-  static exports and idempotent PATH updates only, no prompt/completion/tool
-  manager initialization
 - Keep the files sourced from the active shell rc file (`~/.zshrc` on macOS,
   `~/.bashrc` on Raspberry Pi) — `sh/helpers.sh`, `sh/exports.sh`, and
   `sh/aliases.sh` — safe for interactive shell startup
-- Treat `sh/aliases.sh`, `sh/env.sh`, and `sh/exports.sh` as shell fragments
-  linted with `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and
-  shell-shebang files in `bin/` are linted as scripts by `make check-shell`
+- Treat `sh/aliases.sh` and `sh/exports.sh` as shell fragments linted with
+  `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and shell-shebang
+  files in `bin/` are linted as scripts by `make check-shell`
 - Put executable setup flows under `sh/setup/`
 - Keep bootstrap helpers and platform-specific setup behavior in
   `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
