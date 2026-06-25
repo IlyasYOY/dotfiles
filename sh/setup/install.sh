@@ -411,6 +411,7 @@ setup_opencode() {
         "$DOTFILES_DIR/config/opencode/opencode.json" \
         "$opencode_config_dir/opencode.json"
     symlink "$DOTFILES_DIR/config/opencode/commands" "$opencode_config_dir/commands"
+    symlink "$DOTFILES_DIR/config/opencode/plugins" "$opencode_config_dir/plugins"
 
     info "🤖 Setting up OpenCode skills..."
     local opencode_skills_dir="$opencode_config_dir/skills"
