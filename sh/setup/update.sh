@@ -51,6 +51,22 @@ update_tmux_plugins() {
     fi
 }
 
+update_go_tools() {
+    info "🎯 Updating Go tools..."
+
+    if ! command -v go >/dev/null 2>&1; then
+        warning "Go is not installed; skipping Go tools update"
+        return 0
+    fi
+
+    if go install github.com/IlyasYOY/monotask@latest; then
+        success "monotask updated"
+    else
+        error "Failed to update monotask"
+        return 1
+    fi
+}
+
 main() {
     if is_mac; then
         update_brew
@@ -65,6 +81,7 @@ main() {
 
     update_local_repos
     update_tmux_plugins
+    update_go_tools
 
 }
 

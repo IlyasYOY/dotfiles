@@ -16,3 +16,6 @@ __pycache__/
 
 # neovim
 .nvim.lua
+
+# monotask
+.mtignore

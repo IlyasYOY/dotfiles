@@ -206,6 +206,22 @@ setup_go_version_manager() {
         "$gvm_config"
 }
 
+setup_monotask() {
+    info "🎯 Installing monotask..."
+
+    if ! command -v go >/dev/null 2>&1; then
+        warning "Go is not installed yet; skipping monotask installation"
+        return 0
+    fi
+
+    if go install github.com/IlyasYOY/monotask@latest; then
+        success "monotask installed"
+    else
+        error "Failed to install monotask"
+        return 1
+    fi
+}
+
 setup_oh_my_zsh() {
     if ! is_mac; then
         info "This is not mac, skipping Oh My Zsh installation"
@@ -430,6 +446,7 @@ main() {
     setup_git_config
     setup_sdkman
     setup_go_version_manager
+    setup_monotask
     setup_node_version_manager
     setup_oh_my_zsh
     setup_tmux_plugin_manger
