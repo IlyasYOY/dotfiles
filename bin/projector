@@ -139,6 +139,77 @@ delete_branch() {
     fi
 }
 
+# Return 0 if <path> should not be copied as an ignored item.
+should_skip_ignored_path() {
+    local path="$1"
+    local -a skip_dirs=(".git" "node_modules" "vendor" "build" "dist" "target" ".venv" "__pycache__" ".gradle")
+    local extra="${PROJECTOR_CLONE_IGNORED_EXTRA:-}"
+    local part dir
+
+    if [[ -n "$extra" ]]; then
+        local -a extra_dirs
+        IFS=',' read -ra extra_dirs <<< "$extra"
+        skip_dirs+=("${extra_dirs[@]}")
+    fi
+
+    IFS='/' read -ra parts <<< "$path"
+    for part in "${parts[@]}"; do
+        for dir in "${skip_dirs[@]}"; do
+            if [[ "$part" == "$dir" ]]; then
+                return 0
+            fi
+        done
+    done
+
+    return 1
+}
+
+# List ignored paths present in <repo_root> (respects global and repo gitignore).
+get_ignored_paths() {
+    local repo_root="$1"
+
+    while IFS= read -r line; do
+        if [[ "$line" == "!! "* ]]; then
+            echo "${line#!! }"
+        fi
+    done < <(git -C "$repo_root" status --porcelain --ignored=matching --untracked-files=all 2>/dev/null)
+}
+
+# Copy ignored files/directories from source_dir into target_dir.
+copy_ignored_files() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local item
+    local target_path
+    local copied=0
+    local skipped=0
+
+    while IFS= read -r item; do
+        [[ -z "$item" ]] && continue
+        [[ -e "$source_dir/$item" ]] || continue
+
+        if should_skip_ignored_path "$item"; then
+            ((skipped++))
+            continue
+        fi
+
+        target_path="$target_dir/$item"
+        if [[ -e "$target_path" ]]; then
+            ((skipped++))
+            continue
+        fi
+
+        mkdir -p "$(dirname "$target_path")"
+        cp -a "$source_dir/$item" "$target_path" || {
+            echo "Warning: failed to copy ignored item: $item"
+            continue
+        }
+        ((copied++))
+    done < <(get_ignored_paths "$source_dir")
+
+    echo "Cloned ignored items: copied=$copied skipped=$skipped"
+}
+
 prompt_yes_no() {
     local prompt_msg="$1"
 
@@ -166,6 +237,7 @@ has_uncommitted_changes() {
 create_prefixed_worktree() {
     local branch_prefix="$1"
     local name="$2"
+    local clone_ignored="${3:-true}"
     local project_name
     local accumulated_prefix
     local worktree_path
@@ -173,6 +245,7 @@ create_prefixed_worktree() {
     local branch_name
     local current_branch
     local existing_branch
+    local main_worktree_path
 
     project_name="$(get_project_name)"
     accumulated_prefix="$(get_accumulated_prefix "$project_name")"
@@ -221,6 +294,12 @@ create_prefixed_worktree() {
 
     echo "Creating worktree '$worktree_path' for branch '$branch_name'..."
     git worktree add "$worktree_path" "$branch_name" || return 1
+
+    if [[ "$clone_ignored" == "true" ]]; then
+        main_worktree_path="$(get_main_worktree_path)"
+        copy_ignored_files "$main_worktree_path" "$worktree_path"
+    fi
+
     window_name="${project_name}-${branch_name//\//-}"
     if [[ -n "$TMUX" ]] && command -v tmux >/dev/null 2>&1; then
         tmux new-window -c "$worktree_path" -n "$window_name"
@@ -271,7 +350,11 @@ merge_current_branch() {
 print_usage() {
     echo "projector: A tool for managing git worktrees and branches in a project setup."
     echo ""
-    echo "Usage: projector <command> [args]"
+    echo "Usage: projector [global options] <command> [args]"
+    echo ""
+    echo "Global options:"
+    echo "  --no-clone-ignored      Do not copy ignored files/directories from the main worktree when creating a worktree."
+    echo "  --clone-ignored         Copy ignored files/directories from the main worktree (default)."
     echo ""
     echo "Commands:"
     echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
@@ -300,16 +383,46 @@ print_usage() {
     echo "    Without sourcing, the directory change won't affect your current shell."
     echo ""
     echo "Examples:"
-    echo "  projector pull                  # Update from origin's default branch"
-    echo "  source projector feature auth   # Create worktree for 'feature/auth' and switch to it"
-    echo "  source projector fix typo       # Create worktree for 'fix/typo' and switch to it"
-    echo "  source projector merge          # Switch to the default branch worktree and merge the current branch"
+    echo "  projector pull                       # Update from origin's default branch"
+    echo "  source projector feature auth        # Create worktree for 'feature/auth' and switch to it"
+    echo "  source projector fix typo            # Create worktree for 'fix/typo' and switch to it"
+    echo "  source projector --no-clone-ignored feature auth  # Same, but skip copying ignored files"
+    echo "  source projector merge               # Switch to the default branch worktree and merge the current branch"
     echo "  source projector cleanup --dry-run   # Show what would be removed"
 }
 
 main() {
     local command
     local default_branch
+    local args=()
+    local CLONE_IGNORED="true"
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --no-clone-ignored)
+                CLONE_IGNORED="false"
+                shift
+                ;;
+            --clone-ignored)
+                CLONE_IGNORED="true"
+                shift
+                ;;
+            -h|--help)
+                print_usage
+                return 0
+                ;;
+            -*)
+                echo "Error: Unknown option '$1'"
+                return 1
+                ;;
+            *)
+                args+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    set -- "${args[@]}"
 
     if [[ $# -lt 1 ]]; then
         print_usage
@@ -366,7 +479,7 @@ main() {
                 return 1
             fi
 
-            create_prefixed_worktree "$command" "$1"
+            create_prefixed_worktree "$command" "$1" "$CLONE_IGNORED"
             ;;
         merge)
             if [[ $# -ne 0 ]]; then
