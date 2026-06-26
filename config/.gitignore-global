@@ -19,3 +19,5 @@ __pycache__/
 
 # monotask
 .mtignore
+
+ilyasyoy-sql/

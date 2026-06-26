@@ -5,7 +5,8 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-vim.g.db_ui_save_location = vim.fn.getcwd() .. "/sql/"
+vim.g.db_ui_save_location = vim.fn.getcwd() .. "/ilyasyoy-sql/"
+
 vim.g.db_ui_table_helpers = {
     postgresql = {
         ["Table Size"] = [[
