@@ -214,7 +214,7 @@ setup_monotask() {
         return 0
     fi
 
-    if go install github.com/IlyasYOY/monotask@latest; then
+    if go install github.com/IlyasYOY/monotask/cmd/monotask@latest; then
         success "monotask installed"
     else
         error "Failed to install monotask"

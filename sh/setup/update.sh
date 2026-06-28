@@ -59,7 +59,7 @@ update_go_tools() {
         return 0
     fi
 
-    if go install github.com/IlyasYOY/monotask@latest; then
+    if go install github.com/IlyasYOY/monotask/cmd/monotask@latest; then
         success "monotask updated"
     else
         error "Failed to update monotask"
