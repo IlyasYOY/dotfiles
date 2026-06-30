@@ -365,6 +365,7 @@ print_usage() {
     echo "  refactor <name>         Create a new git worktree for a refactor branch and switch to it."
     echo "  ci <name>               Create a new git worktree for a ci branch and switch to it."
     echo "  docs <name>             Create a new git worktree for a docs branch and switch to it."
+    echo "  review <branch-name>    Check out an existing branch by name in a new worktree and switch to it."
     echo "  merge                   Switch to the default branch worktree and merge the current branch into it."
     echo "  cleanup [flags]         Remove unused worktrees. See flags below."
     echo ""
@@ -386,6 +387,7 @@ print_usage() {
     echo "  projector pull                       # Update from origin's default branch"
     echo "  source projector feature auth        # Create worktree for 'feature/auth' and switch to it"
     echo "  source projector fix typo            # Create worktree for 'fix/typo' and switch to it"
+    echo "  source projector review feature/auth # Check out existing 'feature/auth' branch and switch to it"
     echo "  source projector --no-clone-ignored feature auth  # Same, but skip copying ignored files"
     echo "  source projector merge               # Switch to the default branch worktree and merge the current branch"
     echo "  source projector cleanup --dry-run   # Show what would be removed"
@@ -480,6 +482,75 @@ main() {
             fi
 
             create_prefixed_worktree "$command" "$1" "$CLONE_IGNORED"
+            ;;
+        review)
+            if [[ $# -ne 1 ]]; then
+                echo "Error: 'review' requires exactly one argument: <branch-name>"
+                return 1
+            fi
+
+            local branch_name project_name main_worktree current_dir
+            local worktree_suffix worktree_path existing_branch window_name
+
+            branch_name="$1"
+            project_name="$(get_project_name)"
+            main_worktree="$(get_main_worktree_path)"
+            current_dir="$(basename "$PWD")"
+
+            if [[ "$current_dir" != "$project_name" ]]; then
+                echo "Error: 'review' must be run from the main worktree ($main_worktree)"
+                return 1
+            fi
+
+            if ! git show-ref --verify --quiet "refs/heads/$branch_name"; then
+                echo "Branch '$branch_name' not found locally, fetching from origin..."
+                git fetch origin "$branch_name:$branch_name" || {
+                    echo "Error: Failed to fetch branch '$branch_name' from origin"
+                    return 1
+                }
+            fi
+
+            worktree_suffix="review-${branch_name//\//-}"
+            worktree_path="../${project_name}-${worktree_suffix}"
+
+            if [[ -d "$worktree_path" ]]; then
+                if ! git -C "$worktree_path" rev-parse --git-dir >/dev/null 2>&1; then
+                    echo "Error: Directory '$worktree_path' already exists but is not a git worktree"
+                    return 1
+                fi
+
+                existing_branch="$(git -C "$worktree_path" branch --show-current)"
+                if [[ "$existing_branch" != "$branch_name" ]]; then
+                    echo "Error: Directory '$worktree_path' is on branch '$existing_branch', expected '$branch_name'"
+                    return 1
+                fi
+
+                echo "Warning: Worktree directory '$worktree_path' already exists. Reusing it."
+                window_name="${project_name}-${branch_name//\//-}"
+                if [[ -n "$TMUX" ]] && command -v tmux >/dev/null 2>&1; then
+                    tmux new-window -c "$worktree_path" -n "$window_name"
+                    echo "Opened tmux window '$window_name' at $worktree_path"
+                    return 0
+                fi
+                cd "$worktree_path" || return 1
+                return 0
+            fi
+
+            echo "Creating worktree '$worktree_path' for review branch '$branch_name'..."
+            git worktree add "$worktree_path" "$branch_name" || return 1
+
+            if [[ "$CLONE_IGNORED" == "true" ]]; then
+                copy_ignored_files "$main_worktree" "$worktree_path"
+            fi
+
+            window_name="${project_name}-${branch_name//\//-}"
+            if [[ -n "$TMUX" ]] && command -v tmux >/dev/null 2>&1; then
+                tmux new-window -c "$worktree_path" -n "$window_name"
+                echo "Opened tmux window '$window_name' at $worktree_path"
+            else
+                cd "$worktree_path" || return 1
+                echo "Switched to worktree: $PWD"
+            fi
             ;;
         merge)
             if [[ $# -ne 0 ]]; then
@@ -648,7 +719,7 @@ main() {
             ;;
         *)
             echo "Error: Unknown command '$command'"
-            echo "Available commands: pull, sync, feature <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, merge, cleanup"
+            echo "Available commands: pull, sync, feature <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, review <branch-name>, merge, cleanup"
             return 1
             ;;
     esac
