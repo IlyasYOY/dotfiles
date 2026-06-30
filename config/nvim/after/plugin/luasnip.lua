@@ -75,5 +75,11 @@ vim.defer_fn(function()
         ls.s("tomorrow", fmt("{}", ilyasyoy_snippets.tomorrow_date())),
         ls.s("yesterday", fmt("{}", ilyasyoy_snippets.yesterday_date())),
         ls.s({ trig = "uid", wordTrig = true }, { ls.f(uuid), ls.i(0) }),
+        ls.s("user", {
+            ls.f(function()
+                return os.getenv "USER" or os.getenv "LOGNAME" or "user"
+            end),
+            ls.i(0),
+        }),
     })
 end, 0)
