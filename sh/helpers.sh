@@ -133,6 +133,54 @@ nvim-notes() {
     )
 }
 
+# with-retry runs a command and retries it on failure with a fixed delay
+# between attempts. Up to RETRY_MAX_ATTEMPTS tries (default 20) with
+# RETRY_DELAY_SEC seconds (default 1) between them.
+#
+#   with-retry curl -fsS https://example.com
+#   RETRY_DELAY_SEC=2 RETRY_MAX_ATTEMPTS=5 with-retry make test
+with-retry() {
+    if [ "$#" -eq 0 ]; then
+        printf "with-retry: no command given\n" >&2
+        return 2
+    fi
+
+    local delay="${RETRY_DELAY_SEC:-1}"
+    local max_attempts="${RETRY_MAX_ATTEMPTS:-20}"
+    local attempt=1
+    local rc=0
+
+    if ! [ "$delay" -ge 0 ] 2>/dev/null; then
+        printf "with-retry: invalid RETRY_DELAY_SEC=%s\n" "$delay" >&2
+        return 2
+    fi
+
+    if ! [ "$max_attempts" -gt 0 ] 2>/dev/null; then
+        printf "with-retry: invalid RETRY_MAX_ATTEMPTS=%s\n" "$max_attempts" >&2
+        return 2
+    fi
+
+    while [ "$attempt" -le "$max_attempts" ]; do
+        rc=0
+        "$@" || rc=$?
+        if [ "$rc" -eq 0 ]; then
+            return 0
+        fi
+
+        if [ "$attempt" -lt "$max_attempts" ]; then
+            printf "with-retry: attempt %d/%d failed (exit %d); retrying in %ss\n" \
+                "$attempt" "$max_attempts" "$rc" "$delay" >&2
+            sleep "$delay"
+        fi
+
+        attempt=$((attempt + 1))
+    done
+
+    printf "with-retry: gave up after %d attempts (last exit %d)\n" \
+        "$max_attempts" "$rc" >&2
+    return "$rc"
+}
+
 if [ -n "${ZSH_VERSION:-}" ] && case $- in *i*) true ;; *) false ;; esac; then
     _codex_shell_command_zsh() {
         if [ -z "${BUFFER:-}" ]; then
