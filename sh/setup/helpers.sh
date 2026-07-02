@@ -490,6 +490,34 @@ def deep_fill(existing: dict[str, Any], defaults: dict[str, Any]) -> bool:
     return changed
 
 
+def fill_skill_permission(config: dict[str, Any], defaults: dict[str, Any]) -> bool:
+    default_permission = defaults.get("permission")
+    if not isinstance(default_permission, dict):
+        return False
+
+    default_skill = default_permission.get("skill")
+    if not isinstance(default_skill, dict):
+        return False
+
+    permission = config.get("permission")
+    if not isinstance(permission, dict):
+        return False
+
+    existing_skill = permission.get("skill")
+    if isinstance(existing_skill, dict):
+        return deep_fill(existing_skill, default_skill)
+
+    if isinstance(existing_skill, str):
+        permission["skill"] = {"*": existing_skill}
+        return deep_fill(permission["skill"], default_skill) or True
+
+    if existing_skill is None:
+        permission["skill"] = default_skill
+        return True
+
+    return False
+
+
 default_path = Path(sys.argv[1])
 dest_path = Path(sys.argv[2])
 
@@ -519,7 +547,10 @@ if not isinstance(config, dict):
     print(f"warning: {dest_path} is not a JSON object; leaving it unchanged", file=sys.stderr)
     sys.exit(0)
 
-if not deep_fill(config, defaults):
+changed = deep_fill(config, defaults)
+changed = fill_skill_permission(config, defaults) or changed
+
+if not changed:
     print(f"debug: {dest_path} already contains OpenCode defaults")
     sys.exit(0)
 

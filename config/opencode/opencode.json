@@ -61,7 +61,15 @@
       "git worktree list*": "allow"
     },
     "webfetch": "ask",
-    "websearch": "allow"
+    "websearch": "allow",
+    "skill": {
+      "ai-session-coach": "deny",
+      "caveman": "deny",
+      "caveman-ru": "deny",
+      "grilling": "deny",
+      "writing-great-skills": "deny",
+      "session-hardener": "deny"
+    }
   },
   "command": {
     "shell-command": {
