@@ -29,8 +29,8 @@
 
 Canonical personal repositories:
 
-- Dotfiles: `/Users/ilyasyoy/Projects/IlyasYOY/dotfiles`
-- Notes wiki: `/Users/ilyasyoy/Projects/IlyasYOY/notes-wiki`
+- Dotfiles: `~/Projects/IlyasYOY/dotfiles`
+- Notes wiki: `~/Projects/IlyasYOY/notes-wiki`
 
 When the user asks from any project to work on dotfiles, Neovim config, shell
 config, workstation bootstrap, Homebrew manifests, Codex config, custom Codex
