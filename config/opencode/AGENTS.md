@@ -2,31 +2,6 @@
 
 - Do not make commits unless the user explicitly asks for one.
 - Explain what changed, why it changed, and how it was verified.
-- Use the question tool to ask me clarifying questions before you make changes.
-
-## Delegation to Sub-agents
-
-The main chat is a planner and context holder, not an executor. Its job is to
-clarify the request, break it into tasks, hold long-lived context, and delegate
-the actual work to sub-agents via the `task` tool.
-
-- Delegate almost all real work to sub-agents through `task`: code search and
-  exploration, reading and understanding the codebase, multi-step changes,
-  edits across one or more files, refactors, and running commands.
-- In the main chat, do directly only trivial single-step actions: a quick
-  clarifying read of a specific known file, or a one-line answer that needs no
-  exploration. When in doubt, delegate.
-- Write self-contained `task` prompts: state the goal, the relevant files or
-  paths, the constraints from this repo's `AGENTS.md`, and exactly what the
-  sub-agent must return (summary, diffs, file paths, verification results).
-- Tell each sub-agent whether it should only research or also modify files, and
-  how to verify its work (e.g. `make check`, targeted tests).
-- Run independent `task` calls in parallel; sequence them only when one result
-  feeds the next.
-- After a sub-agent finishes, summarize its result for me and decide the next
-  step. Do not silently redo the sub-agent's work in the main chat.
-- Still ask clarifying questions and get approval (commits, destructive
-  actions) from the main chat before delegating work that needs it.
 
 ## Python Scripts
 
