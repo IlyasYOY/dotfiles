@@ -1,57 +1,61 @@
 ---
 name: session-hardener
-description: Review the current AI coding session and current repository state to find exactly 3 durable repo-hardening improvements. Use after Codex or another AI agent has worked on code and the user wants evidence-backed problems, recurring risks, missing tests, stale instructions, workflow gaps, or small repo updates that would prevent rediscovering the same issues later.
+description: Explicit post-session repo hardening review for Codex/AI coding sessions.
+disable-model-invocation: true
 ---
 
 # Session Hardener
 
-Use this skill after an AI coding session to turn what just happened into
-durable repo improvements. The skill recommends only. Do not edit files,
-stage, commit, archive sessions, or apply fixes unless the user separately asks
-for implementation.
+Turn the current AI coding session into exactly 3 durable repo-hardening
+recommendations. Recommend only; do not edit, stage, commit, archive, or apply
+fixes unless the user separately asks for implementation.
 
 ## Workflow
 
 1. Inspect the current repository before judging the session:
    - Read the nearest `AGENTS.md`.
-   - Run read-only git inspection such as `git status --short`, `git diff --stat`,
-     and focused `git diff` for touched files.
-   - Read any touched files, tests, scripts, or docs needed to understand the
-     relevant behavior.
+   - Run read-only git inspection such as `git status --short`,
+     `git diff --stat`, and focused diffs for touched files.
+   - Read touched files, tests, scripts, or docs needed to understand behavior.
+
+   Completion criterion: repo evidence covers the files or workflows that the
+   session changed or struggled with.
+
 2. Collect current session evidence:
    - Prefer `scripts/collect_current_session.py --pretty`.
    - If `CODEX_THREAD_ID` is unavailable, use
-     `scripts/collect_current_session.py --latest-for-cwd . --pretty` only as a
-     fallback and label that evidence as "latest session for cwd".
-   - If session collection fails, use the live conversation context and state
-     the evidence gap.
-3. Look for repo-hardening problems, not ordinary code-review nits:
-   - Repeated agent confusion or rediscovery.
-   - Missing, stale, or ambiguous `AGENTS.md` rules.
-   - Missing tests, fixture gaps, or verification commands that would have
-     caught the issue earlier.
-   - Fragile scripts, config defaults, or bootstrap behavior surfaced by the
-     session.
-   - Tooling or workflow gaps that caused avoidable approvals, failed commands,
-     or manual checks.
+     `scripts/collect_current_session.py --latest-for-cwd . --pretty` and label
+     it "latest session for cwd".
+   - If collection fails, use live conversation context and state the gap.
+
+3. Look for repo-hardening problems, not code-review nits:
+   - repeated agent confusion or rediscovery
+   - missing, stale, or ambiguous `AGENTS.md` rules
+   - missing tests, fixtures, or verification commands
+   - fragile scripts, config defaults, or bootstrap behavior
+   - tooling gaps that caused avoidable approvals, failed commands, or manual
+     checks
+
 4. Pick exactly 3 problems by recurrence risk and usefulness of a durable repo
-   update. Prefer actionable fixes over vague process advice.
-5. For each problem, include 1 or 2 fixes. Each problem and fix should be a
-   paragraph, not a tiny bullet.
+   update. Prefer actionable repo changes over process advice.
+
+   Completion criterion: each selected problem has objective evidence and at
+   least one concrete repository-level fix.
+
+5. Return the response contract below. Do not include patches.
 
 ## Evidence Rules
 
 - Ground each problem in objective evidence: a short session quote, failed
   command excerpt, approval pattern, or clickable local file link.
-- Quote only short snippets. Redact secrets or tokens.
-- Use file links for repo evidence, for example
-  `[AGENTS.md](/absolute/path/AGENTS.md:12)`.
+- Quote only short snippets; redact secrets and tokens.
+- Use file links like `[AGENTS.md](/absolute/path/AGENTS.md:12)`.
 - If evidence is thin, say so and set confidence to `medium` or `low`.
 - Do not dump raw transcripts or long tool outputs.
 
 ## Response Contract
 
-Return exactly 3 numbered problems. Use this shape for each:
+Return exactly 3 numbered problems:
 
 ```markdown
 1. **Problem:** Paragraph explaining the recurring risk and why it matters.
@@ -65,9 +69,6 @@ Return exactly 3 numbered problems. Use this shape for each:
    **Confidence:** high|medium|low.
 ```
 
-Do not include implementation patches in the report. If the user asks for
-implementation afterward, handle that as a separate coding task.
-
 ## Collector Script
 
 Run from this skill directory or pass the full path:
@@ -76,15 +77,9 @@ Run from this skill directory or pass the full path:
 python3 config/codex/skills/session-hardener/scripts/collect_current_session.py --pretty
 ```
 
-Useful options:
-
-- `--thread-id <id>` inspects a specific Codex thread.
-- `--latest-for-cwd <path>` uses the most recently updated thread whose cwd is
-  that path or a descendant.
-- `--codex-home <path>` overrides `${CODEX_HOME:-~/.codex}`.
-- `--max-message-chars`, `--max-output-chars`, and `--max-events` keep evidence
-  bounded.
+Useful options: `--thread-id`, `--latest-for-cwd`, `--codex-home`,
+`--max-message-chars`, `--max-output-chars`, and `--max-events`.
 
 The script is read-only with respect to Codex state and repository files. It
-must not update `state_5.sqlite`, move rollout files, archive sessions, or
-write generated artifacts.
+must not update `state_5.sqlite`, move rollout files, archive sessions, or write
+generated artifacts.
