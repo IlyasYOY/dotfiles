@@ -20,7 +20,8 @@ setup_my_project() {
         "git@github.com:IlyasYOY/coredor.nvim.git" "$PERSONAL_PROJECTS_DIR/coredor.nvim" \
         "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
         "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim" \
-        "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask"
+        "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \
+        "git@github.com:IlyasYOY/singularity-mcp.git" "$PERSONAL_PROJECTS_DIR/singularity-mcp"
     clone_repo "git@github.com:IlyasYOY/exectest.git" "$PERSONAL_PROJECTS_DIR/monotask" || true
 }
 
@@ -220,6 +221,13 @@ setup_monotask() {
         error "Failed to install monotask"
         return 1
     fi
+
+    if go install github.com/IlyasYOY/singularity-mcp/cmd/singularity-mcp@latest; then
+        success "singularity-mcp installed"
+    else
+        error "Failed to install singularity-mcp"
+        return 1
+    fi
 }
 
 setup_oh_my_zsh() {
@@ -364,6 +372,19 @@ EOF
         "features" \
         "ilyasyoy codex features config" \
         "$codex_features_config"
+
+    local codex_singularity_mcp_config
+    codex_singularity_mcp_config=$(cat <<EOF
+command = "$HOME/go/bin/singularity-mcp"
+env_vars = ["SINGULARITY_TOKEN"]
+startup_timeout_sec = 10
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "mcp_servers.singularity" \
+        "ilyasyoy codex singularity mcp config" \
+        "$codex_singularity_mcp_config"
 
     local codex_trusted_project_config
     codex_trusted_project_config=$(cat <<'EOF'
