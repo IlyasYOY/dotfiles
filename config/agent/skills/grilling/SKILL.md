@@ -1,7 +1,6 @@
 ---
 name: grilling
 description: Explicit plan and design stress-test interview.
-disable-model-invocation: true
 ---
 
 Grill the plan: interview the user relentlessly until the design is decision
