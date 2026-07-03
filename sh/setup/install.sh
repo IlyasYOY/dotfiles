@@ -28,8 +28,12 @@ setup_my_project() {
 setup_notes() {
     info "📝 Setting up notes..."
 
+    mkdir -pv "$NOTES_DIR"
+    if [ ! -d "$NOTES_DIR/.git" ]; then
+        git -C "$NOTES_DIR" init
+        success "Initialized kb-store git repo"
+    fi
     clone_repos_parallel \
-        "git@github.com:IlyasYOY/notes-wiki.git" "$NOTES_DIR" \
         "git@github.com:IlyasYOY/Legacy-Notes.git" "$LEGACY_NOTES_DIR"
 }
 

@@ -184,11 +184,11 @@ try to use it unchanged.
 ### Change these first
 
 - Project layout: the setup scripts assume `~/Projects/IlyasYOY` plus
-  `~/Projects/Work`, with notes living in `~/Projects/IlyasYOY/notes-wiki` and
+  `~/Projects/Work`, with notes living in `~/Projects/kb-store` and
   `~/Projects/IlyasYOY/Legacy-Notes`. If you use a different layout, update the
   path constants in `sh/setup/helpers.sh`.
 - Personal repositories: `sh/setup/install.sh` and `sh/setup/update.sh` clone
-  and update personal repositories such as `notes-wiki`, `obs.nvim`,
+  and update personal repositories such as `kb-store`, `obs.nvim`,
   `theme.nvim`, `git-link.nvim`, `monotask`, and `password-store`. Remove,
   replace, or comment those entries if you do not own those repositories.
 - Secrets and external services: the bootstrap clones a personal password-store
@@ -202,7 +202,7 @@ try to use it unchanged.
 ### Optional personal integrations
 
 - Notes workflow: `config/nvim/after/plugin/obs.lua` points `obs.nvim` at
-  `~/Projects/IlyasYOY/notes-wiki`, and shell aliases/helpers also assume that
+  `~/Projects/kb-store`, and shell aliases/helpers also assume that
   notes location. Change those paths if you use a different vault, or disable
   the integration.
 - Local plugin development: `config/nvim/lua/ilyasyoy/pack.lua` prefers local

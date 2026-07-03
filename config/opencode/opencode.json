@@ -10,7 +10,7 @@
     "read": {
       "*": "allow",
       "~/Projects/IlyasYOY/dotfiles/**": "allow",
-      "~/Projects/IlyasYOY/notes-wiki/**": "allow"
+      "~/Projects/kb-store/**": "allow"
     },
     "external_directory": {
       "~/Projects/**": "allow"

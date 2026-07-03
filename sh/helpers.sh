@@ -63,7 +63,7 @@ ai-resume() {
 }
 
 ai-notes() {
-    local notes_dir="${ILYASYOY_NOTES_DIR:-$HOME/Projects/IlyasYOY/notes-wiki}"
+    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
     local tool
 
     if [ ! -d "$notes_dir" ]; then
@@ -88,7 +88,7 @@ alias codexrl="codex resume --last"
 alias opencoder="opencode --continue"
 
 codex-notes() {
-    local notes_dir="${ILYASYOY_NOTES_DIR:-$HOME/Projects/IlyasYOY/notes-wiki}"
+    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
     if [ ! -d "$notes_dir" ]; then
         printf "codex-notes: notes directory not found: %s\n" "$notes_dir" >&2
@@ -102,7 +102,7 @@ codex-notes() {
 }
 
 opencode-notes() {
-    local notes_dir="${ILYASYOY_NOTES_DIR:-$HOME/Projects/IlyasYOY/notes-wiki}"
+    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
     if [ ! -d "$notes_dir" ]; then
         printf "opencode-notes: notes directory not found: %s\n" "$notes_dir" >&2
@@ -116,7 +116,7 @@ opencode-notes() {
 }
 
 nvim-notes() {
-    local notes_dir="${ILYASYOY_NOTES_DIR:-$HOME/Projects/IlyasYOY/notes-wiki}"
+    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
     if [ ! -d "$notes_dir" ]; then
         printf "nvim-notes: notes directory not found: %s\n" "$notes_dir" >&2

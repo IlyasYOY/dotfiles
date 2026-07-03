@@ -23,7 +23,6 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/singularity-mcp" \
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot" \
         "$PERSONAL_PROJECTS_DIR/theme.nvim" \
-        "$NOTES_DIR" \
         "$HOME/.password-store"
 }
 

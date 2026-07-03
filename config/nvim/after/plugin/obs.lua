@@ -1,6 +1,6 @@
 require("obs").setup {
-    vault_home = "~/Projects/IlyasYOY/notes-wiki",
-    vault_name = "notes-wiki",
+    vault_home = "~/Projects/kb-store",
+    vault_name = "kb-store",
     templater = {
         note_template_name = "zettel",
     },
