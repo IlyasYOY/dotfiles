@@ -133,6 +133,125 @@ nvim-notes() {
     )
 }
 
+# _kb_main_root prints the absolute (physical) path of the main git repository
+# root for the current directory. For a linked worktree (e.g. a projector
+# feature workspace at ../<project>-<suffix>) this resolves to the parent repo
+# root so that notes map to the main project folder. Falls back to the physical
+# $PWD when not in a git repository or when resolution fails.
+_kb_main_root() {
+    local common abs_common
+
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        pwd -P
+        return 0
+    fi
+
+    common=$(git rev-parse --git-common-dir 2>/dev/null)
+    if [ -z "$common" ]; then
+        pwd -P
+        return 0
+    fi
+
+    abs_common=$(cd "$common" 2>/dev/null || exit; pwd -P)
+    if [ -z "$abs_common" ]; then
+        pwd -P
+        return 0
+    fi
+
+    dirname "$abs_common"
+}
+
+# _kb_home_phy prints the physical form of $HOME (resolving symlinks) so it can
+# be compared against the physical paths returned by _kb_main_root.
+_kb_home_phy() {
+    local phy
+    phy=$(cd "$HOME" 2>/dev/null && pwd -P) || phy="$HOME"
+    printf '%s\n' "$phy"
+}
+
+kb-link() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+    local main_root rel_path branch safe_branch note_dir
+
+    if [ ! -d "$kb_dir" ]; then
+        printf "kb-link: kb-store directory not found: %s\n" "$kb_dir" >&2
+        return 1
+    fi
+
+    ln -sfnv "$kb_dir" ".kb-store"
+
+    main_root=$(_kb_main_root)
+    rel_path="${main_root#"$(_kb_home_phy)"}"
+
+    if [ -z "$rel_path" ]; then
+        printf "kb-link: already in HOME; skipping project path\n" >&2
+        return 0
+    fi
+
+    if [ "$rel_path" = "$main_root" ]; then
+        printf "kb-link: %s is not under HOME; skipping project path\n" "$main_root" >&2
+        return 0
+    fi
+
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        branch=$(git branch --show-current)
+    fi
+    [ -z "$branch" ] && branch="master"
+
+    safe_branch=$(printf "%s" "$branch" | tr "/" "-")
+    note_dir="$kb_dir$rel_path/branch-$safe_branch"
+    mkdir -p "$note_dir"
+
+    if [ ! -f "$note_dir/README.md" ]; then
+        {
+            printf "# %s — %s\n\n" "${main_root##*/}" "$branch"
+            printf "Notes for \`%s\` on branch \`%s\`.\n" "$rel_path" "$branch"
+        } >"$note_dir/README.md"
+        printf "kb-link: seeded %s\n" "$note_dir/README.md"
+    fi
+}
+
+kb-note() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+    local main_root rel_path branch safe_branch note_dir
+
+    if [ ! -d "$kb_dir" ]; then
+        printf "kb-note: kb-store directory not found: %s\n" "$kb_dir" >&2
+        return 1
+    fi
+
+    main_root=$(_kb_main_root)
+    rel_path="${main_root#"$(_kb_home_phy)"}"
+
+    if [ -z "$rel_path" ]; then
+        printf "kb-note: already in HOME; no project path\n" >&2
+        return 1
+    fi
+
+    if [ "$rel_path" = "$main_root" ]; then
+        printf "kb-note: %s is not under HOME; no project path\n" "$main_root" >&2
+        return 1
+    fi
+
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        branch=$(git branch --show-current)
+    fi
+    [ -z "$branch" ] && branch="master"
+
+    safe_branch=$(printf "%s" "$branch" | tr "/" "-")
+    note_dir="$kb_dir$rel_path/branch-$safe_branch"
+    mkdir -p "$note_dir"
+
+    (
+        cd "$note_dir" || exit
+        if [ "$#" -eq 0 ]; then
+            "${EDITOR:-nvim}" "README.md"
+        else
+            "${EDITOR:-nvim}" "$@"
+        fi
+    )
+}
+
 # with-retry runs a command and retries it on failure with a fixed delay
 # between attempts. Up to RETRY_MAX_ATTEMPTS tries (default 20) with
 # RETRY_DELAY_SEC seconds (default 1) between them.

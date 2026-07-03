@@ -20,5 +20,5 @@ __pycache__/
 # monotask
 .mtignore
 
-ilyasyoy-sql/
-ilyasyoy-scripts/
+# kb-store symlinks
+.kb-store
