@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# shellcheck source=/dev/null
+source "$ILYASYOY_DOTFILES_DIR/sh/projector.sh"
+
 # tms runs fzf for me to search through tmux sessions and choose one I want to
 # use. works in and out of the tmux.
 tms() {
