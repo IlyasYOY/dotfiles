@@ -94,5 +94,15 @@
       },
       "prompt": "Convert the user's request into exactly one shell command. Return only the command text. Do not use markdown. Do not explain. Do not run tools or execute the command. The command must be safe for the user to review before pressing Enter."
     }
+  },
+  "mcp": {
+    "singularity": {
+      "type": "local",
+      "command": ["singularity-mcp"],
+      "enabled": true,
+      "environment": {
+        "SINGULARITY_TOKEN": "{env:SINGULARITY_TOKEN}"
+      }
+    }
   }
 }
