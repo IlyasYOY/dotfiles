@@ -7,7 +7,7 @@ export HOME_DIR="$HOME"
 PROJECTS_DIR="$HOME/Projects"
 export WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
 PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
-export NOTES_DIR="$PERSONAL_PROJECTS_DIR/kb-store"
+export KB_DIR="${ILYASYOY_KB_STORE_DIR:-$PROJECTS_DIR/kb-store}"
 export LEGACY_NOTES_DIR="$PERSONAL_PROJECTS_DIR/Legacy-Notes"
 ZSHRC="$HOME/.zshrc"
 BASHRC="$HOME/.bashrc"
@@ -617,17 +617,43 @@ replace_managed_symlink() {
     symlink "$new_target" "$link"
 }
 
+prune_stale_managed_skill_links() {
+    local source_root="$1"
+    local dest_root="$2"
+    local link current_target
+
+    if [ ! -d "$dest_root" ]; then
+        return 0
+    fi
+
+    find "$dest_root" -mindepth 1 -maxdepth 1 -type l -print |
+        sort |
+        while IFS= read -r link; do
+            current_target=$(readlink "$link")
+
+            case "$current_target" in
+                "$source_root"/*)
+                    if [ ! -e "$current_target" ]; then
+                        rm -f "$link"
+                        success "Removed stale managed skill symlink $link -> $current_target"
+                    fi
+                    ;;
+            esac
+        done
+}
+
 link_managed_skill_tree() {
     local source_root="$1"
     local dest_root="$2"
     local skill_file skill_dir skill_name
 
+    mkdir -pv "$dest_root"
+    prune_stale_managed_skill_links "$source_root" "$dest_root"
+
     if [ ! -d "$source_root" ]; then
         debug "Skill source root does not exist: $source_root"
         return 0
     fi
-
-    mkdir -pv "$dest_root"
 
     find "$source_root" -mindepth 2 -maxdepth 2 -name SKILL.md -type f -print |
         sort |

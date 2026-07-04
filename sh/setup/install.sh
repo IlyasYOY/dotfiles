@@ -28,9 +28,9 @@ setup_my_project() {
 setup_notes() {
     info "📝 Setting up notes..."
 
-    mkdir -pv "$NOTES_DIR"
-    if [ ! -d "$NOTES_DIR/.git" ]; then
-        git -C "$NOTES_DIR" init
+    mkdir -pv "$KB_DIR"
+    if [ ! -d "$KB_DIR/.git" ]; then
+        git -C "$KB_DIR" init
         success "Initialized kb-store git repo"
     fi
     clone_repos_parallel \
@@ -211,8 +211,8 @@ setup_go_version_manager() {
         "$gvm_config"
 }
 
-setup_monotask() {
-    info "🎯 Installing monotask..."
+setup_go_binaries() {
+    info "🎯 Installing Go binaries..."
 
     if ! command -v go >/dev/null 2>&1; then
         warning "Go is not installed yet; skipping monotask installation"
@@ -328,7 +328,7 @@ EOF
 network_access = false
 writable_roots = [
     "$DOTFILES_DIR",
-    "$NOTES_DIR",
+    "$KB_DIR",
 ]
 EOF
 )
@@ -402,7 +402,7 @@ EOF
         "$codex_trusted_project_config"
     add_toml_table_block \
         "$codex_config_dir/config.toml" \
-        "projects.\"$NOTES_DIR\"" \
+        "projects.\"$KB_DIR\"" \
         "ilyasyoy codex trusted notes project" \
         "$codex_trusted_project_config"
     add_toml_table_block \
@@ -471,7 +471,7 @@ main() {
     setup_git_config
     setup_sdkman
     setup_go_version_manager
-    setup_monotask
+    setup_go_binaries
     setup_node_version_manager
     setup_oh_my_zsh
     setup_tmux_plugin_manger
