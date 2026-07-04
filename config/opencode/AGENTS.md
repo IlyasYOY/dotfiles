@@ -33,10 +33,12 @@ config, workstation bootstrap, Homebrew manifests, OpenCode config,
 custom agent skills, or personal agent instructions, treat the target as the
 dotfiles repo unless the prompt names another path.
 
-When the user asks from any project to create, edit, search, reorganize, or
-summarize notes, wiki pages, Obsidian vault content, diary entries, or personal
-knowledge-base material, treat the target as the kb-store repo unless the
-prompt names another path.
+When the user asks from any project to create, edit, search, reorganize,
+summarize, save, capture, or persist notes, wiki pages, Obsidian vault content,
+diary entries, or personal knowledge-base material, treat the target as the
+kb-store repo unless the prompt names another path. Before writing notes or
+choosing paths inside kb-store, read `~/Projects/kb-store/AGENTS.md`; it is the
+source of truth for the vault layout and filename rules.
 
 Before editing either personal repo, inspect that repo's `AGENTS.md` and the
 relevant files. Preserve dirty user changes. Do not modify the current project
