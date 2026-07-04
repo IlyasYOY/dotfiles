@@ -12,6 +12,40 @@ tms() {
     fi
 }
 
+pass-fzf() {
+    local password_store_dir selected
+
+    password_store_dir="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+
+    if ! command -v pass >/dev/null 2>&1; then
+        printf "pass-fzf: pass is not available\n" >&2
+        return 1
+    fi
+
+    if ! command -v fzf >/dev/null 2>&1; then
+        printf "pass-fzf: fzf is not available\n" >&2
+        return 1
+    fi
+
+    if [ ! -d "$password_store_dir" ]; then
+        printf "pass-fzf: password store not found: %s\n" "$password_store_dir" >&2
+        return 1
+    fi
+
+    selected=$(
+        (
+            cd "$password_store_dir" || exit
+            find . -type f -name "*.gpg" -print
+        ) \
+            | sed "s#^\./##; s#\.gpg\$##" \
+            | sort \
+            | fzf --prompt="pass> "
+    ) || return 0
+
+    [ -n "$selected" ] || return 0
+    pass -c "$selected"
+}
+
 ### multimedia conversion ###
 
 convert-webm-to-mp4() {
@@ -65,22 +99,22 @@ ai-resume() {
     return 1
 }
 
-ai-notes() {
-    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+ai-kb() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
     local tool
 
-    if [ ! -d "$notes_dir" ]; then
-        printf "ai-notes: notes directory not found: %s\n" "$notes_dir" >&2
+    if [ ! -d "$kb_dir" ]; then
+        printf "ai-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
         return 1
     fi
 
     if ! tool=$(_ai_cli); then
-        printf "ai-notes: neither codex nor opencode is available\n" >&2
+        printf "ai-kb: neither codex nor opencode is available\n" >&2
         return 1
     fi
 
     (
-        cd "$notes_dir" || exit
+        cd "$kb_dir" || exit
         "$tool" "$@"
     )
 }
@@ -90,44 +124,44 @@ alias codex-spark="codex --model gpt-5.3-codex-spark"
 alias codexrl="codex resume --last"
 alias opencoder="opencode --continue"
 
-codex-notes() {
-    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+codex-kb() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
-    if [ ! -d "$notes_dir" ]; then
-        printf "codex-notes: notes directory not found: %s\n" "$notes_dir" >&2
+    if [ ! -d "$kb_dir" ]; then
+        printf "codex-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
         return 1
     fi
 
     (
-        cd "$notes_dir" || exit
+        cd "$kb_dir" || exit
         codex "$@"
     )
 }
 
-opencode-notes() {
-    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+opencode-kb() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
-    if [ ! -d "$notes_dir" ]; then
-        printf "opencode-notes: notes directory not found: %s\n" "$notes_dir" >&2
+    if [ ! -d "$kb_dir" ]; then
+        printf "opencode-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
         return 1
     fi
 
     (
-        cd "$notes_dir" || exit
+        cd "$kb_dir" || exit
         opencode "$@"
     )
 }
 
-nvim-notes() {
-    local notes_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
+nvim-kb() {
+    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
 
-    if [ ! -d "$notes_dir" ]; then
-        printf "nvim-notes: notes directory not found: %s\n" "$notes_dir" >&2
+    if [ ! -d "$kb_dir" ]; then
+        printf "nvim-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
         return 1
     fi
 
     (
-        cd "$notes_dir" || exit
+        cd "$kb_dir" || exit
         if [ "$#" -eq 0 ]; then
             nvim .
         else
