@@ -261,10 +261,12 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 - `config/agent/skills/<skill>/SKILL.md` is the source marker for portable
   skills shared by Codex and OpenCode.
 - `config/codex/skills/<skill>/SKILL.md` is Codex-only. Do not install
-  `ai-session-coach` or `session-hardener` into OpenCode because they read
-  `~/.codex/state_5.sqlite` and Codex rollout files.
+  Codex session-history skills into OpenCode because they read
+  `~/.codex/state_5.sqlite` and Codex rollout files. Use separate OpenCode
+  implementations for similarly named OpenCode session-history skills.
 - `config/opencode/skills/<skill>/SKILL.md` is OpenCode-only. Do not install
-  OpenCode session-hardener into Codex because it reads
+  OpenCode session-history skills such as `ai-session-coach` and
+  `session-hardener` into Codex because they read
   `~/.local/share/opencode/opencode.db` and OpenCode log files.
 - Setup discovers only immediate child directories containing `SKILL.md`; do
   not add hard-coded skill-name lists to `sh/setup/install.sh`.

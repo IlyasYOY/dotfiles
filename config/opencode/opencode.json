@@ -63,7 +63,7 @@
     "webfetch": "ask",
     "websearch": "allow",
     "skill": {
-      "ai-session-coach": "deny",
+      "ai-session-coach": "allow",
       "caveman": "deny",
       "caveman-ru": "deny",
       "grilling": "deny",

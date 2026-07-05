@@ -139,6 +139,8 @@ Main links created by the installer:
   `~/.config/opencode/skills/<skill>`
 - Codex-only skills from `config/codex/skills/<skill>/SKILL.md` ->
   `~/.codex/skills/IlyasYOY/<skill>`
+- OpenCode-only skills from `config/opencode/skills/<skill>/SKILL.md` ->
+  `~/.config/opencode/skills/<skill>`
 - `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
 - `config/opencode/opencode.json` -> `~/.config/opencode/opencode.json`
 - `config/opencode/commands` -> `~/.config/opencode/commands`
@@ -148,16 +150,18 @@ Main links created by the installer:
 Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, and
 managed TOML blocks in `~/.codex/config.toml`. Shared portable skills such as
 `caveman`, `git-commit`, and `hammerspoon` are linked from
-`config/agent/skills`. Codex-only skills such as `ai-session-coach` and
-`session-hardener` stay under `config/codex/skills` because they read
-`~/.codex/state_5.sqlite` and rollout files. Setup discovers installable skills
-from immediate child directories that contain `SKILL.md`.
+`config/agent/skills`. Codex-only session-history skills stay under
+`config/codex/skills` because they read `~/.codex/state_5.sqlite` and rollout
+files. Setup discovers installable skills from immediate child directories that
+contain `SKILL.md`.
 
 OpenCode uses `config/opencode/opencode.json` as a global config with cautious
 permissions for file edits, shell commands, web fetch/search, and skills. The
-OpenCode skill links intentionally include only shared portable skills from
-`config/agent/skills`; Codex session-history skills are not installed into
-OpenCode.
+OpenCode skill links include shared portable skills from `config/agent/skills`
+and OpenCode-only skills from `config/opencode/skills`, including separate
+OpenCode implementations of session-history skills such as `ai-session-coach`
+and `session-hardener`. Codex session-history skill directories are not
+installed into OpenCode.
 
 If the OpenCode config path is missing, the installer links the repo default.
 If a strict JSON object already exists there, the installer writes a timestamped
