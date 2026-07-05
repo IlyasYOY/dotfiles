@@ -1,0 +1,546 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+program_name=$(basename "$0")
+
+usage() {
+    cat <<EOF
+Usage:
+  $program_name [--alias HOST] [--key-file PATH] [--port PORT] [--no-config] PASS_ENTRY
+
+Create or reuse an SSH key, install its public key on a remote host, and update
+~/.ssh/config from a pass entry.
+
+The pass entry must use the first line as the SSH password and metadata lines
+for connection details:
+
+  password
+  user: root
+  ip: 192.0.2.10
+  port: 22
+
+Options:
+  --alias HOST    SSH Host alias to write to ~/.ssh/config.
+                  Defaults to the basename of PASS_ENTRY.
+  --key-file PATH Private key path.
+                  Defaults to ~/.ssh/id_ed25519_<sanitized-host-alias>.
+  --port PORT     SSH port. Overrides the pass metadata port.
+  --no-config     Install the key but do not update ~/.ssh/config.
+  -h, --help      Show this help.
+EOF
+}
+
+die() {
+    printf "%s: %s\n" "$program_name" "$*" >&2
+    exit 1
+}
+
+require_command() {
+    local command_name=$1
+
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+        die "required command is not available: $command_name"
+    fi
+}
+
+trim() {
+    local value=$1
+
+    value=${value#"${value%%[![:space:]]*}"}
+    value=${value%"${value##*[![:space:]]}"}
+    printf "%s\n" "$value"
+}
+
+pass_field() {
+    local pass_entry=$1
+    local field=$2
+
+    if ! pass show "$pass_entry" 2>/dev/null | awk -v field="$field" '
+        NR == 1 {
+            next
+        }
+
+        {
+            line = $0
+            key = line
+            sub(/[[:space:]]*[:=].*/, "", key)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+
+            if (tolower(key) == field) {
+                sub(/^[^:=]*[:=][[:space:]]*/, "", line)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+                print line
+                exit
+            }
+        }
+    '; then
+        die "failed to read pass entry: $pass_entry"
+    fi
+}
+
+validate_no_whitespace() {
+    local label=$1
+    local value=$2
+
+    if [[ -z "$value" || "$value" =~ [[:space:]] ]]; then
+        die "$label must be non-empty and must not contain whitespace"
+    fi
+}
+
+validate_port() {
+    local port=$1
+
+    if [[ ! "$port" =~ ^[0-9]+$ || "$port" -lt 1 || "$port" -gt 65535 ]]; then
+        die "port must be an integer between 1 and 65535"
+    fi
+}
+
+sanitize_key_suffix() {
+    local value=$1
+    local sanitized
+
+    sanitized=$(
+        printf "%s" "$value" |
+            tr -c "[:alnum:]" "_" |
+            sed 's/_\{1,\}/_/g; s/^_//; s/_$//'
+    )
+
+    if [[ -z "$sanitized" ]]; then
+        die "host alias does not contain characters usable for a key filename"
+    fi
+
+    printf "%s\n" "$sanitized"
+}
+
+ensure_ssh_dir() {
+    local ssh_dir=$1
+
+    mkdir -p "$ssh_dir"
+    chmod 700 "$ssh_dir"
+}
+
+ensure_key() {
+    local key_file=$1
+    local host_alias=$2
+    local key_dir
+
+    key_dir=$(dirname "$key_file")
+    mkdir -p "$key_dir"
+
+    if [[ -e "$key_file" ]]; then
+        if [[ ! -f "$key_file.pub" ]]; then
+            ssh-keygen -y -f "$key_file" > "$key_file.pub"
+            chmod 644 "$key_file.pub"
+        fi
+
+        chmod 600 "$key_file"
+        printf "Reusing key: %s\n" "$key_file"
+        return 0
+    fi
+
+    ssh-keygen -t ed25519 -N "" -f "$key_file" -C "$host_alias" >/dev/null
+    chmod 600 "$key_file"
+    chmod 644 "$key_file.pub"
+    printf "Generated key: %s\n" "$key_file"
+}
+
+create_askpass_helper() {
+    local askpass_file=$1
+
+    cat > "$askpass_file" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -z "${SSH_PASS_KEYDEPLOY_PASS_ENTRY:-}" ]]; then
+    exit 1
+fi
+
+pass show "$SSH_PASS_KEYDEPLOY_PASS_ENTRY" 2>/dev/null | sed -n '1p'
+EOF
+
+    chmod 700 "$askpass_file"
+}
+
+install_public_key() {
+    local pass_entry=$1
+    local user=$2
+    local host_name=$3
+    local port=$4
+    local public_key_file=$5
+    local askpass_file=$6
+    local remote_command
+
+    remote_command=$(cat <<'EOF'
+set -eu
+umask 077
+mkdir -p "$HOME/.ssh"
+auth="$HOME/.ssh/authorized_keys"
+tmp="$HOME/.ssh/.authorized_keys.ssh-pass-keydeploy.$$"
+touch "$auth"
+chmod 700 "$HOME/.ssh"
+chmod 600 "$auth"
+trap 'rm -f "$tmp"' EXIT
+cat > "$tmp"
+if ! grep -qxF -f "$tmp" "$auth"; then
+    if [ -s "$auth" ]; then
+        printf "\n" >> "$auth"
+    fi
+    cat "$tmp" >> "$auth"
+fi
+chmod 600 "$auth"
+EOF
+)
+
+    SSH_PASS_KEYDEPLOY_PASS_ENTRY=$pass_entry \
+        SSH_ASKPASS=$askpass_file \
+        SSH_ASKPASS_REQUIRE=force \
+        DISPLAY=${DISPLAY:-ssh-pass-keydeploy} \
+        ssh \
+            -p "$port" \
+            -o StrictHostKeyChecking=accept-new \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            -o NumberOfPasswordPrompts=1 \
+            -o ConnectTimeout=20 \
+            "$user@$host_name" \
+            "$remote_command" < "$public_key_file" >/dev/null
+}
+
+host_alias_status() {
+    local config_file=$1
+    local host_alias=$2
+
+    if [[ ! -f "$config_file" ]]; then
+        printf "missing\n"
+        return 0
+    fi
+
+    awk -v host_alias="$host_alias" '
+        tolower($1) == "host" {
+            match_count = 0
+            for (idx = 2; idx <= NF; idx++) {
+                if ($idx == host_alias) {
+                    match_count++
+                }
+            }
+
+            if (match_count > 0) {
+                if (NF == 2) {
+                    print "exact"
+                } else {
+                    print "multi"
+                }
+                found = 1
+                exit
+            }
+        }
+
+        END {
+            if (!found) {
+                print "missing"
+            }
+        }
+    ' "$config_file"
+}
+
+append_config_block() {
+    local config_file=$1
+    local host_alias=$2
+    local host_name=$3
+    local user=$4
+    local port=$5
+    local key_file=$6
+
+    {
+        printf "\nHost %s\n" "$host_alias"
+        printf "    HostName %s\n" "$host_name"
+        printf "    User %s\n" "$user"
+        printf "    Port %s\n" "$port"
+        printf "    IdentityFile %s\n" "$key_file"
+        printf "    IdentitiesOnly yes\n"
+    } >> "$config_file"
+}
+
+update_exact_config_block() {
+    local config_file=$1
+    local host_alias=$2
+    local host_name=$3
+    local user=$4
+    local port=$5
+    local key_file=$6
+    local tmp_file
+
+    tmp_file=$(mktemp "${TMPDIR:-/tmp}/ssh-pass-keydeploy-config.XXXXXX")
+
+    awk \
+        -v host_alias="$host_alias" \
+        -v host_name="$host_name" \
+        -v user="$user" \
+        -v port="$port" \
+        -v key_file="$key_file" \
+        '
+        function reset_seen() {
+            seen_hostname = 0
+            seen_user = 0
+            seen_port = 0
+            seen_identityfile = 0
+            seen_identitiesonly = 0
+        }
+
+        function emit_missing() {
+            if (!seen_hostname) {
+                print "    HostName " host_name
+            }
+            if (!seen_user) {
+                print "    User " user
+            }
+            if (!seen_port) {
+                print "    Port " port
+            }
+            if (!seen_identityfile) {
+                print "    IdentityFile " key_file
+            }
+            if (!seen_identitiesonly) {
+                print "    IdentitiesOnly yes"
+            }
+        }
+
+        function option_key(line) {
+            sub(/^[[:space:]]+/, "", line)
+            sub(/[[:space:]].*/, "", line)
+            return tolower(line)
+        }
+
+        BEGIN {
+            in_target = 0
+            reset_seen()
+        }
+
+        tolower($1) == "host" {
+            if (in_target) {
+                emit_missing()
+                in_target = 0
+            }
+
+            if (NF == 2 && $2 == host_alias) {
+                print
+                in_target = 1
+                reset_seen()
+                next
+            }
+        }
+
+        in_target {
+            key = option_key($0)
+
+            if (key == "hostname") {
+                if (!seen_hostname) {
+                    print "    HostName " host_name
+                }
+                seen_hostname = 1
+                next
+            }
+            if (key == "user") {
+                if (!seen_user) {
+                    print "    User " user
+                }
+                seen_user = 1
+                next
+            }
+            if (key == "port") {
+                if (!seen_port) {
+                    print "    Port " port
+                }
+                seen_port = 1
+                next
+            }
+            if (key == "identityfile") {
+                if (!seen_identityfile) {
+                    print "    IdentityFile " key_file
+                }
+                seen_identityfile = 1
+                next
+            }
+            if (key == "identitiesonly") {
+                if (!seen_identitiesonly) {
+                    print "    IdentitiesOnly yes"
+                }
+                seen_identitiesonly = 1
+                next
+            }
+        }
+
+        {
+            print
+        }
+
+        END {
+            if (in_target) {
+                emit_missing()
+            }
+        }
+    ' "$config_file" > "$tmp_file"
+
+    cat "$tmp_file" > "$config_file"
+    rm -f "$tmp_file"
+}
+
+update_ssh_config() {
+    local config_file=$1
+    local host_alias=$2
+    local host_name=$3
+    local user=$4
+    local port=$5
+    local key_file=$6
+    local status backup_file
+
+    touch "$config_file"
+    chmod 600 "$config_file"
+
+    status=$(host_alias_status "$config_file" "$host_alias")
+    if [[ "$status" == "multi" ]]; then
+        die "host alias '$host_alias' is part of a multi-pattern Host block; refusing to edit it"
+    fi
+
+    backup_file="$config_file.ssh-pass-keydeploy-$(date +%Y%m%d%H%M%S)-$$"
+    cp "$config_file" "$backup_file"
+    chmod 600 "$backup_file"
+
+    case "$status" in
+        exact)
+            update_exact_config_block "$config_file" "$host_alias" "$host_name" "$user" "$port" "$key_file"
+            printf "Updated SSH config: %s\n" "$config_file"
+            ;;
+        missing)
+            append_config_block "$config_file" "$host_alias" "$host_name" "$user" "$port" "$key_file"
+            printf "Added SSH config host: %s\n" "$host_alias"
+            ;;
+        *)
+            die "unexpected SSH config status: $status"
+            ;;
+    esac
+
+    chmod 600 "$config_file"
+    printf "SSH config backup: %s\n" "$backup_file"
+}
+
+host_alias=""
+key_file=""
+port_override=""
+update_config=1
+pass_entry=""
+
+while (($# > 0)); do
+    case "$1" in
+        --alias)
+            shift
+            [[ $# -gt 0 ]] || die "--alias requires a value"
+            host_alias=$1
+            ;;
+        --key-file)
+            shift
+            [[ $# -gt 0 ]] || die "--key-file requires a value"
+            key_file=$1
+            ;;
+        --port)
+            shift
+            [[ $# -gt 0 ]] || die "--port requires a value"
+            port_override=$1
+            ;;
+        --no-config)
+            update_config=0
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            die "unknown option: $1"
+            ;;
+        *)
+            if [[ -n "$pass_entry" ]]; then
+                die "unexpected extra argument: $1"
+            fi
+            pass_entry=$1
+            ;;
+    esac
+    shift
+done
+
+if (($# > 0)); then
+    if [[ -n "$pass_entry" ]]; then
+        die "unexpected extra argument: $1"
+    fi
+    pass_entry=$1
+    shift
+fi
+
+[[ $# -eq 0 ]] || die "unexpected extra argument: $1"
+[[ -n "$pass_entry" ]] || die "PASS_ENTRY is required"
+
+require_command awk
+require_command date
+require_command mktemp
+require_command pass
+require_command sed
+require_command ssh
+require_command ssh-keygen
+require_command tr
+
+if [[ -z "$host_alias" ]]; then
+    host_alias=${pass_entry##*/}
+fi
+
+host_alias=$(trim "$host_alias")
+validate_no_whitespace "host alias" "$host_alias"
+
+ssh_user=$(pass_field "$pass_entry" user)
+ssh_host=$(pass_field "$pass_entry" ip)
+ssh_port=$(pass_field "$pass_entry" port)
+
+ssh_user=$(trim "$ssh_user")
+ssh_host=$(trim "$ssh_host")
+ssh_port=$(trim "$ssh_port")
+
+if [[ -n "$port_override" ]]; then
+    ssh_port=$port_override
+fi
+if [[ -z "$ssh_port" ]]; then
+    ssh_port=22
+fi
+
+validate_no_whitespace "user" "$ssh_user"
+validate_no_whitespace "ip" "$ssh_host"
+validate_port "$ssh_port"
+
+ssh_dir="$HOME/.ssh"
+ensure_ssh_dir "$ssh_dir"
+
+if [[ -z "$key_file" ]]; then
+    key_suffix=$(sanitize_key_suffix "$host_alias")
+    key_file="$ssh_dir/id_ed25519_$key_suffix"
+fi
+
+askpass_file=$(mktemp "${TMPDIR:-/tmp}/ssh-pass-keydeploy-askpass.XXXXXX")
+cleanup() {
+    rm -f "$askpass_file"
+}
+trap cleanup EXIT
+
+create_askpass_helper "$askpass_file"
+ensure_key "$key_file" "$host_alias"
+
+printf "Installing public key for %s from pass entry %s\n" "$host_alias" "$pass_entry"
+install_public_key "$pass_entry" "$ssh_user" "$ssh_host" "$ssh_port" "$key_file.pub" "$askpass_file"
+printf "Installed public key for %s\n" "$host_alias"
+
+if ((update_config)); then
+    update_ssh_config "$ssh_dir/config" "$host_alias" "$ssh_host" "$ssh_user" "$ssh_port" "$key_file"
+else
+    printf "Skipped SSH config update\n"
+fi
