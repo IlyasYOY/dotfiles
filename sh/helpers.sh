@@ -279,14 +279,21 @@ kb-note() {
     note_dir="$kb_dir$rel_path/branch-$safe_branch"
     mkdir -p "$note_dir"
 
-    (
-        cd "$note_dir" || exit
-        if [ "$#" -eq 0 ]; then
-            "${EDITOR:-nvim}" "README.md"
-        else
-            "${EDITOR:-nvim}" "$@"
-        fi
-    )
+    # Open note files by absolute path so nvim keeps the caller's CWD. Relative
+    # args resolve against $note_dir; absolute args are passed through as-is.
+    local files=() arg
+    if [ "$#" -eq 0 ]; then
+        files=("$note_dir/README.md")
+    else
+        for arg in "$@"; do
+            if [ "${arg#/}" != "$arg" ]; then
+                files+=("$arg")
+            else
+                files+=("$note_dir/$arg")
+            fi
+        done
+    fi
+    "${EDITOR:-nvim}" "${files[@]}"
 }
 
 # with-retry runs a command and retries it on failure with a fixed delay
