@@ -294,8 +294,8 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
   missing defaults in strict JSON object configs after writing a backup.
 - Setup should not uninstall Codex or delete existing local Codex sessions,
   auth, app state, plugins, memories, or OpenCode state.
-- Use the local `git-commit` and `git-commit-split` skills only when the user
-  asks for commit help; do not create commits without explicit approval.
+- Use the local `git-commit` skill only when the user asks for commit help; do
+  not create commits without explicit approval.
 
 ## Tool Versions
 
