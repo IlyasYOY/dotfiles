@@ -101,7 +101,8 @@
       "command": ["singularity-mcp"],
       "enabled": true,
       "environment": {
-        "SINGULARITY_TOKEN": "{env:SINGULARITY_TOKEN}"
+        "SINGULARITY_TOKEN": "{env:SINGULARITY_TOKEN}",
+        "SINGULARITY_MCP_REQUIRE_WRITE_APPROVAL": "false"
       }
     }
   }
