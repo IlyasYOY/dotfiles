@@ -6,9 +6,8 @@ set -euo pipefail
 export HOME_DIR="$HOME"
 PROJECTS_DIR="$HOME/Projects"
 export WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
-PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
+export PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
 export KB_DIR="${ILYASYOY_KB_STORE_DIR:-$PROJECTS_DIR/kb-store}"
-export LEGACY_NOTES_DIR="$PERSONAL_PROJECTS_DIR/Legacy-Notes"
 ZSHRC="$HOME/.zshrc"
 BASHRC="$HOME/.bashrc"
 DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)

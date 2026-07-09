@@ -22,13 +22,19 @@ explicit confirmations: one for intent, one after dry-run review.
    - Use `--unarchived --exclude-current-thread`.
    - Write packs under `/tmp`, not the repository.
    - Pass `--analysis-focus` with the user's request.
+   - Keep the default internal-session filter enabled. It excludes Codex
+     subagents, approval-review fallbacks, earlier session-coach runs, and
+     model-switch-only sessions from analysis packs while recording them in
+     `manifest.internal_sessions`.
 
    Completion criterion: `manifest.json` exists, names the generated project
-   packs, and excludes the current live thread.
+   packs, reports internal exclusions by reason, and excludes the current live
+   thread from both analyzed and internal IDs.
 
 3. Read `manifest.json`.
-   - If there are no project packs, say there are no unarchived sessions to
-     analyze and stop.
+   - If there are no project packs, say there are no user sessions to analyze.
+     If the manifest contains internal sessions, the snapshot may still be
+     offered for archival using the same two-confirmation workflow.
    - Projects are grouped by exact `cwd`.
 
 4. Analyze each project pack.
@@ -49,7 +55,9 @@ explicit confirmations: one for intent, one after dry-run review.
 6. Ask whether to archive the exact snapshot.
    - If the user does not explicitly confirm, stop.
    - If the manifest path is missing from conversation context, ask for it.
-   - Never archive all unarchived sessions; archive only IDs from this manifest.
+   - State the analyzed and internal target counts separately.
+   - Never archive all unarchived sessions; archive only analyzed and internal
+     IDs recorded in this manifest.
 
 7. If archiving is confirmed, run dry-run first:
    - `scripts/archive_sessions.py --manifest <manifest> --pretty`
@@ -99,8 +107,11 @@ nearby `AGENTS.md` files.
 
 Useful collection options: `--exclude-thread`, `--max-sessions`,
 `--max-message-chars`, `--max-output-chars`, and `--max-events-per-session`.
+Use `--include-internal` only when internal orchestration sessions should be
+included in the analysis packs instead of recorded separately.
 
 `archive_sessions.py` is the only archival tool for this skill. Dry-run is the
 default; `--apply` is required for real archiving. It reads target sessions from
-`manifest.projects[].session_ids`, creates a timestamped DB backup, and reports
-archived/skipped/error counts.
+`manifest.projects[].session_ids` and `manifest.internal_sessions[].id`, creates
+a timestamped DB backup, and reports analyzed/internal results separately along
+with archived/skipped/error totals.

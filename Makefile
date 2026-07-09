@@ -4,14 +4,14 @@ SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) 
 	$(wildcard sh/setup/*.sh)
 VERBOSE ?= 0
 
-.PHONY: install update check check-lua check-shell format-lua
+.PHONY: install update check check-lua check-shell check-python format-lua
 install:
 	@VERBOSE=$(VERBOSE) ./sh/setup/install.sh
 
 update:
 	@VERBOSE=$(VERBOSE) ./sh/setup/update.sh
 
-check: check-lua check-shell
+check: check-lua check-shell check-python
 
 check-lua:
 	@luacheck $(LUA_FILES)
@@ -31,6 +31,11 @@ check-shell:
 		shellcheck $(SHELL_SCRIPT_FILES) $$bin_shell_files; \
 	fi
 	@shellcheck -s bash $(SHELL_FRAGMENT_FILES)
+
+check-python:
+	@PYTHONPYCACHEPREFIX=/private/tmp/dotfiles-python-cache \
+		python3 -m unittest discover \
+		-s config/codex/skills/ai-session-coach/tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)

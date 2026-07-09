@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import datetime as dt
 import hashlib
 import json
@@ -34,6 +35,15 @@ ERROR_PATTERNS = [
     re.compile(r"Operation not permitted"),
     re.compile(r"permission denied", re.IGNORECASE),
 ]
+
+APPROVAL_REVIEW_PROMPT = (
+    "The following is the Codex agent history whose request action you are assessing"
+)
+MODEL_COMMAND_PATTERN = re.compile(r"^/model(?:\s|$)", re.IGNORECASE)
+SESSION_COACH_PATTERNS = (
+    re.compile(r"^(?:\$|/)?ai-session-coach(?:\s|$)", re.IGNORECASE),
+    re.compile(r"^use \$ai-session-coach(?:\s|$)", re.IGNORECASE),
+)
 
 
 def redact(text: str) -> str:
@@ -124,6 +134,54 @@ def exclude_threads(rows: list[dict[str, Any]], thread_ids: set[str]) -> list[di
     if not thread_ids:
         return rows
     return [row for row in rows if row.get("id") not in thread_ids]
+
+
+def internal_session_reason(row: dict[str, Any]) -> str | None:
+    thread_source = compact_whitespace(str(row.get("thread_source") or "user")).lower()
+    if thread_source != "user":
+        return "codex_subagent"
+
+    prompt_candidates = (
+        compact_whitespace(str(row.get("first_user_message") or "")),
+        compact_whitespace(str(row.get("title") or "")),
+    )
+    if any(prompt.startswith(APPROVAL_REVIEW_PROMPT) for prompt in prompt_candidates):
+        return "approval_review_prompt"
+    if any(MODEL_COMMAND_PATTERN.match(prompt) for prompt in prompt_candidates):
+        return "model_switch"
+    if any(
+        pattern.match(prompt)
+        for prompt in prompt_candidates
+        for pattern in SESSION_COACH_PATTERNS
+    ):
+        return "session_coach_housekeeping"
+    return None
+
+
+def partition_internal_sessions(
+    rows: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    user_rows: list[dict[str, Any]] = []
+    internal_rows: list[dict[str, Any]] = []
+    for row in rows:
+        reason = internal_session_reason(row)
+        if reason is None:
+            user_rows.append(row)
+            continue
+        internal_row = dict(row)
+        internal_row["internal_reason"] = reason
+        internal_rows.append(internal_row)
+    return user_rows, internal_rows
+
+
+def internal_session_summary(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": row.get("id"),
+        "source": "codex",
+        "project": row.get("cwd") or "",
+        "timestamp": iso_from_ms(row.get("created_ms")),
+        "reason": row.get("internal_reason"),
+    }
 
 
 def normalize_project(value: str) -> dict[str, Any]:
@@ -566,6 +624,7 @@ def build_filters(
         "unarchived": args.unarchived,
         "exclude_current_thread": args.exclude_current_thread,
         "exclude_thread_ids": sorted(excluded_thread_ids),
+        "include_internal": args.include_internal,
         "max_sessions": max_sessions,
     }
 
@@ -583,6 +642,7 @@ def write_analysis_packs(
     counts: dict[str, Any],
     analysis_focus: str,
     grouped_sessions: dict[str, list[dict[str, Any]]],
+    internal_sessions: list[dict[str, Any]],
     max_agents_chars: int,
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -621,7 +681,14 @@ def write_analysis_packs(
         for session in sessions
         if session.get("id")
     ]
-    snapshot_hash = hashlib.sha256("\n".join(session_ids).encode("utf-8")).hexdigest()[:12]
+    snapshot_session_ids = session_ids + [
+        str(session.get("id"))
+        for session in internal_sessions
+        if session.get("id")
+    ]
+    snapshot_hash = hashlib.sha256(
+        "\n".join(snapshot_session_ids).encode("utf-8")
+    ).hexdigest()[:12]
     snapshot_id = f"{generated_at.replace(':', '').replace('-', '').replace('.', '')}-{snapshot_hash}"
     manifest = {
         "generated_at": generated_at,
@@ -631,6 +698,7 @@ def write_analysis_packs(
         "filters": filters,
         "counts": counts,
         "projects": projects,
+        "internal_sessions": internal_sessions,
         "read_only": True,
         "notes": "This snapshot is for analysis only. It does not archive, update, move, or delete Codex sessions.",
     }
@@ -647,6 +715,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--unarchived", action="store_true", help="Only include sessions with archived = 0.")
     parser.add_argument("--exclude-current-thread", action="store_true", help="Exclude CODEX_THREAD_ID when it is set.")
     parser.add_argument("--exclude-thread", action="append", default=[], help="Thread ID to exclude. Repeatable.")
+    parser.add_argument(
+        "--include-internal",
+        action="store_true",
+        help="Include subagents, approval reviews, coach housekeeping, and model-switch sessions.",
+    )
     parser.add_argument("--out-dir", help="Write manifest.json and per-project JSON analysis packs to this directory.")
     parser.add_argument("--analysis-focus", default="", help="User request or analysis focus copied into generated packs.")
     parser.add_argument(
@@ -683,7 +756,10 @@ def main(argv: list[str]) -> int:
     archive_filtered_rows = [row for row in rows if not bool(row.get("archived"))] if args.unarchived else rows
     eligible_rows = exclude_threads(archive_filtered_rows, excluded_thread_ids)
     matched_rows = [row for row in eligible_rows if cwd_matches(row.get("cwd", ""), projects)]
-    limited_rows = limit_rows(matched_rows, max_sessions)
+    user_rows, internal_rows = partition_internal_sessions(matched_rows)
+    analysis_rows = matched_rows if args.include_internal else user_rows
+    excluded_internal_rows = [] if args.include_internal else internal_rows
+    limited_rows = limit_rows(analysis_rows, max_sessions)
 
     sessions = [
         build_session(
@@ -699,6 +775,12 @@ def main(argv: list[str]) -> int:
 
     cwds = sorted({session.get("cwd", "") for session in sessions if session.get("cwd")})
     grouped_sessions = group_sessions_by_cwd(sessions)
+    internal_sessions = [
+        internal_session_summary(row) for row in excluded_internal_rows
+    ]
+    internal_reasons = Counter(
+        str(row.get("internal_reason")) for row in excluded_internal_rows
+    )
     generated_at = dt.datetime.now(tz=dt.timezone.utc).isoformat()
     filters = build_filters(
         args,
@@ -710,7 +792,12 @@ def main(argv: list[str]) -> int:
     counts = {
         "candidate_sessions_in_time_window": len(rows),
         "sessions_after_archive_filter": len(archive_filtered_rows),
-        "excluded_sessions": len(archive_filtered_rows) - len(eligible_rows),
+        "excluded_sessions": (
+            len(archive_filtered_rows) - len(eligible_rows) + len(excluded_internal_rows)
+        ),
+        "explicitly_excluded_sessions": len(archive_filtered_rows) - len(eligible_rows),
+        "internal_sessions_excluded": len(excluded_internal_rows),
+        "internal_exclusion_reasons": dict(sorted(internal_reasons.items())),
         "matched_sessions": len(matched_rows),
         "loaded_sessions": len(sessions),
         "projects": len(grouped_sessions),
@@ -727,6 +814,7 @@ def main(argv: list[str]) -> int:
             counts=counts,
             analysis_focus=args.analysis_focus,
             grouped_sessions=grouped_sessions,
+            internal_sessions=internal_sessions,
             max_agents_chars=args.max_output_chars * 2,
         )
         output = {
@@ -748,6 +836,7 @@ def main(argv: list[str]) -> int:
         "projects": make_project_summaries(grouped_sessions),
         "existing_project_instructions": find_agents_files(cwds, args.max_output_chars * 2),
         "sessions": sessions,
+        "internal_sessions": internal_sessions,
     }
 
     json.dump(output, sys.stdout, ensure_ascii=False, indent=2 if args.pretty else None)

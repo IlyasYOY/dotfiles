@@ -188,9 +188,8 @@ try to use it unchanged.
 ### Change these first
 
 - Project layout: the setup scripts assume `~/Projects/IlyasYOY` plus
-  `~/Projects/Work`, with notes living in `~/Projects/kb-store` and
-  `~/Projects/IlyasYOY/Legacy-Notes`. If you use a different layout, update the
-  path constants in `sh/setup/helpers.sh`.
+  `~/Projects/Work`, with notes living in `~/Projects/kb-store`. If you use a
+  different layout, update the path constants in `sh/setup/helpers.sh`.
 - Notes: `sh/setup/install.sh` initializes `~/Projects/kb-store` as a local git
   repository when it is missing.
 - Personal repositories: `sh/setup/install.sh` and `sh/setup/update.sh` clone
@@ -247,11 +246,13 @@ make update VERBOSE=1
 make check
 make check-lua
 make check-shell
+make check-python
 make format-lua
 ```
 
-- `make check` runs the first-pass validation for Lua and shell files and is
-  the same check target used by CI.
+- `make check` runs the first-pass validation for Lua, shell, and Python skill
+  files and is the same check target used by CI.
 - `make check-lua` runs the Lua lint and formatting checks.
 - `make check-shell` runs `shellcheck` for shell scripts and shell fragments.
+- `make check-python` runs the AI session coach's standard-library tests.
 - `make format-lua` formats Lua files with `stylua`.

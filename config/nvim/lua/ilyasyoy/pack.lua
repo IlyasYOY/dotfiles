@@ -61,9 +61,10 @@ vim.api.nvim_create_autocmd("PackChanged", {
 
 local M = {
     specs = {
-        ilyasyoy "theme.nvim",
+        ilyasyoy("theme.nvim", { live = true }),
         ilyasyoy("ts-pack.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
+        ilyasyoy("qfstore.nvim", { live = true }),
 
         gh "jamessan/vim-gnupg",
         gh "glacambre/firenvim",

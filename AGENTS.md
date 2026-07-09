@@ -94,9 +94,14 @@ make update VERBOSE=1
 - Keep `config/nvim/nvim-pack-lock.json` and `config/nvim/ts-pack-lock.json`
   under version control when plugin or Treesitter lock state changes
 - Keep plugin-level configuration in `config/nvim/after/plugin/*.lua`,
-  including LSP, DAP, Fugitive, Dispatch, FZF, Treesitter, and Obsidian setup
+  including LSP, DAP, Fugitive, Dispatch, FZF, Treesitter, Theme, and Obsidian setup
 - Keep `config/nvim/after/ftplugin/*.lua` focused on buffer-local options,
   filetype-specific mappings, and commands
+- Keep Neovim colorscheme implementation in the sibling
+  `~/Projects/IlyasYOY/theme.nvim` repository. Dotfiles should only register
+  that plugin in `config/nvim/lua/ilyasyoy/pack.lua` and select/configure it in
+  `config/nvim/after/plugin/theme.lua`; do not reintroduce local
+  `config/nvim/colors/*.lua` themes unless a task explicitly asks for it
 - Keep plugin loading eager unless a task explicitly asks to reintroduce lazy loading
 - `pack.lua` may prefer local plugin checkouts under
   `~/Projects/IlyasYOY/<plugin>` before falling back to GitHub; preserve that
@@ -158,6 +163,8 @@ make update VERBOSE=1
   mappings, Java, password-store, tests, and Treesitter behavior
 - `config/nvim/after/ftplugin/` - Language-specific Neovim configs
 - `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
+- `~/Projects/IlyasYOY/theme.nvim` - External Neovim colorscheme plugin that
+  provides the `ilyasyoy-mono` theme used by `config/nvim/after/plugin/theme.lua`
 - `config/nvim/after/queries/` - Treesitter query overrides and injections
 - `config/nvim/snippets/` - LuaSnip snippets (gitcommit, go, java, lua, markdown)
 - `config/nvim/spell/` - Checked-in custom spell files used by Neovim

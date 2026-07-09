@@ -17,12 +17,12 @@ setup_my_project() {
 
     clone_repos_parallel \
         "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim" \
-        "git@github.com:IlyasYOY/coredor.nvim.git" "$PERSONAL_PROJECTS_DIR/coredor.nvim" \
-        "git@github.com:IlyasYOY/git-link.nvim.git" "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
+        "git@github.com:IlyasYOY/qfstore.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim" \
         "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim" \
+        "git@github.com:IlyasYOY/ts-pack.nvim.git" "$PERSONAL_PROJECTS_DIR/monotask" \
         "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \
+        "git@github.com:IlyasYOY/IlyasYOY.git" "$PERSONAL_PROJECTS_DIR/monotask" \
         "git@github.com:IlyasYOY/singularity-mcp.git" "$PERSONAL_PROJECTS_DIR/singularity-mcp"
-    clone_repo "git@github.com:IlyasYOY/exectest.git" "$PERSONAL_PROJECTS_DIR/monotask" || true
 }
 
 setup_notes() {
@@ -33,8 +33,6 @@ setup_notes() {
         git -C "$KB_DIR" init
         success "Initialized kb-store git repo"
     fi
-    clone_repos_parallel \
-        "git@github.com:IlyasYOY/Legacy-Notes.git" "$LEGACY_NOTES_DIR"
 }
 
 setup_links_to_config_files() {

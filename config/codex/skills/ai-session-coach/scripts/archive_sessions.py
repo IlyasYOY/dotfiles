@@ -47,9 +47,9 @@ def load_manifest(path: Path) -> dict[str, Any]:
     return value
 
 
-def extract_session_ids(manifest: dict[str, Any]) -> list[str]:
+def extract_session_targets(manifest: dict[str, Any]) -> list[dict[str, str]]:
     seen: set[str] = set()
-    session_ids: list[str] = []
+    targets: list[dict[str, str]] = []
     projects = manifest.get("projects", [])
     if not isinstance(projects, list):
         raise ValueError("manifest.projects must be a list")
@@ -62,8 +62,24 @@ def extract_session_ids(manifest: dict[str, Any]) -> list[str]:
             if session_id in seen:
                 continue
             seen.add(session_id)
-            session_ids.append(session_id)
-    return session_ids
+            targets.append({"id": session_id, "category": "analyzed"})
+
+    internal_sessions = manifest.get("internal_sessions", [])
+    if not isinstance(internal_sessions, list):
+        raise ValueError("manifest.internal_sessions must be a list")
+    for session in internal_sessions:
+        if not isinstance(session, dict):
+            continue
+        session_id = session.get("id")
+        if not isinstance(session_id, str) or not session_id or session_id in seen:
+            continue
+        seen.add(session_id)
+        targets.append({"id": session_id, "category": "internal"})
+    return targets
+
+
+def extract_session_ids(manifest: dict[str, Any]) -> list[str]:
+    return [target["id"] for target in extract_session_targets(manifest)]
 
 
 def chunked(values: list[str], size: int = 800) -> list[list[str]]:
@@ -139,9 +155,11 @@ def build_result(
     source: Path | None = None,
     destination: Path | None = None,
     planned_action: str | None = None,
+    category: str = "analyzed",
 ) -> dict[str, Any]:
     result: dict[str, Any] = {
         "id": session_id,
+        "category": category,
         "status": status,
     }
     if row:
@@ -169,18 +187,22 @@ def build_plan(
     if not db_path.exists():
         raise FileNotFoundError(f"state database not found: {db_path}")
 
-    session_ids = extract_session_ids(manifest)
+    targets = extract_session_targets(manifest)
+    session_ids = [target["id"] for target in targets]
     rows_by_id = fetch_threads(db_path, session_ids)
     archived_root = codex_home / "archived_sessions"
 
     results: list[dict[str, Any]] = []
-    for session_id in session_ids:
+    for target in targets:
+        session_id = target["id"]
+        category = target["category"]
         if current_thread_id and session_id == current_thread_id:
             results.append(
                 build_result(
                     status="skipped_current_thread",
                     session_id=session_id,
                     reason="matches CODEX_THREAD_ID",
+                    category=category,
                 )
             )
             continue
@@ -192,12 +214,20 @@ def build_plan(
                     status="error",
                     session_id=session_id,
                     reason="thread not found in state_5.sqlite",
+                    category=category,
                 )
             )
             continue
 
         if bool(row.get("archived")):
-            results.append(build_result(status="already_archived", session_id=session_id, row=row))
+            results.append(
+                build_result(
+                    status="already_archived",
+                    session_id=session_id,
+                    row=row,
+                    category=category,
+                )
+            )
             continue
 
         source = find_rollout(
@@ -213,6 +243,7 @@ def build_plan(
                     session_id=session_id,
                     row=row,
                     reason="rollout file not found",
+                    category=category,
                 )
             )
             continue
@@ -230,6 +261,7 @@ def build_plan(
                     reason="archive destination already exists",
                     source=source,
                     destination=destination,
+                    category=category,
                 )
             )
             continue
@@ -244,6 +276,7 @@ def build_plan(
                 source=source,
                 destination=destination,
                 planned_action=planned_action,
+                category=category,
             )
         )
 
@@ -259,6 +292,17 @@ def summarize(results: list[dict[str, Any]]) -> dict[str, int]:
         elif status in summary:
             summary[status] += 1
     return summary
+
+
+def summarize_by_category(
+    results: list[dict[str, Any]],
+) -> dict[str, dict[str, int]]:
+    return {
+        category: summarize(
+            [result for result in results if result.get("category") == category]
+        )
+        for category in ("analyzed", "internal")
+    }
 
 
 def backup_database(db_path: Path) -> Path:
@@ -391,6 +435,7 @@ def main(argv: list[str]) -> int:
         codex_home=codex_home,
         current_thread_id=current_thread_id,
     )
+    category_summary = summarize_by_category(results)
 
     backup_path: Path | None = None
     restore_errors: list[dict[str, str]] = []
@@ -402,6 +447,7 @@ def main(argv: list[str]) -> int:
             results=results,
         )
         summary = summarize(results)
+        category_summary = summarize_by_category(results)
 
     output = {
         "mode": "apply" if args.apply else "dry-run",
@@ -412,6 +458,7 @@ def main(argv: list[str]) -> int:
         "current_thread_id": current_thread_id,
         "backup_path": str(backup_path) if backup_path else None,
         "summary": summary,
+        "summary_by_category": category_summary,
         "apply_error": apply_error,
         "restore_errors": restore_errors,
         "results": results,
