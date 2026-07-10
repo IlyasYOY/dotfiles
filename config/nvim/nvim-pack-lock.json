@@ -17,7 +17,7 @@
       "src": "https://github.com/shumphrey/fugitive-gitlab.vim"
     },
     "fzf-lua": {
-      "rev": "774150bc05f774af1df614f55d156b3318c6decd",
+      "rev": "532d463f5c83595192fe740572d8fd6902b2217a",
       "src": "https://github.com/ibhagwan/fzf-lua"
     },
     "lualine.nvim": {
@@ -85,9 +85,9 @@
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
-    "theme.nvim": {
-      "rev": "73d9b21913e668fd85f9ef2f61129efcbd83509f",
-      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/theme.nvim"
+    "qfstore.nvim": {
+      "rev": "7d62b5e9289c0b6e3378f269c13f970023f0f3f9",
+      "src": "https://github.com/IlyasYOY/qfstore.nvim"
     },
     "ts-pack.nvim": {
       "rev": "a635da05c84a7fef216ac007ec8b69e8c7a07e78",
