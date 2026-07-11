@@ -176,6 +176,9 @@ make update VERBOSE=1
 - `config/agent/skills/` - Shared portable skills linked into both Codex and
   OpenCode; any immediate child directory with `SKILL.md` is installed
 - `config/codex/` - Codex instructions, rules, and Codex-only skills
+- `config/codex/cli.config.toml` - Coding-focused CLI profile that disables
+  app connectors, plugins, and the Singularity MCP server and configures the
+  terminal UI
 - `config/codex/skills/` - Codex-only skills that can read local Codex session
   state, such as `ai-session-coach` and `session-hardener`
 - `.agents/skills/` - Repository-local agent skills such as
@@ -280,9 +283,14 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 
 <!-- Codex setup -->
 - `sh/setup/install.sh` links `config/codex/AGENTS.md` to
-  `~/.codex/AGENTS.md`, `config/codex/rules/default.rules` to
+  `~/.codex/AGENTS.md`, `config/codex/cli.config.toml` to
+  `~/.codex/cli.config.toml`, `config/codex/rules/default.rules` to
   `~/.codex/rules/default.rules`, and skills into
   `~/.codex/skills/IlyasYOY/<skill>`.
+- Interactive shells route `codex` through the `cli` profile. Use `codex-full`
+  for unprofiled desktop and administrative commands. Keep CLI-only integration
+  restrictions in the profile so desktop connector and plugin settings remain
+  independent.
 - If `~/.codex/skills/IlyasYOY` is a legacy repo-managed symlink, setup should
   replace it with a directory of per-skill symlinks while preserving unknown
   user-created entries.

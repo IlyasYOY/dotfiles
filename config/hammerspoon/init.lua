@@ -1,6 +1,7 @@
 for _, app in ipairs {
     { shortcut = "1", name = "WezTerm" },
     { shortcut = "2", name = "Zen" },
+    { shortcut = "3", name = "ChatGPT" },
     { shortcut = "5", name = "Final Cut Pro" },
 } do
     hs.hotkey.bind({ "alt" }, app.shortcut, function()

@@ -89,6 +89,10 @@
       "rev": "7d62b5e9289c0b6e3378f269c13f970023f0f3f9",
       "src": "https://github.com/IlyasYOY/qfstore.nvim"
     },
+    "theme.nvim": {
+      "rev": "73d9b21913e668fd85f9ef2f61129efcbd83509f",
+      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/theme.nvim"
+    },
     "ts-pack.nvim": {
       "rev": "a635da05c84a7fef216ac007ec8b69e8c7a07e78",
       "src": "https://github.com/IlyasYOY/ts-pack.nvim"

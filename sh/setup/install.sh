@@ -285,12 +285,13 @@ setup_codex() {
     local codex_config_dir="$HOME/.codex"
     mkdir -pv "$codex_config_dir"
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
+    symlink "$DOTFILES_DIR/config/codex/cli.config.toml" "$codex_config_dir/cli.config.toml"
 
     local codex_root_config
     codex_root_config=$(cat <<'EOF'
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 personality = "pragmatic"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "medium"
 plan_mode_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
@@ -335,33 +336,6 @@ EOF
         "sandbox_workspace_write" \
         "ilyasyoy codex sandbox config" \
         "$codex_sandbox_config"
-
-    local codex_tui_config
-    codex_tui_config=$(cat <<'EOF'
-notifications = true
-notification_method = "bel"
-notification_condition = "always"
-status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
-session_picker_view = "comfortable"
-pet = "disabled"
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "tui" \
-        "ilyasyoy codex tui config" \
-        "$codex_tui_config"
-
-    local codex_default_apps_config
-    codex_default_apps_config=$(cat <<'EOF'
-enabled = false
-EOF
-)
-    add_toml_table_block \
-        "$codex_config_dir/config.toml" \
-        "apps._default" \
-        "ilyasyoy codex default apps config" \
-        "$codex_default_apps_config"
 
     local codex_features_config
     codex_features_config=$(cat <<'EOF'

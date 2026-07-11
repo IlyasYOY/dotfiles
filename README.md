@@ -133,6 +133,7 @@ Main links created by the installer:
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
+- `config/codex/cli.config.toml` -> `~/.codex/cli.config.toml`
 - `config/codex/rules/default.rules` -> `~/.codex/rules/default.rules`
 - shared portable skills from `config/agent/skills/<skill>/SKILL.md` ->
   `~/.codex/skills/IlyasYOY/<skill>` and
@@ -147,10 +148,17 @@ Main links created by the installer:
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 
-Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, and
-managed TOML blocks in `~/.codex/config.toml`. Shared portable skills such as
-`caveman`, `git-commit`, and `hammerspoon` are linked from
-`config/agent/skills`. Codex-only session-history skills stay under
+Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, the
+`cli` profile in `config/codex/cli.config.toml`, and managed TOML blocks in
+`~/.codex/config.toml`. Interactive shells route `codex` through
+`codex --profile cli`; use `codex-full` for unprofiled desktop and
+administrative commands such as `codex-full app` or `codex-full plugin`. The
+profile disables apps, plugins, and the Singularity MCP server, and owns
+CLI-only TUI settings. It keeps the shared `~/.codex` state, including
+authentication, history, and memories.
+
+Shared portable skills such as `caveman`, `git-commit`, and `hammerspoon` are
+linked from `config/agent/skills`. Codex-only session-history skills stay under
 `config/codex/skills` because they read `~/.codex/state_5.sqlite` and rollout
 files. Setup discovers installable skills from immediate child directories that
 contain `SKILL.md`.

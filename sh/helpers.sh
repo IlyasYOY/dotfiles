@@ -60,6 +60,14 @@ convert-webp-to-png() {
     done
 }
 
+if command -v codex >/dev/null 2>&1; then
+    codex() {
+        command codex --profile cli "$@"
+    }
+
+    alias codex-full="command codex"
+fi
+
 _ai_cli() {
     if command -v codex >/dev/null 2>&1; then
         printf "codex\n"
@@ -97,77 +105,6 @@ ai-resume() {
 
     printf "ai-resume: neither codex nor opencode is available\n" >&2
     return 1
-}
-
-ai-kb() {
-    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
-    local tool
-
-    if [ ! -d "$kb_dir" ]; then
-        printf "ai-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
-        return 1
-    fi
-
-    if ! tool=$(_ai_cli); then
-        printf "ai-kb: neither codex nor opencode is available\n" >&2
-        return 1
-    fi
-
-    (
-        cd "$kb_dir" || exit
-        "$tool" "$@"
-    )
-}
-
-alias codexr="codex resume"
-alias codex-spark="codex --model gpt-5.3-codex-spark"
-alias codexrl="codex resume --last"
-alias opencoder="opencode --continue"
-
-codex-kb() {
-    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
-
-    if [ ! -d "$kb_dir" ]; then
-        printf "codex-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
-        return 1
-    fi
-
-    (
-        cd "$kb_dir" || exit
-        codex "$@"
-    )
-}
-
-opencode-kb() {
-    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
-
-    if [ ! -d "$kb_dir" ]; then
-        printf "opencode-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
-        return 1
-    fi
-
-    (
-        cd "$kb_dir" || exit
-        opencode "$@"
-    )
-}
-
-nvim-kb() {
-    local kb_dir="${ILYASYOY_KB_STORE_DIR:-$HOME/Projects/kb-store}"
-
-    if [ ! -d "$kb_dir" ]; then
-        printf "nvim-kb: kb-store directory not found: %s\n" "$kb_dir" >&2
-        return 1
-    fi
-
-    (
-        cd "$kb_dir" || exit
-        if [ "$#" -eq 0 ]; then
-            nvim .
-        else
-            nvim "$@"
-        fi
-    )
 }
 
 # _kb_main_root prints the absolute (physical) path of the main git repository
