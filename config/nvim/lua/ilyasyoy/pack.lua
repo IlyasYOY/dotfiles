@@ -65,6 +65,7 @@ local M = {
         ilyasyoy("ts-pack.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
         ilyasyoy("qfstore.nvim", { live = true }),
+        ilyasyoy("spellfix.nvim", { live = true }),
 
         gh "jamessan/vim-gnupg",
         gh "glacambre/firenvim",

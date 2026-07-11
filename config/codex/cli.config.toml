@@ -20,5 +20,8 @@ enabled = false
 [projects."/Users/ilyasyoy/Projects/IlyasYOY/singularity-mcp"]
 trust_level = "trusted"
 
+[projects."/Users/ilyasyoy/Projects/IlyasYOY/spellfix.nvim"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.6-sol" = 4
