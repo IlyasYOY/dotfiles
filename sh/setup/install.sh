@@ -18,7 +18,8 @@ setup_my_project() {
     clone_repos_parallel \
         "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim" \
         "git@github.com:IlyasYOY/qfstore.nvim.git" "$PERSONAL_PROJECTS_DIR/qfstore.nvim" \
-        "git@github.com:IlyasYOY/dispatch-kit.nvim.nvim.git" "$PERSONAL_PROJECTS_DIR/qfstore.nvim" \
+        "git@github.com:IlyasYOY/markdown-tools.nvim.git" "$PERSONAL_PROJECTS_DIR/markdown-tools.nvim" \
+        "git@github.com:IlyasYOY/dispatch-kit.nvim.nvim.git" "$PERSONAL_PROJECTS_DIR/dispatch-kit.nvim" \
         "git@github.com:IlyasYOY/spellfix.nvim.git" "$PERSONAL_PROJECTS_DIR/spellfix.nvim" \
         "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim" \
         "git@github.com:IlyasYOY/ts-pack.nvim.git" "$PERSONAL_PROJECTS_DIR/monotask" \
