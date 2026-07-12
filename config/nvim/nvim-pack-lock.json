@@ -4,6 +4,10 @@
       "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
+    "agent-review.nvim": {
+      "rev": "aa4f309b3061fcca28165f3c7e7f8a63cae3b50b",
+      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/agent-review.nvim"
+    },
     "auto-dark-mode.nvim": {
       "rev": "54058b4fe414bd64bd2904a6f8a63f1f14e3d8df",
       "src": "https://github.com/f-person/auto-dark-mode.nvim"
