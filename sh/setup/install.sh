@@ -15,16 +15,16 @@ setup_basic_directories() {
 setup_my_project() {
     info "👨💻 Setting up personal projects..."
 
-    clone_repos_parallel \
-        "git@github.com:IlyasYOY/agent-review.nvim.git" "$PERSONAL_PROJECTS_DIR/agent-review.nvim" \
-        "git@github.com:IlyasYOY/dispatch-kit.nvim.nvim.git" "$PERSONAL_PROJECTS_DIR/dispatch-kit.nvim" \
-        "git@github.com:IlyasYOY/markdown-tools.nvim.git" "$PERSONAL_PROJECTS_DIR/markdown-tools.nvim" \
-        "git@github.com:IlyasYOY/obs.nvim.git" "$PERSONAL_PROJECTS_DIR/obs.nvim" \
-        "git@github.com:IlyasYOY/qfstore.nvim.git" "$PERSONAL_PROJECTS_DIR/qfstore.nvim" \
-        "git@github.com:IlyasYOY/spellfix.nvim.git" "$PERSONAL_PROJECTS_DIR/spellfix.nvim" \
-        "git@github.com:IlyasYOY/test-toggle.nvim.git" "$PERSONAL_PROJECTS_DIR/test-toggle.nvim" \
-        "git@github.com:IlyasYOY/theme.nvim.git" "$PERSONAL_PROJECTS_DIR/theme.nvim" \
-        "git@github.com:IlyasYOY/ts-pack.nvim.git" "$PERSONAL_PROJECTS_DIR/ts-pack.nvim" 
+    local -a plugin_clone_args=()
+    local plugin
+    for plugin in "${PERSONAL_NVIM_PLUGIN_REPOS[@]}"; do
+        plugin_clone_args+=(
+            "git@github.com:IlyasYOY/$plugin.git"
+            "$PERSONAL_PROJECTS_DIR/$plugin"
+        )
+    done
+
+    clone_repos_parallel "${plugin_clone_args[@]}"
 
     clone_repos_parallel \
         "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \

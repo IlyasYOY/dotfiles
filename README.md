@@ -201,9 +201,9 @@ try to use it unchanged.
 - Notes: `sh/setup/install.sh` initializes `~/Projects/kb-store` as a local git
   repository when it is missing.
 - Personal repositories: `sh/setup/install.sh` and `sh/setup/update.sh` clone
-  and update personal repositories such as `obs.nvim`, `theme.nvim`,
-  `git-link.nvim`, `monotask`, and `password-store`. Remove, replace, or
-  comment those entries if you do not own those repositories.
+  and update the personal Neovim plugins registered in `pack.lua`, plus other
+  projects such as `git-link.nvim`, `monotask`, and `password-store`. Remove or
+  replace those entries if you do not own those repositories.
 - Secrets and external services: the bootstrap clones a personal password-store
   repository and shell helpers assume that store is available. If you do not use
   that exact setup, remove or replace those entries.

@@ -22,11 +22,11 @@ jobs:
 
       - name: Install check tools
         env:
-          STYLUA_VERSION: v2.4.0
+          STYLUA_VERSION: v2.5.2
         run: |
           sudo apt-get update
           sudo apt-get install --yes shellcheck unzip
-          luarocks install luacheck
+          luarocks install luacheck 1.2.0-1
           curl -fsSL -o stylua.zip "https://github.com/JohnnyMorganz/StyLua/releases/download/${STYLUA_VERSION}/stylua-linux-x86_64.zip"
           unzip -q stylua.zip -d stylua-bin
           sudo install stylua-bin/stylua /usr/local/bin/stylua

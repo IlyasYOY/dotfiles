@@ -8,22 +8,27 @@ source "$(dirname "$0")/mac.sh"
 source "$(dirname "$0")/raspberry-pi.sh"
 
 update_local_repos() {
+    local -a repo_paths=(
+        "$PERSONAL_PROJECTS_DIR/IlyasYOY"
+        "$PERSONAL_PROJECTS_DIR/detailederror"
+        "$PERSONAL_PROJECTS_DIR/ffmpeg-video-chapters-parser"
+        "$PERSONAL_PROJECTS_DIR/git-link.nvim"
+        "$PERSONAL_PROJECTS_DIR/go-retry"
+        "$PERSONAL_PROJECTS_DIR/httpservertest"
+        "$PERSONAL_PROJECTS_DIR/monotask"
+        "$PERSONAL_PROJECTS_DIR/remotion-projects"
+        "$PERSONAL_PROJECTS_DIR/singularity-mcp"
+        "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
+        "$HOME/.password-store"
+    )
+    local plugin
+    for plugin in "${PERSONAL_NVIM_PLUGIN_REPOS[@]}"; do
+        repo_paths+=("$PERSONAL_PROJECTS_DIR/$plugin")
+    done
+
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles" || true
 
-    update_repos_parallel \
-        "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
-        "$PERSONAL_PROJECTS_DIR/detailederror" \
-        "$PERSONAL_PROJECTS_DIR/ffmpeg-video-chapters-parser" \
-        "$PERSONAL_PROJECTS_DIR/git-link.nvim" \
-        "$PERSONAL_PROJECTS_DIR/go-retry" \
-        "$PERSONAL_PROJECTS_DIR/httpservertest" \
-        "$PERSONAL_PROJECTS_DIR/monotask" \
-        "$PERSONAL_PROJECTS_DIR/obs.nvim" \
-        "$PERSONAL_PROJECTS_DIR/remotion-projects" \
-        "$PERSONAL_PROJECTS_DIR/singularity-mcp" \
-        "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot" \
-        "$PERSONAL_PROJECTS_DIR/theme.nvim" \
-        "$HOME/.password-store"
+    update_repos_parallel "${repo_paths[@]}"
 }
 
 update_repo() {

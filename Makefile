@@ -4,7 +4,8 @@ SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) 
 	$(wildcard sh/setup/*.sh)
 VERBOSE ?= 0
 
-.PHONY: install update check check-lua check-shell check-python format-lua
+.PHONY: install update check check-lua check-shell check-python
+
 install:
 	@VERBOSE=$(VERBOSE) ./sh/setup/install.sh
 

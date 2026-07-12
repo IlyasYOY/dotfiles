@@ -12,6 +12,19 @@ ZSHRC="$HOME/.zshrc"
 BASHRC="$HOME/.bashrc"
 DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)
 
+# shellcheck disable=SC2034 # Shared by install.sh and update.sh after sourcing.
+readonly -a PERSONAL_NVIM_PLUGIN_REPOS=(
+    "agent-review.nvim"
+    "dispatch-kit.nvim"
+    "markdown-tools.nvim"
+    "obs.nvim"
+    "qfstore.nvim"
+    "spellfix.nvim"
+    "test-toggle.nvim"
+    "theme.nvim"
+    "ts-pack.nvim"
+)
+
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
 }

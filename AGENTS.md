@@ -42,8 +42,8 @@ stylua $(git ls-files -- '*.lua')
 stylua config/nvim/lua/ilyasyoy/init.lua
 ```
 
-CI runs Lua 5.4, installs `luacheck` with LuaRocks, installs
-`shellcheck`, and pins StyLua to `v2.4.0` before running `make check`.
+CI runs Lua 5.4, pins Luacheck to `1.2.0-1`, installs
+`shellcheck`, and pins StyLua to `v2.5.2` before running `make check`.
 
 ### Shell Scripts
 
@@ -128,6 +128,8 @@ make update VERBOSE=1
   `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
 - Keep clone/update parallelism in the shared setup helpers and respect
   `GIT_PARALLEL_JOBS` when changing personal repository bootstrap behavior
+- Keep `PERSONAL_NVIM_PLUGIN_REPOS` in `sh/setup/helpers.sh` as the shared
+  source for cloning, updating, and locally checking personal Neovim plugins
 - Keep macOS GnuPG Touch ID pinentry behavior coordinated across
   `Brewfile.mac`, `config/gnupg/gpg-agent.conf`, and `sh/setup/mac.sh`
 
