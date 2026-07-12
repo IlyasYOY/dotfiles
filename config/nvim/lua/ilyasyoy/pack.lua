@@ -63,6 +63,7 @@ local M = {
     specs = {
         ilyasyoy("theme.nvim", { live = true }),
         ilyasyoy("ts-pack.nvim", { live = true }),
+        ilyasyoy("dispatch-kit.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
         ilyasyoy("qfstore.nvim", { live = true }),
         ilyasyoy("spellfix.nvim", { live = true }),
