@@ -1,3 +1,4 @@
+service_tier = "fast"
 [features]
 apps = false
 plugins = false
@@ -21,6 +22,9 @@ enabled = false
 trust_level = "trusted"
 
 [projects."/Users/ilyasyoy/Projects/IlyasYOY/spellfix.nvim"]
+trust_level = "trusted"
+
+[projects."/Users/ilyasyoy/Projects/IlyasYOY/IlyasYOY"]
 trust_level = "trusted"
 
 [tui.model_availability_nux]

@@ -1,5 +1,3 @@
-local toggle_helper = require "ilyasyoy.functions.toggle_test"
-
 vim.opt_local.expandtab = false
 vim.opt_local.spell = false
 vim.bo.formatoptions = vim.bo.formatoptions .. "ro/"
@@ -170,19 +168,3 @@ local function setup_lsp_actions()
 end
 
 setup_lsp_actions()
-
-toggle_helper.setup {
-    command = "GoToggleTest",
-    rules = {
-        {
-            detect = "_test%.go$",
-            gsub_pattern = "(%w+)_test%.go$",
-            gsub_replacement = "%1.go",
-        },
-        {
-            detect = "%.go$",
-            gsub_pattern = "(%w+)%.go$",
-            gsub_replacement = "%1_test.go",
-        },
-    },
-}

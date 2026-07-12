@@ -67,6 +67,7 @@ local M = {
         ilyasyoy("obs.nvim", { live = true }),
         ilyasyoy("qfstore.nvim", { live = true }),
         ilyasyoy("spellfix.nvim", { live = true }),
+        ilyasyoy("test-toggle.nvim", { live = true }),
         ilyasyoy("theme.nvim", { live = true }),
         ilyasyoy("ts-pack.nvim", { live = true }),
 
