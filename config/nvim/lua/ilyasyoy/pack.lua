@@ -64,6 +64,7 @@ local M = {
         ilyasyoy("theme.nvim", { live = true }),
         ilyasyoy("ts-pack.nvim", { live = true }),
         ilyasyoy("dispatch-kit.nvim", { live = true }),
+        ilyasyoy("markdown-tools.nvim", { live = true }),
         ilyasyoy("obs.nvim", { live = true }),
         ilyasyoy("qfstore.nvim", { live = true }),
         ilyasyoy("spellfix.nvim", { live = true }),
