@@ -1,70 +1,69 @@
 ---
 name: ai-session-coach
-description: Explicit workflow coach for analyzing unarchived Codex sessions.
-disable-model-invocation: true
+description: Analyze Codex session history since the last successful coaching run and return exactly five practical workflow improvements. Use when the user explicitly invokes the AI session coach or asks to review recent Codex sessions for recurring friction, instruction gaps, or reusable workflow improvements.
 ---
 
 # AI Session Coach
 
 Turn local Codex session history into exactly 5 practical workflow
-recommendations. Analysis is read-only. Archiving is optional and requires two
-explicit confirmations: one for intent, one after dry-run review.
+recommendations. Preserve every session. After a successful complete run, store
+a checkpoint so the next run skips sessions that have not changed.
 
 ## Workflow
 
 1. Treat the user's request as `analysis_focus`.
-   - Default scope: every unarchived session in `~/.codex/state_5.sqlite`.
-   - Do not ask for a project or time window by default.
+   - Default to every session updated since the last successful full run.
    - Add `--project`, `--since`, or `--until` only when the user narrows scope.
+   - Treat narrowed runs as ad hoc; never advance the global checkpoint for
+     them.
 
 2. Collect a snapshot:
    - Run this skill's `scripts/collect_sessions.py`.
-   - Use `--unarchived --exclude-current-thread`.
+   - Use `--incremental --exclude-current-thread`.
    - Write packs under `/tmp`, not the repository.
    - Pass `--analysis-focus` with the user's request.
    - Keep the default internal-session filter enabled. It excludes Codex
      subagents, approval-review fallbacks, earlier session-coach runs, and
-     model-switch-only sessions from analysis packs while recording them in
+     model-switch-only sessions while recording them in
      `manifest.internal_sessions`.
+   - On the first checkpointed run, let incremental mode use unarchived
+     sessions as the migration baseline. Do not add `--unarchived` manually.
+   - Use `--ignore-checkpoint` only for an intentional historical rerun; such a
+     run must not advance the checkpoint.
 
    Completion criterion: `manifest.json` exists, names the generated project
-   packs, reports internal exclusions by reason, and excludes the current live
-   thread from both analyzed and internal IDs.
+   packs, reports checkpoint and internal-exclusion details, and excludes the
+   current live thread from analyzed and internal IDs.
 
 3. Read `manifest.json`.
-   - If there are no project packs, say there are no user sessions to analyze.
-     If the manifest contains internal sessions, the snapshot may still be
-     offered for archival using the same two-confirmation workflow.
+   - If there are no project packs, say there are no new user sessions to
+     analyze, then record the checkpoint for a complete default run.
    - Projects are grouped by exact `cwd`.
 
 4. Analyze each project pack.
-   - Prefer one sub-agent per project when sub-agent tools are available.
+   - Prefer one sub-agent per project when sub-agent tools and repository rules
+     allow delegation.
    - Give each sub-agent only its project JSON path and `analysis_focus`.
    - Ask for recurring friction, evidence snippets, durable fixes, confidence,
      and thin-data caveats.
    - If sub-agents are unavailable or a result is ambiguous, inspect the pack
      directly.
 
-   Completion criterion: every project pack in the manifest is represented in
-   the synthesis or explicitly excluded with a reason.
+   Completion criterion: represent every project pack in the synthesis or
+   explicitly exclude it with a reason.
 
 5. Synthesize exactly 5 recommendations, prioritized by leverage.
    - Prefer durable fixes over vague process advice.
    - Use short evidence snippets only; redact secrets or tokens.
 
-6. Ask whether to archive the exact snapshot.
-   - If the user does not explicitly confirm, stop.
-   - If the manifest path is missing from conversation context, ask for it.
-   - State the analyzed and internal target counts separately.
-   - Never archive all unarchived sessions; archive only analyzed and internal
-     IDs recorded in this manifest.
-
-7. If archiving is confirmed, run dry-run first:
-   - `scripts/archive_sessions.py --manifest <manifest> --pretty`
-   - Show the dry-run summary.
-
-8. Apply archiving only after explicit dry-run confirmation:
-   - `scripts/archive_sessions.py --manifest <manifest> --apply --pretty`
+6. Record a checkpoint only for a successful complete default run:
+   - Request approval before writing under `~/.codex` when required by the
+     active environment instructions.
+   - Run `scripts/record_checkpoint.py --manifest <manifest> --pretty` after
+     synthesis and before returning the response.
+   - If checkpoint recording fails, return the recommendations with a concise
+     warning. Do not claim the run was checkpointed; the next run may repeat
+     the same window.
 
 ## Recommendation Priorities
 
@@ -86,32 +85,30 @@ Return exactly 5 numbered recommendations. Each includes:
 - **Expected impact**: why this improves future AI work.
 
 If data is thin, still return 5 recommendations and label weaker items lower
-confidence.
+confidence. If there are no new user sessions, return the no-new-sessions
+message instead of inventing recommendations.
 
 ## Script Reference
 
-Example collection:
-
 ```bash
 python3 config/codex/skills/ai-session-coach/scripts/collect_sessions.py \
-    --unarchived \
+    --incremental \
     --exclude-current-thread \
     --out-dir /tmp/ai-session-coach \
     --analysis-focus "find recurring AI workflow friction" \
     --pretty
 ```
 
-`collect_sessions.py` is read-only with respect to Codex state. It reads
-session metadata from `~/.codex/state_5.sqlite`, bounded rollout excerpts, and
-nearby `AGENTS.md` files.
+`collect_sessions.py` reads `~/.codex/state_5.sqlite`, bounded rollout
+excerpts, nearby `AGENTS.md` files, and the machine-local checkpoint. It never
+changes Codex sessions. Incremental filtering uses session `updated_at`, so a
+session that continues after a prior snapshot is eligible again.
 
-Useful collection options: `--exclude-thread`, `--max-sessions`,
-`--max-message-chars`, `--max-output-chars`, and `--max-events-per-session`.
-Use `--include-internal` only when internal orchestration sessions should be
-included in the analysis packs instead of recorded separately.
+Useful options: `--exclude-thread`, `--max-sessions`, `--max-message-chars`,
+`--max-output-chars`, and `--max-events-per-session`. Use
+`--include-internal` only when internal orchestration sessions belong in the
+analysis packs.
 
-`archive_sessions.py` is the only archival tool for this skill. Dry-run is the
-default; `--apply` is required for real archiving. It reads target sessions from
-`manifest.projects[].session_ids` and `manifest.internal_sessions[].id`, creates
-a timestamped DB backup, and reports analyzed/internal results separately along
-with archived/skipped/error totals.
+`record_checkpoint.py` writes `~/.codex/ai-session-coach-state.json`
+atomically. It rejects project/date-scoped, limited, checkpoint-ignored, or
+custom-exclusion manifests so a partial run cannot hide unchecked sessions.

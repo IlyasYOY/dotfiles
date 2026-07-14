@@ -155,7 +155,10 @@ managed TOML blocks in `~/.codex/config.toml` and
 administrative commands such as `codex-full app` or `codex-full plugin`. The
 profile disables apps, plugins, and the Singularity MCP server, and owns
 CLI-only TUI settings. It keeps the shared `~/.codex` state, including
-authentication, history, and memories.
+authentication, history, and memories. The base config enables local memories
+for every local Codex client, including memory use and generation for tasks
+that use external context. Start a new session after changing the setting, and
+use `/memories` to adjust memory behavior for an individual task.
 
 Shared portable skills such as `caveman`, `git-commit`, and `hammerspoon` are
 linked from `config/agent/skills`. Codex-only session-history skills stay under

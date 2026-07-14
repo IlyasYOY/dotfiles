@@ -4,6 +4,10 @@
       "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
+    "agent-review.nvim": {
+      "rev": "aa4f309b3061fcca28165f3c7e7f8a63cae3b50b",
+      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/agent-review.nvim"
+    },
     "auto-dark-mode.nvim": {
       "rev": "54058b4fe414bd64bd2904a6f8a63f1f14e3d8df",
       "src": "https://github.com/f-person/auto-dark-mode.nvim"
@@ -88,6 +92,10 @@
     "qfstore.nvim": {
       "rev": "7d62b5e9289c0b6e3378f269c13f970023f0f3f9",
       "src": "https://github.com/IlyasYOY/qfstore.nvim"
+    },
+    "theme.nvim": {
+      "rev": "73d9b21913e668fd85f9ef2f61129efcbd83509f",
+      "src": "file:///Users/ilyasyoy/Projects/IlyasYOY/theme.nvim"
     },
     "ts-pack.nvim": {
       "rev": "a635da05c84a7fef216ac007ec8b69e8c7a07e78",

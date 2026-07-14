@@ -443,6 +443,7 @@ EOF
     codex_features_config=$(cat <<'EOF'
 js_repl = false
 default_mode_request_user_input = true
+memories = true
 EOF
 )
     add_toml_table_block \
@@ -450,6 +451,19 @@ EOF
         "features" \
         "ilyasyoy codex features config" \
         "$codex_features_config"
+
+    local codex_memories_config
+    codex_memories_config=$(cat <<'EOF'
+generate_memories = true
+use_memories = true
+disable_on_external_context = false
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "memories" \
+        "ilyasyoy codex memories config" \
+        "$codex_memories_config"
 
     local codex_singularity_mcp_config
     codex_singularity_mcp_config=$(cat <<EOF

@@ -44,6 +44,8 @@ SESSION_COACH_PATTERNS = (
     re.compile(r"^(?:\$|/)?ai-session-coach(?:\s|$)", re.IGNORECASE),
     re.compile(r"^use \$ai-session-coach(?:\s|$)", re.IGNORECASE),
 )
+CHECKPOINT_FILENAME = "ai-session-coach-state.json"
+CHECKPOINT_VERSION = 1
 
 
 def redact(text: str) -> str:
@@ -86,6 +88,28 @@ def parse_bound(value: str | None, *, until: bool = False) -> int | None:
     if parsed.tzinfo is None:
         parsed = parsed.astimezone()
     return int(parsed.timestamp() * 1000)
+
+
+def parse_checkpoint_timestamp(value: Any) -> int:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("checkpoint sessions_updated_through must be an ISO timestamp")
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("checkpoint sessions_updated_through must include a timezone")
+    return int(parsed.timestamp() * 1000)
+
+
+def load_checkpoint(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    with path.open("r", encoding="utf-8") as handle:
+        value = json.load(handle)
+    if not isinstance(value, dict):
+        raise ValueError(f"checkpoint must be a JSON object: {path}")
+    if value.get("version") != CHECKPOINT_VERSION:
+        raise ValueError(f"unsupported checkpoint version in {path}")
+    parse_checkpoint_timestamp(value.get("sessions_updated_through"))
+    return value
 
 
 def load_threads(codex_home: Path, since_ms: int | None, until_ms: int | None) -> list[dict[str, Any]]:
@@ -614,15 +638,34 @@ def build_filters(
     until_ms: int | None,
     max_sessions: int | None,
     excluded_thread_ids: set[str],
+    current_thread_id: str | None,
+    checkpoint_path: Path,
+    checkpoint: dict[str, Any] | None,
+    checkpoint_ignored: bool,
+    effective_since_ms: int | None,
+    initial_unarchived_baseline: bool,
 ) -> dict[str, Any]:
     return {
         "projects": args.project,
         "since": args.since,
         "until": args.until,
         "since_ms": since_ms,
+        "effective_since_ms": effective_since_ms,
         "until_ms_exclusive": until_ms,
         "unarchived": args.unarchived,
+        "incremental": args.incremental,
+        "checkpoint_path": str(checkpoint_path),
+        "checkpoint_exists": checkpoint is not None,
+        "checkpoint_ignored": checkpoint_ignored,
+        "checkpoint_sessions_updated_through": (
+            checkpoint.get("sessions_updated_through") if checkpoint else None
+        ),
+        "initial_unarchived_baseline": initial_unarchived_baseline,
         "exclude_current_thread": args.exclude_current_thread,
+        "current_thread_id": current_thread_id,
+        "custom_exclude_thread_ids": sorted(
+            thread_id for thread_id in args.exclude_thread if thread_id
+        ),
         "exclude_thread_ids": sorted(excluded_thread_ids),
         "include_internal": args.include_internal,
         "max_sessions": max_sessions,
@@ -636,6 +679,7 @@ def write_json(path: Path, value: dict[str, Any]) -> None:
 def write_analysis_packs(
     *,
     out_dir: Path,
+    snapshot_started_at: str,
     generated_at: str,
     codex_home: Path,
     filters: dict[str, Any],
@@ -691,6 +735,7 @@ def write_analysis_packs(
     ).hexdigest()[:12]
     snapshot_id = f"{generated_at.replace(':', '').replace('-', '').replace('.', '')}-{snapshot_hash}"
     manifest = {
+        "snapshot_started_at": snapshot_started_at,
         "generated_at": generated_at,
         "snapshot_id": snapshot_id,
         "codex_home": str(codex_home),
@@ -713,6 +758,20 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--until", help="End date/time. Date-only values include that whole local day.")
     parser.add_argument("--codex-home", default=os.environ.get("CODEX_HOME", "~/.codex"), help="Codex home directory.")
     parser.add_argument("--unarchived", action="store_true", help="Only include sessions with archived = 0.")
+    parser.add_argument(
+        "--incremental",
+        action="store_true",
+        help="Use the saved coach checkpoint; without one, include unarchived sessions as the migration baseline.",
+    )
+    parser.add_argument(
+        "--checkpoint-file",
+        help="Override the default <codex-home>/ai-session-coach-state.json checkpoint.",
+    )
+    parser.add_argument(
+        "--ignore-checkpoint",
+        action="store_true",
+        help="Ignore saved checkpoint filtering for an intentional historical rerun.",
+    )
     parser.add_argument("--exclude-current-thread", action="store_true", help="Exclude CODEX_THREAD_ID when it is set.")
     parser.add_argument("--exclude-thread", action="append", default=[], help="Thread ID to exclude. Repeatable.")
     parser.add_argument(
@@ -726,7 +785,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--max-sessions",
         type=int,
         default=None,
-        help="Maximum matched sessions to load. Defaults to all for --unarchived, otherwise 40. Use 0 for unlimited.",
+        help="Maximum matched sessions to load. Defaults to all for incremental or --unarchived, otherwise 40. Use 0 for unlimited.",
     )
     parser.add_argument("--max-message-chars", type=int, default=900, help="Maximum chars per message/snippet.")
     parser.add_argument("--max-output-chars", type=int, default=900, help="Maximum chars per tool output snippet.")
@@ -739,22 +798,54 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
     codex_home = Path(os.path.expanduser(args.codex_home)).resolve()
+    checkpoint_path = Path(
+        os.path.expanduser(
+            args.checkpoint_file or str(codex_home / CHECKPOINT_FILENAME)
+        )
+    ).resolve()
+    if args.ignore_checkpoint and not args.incremental:
+        raise ValueError("--ignore-checkpoint requires --incremental")
+    checkpoint = (
+        None
+        if args.ignore_checkpoint or not args.incremental
+        else load_checkpoint(checkpoint_path)
+    )
     since_ms = parse_bound(args.since)
     until_ms = parse_bound(args.until, until=True)
+    checkpoint_since_ms = (
+        parse_checkpoint_timestamp(checkpoint["sessions_updated_through"])
+        if checkpoint
+        else None
+    )
+    effective_since_ms = since_ms
+    if checkpoint_since_ms is not None:
+        effective_since_ms = max(
+            value for value in (since_ms, checkpoint_since_ms) if value is not None
+        )
+    initial_unarchived_baseline = (
+        args.incremental and checkpoint is None and not args.ignore_checkpoint
+    )
     projects = [normalize_project(project) for project in args.project]
     max_sessions = args.max_sessions
     if max_sessions is None:
-        max_sessions = 0 if args.unarchived else 40
+        max_sessions = 0 if args.incremental or args.unarchived else 40
 
     excluded_thread_ids = {thread_id for thread_id in args.exclude_thread if thread_id}
+    current_thread_id = None
     if args.exclude_current_thread:
         current_thread_id = os.environ.get("CODEX_THREAD_ID")
         if current_thread_id:
             excluded_thread_ids.add(current_thread_id)
 
-    rows = load_threads(codex_home, since_ms, until_ms)
-    archive_filtered_rows = [row for row in rows if not bool(row.get("archived"))] if args.unarchived else rows
-    eligible_rows = exclude_threads(archive_filtered_rows, excluded_thread_ids)
+    snapshot_started_at = dt.datetime.now(tz=dt.timezone.utc).isoformat()
+    rows = load_threads(codex_home, effective_since_ms, until_ms)
+    use_unarchived_filter = args.unarchived or initial_unarchived_baseline
+    incrementally_filtered_rows = (
+        [row for row in rows if not bool(row.get("archived"))]
+        if use_unarchived_filter
+        else rows
+    )
+    eligible_rows = exclude_threads(incrementally_filtered_rows, excluded_thread_ids)
     matched_rows = [row for row in eligible_rows if cwd_matches(row.get("cwd", ""), projects)]
     user_rows, internal_rows = partition_internal_sessions(matched_rows)
     analysis_rows = matched_rows if args.include_internal else user_rows
@@ -788,14 +879,24 @@ def main(argv: list[str]) -> int:
         until_ms=until_ms,
         max_sessions=max_sessions,
         excluded_thread_ids=excluded_thread_ids,
+        current_thread_id=current_thread_id,
+        checkpoint_path=checkpoint_path,
+        checkpoint=checkpoint,
+        checkpoint_ignored=args.ignore_checkpoint,
+        effective_since_ms=effective_since_ms,
+        initial_unarchived_baseline=initial_unarchived_baseline,
     )
     counts = {
-        "candidate_sessions_in_time_window": len(rows),
-        "sessions_after_archive_filter": len(archive_filtered_rows),
+        "candidate_sessions_after_time_filter": len(rows),
+        "sessions_after_incremental_filter": len(incrementally_filtered_rows),
         "excluded_sessions": (
-            len(archive_filtered_rows) - len(eligible_rows) + len(excluded_internal_rows)
+            len(incrementally_filtered_rows)
+            - len(eligible_rows)
+            + len(excluded_internal_rows)
         ),
-        "explicitly_excluded_sessions": len(archive_filtered_rows) - len(eligible_rows),
+        "explicitly_excluded_sessions": (
+            len(incrementally_filtered_rows) - len(eligible_rows)
+        ),
         "internal_sessions_excluded": len(excluded_internal_rows),
         "internal_exclusion_reasons": dict(sorted(internal_reasons.items())),
         "matched_sessions": len(matched_rows),
@@ -808,6 +909,7 @@ def main(argv: list[str]) -> int:
         out_dir = Path(os.path.expanduser(args.out_dir)).resolve()
         manifest = write_analysis_packs(
             out_dir=out_dir,
+            snapshot_started_at=snapshot_started_at,
             generated_at=generated_at,
             codex_home=codex_home,
             filters=filters,

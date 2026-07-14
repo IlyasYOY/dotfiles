@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import datetime as dt
 import importlib.util
 import io
 import json
@@ -28,9 +29,9 @@ collect_sessions = load_module(
     "ai_session_coach_collect_sessions",
     SKILL_DIR / "scripts" / "collect_sessions.py",
 )
-archive_sessions = load_module(
-    "ai_session_coach_archive_sessions",
-    SKILL_DIR / "scripts" / "archive_sessions.py",
+record_checkpoint = load_module(
+    "ai_session_coach_record_checkpoint",
+    SKILL_DIR / "scripts" / "record_checkpoint.py",
 )
 
 
@@ -84,6 +85,8 @@ class SessionCoachToolsTest(unittest.TestCase):
         *,
         thread_source: str = "user",
         rollout: bool = False,
+        archived: bool = False,
+        updated_at_ms: int = 1_750_000_000_000,
     ) -> None:
         rollout_path = None
         if rollout:
@@ -93,18 +96,17 @@ class SessionCoachToolsTest(unittest.TestCase):
             path.write_text("", encoding="utf-8")
             rollout_path = str(path)
 
-        timestamp = 1_750_000_000_000
         values = {
             "id": thread_id,
             "rollout_path": rollout_path,
-            "created_at_ms": timestamp,
-            "updated_at_ms": timestamp,
+            "created_at_ms": updated_at_ms,
+            "updated_at_ms": updated_at_ms,
             "source": "cli",
             "cwd": "/workspace/project",
             "title": prompt,
             "approval_mode": "on-request",
             "tokens_used": 10,
-            "archived": 0,
+            "archived": int(archived),
             "first_user_message": prompt,
             "model": "test-model",
             "thread_source": thread_source,
@@ -118,9 +120,33 @@ class SessionCoachToolsTest(unittest.TestCase):
             )
             connection.commit()
 
-    def run_collector(self, out_dir: Path, *extra_args: str) -> dict:
+    def write_checkpoint(self, updated_through_ms: int) -> Path:
+        path = self.codex_home / collect_sessions.CHECKPOINT_FILENAME
+        timestamp = dt.datetime.fromtimestamp(
+            updated_through_ms / 1000,
+            tz=dt.timezone.utc,
+        ).isoformat()
+        path.write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "last_execution_at": timestamp,
+                    "sessions_updated_through": timestamp,
+                    "snapshot_id": "previous",
+                }
+            ),
+            encoding="utf-8",
+        )
+        return path
+
+    def run_collector(
+        self,
+        out_dir: Path,
+        *extra_args: str,
+        current_thread_id: str = "current",
+    ) -> dict:
         args = [
-            "--unarchived",
+            "--incremental",
             "--exclude-current-thread",
             "--codex-home",
             str(self.codex_home),
@@ -129,14 +155,15 @@ class SessionCoachToolsTest(unittest.TestCase):
             *extra_args,
         ]
         stdout = io.StringIO()
-        with mock.patch.dict(os.environ, {"CODEX_THREAD_ID": "current"}):
+        with mock.patch.dict(os.environ, {"CODEX_THREAD_ID": current_thread_id}):
             with contextlib.redirect_stdout(stdout):
                 result = collect_sessions.main(args)
         self.assertEqual(result, 0)
         return json.loads((out_dir / "manifest.json").read_text(encoding="utf-8"))
 
-    def test_default_filter_tracks_internal_sessions(self) -> None:
+    def test_first_incremental_run_uses_unarchived_migration_baseline(self) -> None:
         self.insert_thread("normal", "Implement the feature")
+        self.insert_thread("already-reviewed", "Old work", archived=True)
         self.insert_thread("guardian", "Approval review", thread_source="subagent")
         self.insert_thread(
             "review-fallback",
@@ -147,8 +174,10 @@ class SessionCoachToolsTest(unittest.TestCase):
         self.insert_thread("model", "/model gpt-test")
         self.insert_thread("current", "Current task")
 
-        manifest = self.run_collector(Path(self.temp_dir.name) / "default")
+        manifest = self.run_collector(self.root_path / "default")
 
+        self.assertTrue(manifest["filters"]["initial_unarchived_baseline"])
+        self.assertFalse(manifest["filters"]["checkpoint_exists"])
         self.assertEqual(
             set(manifest["projects"][0]["session_ids"]),
             {"normal", "daily"},
@@ -166,104 +195,136 @@ class SessionCoachToolsTest(unittest.TestCase):
                 "session_coach_housekeeping": 1,
             },
         )
-        self.assertNotIn("current", archive_sessions.extract_session_ids(manifest))
+
+    def test_checkpoint_uses_updated_time_and_includes_archived_sessions(self) -> None:
+        cutoff_ms = 1_750_000_000_000
+        self.write_checkpoint(cutoff_ms)
+        self.insert_thread("old", "Old", updated_at_ms=cutoff_ms - 1)
+        self.insert_thread("boundary", "Boundary", updated_at_ms=cutoff_ms)
+        self.insert_thread("new", "New", updated_at_ms=cutoff_ms + 1)
+        self.insert_thread(
+            "archived-new",
+            "Archived but changed",
+            archived=True,
+            updated_at_ms=cutoff_ms + 2,
+        )
+        self.insert_thread("current", "Current", updated_at_ms=cutoff_ms + 3)
+
+        manifest = self.run_collector(self.root_path / "incremental")
+
+        self.assertFalse(manifest["filters"]["initial_unarchived_baseline"])
+        self.assertTrue(manifest["filters"]["checkpoint_exists"])
+        self.assertEqual(
+            set(manifest["projects"][0]["session_ids"]),
+            {"boundary", "new", "archived-new"},
+        )
+
+        later_manifest = self.run_collector(
+            self.root_path / "former-current",
+            current_thread_id="different-current",
+        )
+        self.assertIn("current", later_manifest["projects"][0]["session_ids"])
 
     def test_include_internal_restores_filtered_sessions(self) -> None:
         self.insert_thread("normal", "Implement the feature")
         self.insert_thread("guardian", "Approval review", thread_source="subagent")
-        self.insert_thread(
-            "review-fallback",
-            collect_sessions.APPROVAL_REVIEW_PROMPT,
-        )
         self.insert_thread("coach", "$ai-session-coach")
-        self.insert_thread("daily", "Use $daily-session-report for today")
-        self.insert_thread("model", "/model gpt-test")
         self.insert_thread("current", "Current task")
 
         manifest = self.run_collector(
-            Path(self.temp_dir.name) / "included",
+            self.root_path / "included",
             "--include-internal",
         )
 
         self.assertEqual(manifest["internal_sessions"], [])
-        self.assertEqual(manifest["counts"]["internal_sessions_excluded"], 0)
         self.assertEqual(
             set(manifest["projects"][0]["session_ids"]),
-            {
-                "normal",
-                "guardian",
-                "review-fallback",
-                "coach",
-                "daily",
-                "model",
-            },
+            {"normal", "guardian", "coach"},
         )
 
-    def test_archive_plan_combines_categories_without_mutation(self) -> None:
+    def test_record_checkpoint_preserves_sessions_and_enables_empty_next_run(self) -> None:
         self.insert_thread("normal", "Implement the feature", rollout=True)
-        self.insert_thread(
-            "guardian",
-            "Approval review",
-            thread_source="subagent",
-            rollout=True,
-        )
-        self.insert_thread("current", "Current task", rollout=True)
-        manifest = {
-            "snapshot_id": "test-snapshot",
-            "codex_home": str(self.codex_home),
-            "projects": [{"session_ids": ["normal"]}],
-            "internal_sessions": [
-                {"id": "normal"},
-                {"id": "guardian"},
-                {"id": "current"},
-            ],
-        }
+        manifest_path = self.root_path / "snapshot" / "manifest.json"
+        manifest = self.run_collector(manifest_path.parent)
+        rollout_path = self.codex_home / "sessions" / "rollout-normal.jsonl"
+        executed_at = dt.datetime(2026, 7, 14, 12, 0, tzinfo=dt.timezone.utc)
 
-        results, summary = archive_sessions.build_plan(
-            manifest=manifest,
-            codex_home=self.codex_home,
-            current_thread_id="current",
+        checkpoint_path, checkpoint = record_checkpoint.record_checkpoint(
+            manifest_path=manifest_path,
+            executed_at=executed_at,
         )
 
-        self.assertEqual([result["id"] for result in results], ["normal", "guardian", "current"])
         self.assertEqual(
-            {result["id"]: result["category"] for result in results},
-            {"normal": "analyzed", "guardian": "internal", "current": "internal"},
+            checkpoint["last_execution_at"],
+            "2026-07-14T12:00:00+00:00",
         )
-        self.assertEqual(summary["archived"], 2)
-        self.assertEqual(summary["skipped_current_thread"], 1)
-        category_summary = archive_sessions.summarize_by_category(results)
-        self.assertEqual(category_summary["analyzed"]["archived"], 1)
-        self.assertEqual(category_summary["internal"]["archived"], 1)
-        self.assertEqual(category_summary["internal"]["skipped_current_thread"], 1)
+        self.assertEqual(
+            checkpoint["sessions_updated_through"],
+            manifest["snapshot_started_at"],
+        )
+        self.assertEqual(
+            checkpoint_path,
+            (self.codex_home / "ai-session-coach-state.json").resolve(),
+        )
+        self.assertTrue(rollout_path.exists())
         with contextlib.closing(sqlite3.connect(self.db_path)) as connection:
             archived = connection.execute(
-                "SELECT SUM(archived) FROM threads"
+                "SELECT archived FROM threads WHERE id = 'normal'"
             ).fetchone()[0]
         self.assertEqual(archived, 0)
 
-        manifest_path = self.root_path / "manifest.json"
-        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        next_manifest_path = self.root_path / "next" / "manifest.json"
+        next_manifest = self.run_collector(next_manifest_path.parent)
+        self.assertEqual(next_manifest["projects"], [])
         stdout = io.StringIO()
-        with mock.patch.dict(os.environ, {"CODEX_THREAD_ID": "current"}):
-            with contextlib.redirect_stdout(stdout):
-                exit_code = archive_sessions.main(
-                    [
-                        "--manifest",
-                        str(manifest_path),
-                        "--codex-home",
-                        str(self.codex_home),
-                    ]
-                )
+        with contextlib.redirect_stdout(stdout):
+            exit_code = record_checkpoint.main(
+                ["--manifest", str(next_manifest_path), "--pretty"]
+            )
         self.assertEqual(exit_code, 0)
-        dry_run = json.loads(stdout.getvalue())
-        self.assertEqual(dry_run["mode"], "dry-run")
-        self.assertEqual(dry_run["summary_by_category"], category_summary)
-        with contextlib.closing(sqlite3.connect(self.db_path)) as connection:
-            archived_after_dry_run = connection.execute(
-                "SELECT SUM(archived) FROM threads"
-            ).fetchone()[0]
-        self.assertEqual(archived_after_dry_run, 0)
+        cli_output = json.loads(stdout.getvalue())
+        self.assertEqual(
+            Path(cli_output["checkpoint_path"]),
+            checkpoint_path,
+        )
+
+    def test_checkpoint_rejects_partial_and_stale_manifests(self) -> None:
+        self.insert_thread("normal", "Implement the feature")
+        manifest = self.run_collector(self.root_path / "snapshot")
+
+        unsafe_filters = (
+            {"projects": ["project"]},
+            {"since": "2026-01-01"},
+            {"until": "2026-01-02"},
+            {"max_sessions": 10},
+            {"custom_exclude_thread_ids": ["hidden"]},
+            {"checkpoint_ignored": True},
+        )
+        for overrides in unsafe_filters:
+            with self.subTest(overrides=overrides):
+                partial = json.loads(json.dumps(manifest))
+                partial["filters"].update(overrides)
+                with self.assertRaises(ValueError):
+                    record_checkpoint.build_checkpoint(
+                        manifest=partial,
+                        existing=None,
+                    )
+
+        future = dict(
+            record_checkpoint.build_checkpoint(manifest=manifest, existing=None)
+        )
+        future["sessions_updated_through"] = "2999-01-01T00:00:00+00:00"
+        with self.assertRaisesRegex(ValueError, "older than"):
+            record_checkpoint.build_checkpoint(
+                manifest=manifest,
+                existing=future,
+            )
+
+    def test_invalid_checkpoint_fails_closed(self) -> None:
+        checkpoint_path = self.codex_home / collect_sessions.CHECKPOINT_FILENAME
+        checkpoint_path.write_text('{"version": 99}', encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "unsupported checkpoint version"):
+            collect_sessions.load_checkpoint(checkpoint_path)
 
 
 if __name__ == "__main__":
