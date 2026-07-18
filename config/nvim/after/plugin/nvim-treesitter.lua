@@ -1,66 +1,62 @@
-local ts_pack = require "ts-pack"
-local library = require "ts-pack.library"
+local ts = require "nvim-treesitter"
 local ts_select = require "nvim-treesitter-textobjects.select"
 local ts_moves = require "nvim-treesitter-textobjects.move"
 local ts_swaps = require "nvim-treesitter-textobjects.swap"
 local ts_context = require "treesitter-context"
 local ts_textobjects = require "nvim-treesitter-textobjects"
 
-ts_pack.add(
-    library.select {
-        "bash",
-        "c",
-        "clojure",
-        "fennel",
-        "go",
-        "gomod",
-        "gosum",
-        "groovy",
-        "java",
-        "javadoc",
-        "javascript",
-        "kotlin",
-        "lua",
-        "luadoc",
-        "make",
-        "proto",
-        "python",
-        "ruby",
-        "rust",
-        "scheme",
-        "sql",
-        "tsx",
-        "typescript",
-        "vim",
-        "vimdoc",
-        "css",
-        "html",
-        "markdown",
-        "markdown_inline",
-        "xml",
-        "asm",
-        "typst",
-        "dot",
-        "toml",
-        "yaml",
-        "csv",
-        "json",
-        "json5",
-        "diff",
-        "disassembly",
-        "dockerfile",
-        "git_config",
-        "git_rebase",
-        "gitcommit",
-        "gitignore",
-        "http",
-        "mermaid",
-        "printf",
-        "query",
-        "ssh_config",
-    },
-    { async = true }
-)
+ts.install {
+    "bash",
+    "c",
+    "clojure",
+    "fennel",
+    "go",
+    "gomod",
+    "gosum",
+    "groovy",
+    "java",
+    "javadoc",
+    "javascript",
+    "kotlin",
+    "lua",
+    "luadoc",
+    "make",
+    "proto",
+    "python",
+    "ruby",
+    "rust",
+    "scheme",
+    "sql",
+    "tsx",
+    "typescript",
+    "vim",
+    "vimdoc",
+    "css",
+    "html",
+    "markdown",
+    "markdown_inline",
+    "xml",
+    "asm",
+    "typst",
+    "dot",
+    "toml",
+    "yaml",
+    "csv",
+    "json",
+    "json5",
+    "diff",
+    "disassembly",
+    "dockerfile",
+    "git_config",
+    "git_rebase",
+    "gitcommit",
+    "gitignore",
+    "http",
+    "mermaid",
+    "printf",
+    "query",
+    "ssh_config",
+}
 
 vim.treesitter.language.register("javascript", "tsx")
 vim.treesitter.language.register("typescript.tsc", "tsx")
@@ -181,7 +177,8 @@ vim.api.nvim_create_autocmd("FileType", {
         setup_swaps()
 
         if vim.bo.filetype ~= "markdown" then
-            vim.opt_local.indentexpr = "v:lua.require'ts-pack.indent'.expr()"
+            vim.opt_local.indentexpr =
+                "v:lua.require'nvim-treesitter'.indentexpr()"
         end
 
         vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
