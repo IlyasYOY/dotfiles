@@ -285,101 +285,6 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" || true
 }
 
-setup_codex_cli_config() {
-    local cli_config="$1"
-    local legacy_cli_config="$DOTFILES_DIR/config/codex/cli.config.toml"
-
-    if [ -L "$cli_config" ]; then
-        local current_target
-        current_target=$(readlink "$cli_config")
-        if [ "$current_target" = "$legacy_cli_config" ]; then
-            rm -f "$cli_config"
-            success "Replaced legacy Codex CLI config symlink"
-        else
-            warning "$cli_config is a symlink to another target; leaving it unchanged"
-            return 0
-        fi
-    fi
-
-    local codex_cli_root_config
-    codex_cli_root_config=$(cat <<'EOF'
-service_tier = "fast"
-EOF
-)
-    add_toml_root_block \
-        "$cli_config" \
-        "ilyasyoy codex cli root config" \
-        "$codex_cli_root_config"
-
-    local codex_cli_features_config
-    codex_cli_features_config=$(cat <<'EOF'
-apps = false
-plugins = false
-EOF
-)
-    add_toml_table_block \
-        "$cli_config" \
-        "features" \
-        "ilyasyoy codex cli features config" \
-        "$codex_cli_features_config"
-
-    local codex_cli_tui_config
-    codex_cli_tui_config=$(cat <<'EOF'
-vim_mode_default = true
-notifications = true
-notification_method = "bel"
-notification_condition = "always"
-status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
-session_picker_view = "comfortable"
-pet = "disabled"
-EOF
-)
-    add_toml_table_block \
-        "$cli_config" \
-        "tui" \
-        "ilyasyoy codex cli tui config" \
-        "$codex_cli_tui_config"
-
-    local codex_cli_singularity_mcp_config
-    codex_cli_singularity_mcp_config=$(cat <<EOF
-command = "$HOME/go/bin/singularity-mcp"
-env_vars = ["SINGULARITY_TOKEN"]
-startup_timeout_sec = 10
-enabled = false
-EOF
-)
-    add_toml_table_block \
-        "$cli_config" \
-        "mcp_servers.singularity" \
-        "ilyasyoy codex cli singularity mcp config" \
-        "$codex_cli_singularity_mcp_config"
-
-    local codex_cli_trusted_project_config
-    codex_cli_trusted_project_config=$(cat <<'EOF'
-trust_level = "trusted"
-EOF
-)
-    local project
-    for project in singularity-mcp spellfix.nvim IlyasYOY; do
-        add_toml_table_block \
-            "$cli_config" \
-            "projects.\"$PERSONAL_PROJECTS_DIR/$project\"" \
-            "ilyasyoy codex cli trusted $project project" \
-            "$codex_cli_trusted_project_config"
-    done
-
-    local codex_cli_model_availability_config
-    codex_cli_model_availability_config=$(cat <<'EOF'
-"gpt-5.6-sol" = 4
-EOF
-)
-    add_toml_table_block \
-        "$cli_config" \
-        "tui.model_availability_nux" \
-        "ilyasyoy codex cli model availability config" \
-        "$codex_cli_model_availability_config"
-}
-
 setup_codex() {
     info "🤖 Setting up Codex..."
 
@@ -387,7 +292,6 @@ setup_codex() {
     local codex_config_dir="$HOME/.codex"
     mkdir -pv "$codex_config_dir"
     symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
-    setup_codex_cli_config "$codex_config_dir/cli.config.toml"
 
     local codex_root_config
     codex_root_config=$(cat <<'EOF'
@@ -406,6 +310,22 @@ EOF
         "$codex_config_dir/config.toml" \
         "ilyasyoy codex root config" \
         "$codex_root_config"
+
+    local codex_tui_config
+    codex_tui_config=$(cat <<'EOF'
+notifications = true
+notification_method = "bel"
+notification_condition = "always"
+status_line = ["model-with-reasoning", "current-dir", "five-hour-limit", "weekly-limit", "context-remaining"]
+session_picker_view = "comfortable"
+pet = "disabled"
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "tui" \
+        "ilyasyoy codex tui config" \
+        "$codex_tui_config"
 
     info "🤖 Setting up Codex rules..."
     local codex_rules_dir="$codex_config_dir/rules"

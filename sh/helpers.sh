@@ -60,14 +60,6 @@ convert-webp-to-png() {
     done
 }
 
-if command -v codex >/dev/null 2>&1; then
-    codex() {
-        command codex --profile cli "$@"
-    }
-
-    alias codex-full="command codex"
-fi
-
 _ai_cli() {
     if command -v codex >/dev/null 2>&1; then
         printf "codex\n"

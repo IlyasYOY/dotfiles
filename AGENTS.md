@@ -286,13 +286,11 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 <!-- Codex setup -->
 - `sh/setup/install.sh` links `config/codex/AGENTS.md` to
   `~/.codex/AGENTS.md`, updates managed TOML blocks in
-  `~/.codex/cli.config.toml`, links `config/codex/rules/default.rules` to
+  `~/.codex/config.toml`, links `config/codex/rules/default.rules` to
   `~/.codex/rules/default.rules`, and installs skills into
   `~/.codex/skills/IlyasYOY/<skill>`.
-- Interactive shells route `codex` through the `cli` profile. Use `codex-full`
-  for unprofiled desktop and administrative commands. Keep CLI-only integration
-  restrictions in the profile so desktop connector and plugin settings remain
-  independent.
+- Interactive shells run the unprofiled `codex` command. Keep terminal and
+  desktop settings together in the default `~/.codex/config.toml`.
 - If `~/.codex/skills/IlyasYOY` is a legacy repo-managed symlink, setup should
   replace it with a directory of per-skill symlinks while preserving unknown
   user-created entries.

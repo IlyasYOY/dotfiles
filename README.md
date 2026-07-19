@@ -133,7 +133,7 @@ Main links created by the installer:
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
-- managed TOML blocks in `~/.codex/cli.config.toml`
+- managed TOML blocks in `~/.codex/config.toml`
 - `config/codex/rules/default.rules` -> `~/.codex/rules/default.rules`
 - shared portable skills from `config/agent/skills/<skill>/SKILL.md` ->
   `~/.codex/skills/IlyasYOY/<skill>` and
@@ -149,16 +149,12 @@ Main links created by the installer:
 - `config/.vimrc` -> `~/.vimrc`
 
 Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, and
-managed TOML blocks in `~/.codex/config.toml` and
-`~/.codex/cli.config.toml`. Interactive shells route `codex` through
-`codex --profile cli`; use `codex-full` for unprofiled desktop and
-administrative commands such as `codex-full app` or `codex-full plugin`. The
-profile disables apps, plugins, and the Singularity MCP server, and owns
-CLI-only TUI settings. It keeps the shared `~/.codex` state, including
-authentication, history, and memories. The base config enables local memories
-for every local Codex client, including memory use and generation for tasks
-that use external context. Start a new session after changing the setting, and
-use `/memories` to adjust memory behavior for an individual task.
+managed TOML blocks in `~/.codex/config.toml`. Interactive shells run the
+unprofiled `codex` command, so terminal and desktop clients share integrations,
+MCP servers, and TUI settings. The config enables local memories for every
+local Codex client, including memory use and generation for tasks that use
+external context. Start a new session after changing the setting, and use
+`/memories` to adjust memory behavior for an individual task.
 
 Shared portable skills such as `caveman`, `git-commit`, and `hammerspoon` are
 linked from `config/agent/skills`. Codex-only session-history skills stay under
