@@ -22,7 +22,6 @@ readonly -a PERSONAL_NVIM_PLUGIN_REPOS=(
     "spellfix.nvim"
     "test-toggle.nvim"
     "theme.nvim"
-    "ts-pack.nvim"
 )
 
 is_mac() {

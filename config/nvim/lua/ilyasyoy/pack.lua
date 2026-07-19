@@ -55,8 +55,27 @@ local function install_firenvim(ev)
     vim.fn["firenvim#install"](0)
 end
 
+local function update_nvim_treesitter(ev)
+    local data = ev.data
+    if data.spec.name ~= "nvim-treesitter" or data.kind ~= "update" then
+        return
+    end
+
+    if not data.active then
+        vim.cmd.packadd "nvim-treesitter"
+    end
+
+    assert(
+        require("nvim-treesitter").update():wait(300000),
+        "nvim-treesitter parser update failed"
+    )
+end
+
 vim.api.nvim_create_autocmd("PackChanged", {
-    callback = install_firenvim,
+    callback = function(ev)
+        install_firenvim(ev)
+        update_nvim_treesitter(ev)
+    end,
 })
 
 local M = {
@@ -69,7 +88,6 @@ local M = {
         ilyasyoy("spellfix.nvim", { live = true }),
         ilyasyoy("test-toggle.nvim", { live = true }),
         ilyasyoy("theme.nvim", { live = true }),
-        ilyasyoy("ts-pack.nvim", { live = true }),
 
         gh "jamessan/vim-gnupg",
         gh "glacambre/firenvim",
@@ -80,6 +98,7 @@ local M = {
         gh "neovim/nvim-lspconfig",
         gh "williamboman/mason.nvim",
         gh "WhoIsSethDaniel/mason-tool-installer.nvim",
+        gh "nvim-treesitter/nvim-treesitter",
         {
             src = gh "nvim-treesitter/nvim-treesitter-textobjects",
             version = "main",

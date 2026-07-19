@@ -91,8 +91,8 @@ make update VERBOSE=1
 - Handle Vim options properly
 - Use local variables when possible
 - Keep shared `vim.pack` specs and eager registration in `config/nvim/lua/ilyasyoy/pack.lua`
-- Keep `config/nvim/nvim-pack-lock.json` and `config/nvim/ts-pack-lock.json`
-  under version control when plugin or Treesitter lock state changes
+- Keep `config/nvim/nvim-pack-lock.json` under version control when plugin
+  lock state changes; update nvim-treesitter parsers with `:TSUpdate`
 - Keep plugin-level configuration in `config/nvim/after/plugin/*.lua`,
   including LSP, DAP, Fugitive, Dispatch, FZF, Treesitter, Theme, and Obsidian setup
 - Keep `config/nvim/after/ftplugin/*.lua` focused on buffer-local options,
@@ -157,8 +157,8 @@ make update VERBOSE=1
 - `bin/` - Executable personal utilities, including Python CLIs such as
   `vless-switch` and `ilyasyoy-ffmpeg-parse-chapters`
 - `config/nvim/` - Neovim configuration
-- `config/nvim/nvim-pack-lock.json`, `config/nvim/ts-pack-lock.json` - Lock
-  files for `vim.pack` plugins and Treesitter parsers
+- `config/nvim/nvim-pack-lock.json` - Lock file for `vim.pack` plugins;
+  nvim-treesitter manages parser revisions under Neovim's data directory
 - `config/nvim-minimal/` - Minimal Neovim configuration for reproducing issues
 - `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
 - `config/nvim/lua/ilyasyoy/functions/` - Shared Neovim Lua helpers for core
