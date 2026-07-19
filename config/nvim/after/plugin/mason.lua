@@ -44,7 +44,7 @@ vim.defer_fn(function()
             "stylelint",
             "stylua",
             "tinymist",
-            "typescript-language-server",
+            "tsgo",
             "yamllint",
         },
         -- luacheck is installed outside Mason because its LuaRocks package

@@ -129,7 +129,7 @@ vim.lsp.config("tinymist", {
 
 for _, server in ipairs {
     "bashls",
-    "ts_ls",
+    "tsgo",
     "lua_ls",
     "basedpyright",
     "gopls",

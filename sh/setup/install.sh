@@ -298,7 +298,7 @@ setup_codex() {
 model = "gpt-5.6-sol"
 personality = "pragmatic"
 model_reasoning_effort = "medium"
-plan_mode_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
