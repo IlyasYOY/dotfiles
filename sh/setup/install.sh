@@ -257,7 +257,7 @@ setup_oh_my_zsh() {
 setup_git_config() {
     info "🔧 Configuring Git..."
 
-    git config --global alias.st "status --short"
+    git config --global alias.st "status"
     git config --global alias.c "commit"
     git config --global alias.co "checkout"
     git config --global alias.lg "log --all --decorate --graph --oneline"
