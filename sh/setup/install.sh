@@ -31,7 +31,8 @@ setup_my_project() {
     clone_repos_parallel \
         "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \
         "git@github.com:IlyasYOY/IlyasYOY.git" "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
-        "git@github.com:IlyasYOY/singularity-mcp.git" "$PERSONAL_PROJECTS_DIR/singularity-mcp"
+        "git@github.com:IlyasYOY/singularity-mcp.git" "$PERSONAL_PROJECTS_DIR/singularity-mcp" \
+        "git@github.com:IlyasYOY/t-invest-mcp.git" "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
 }
 
 setup_notes() {
@@ -222,7 +223,7 @@ setup_go_binaries() {
     info "🎯 Installing Go binaries..."
 
     if ! command -v go >/dev/null 2>&1; then
-        warning "Go is not installed yet; skipping monotask installation"
+        warning "Go is not installed yet; skipping Go binary installation"
         return 0
     fi
 
@@ -237,6 +238,13 @@ setup_go_binaries() {
         success "singularity-mcp installed"
     else
         error "Failed to install singularity-mcp"
+        return 1
+    fi
+
+    if make -C "$PERSONAL_PROJECTS_DIR/t-invest-mcp" install; then
+        success "t-invest-mcp installed"
+    else
+        error "Failed to install t-invest-mcp"
         return 1
     fi
 }
@@ -400,6 +408,26 @@ EOF
         "ilyasyoy codex singularity mcp config" \
         "$codex_singularity_mcp_config"
 
+    local codex_t_invest_mcp_config
+    codex_t_invest_mcp_config=$(cat <<EOF
+command = "$HOME/go/bin/t-invest-mcp"
+env_vars = [
+    "T_INVEST_TOKEN",
+    "T_INVEST_ENV",
+    "T_INVEST_ACCOUNT_ID",
+    "T_INVEST_TIMEOUT",
+    "T_INVEST_MAX_RESPONSE_BYTES",
+    "T_INVEST_APP_NAME",
+]
+startup_timeout_sec = 10
+EOF
+)
+    add_toml_table_block \
+        "$codex_config_dir/config.toml" \
+        "mcp_servers.t-invest" \
+        "ilyasyoy codex t-invest mcp config" \
+        "$codex_t_invest_mcp_config"
+
     local codex_trusted_project_config
     codex_trusted_project_config=$(cat <<'EOF'
 trust_level = "trusted"
@@ -482,11 +510,11 @@ main() {
     setup_git_config
     setup_sdkman
     setup_go_version_manager
+    setup_my_project
     setup_go_binaries
     setup_node_version_manager
     setup_oh_my_zsh
     setup_tmux_plugin_manger
-    setup_my_project
     setup_pass
 
     setup_codex

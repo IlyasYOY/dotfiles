@@ -20,6 +20,7 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/monotask"
         "$PERSONAL_PROJECTS_DIR/remotion-projects"
         "$PERSONAL_PROJECTS_DIR/singularity-mcp"
+        "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
         "$HOME/.password-store"
     )
@@ -77,6 +78,13 @@ update_go_tools() {
         success "singularity-mcp updated"
     else
         error "Failed to update singularity-mcp"
+        return 1
+    fi
+
+    if make -C "$PERSONAL_PROJECTS_DIR/t-invest-mcp" install; then
+        success "t-invest-mcp updated"
+    else
+        error "Failed to update t-invest-mcp"
         return 1
     fi
 }

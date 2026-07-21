@@ -156,6 +156,17 @@ local Codex client, including memory use and generation for tasks that use
 external context. Start a new session after changing the setting, and use
 `/memories` to adjust memory behavior for an individual task.
 
+The bootstrap also clones and installs the local `singularity-mcp` and
+`t-invest-mcp` Go binaries, and `make update` refreshes both repositories and
+reinstalls their binaries. T-Invest is installed from its SSH-cloned local
+checkout and registered only in Codex as the `t-invest` MCP server. It requires
+`T_INVEST_TOKEN` and `T_INVEST_ENV` (`prod` or `sandbox`) in the environment
+before Codex starts; optional
+`T_INVEST_ACCOUNT_ID`, `T_INVEST_TIMEOUT`, `T_INVEST_MAX_RESPONSE_BYTES`, and
+`T_INVEST_APP_NAME` values are forwarded when present. The bootstrap stores no
+token values. Start a new Codex session after changing these variables or the
+MCP configuration.
+
 Shared portable skills such as `caveman`, `git-commit`, and `hammerspoon` are
 linked from `config/agent/skills`. Codex-only session-history skills stay under
 `config/codex/skills` because they read `~/.codex/state_5.sqlite` and rollout
