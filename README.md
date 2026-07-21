@@ -162,6 +162,15 @@ linked from `config/agent/skills`. Codex-only session-history skills stay under
 files. Setup discovers installable skills from immediate child directories that
 contain `SKILL.md`.
 
+Codex-only third-party skills are configured in
+`config/codex/external-skills.conf`. Each repository is pinned to a full commit
+hash and may restrict discovery to selected repository paths. `make install`
+materializes the accepted commits under
+`~/.local/share/ilyasyoy/codex-skills` and links every selected `SKILL.md`
+directory into `~/.codex/skills/IlyasYOY`. `make update` compares the pinned
+commit with the configured upstream branch and requires an interactive review
+and confirmation before changing any installed skill or commit pin.
+
 OpenCode uses `config/opencode/opencode.json` as a global config with cautious
 permissions for file edits, shell commands, web fetch/search, and skills. The
 OpenCode skill links include shared portable skills from `config/agent/skills`

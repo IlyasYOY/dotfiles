@@ -3,6 +3,8 @@
 # shellcheck disable=SC1091
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
+source "$(dirname "$0")/codex-external-skills.sh"
+# shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/raspberry-pi.sh"
@@ -92,6 +94,7 @@ main() {
     fi
 
     update_local_repos
+    update_external_codex_skills
     update_tmux_plugins
     update_go_tools
 

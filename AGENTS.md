@@ -183,6 +183,10 @@ make update VERBOSE=1
   configures the terminal UI
 - `config/codex/skills/` - Codex-only skills that can read local Codex session
   state, such as `ai-session-coach` and `session-hardener`
+- `config/codex/external-skills.conf` - Commit-pinned third-party Codex skill
+  repositories and optional included repository paths
+- `sh/setup/codex-external-skills.sh` - Shared exact-commit install and
+  review-gated update functions used by the main setup flows
 - `.agents/skills/` - Repository-local agent skills such as
   `dotfiles-luasnip/SKILL.md`
 - `.github/workflows/` - CI workflows such as `check.yml`
@@ -282,6 +286,9 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
   `~/.local/share/opencode/opencode.db` and OpenCode log files.
 - Setup discovers only immediate child directories containing `SKILL.md`; do
   not add hard-coded skill-name lists to `sh/setup/install.sh`.
+- External Codex skill repositories discover every `SKILL.md` recursively by
+  default. Optional manifest paths narrow discovery; installation must remain
+  commit-pinned and updates must show a diff before changing the accepted pin.
 
 <!-- Codex setup -->
 - `sh/setup/install.sh` links `config/codex/AGENTS.md` to

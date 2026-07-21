@@ -3,6 +3,8 @@
 # shellcheck disable=SC1091
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
+source "$(dirname "$0")/codex-external-skills.sh"
+# shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/raspberry-pi.sh"
@@ -445,6 +447,7 @@ EOF
 
     link_managed_skill_tree "$DOTFILES_DIR/config/agent/skills" "$codex_namespace_dir"
     link_managed_skill_tree "$DOTFILES_DIR/config/codex/skills" "$codex_namespace_dir"
+    install_external_codex_skills
 }
 
 setup_opencode() {

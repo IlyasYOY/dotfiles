@@ -37,6 +37,8 @@ check-python:
 	@PYTHONPYCACHEPREFIX=/private/tmp/dotfiles-python-cache \
 		python3 -m unittest discover \
 		-s config/codex/skills/ai-session-coach/tests -p 'test_*.py'
+	@PYTHONPYCACHEPREFIX=/private/tmp/dotfiles-python-cache \
+		python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)
