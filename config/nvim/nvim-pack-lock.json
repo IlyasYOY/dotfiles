@@ -77,6 +77,10 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
       "version": "'main'"
     },
+    "obs.nvim": {
+      "rev": "9c93453da1545e60c20336466b924b2576587782",
+      "src": "https://github.com/IlyasYOY/obs.nvim"
+    },
     "oil.nvim": {
       "rev": "b73018b75affd13fa38e2fc94ef753b465f770d7",
       "src": "https://github.com/stevearc/oil.nvim"
@@ -84,6 +88,10 @@
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "qfstore.nvim": {
+      "rev": "7d62b5e9289c0b6e3378f269c13f970023f0f3f9",
+      "src": "https://github.com/IlyasYOY/qfstore.nvim"
     },
     "vim-abolish": {
       "rev": "dcbfe065297d31823561ba787f51056c147aa682",
