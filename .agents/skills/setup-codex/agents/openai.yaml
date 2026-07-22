@@ -1,0 +1,7 @@
+interface:
+  display_name: "Setup Codex"
+  short_description: "Configure Codex from dotfiles safely"
+  default_prompt: "Use $setup-codex to review and configure my Codex settings."
+
+policy:
+  allow_implicit_invocation: false

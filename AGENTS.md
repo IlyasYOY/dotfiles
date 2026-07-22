@@ -178,20 +178,19 @@ make update VERBOSE=1
 - `config/agent/skills/` - Shared portable skills linked into both Codex and
   OpenCode; any immediate child directory with `SKILL.md` is installed
 - `config/codex/` - Codex instructions, rules, and Codex-only skills
-- `sh/setup/install.sh` - Generates the coding-focused Codex CLI profile that
-  disables app connectors, plugins, and the Singularity MCP server and
-  configures the terminal UI
+- `sh/setup/install.sh` - Links Codex and OpenCode instructions, rules,
+  commands, plugins, and global skills without editing either user config
 - `config/codex/skills/` - Codex-only skills that can read local Codex session
   state, such as `ai-session-coach` and `session-hardener`
 - `config/codex/external-skills.conf` - Commit-pinned third-party Codex skill
   repositories and optional included repository paths
 - `sh/setup/codex-external-skills.sh` - Shared exact-commit install and
   review-gated update functions used by the main setup flows
-- `.agents/skills/` - Repository-local agent skills such as
-  `dotfiles-luasnip/SKILL.md`
+- `.agents/skills/` - Repository-local agent skills, including
+  `setup-codex` and `setup-opencode`
 - `.github/workflows/` - CI workflows such as `check.yml`
-- `config/opencode/` - Checked-in OpenCode instructions, global config, and
-  command prompts symlinked into `~/.config/opencode`
+- `config/opencode/` - Checked-in OpenCode instructions, commands, plugins,
+  and OpenCode-only skills symlinked into `~/.config/opencode`
 
 ### File Naming
 
@@ -274,6 +273,10 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 ## Agent Configuration
 
 <!-- Skill source markers -->
+- `.agents/skills/setup-codex/SKILL.md` and
+  `.agents/skills/setup-opencode/SKILL.md` are repo-local config workflows.
+  Keep their desired config references inside the skill directories; do not
+  install these two skills globally.
 - `config/agent/skills/<skill>/SKILL.md` is the source marker for portable
   skills shared by Codex and OpenCode.
 - `config/codex/skills/<skill>/SKILL.md` is Codex-only. Do not install
@@ -292,10 +295,12 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 
 <!-- Codex setup -->
 - `sh/setup/install.sh` links `config/codex/AGENTS.md` to
-  `~/.codex/AGENTS.md`, updates managed TOML blocks in
-  `~/.codex/config.toml`, links `config/codex/rules/default.rules` to
-  `~/.codex/rules/default.rules`, and installs skills into
-  `~/.codex/skills/IlyasYOY/<skill>`.
+  `~/.codex/AGENTS.md`, links `config/codex/rules/default.rules` to
+  `~/.codex/rules/default.rules`, and installs global skills into
+  `~/.codex/skills/IlyasYOY/<skill>`. It must not edit
+  `~/.codex/config.toml`.
+- Run the repo-local `$setup-codex` skill from dotfiles to review, back up,
+  update, and validate `~/.codex/config.toml`.
 - Interactive shells run the unprofiled `codex` command. Keep terminal and
   desktop settings together in the default `~/.codex/config.toml`.
 - If `~/.codex/skills/IlyasYOY` is a legacy repo-managed symlink, setup should
@@ -303,17 +308,18 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
   user-created entries.
 
 <!-- OpenCode setup -->
-- `sh/setup/install.sh` links `config/opencode/AGENTS.md`,
-  `config/opencode/opencode.json`, and `config/opencode/commands` into
-  `~/.config/opencode`
+- `sh/setup/install.sh` links `config/opencode/AGENTS.md`, commands, and
+  plugins into `~/.config/opencode`; it must not edit or link the global
+  `opencode.json`.
 - OpenCode skill links are individual skills under
   `~/.config/opencode/skills/<skill>` from both `config/agent/skills/<skill>`
   (shared) and `config/opencode/skills/<skill>` (OpenCode-only).
-- Keep `config/opencode/opencode.json` valid JSON. OpenCode-specific command
-  prompts live in `config/opencode/commands/*.md`.
-- When installing OpenCode config, preserve existing user settings: symlink the
-  repo default only when the destination is missing, and otherwise fill only
-  missing defaults in strict JSON object configs after writing a backup.
+- The root `opencode.json` registers only the repo-local `setup-opencode`
+  skill. Run that skill from dotfiles to review, back up, update, and validate
+  `~/.config/opencode/opencode.json`.
+- Keep both the root project config and the setup skill's reference valid
+  strict JSON. OpenCode-specific command prompts live in
+  `config/opencode/commands/*.md`.
 - Setup should not uninstall Codex or delete existing local Codex sessions,
   auth, app state, plugins, memories, or OpenCode state.
 - Use the local `git-commit` skill only when the user asks for commit help; do
@@ -327,9 +333,9 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 - Java: Latest LTS with SDKMAN
 - Neovim: version with Lua support and built-in `vim.pack` support
 - Codex: installed on macOS by the bootstrap flow and configured from
-  `config/codex`
+  `config/codex` plus the repo-local `setup-codex` skill
 - OpenCode: installed by the bootstrap flow and configured from
-  `config/opencode/AGENTS.md`, `config/opencode/opencode.json`, and
-  shared portable skills in `config/agent/skills`
+  `config/opencode/AGENTS.md`, shared portable skills, and the repo-local
+  `setup-opencode` skill
 
 This document should be updated as coding standards evolve or new tools are adopted.

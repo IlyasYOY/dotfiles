@@ -40,10 +40,10 @@ hardware.
   OpenCode. Any immediate child directory with `SKILL.md` is installed.
 - `config/codex` — Codex instructions, rules, and Codex-only skills that read
   local Codex session state.
-- `config/opencode` — checked-in OpenCode instructions, global config, and
-  command prompts that load the shared portable skill set.
-- `.agents/skills` — repository-local agent skills used when working in this
-  checkout.
+- `config/opencode` — checked-in OpenCode instructions, commands, plugins, and
+  OpenCode-only skills.
+- `.agents/skills` — repository-local agent skills, including `setup-codex`
+  and `setup-opencode`, used only while working in this checkout.
 - `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`,
   `Brewfile.raspberry-pi` — package manifests used by the bootstrap scripts.
 - `bin` — small personal utilities and executable helpers.
@@ -84,8 +84,8 @@ make install
 6. Configures Git defaults.
 7. Installs and configures `SDKMAN`, `gvm`, and `fnm`.
 8. Sets up tmux TPM, clones the password store, and links Codex and OpenCode
-   instructions, config, commands, rules, and skills into `~/.codex` and
-   `~/.config/opencode`.
+   instructions, commands, rules, plugins, and global skills into `~/.codex`
+   and `~/.config/opencode`. User config files are left unchanged.
 
 On macOS, the installer uses:
 
@@ -133,7 +133,6 @@ Main links created by the installer:
 - `config/.gitignore-global` -> `~/.config/git/ignore`
 - `config/.golangci.yml` -> `~/.golangci.yml`
 - `config/codex/AGENTS.md` -> `~/.codex/AGENTS.md`
-- managed TOML blocks in `~/.codex/config.toml`
 - `config/codex/rules/default.rules` -> `~/.codex/rules/default.rules`
 - shared portable skills from `config/agent/skills/<skill>/SKILL.md` ->
   `~/.codex/skills/IlyasYOY/<skill>` and
@@ -143,23 +142,20 @@ Main links created by the installer:
 - OpenCode-only skills from `config/opencode/skills/<skill>/SKILL.md` ->
   `~/.config/opencode/skills/<skill>`
 - `config/opencode/AGENTS.md` -> `~/.config/opencode/AGENTS.md`
-- `config/opencode/opencode.json` -> `~/.config/opencode/opencode.json`
 - `config/opencode/commands` -> `~/.config/opencode/commands`
 - `config/.tmux.conf` -> `~/.tmux.conf`
 - `config/.vimrc` -> `~/.vimrc`
 
-Codex uses `config/codex/AGENTS.md`, `config/codex/rules/default.rules`, and
-managed TOML blocks in `~/.codex/config.toml`. Interactive shells run the
-unprofiled `codex` command, so terminal and desktop clients share integrations,
-MCP servers, and TUI settings. The config enables local memories for every
-local Codex client, including memory use and generation for tasks that use
-external context. Start a new session after changing the setting, and use
-`/memories` to adjust memory behavior for an individual task.
+`make install` does not edit `~/.codex/config.toml`. From this repository, run
+`$setup-codex` to compare that file with the reference stored in
+`.agents/skills/setup-codex`, review a redacted grouped diff, choose which
+groups to apply, create a backup, and validate the result with `codex doctor`.
+Codex discovers this skill from the repository-local `.agents/skills` tree.
 
 The bootstrap also clones and installs the local `singularity-mcp` and
 `t-invest-mcp` Go binaries, and `make update` refreshes both repositories and
-reinstalls their binaries. T-Invest is installed from its SSH-cloned local
-checkout and registered only in Codex as the `t-invest` MCP server. It requires
+reinstalls their binaries. The `setup-codex` reference registers T-Invest only
+in Codex as the `t-invest` MCP server. It requires
 `T_INVEST_TOKEN` and `T_INVEST_ENV` (`prod` or `sandbox`) in the environment
 before Codex starts; optional
 `T_INVEST_ACCOUNT_ID`, `T_INVEST_TIMEOUT`, `T_INVEST_MAX_RESPONSE_BYTES`, and
@@ -182,23 +178,16 @@ directory into `~/.codex/skills/IlyasYOY`. `make update` compares the pinned
 commit with the configured upstream branch and requires an interactive review
 and confirmation before changing any installed skill or commit pin.
 
-OpenCode uses `config/opencode/opencode.json` as a global config with cautious
-permissions for file edits, shell commands, web fetch/search, and skills. The
-OpenCode skill links include shared portable skills from `config/agent/skills`
-and OpenCode-only skills from `config/opencode/skills`, including separate
-OpenCode implementations of session-history skills such as `ai-session-coach`
-and `session-hardener`. Codex session-history skill directories are not
-installed into OpenCode.
+`make install` does not edit `~/.config/opencode/opencode.json`. The root
+`opencode.json` exposes only `.agents/skills/setup-opencode` to OpenCode while
+working in this repository. Invoke that skill to compare the global config
+with its reference, review a redacted grouped diff, choose changes, create a
+backup, and validate the result with OpenCode's real config loader.
 
-If the OpenCode config path is missing, the installer links the repo default.
-If a strict JSON object already exists there, the installer writes a timestamped
-backup and fills only missing defaults, preserving all existing user settings.
-JSONC, invalid JSON, non-object JSON, and symlinks to other targets are left
-unchanged with a warning.
-
-The installer manages Codex config links and repo-owned skill links, but it
-does not delete Codex sessions, auth, app state, plugins, memories, or OpenCode
-state.
+Global OpenCode skill links still include shared portable skills from
+`config/agent/skills` and OpenCode-only session-history implementations from
+`config/opencode/skills`. The installer does not delete Codex sessions, auth,
+app state, plugins, memories, or OpenCode state.
 
 macOS-only links created by the installer:
 

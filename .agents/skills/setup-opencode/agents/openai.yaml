@@ -1,0 +1,7 @@
+interface:
+  display_name: "Setup OpenCode"
+  short_description: "Configure OpenCode from dotfiles safely"
+  default_prompt: "Use $setup-opencode to review and configure my OpenCode settings."
+
+policy:
+  allow_implicit_invocation: false

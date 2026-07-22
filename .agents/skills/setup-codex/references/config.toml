@@ -1,0 +1,70 @@
+model = "gpt-5.6-sol"
+personality = "pragmatic"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+service_tier = "default"
+suppress_unstable_features_warning = true
+
+[tui]
+notifications = true
+notification_method = "bel"
+notification_condition = "always"
+status_line = [
+    "model-with-reasoning",
+    "current-dir",
+    "five-hour-limit",
+    "weekly-limit",
+    "context-remaining",
+]
+session_picker_view = "comfortable"
+pet = "disabled"
+
+[notice]
+hide_rate_limit_model_nudge = true
+fast_default_opt_out = true
+
+[sandbox_workspace_write]
+network_access = false
+writable_roots = [
+    "{{DOTFILES_DIR}}",
+    "{{KB_DIR}}",
+]
+
+[features]
+js_repl = false
+default_mode_request_user_input = true
+memories = true
+
+[memories]
+generate_memories = true
+use_memories = true
+disable_on_external_context = false
+
+[mcp_servers.singularity]
+command = "{{HOME}}/go/bin/singularity-mcp"
+env_vars = ["SINGULARITY_TOKEN"]
+startup_timeout_sec = 10
+
+[mcp_servers.t-invest]
+command = "{{HOME}}/go/bin/t-invest-mcp"
+env_vars = [
+    "T_INVEST_TOKEN",
+    "T_INVEST_ENV",
+    "T_INVEST_ACCOUNT_ID",
+    "T_INVEST_TIMEOUT",
+    "T_INVEST_MAX_RESPONSE_BYTES",
+    "T_INVEST_APP_NAME",
+]
+startup_timeout_sec = 10
+
+[projects."{{DOTFILES_DIR}}"]
+trust_level = "trusted"
+
+[projects."{{KB_DIR}}"]
+trust_level = "trusted"
+
+[projects."{{PERSONAL_PROJECTS_DIR}}"]
+trust_level = "trusted"
