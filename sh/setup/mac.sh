@@ -148,7 +148,7 @@ update_brew_packages() {
 
     info "🍺 Updating Homebrew packages..."
 
-    if brew upgrade; then
+    if brew upgrade -y; then
         success "Brew packages upgraded"
     else
         error "Failed to upgrade packages"
@@ -163,7 +163,7 @@ update_brew_cask_packages() {
 
     info "🍺 Updating Homebrew cask packages..."
 
-    if brew upgrade --cask; then
+    if brew upgrade --cask -y; then
         success "Brew casks upgraded"
     else
         error "Failed to upgrade casks"

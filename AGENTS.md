@@ -314,12 +314,11 @@ Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
 - OpenCode skill links are individual skills under
   `~/.config/opencode/skills/<skill>` from both `config/agent/skills/<skill>`
   (shared) and `config/opencode/skills/<skill>` (OpenCode-only).
-- The root `opencode.json` registers only the repo-local `setup-opencode`
-  skill. Run that skill from dotfiles to review, back up, update, and validate
-  `~/.config/opencode/opencode.json`.
-- Keep both the root project config and the setup skill's reference valid
-  strict JSON. OpenCode-specific command prompts live in
-  `config/opencode/commands/*.md`.
+- OpenCode discovers the repo-local `setup-opencode` skill from
+  `.agents/skills`. Run that skill from dotfiles to review, back up, update,
+  and validate `~/.config/opencode/opencode.json`.
+- Keep the setup skill's reference valid strict JSON. OpenCode-specific command
+  prompts live in `config/opencode/commands/*.md`.
 - Setup should not uninstall Codex or delete existing local Codex sessions,
   auth, app state, plugins, memories, or OpenCode state.
 - Use the local `git-commit` skill only when the user asks for commit help; do

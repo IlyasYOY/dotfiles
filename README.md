@@ -178,11 +178,11 @@ directory into `~/.codex/skills/IlyasYOY`. `make update` compares the pinned
 commit with the configured upstream branch and requires an interactive review
 and confirmation before changing any installed skill or commit pin.
 
-`make install` does not edit `~/.config/opencode/opencode.json`. The root
-`opencode.json` exposes only `.agents/skills/setup-opencode` to OpenCode while
-working in this repository. Invoke that skill to compare the global config
-with its reference, review a redacted grouped diff, choose changes, create a
-backup, and validate the result with OpenCode's real config loader.
+`make install` does not edit `~/.config/opencode/opencode.json`. OpenCode
+discovers `.agents/skills/setup-opencode` through its native repository-local
+skill directory. Invoke that skill to compare the global config with its
+reference, review a redacted grouped diff, choose changes, create a backup,
+and validate the result with OpenCode's real config loader.
 
 Global OpenCode skill links still include shared portable skills from
 `config/agent/skills` and OpenCode-only session-history implementations from
