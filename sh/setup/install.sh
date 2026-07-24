@@ -31,7 +31,6 @@ setup_my_project() {
     clone_repos_parallel \
         "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \
         "git@github.com:IlyasYOY/IlyasYOY.git" "$PERSONAL_PROJECTS_DIR/IlyasYOY" \
-        "git@github.com:IlyasYOY/singularity-mcp.git" "$PERSONAL_PROJECTS_DIR/singularity-mcp" \
         "git@github.com:IlyasYOY/t-invest-mcp.git" "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
 }
 
@@ -231,13 +230,6 @@ setup_go_binaries() {
         success "monotask installed"
     else
         error "Failed to install monotask"
-        return 1
-    fi
-
-    if go install github.com/IlyasYOY/singularity-mcp/cmd/singularity-mcp@latest; then
-        success "singularity-mcp installed"
-    else
-        error "Failed to install singularity-mcp"
         return 1
     fi
 

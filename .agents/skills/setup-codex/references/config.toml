@@ -44,9 +44,8 @@ use_memories = true
 disable_on_external_context = false
 
 [mcp_servers.singularity]
-command = "{{HOME}}/go/bin/singularity-mcp"
-env_vars = ["SINGULARITY_TOKEN"]
-startup_timeout_sec = 10
+enabled = true
+url = "https://mcp.singularity-app.com/mcp"
 
 [mcp_servers.t-invest]
 command = "{{HOME}}/go/bin/t-invest-mcp"

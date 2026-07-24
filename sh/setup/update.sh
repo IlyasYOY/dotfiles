@@ -19,7 +19,6 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/httpservertest"
         "$PERSONAL_PROJECTS_DIR/monotask"
         "$PERSONAL_PROJECTS_DIR/remotion-projects"
-        "$PERSONAL_PROJECTS_DIR/singularity-mcp"
         "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
         "$HOME/.password-store"
@@ -71,13 +70,6 @@ update_go_tools() {
         success "monotask updated"
     else
         error "Failed to update monotask"
-        return 1
-    fi
-
-    if go install github.com/IlyasYOY/singularity-mcp/cmd/singularity-mcp@latest; then
-        success "singularity-mcp updated"
-    else
-        error "Failed to update singularity-mcp"
         return 1
     fi
 

@@ -152,10 +152,13 @@ Main links created by the installer:
 groups to apply, create a backup, and validate the result with `codex doctor`.
 Codex discovers this skill from the repository-local `.agents/skills` tree.
 
-The bootstrap also clones and installs the local `singularity-mcp` and
-`t-invest-mcp` Go binaries, and `make update` refreshes both repositories and
-reinstalls their binaries. The `setup-codex` reference registers T-Invest only
-in Codex as the `t-invest` MCP server. It requires
+The bootstrap also clones and installs the local `t-invest-mcp` Go binary, and
+`make update` refreshes its repository and reinstalls the binary. The
+`setup-codex` and `setup-opencode` references register Singularity's official
+remote MCP server at `https://mcp.singularity-app.com/mcp`; no local
+checkout, custom binary, or token environment variable is required.
+The `setup-codex` reference registers T-Invest only in Codex as the `t-invest`
+MCP server. It requires
 `T_INVEST_TOKEN` and `T_INVEST_ENV` (`prod` or `sandbox`) in the environment
 before Codex starts; optional
 `T_INVEST_ACCOUNT_ID`, `T_INVEST_TIMEOUT`, `T_INVEST_MAX_RESPONSE_BYTES`, and

@@ -35,7 +35,9 @@ Reconcile the user's Codex config with the preferences stored in
 7. Compare every leaf in the rendered reference with the target. Treat arrays
    as single values and group differences as `root`, `tui`, `notice`,
    `sandbox`, `features`, `memories`, `mcp`, and `projects`. Preserve every
-   target key not present in the reference.
+   target key not present in the reference, except when an MCP server changes
+   transport between a local `command` and a remote `url`: compare and replace
+   that server table atomically so fields from the old transport are removed.
 8. Show a concise redacted summary containing missing, differing, and legacy
    marker changes. Never print unknown values or values whose key or content
    looks like a token, password, key, credential, authorization header, or
@@ -46,10 +48,11 @@ Reconcile the user's Codex config with the preferences stored in
 10. Before the first write, request approval for writing under `CODEX_HOME`.
     Create `config.toml.YYYYMMDDHHMMSS.bak` with metadata preserved. If the
     target is missing, state that no backup is possible.
-11. Apply only the confirmed groups and marker-line cleanup. Keep root keys
-    before TOML tables, retain comments where practical, and preserve all
-    unrelated tables and runtime-generated settings. Do not use the old
-    dotfiles setup helpers.
+11. Apply only the confirmed groups and marker-line cleanup. Replace a
+    confirmed MCP server table atomically when its transport changes; otherwise
+    preserve target keys absent from the reference. Keep root keys before TOML
+    tables, retain comments where practical, and preserve all unrelated tables
+    and runtime-generated settings. Do not use the old dotfiles setup helpers.
 12. Parse the result again, then run
     `codex doctor --summary --no-color --ascii`. If validation fails, stop,
     show the failure, and offer to restore the backup; do not restore or make

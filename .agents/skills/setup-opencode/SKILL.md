@@ -34,7 +34,9 @@ Reconcile the user's OpenCode config with the preferences stored in
      Never replace an unknown symlink automatically.
 6. Compare every leaf in the reference with the target. Treat arrays as single
    values and group differences as `core`, `permissions`, `command`, `agent`,
-   and `mcp`. Preserve every target key not present in the reference.
+   and `mcp`. Preserve every target key not present in the reference, except
+   when an MCP server changes `type`: compare and replace that server object
+   atomically so fields from the old transport are removed.
 7. Show a concise redacted summary containing missing and differing values
    plus any symlink migration. Never print unknown values or values whose key
    or content looks like a token, password, key, credential, authorization
@@ -46,9 +48,10 @@ Reconcile the user's OpenCode config with the preferences stored in
    config. Create `opencode.json.YYYYMMDDHHMMSS.bak` with metadata preserved.
    If the target is missing, state that no backup is possible.
 10. Apply only the confirmed groups and symlink migration. Deep-merge objects,
-    replace only confirmed arrays or scalar leaves, format with two spaces and
-    a final newline, and preserve all unrelated user, work, provider, and MCP
-    settings. Do not use the old dotfiles setup helpers.
+    replace only confirmed arrays or scalar leaves, and replace a confirmed MCP
+    server object atomically when its `type` changes. Format with two spaces
+    and a final newline, and preserve all unrelated user, work, provider, and
+    MCP settings. Do not use the old dotfiles setup helpers.
 11. Validate with `jq empty` and then run the real runtime check without
     printing the resolved config:
     `OPENCODE_CONFIG=<target> opencode debug config --pure >/dev/null`.
