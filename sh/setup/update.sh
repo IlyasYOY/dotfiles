@@ -79,7 +79,6 @@ main() {
         update_brew
         update_brew_packages
         update_brew_cask_packages
-        update_mas_applications
     elif is_raspberry_pi; then
         update_raspberry_pi_system
         update_raspberry_pi_brew

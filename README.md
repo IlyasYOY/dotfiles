@@ -23,9 +23,8 @@ their own installation, dependency updates, and canonical checks.
 
 ## Platform support
 
-- macOS packages come from `Brewfile.mac`, `Brewfile.mac.cask`, and
-  `Brewfile.mac.mas`; desktop configuration includes WezTerm, Hammerspoon, and
-  Amethyst.
+- macOS packages come from `Brewfile.mac` and `Brewfile.mac.cask`; desktop
+  configuration includes WezTerm, Hammerspoon, and Amethyst.
 - Raspberry Pi OS and compatible Debian systems use the smaller
   `Brewfile.raspberry-pi` plus apt-based bootstrap.
 

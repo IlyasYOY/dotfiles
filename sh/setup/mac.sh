@@ -1,18 +1,5 @@
 #!/usr/bin/env bash
 
-setup_mac_using_app_store() {
-    if ! is_mac; then 
-        info "This is not mac, skipping installing App Store applications"
-        return 1;
-    fi
-
-    info "🍎 Installing App Store applications..."
-
-    if confirm_update "Install App Store applications"; then
-        brew_bundle_install "$DOTFILES_DIR/Brewfile.mac.mas" "App Store applications"
-    fi
-}
-
 setup_mac_using_brew() {
     if ! is_mac; then 
         info "This is not mac, skipping installing Homebrew packages"
@@ -167,20 +154,5 @@ update_brew_cask_packages() {
         success "Brew casks upgraded"
     else
         error "Failed to upgrade casks"
-    fi
-}
-
-update_mas_applications() {
-    if ! is_mac; then 
-        info "This is not mac, skipping updating App Store applications"
-        return 1;
-    fi
-
-    info "🍎 Updating App Store applications..."
-
-    if mas upgrade; then
-        success "Mas updated"
-    else
-        error "Failed to update mas"
     fi
 }
