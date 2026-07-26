@@ -1,7 +1,0 @@
-policy:
-  allow_implicit_invocation: false
-
-interface:
-  display_name: "AI Session Coach"
-  short_description: "Analyze Codex sessions for workflow improvements"
-  default_prompt: "Use $ai-session-coach to analyze Codex sessions changed since the last successful run and suggest exactly 5 workflow improvements."

@@ -4,13 +4,19 @@ SHELL_SCRIPT_FILES := $(filter-out $(SHELL_FRAGMENT_FILES),$(wildcard sh/*.sh)) 
 	$(wildcard sh/setup/*.sh)
 VERBOSE ?= 0
 
-.PHONY: install update check check-lua check-shell check-python
+.PHONY: install update install-workbenches update-workbenches check check-lua check-shell check-python
 
 install:
 	@VERBOSE=$(VERBOSE) ./sh/setup/install.sh
 
 update:
 	@VERBOSE=$(VERBOSE) ./sh/setup/update.sh
+
+install-workbenches:
+	@VERBOSE=$(VERBOSE) ./sh/setup/workbenches.sh install
+
+update-workbenches:
+	@VERBOSE=$(VERBOSE) ./sh/setup/workbenches.sh update
 
 check: check-lua check-shell check-python
 
@@ -35,8 +41,7 @@ check-shell:
 
 check-python:
 	@PYTHONPYCACHEPREFIX=/private/tmp/dotfiles-python-cache \
-		python3 -m unittest discover \
-		-s config/codex/skills/ai-session-coach/tests -p 'test_*.py'
+		python3 -m unittest discover -s tests -p 'test_*.py'
 
 format-lua:
 	@stylua $(LUA_FILES)

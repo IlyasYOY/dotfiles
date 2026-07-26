@@ -8,21 +8,11 @@ PROJECTS_DIR="$HOME/Projects"
 export WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
 export PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
 export KB_DIR="${ILYASYOY_KB_STORE_DIR:-$PROJECTS_DIR/kb-store}"
+export NVIM_WORKBENCH_DIR="${ILYASYOY_NVIM_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/nvim-workbench}"
+export AGENT_WORKBENCH_DIR="${ILYASYOY_AGENT_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/agent-workbench}"
 ZSHRC="$HOME/.zshrc"
 BASHRC="$HOME/.bashrc"
 DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)
-
-# shellcheck disable=SC2034 # Shared by install.sh and update.sh after sourcing.
-readonly -a PERSONAL_NVIM_PLUGIN_REPOS=(
-    "agent-review.nvim"
-    "dispatch-kit.nvim"
-    "markdown-tools.nvim"
-    "obs.nvim"
-    "qfstore.nvim"
-    "spellfix.nvim"
-    "test-toggle.nvim"
-    "theme.nvim"
-)
 
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
@@ -193,90 +183,6 @@ symlink() {
 
     ln -sv "$target" "$link"
     success "Added symlink $link to $target"
-}
-
-replace_managed_symlink() {
-    local new_target="$1"
-    local link="$2"
-    local managed_prefix="$3"
-    local managed_suffix="$4"
-
-    if [ -L "$link" ]; then
-        local current_target
-        current_target=$(readlink "$link")
-
-        if [ "$current_target" = "$new_target" ]; then
-            debug "Symlink already exists: $link"
-            return 0
-        fi
-
-        case "$current_target" in
-            "$managed_prefix"/*"$managed_suffix")
-                if [ ! -e "$current_target" ]; then
-                    rm -f "$link"
-                    ln -sv "$new_target" "$link"
-                    success "Migrated symlink $link from $current_target to $new_target"
-                    return 0
-                fi
-                ;;
-        esac
-
-        warning "$link is a symlink to another target; leaving it unchanged"
-        return 0
-    fi
-
-    symlink "$new_target" "$link"
-}
-
-prune_stale_managed_skill_links() {
-    local source_root="$1"
-    local dest_root="$2"
-    local link current_target
-
-    if [ ! -d "$dest_root" ]; then
-        return 0
-    fi
-
-    find "$dest_root" -mindepth 1 -maxdepth 1 -type l -print |
-        sort |
-        while IFS= read -r link; do
-            current_target=$(readlink "$link")
-
-            case "$current_target" in
-                "$source_root"/*)
-                    if [ ! -e "$current_target" ]; then
-                        rm -f "$link"
-                        success "Removed stale managed skill symlink $link -> $current_target"
-                    fi
-                    ;;
-            esac
-        done
-}
-
-link_managed_skill_tree() {
-    local source_root="$1"
-    local dest_root="$2"
-    local skill_file skill_dir skill_name
-
-    mkdir -pv "$dest_root"
-    prune_stale_managed_skill_links "$source_root" "$dest_root"
-
-    if [ ! -d "$source_root" ]; then
-        debug "Skill source root does not exist: $source_root"
-        return 0
-    fi
-
-    find "$source_root" -mindepth 2 -maxdepth 2 -name SKILL.md -type f -print |
-        sort |
-        while IFS= read -r skill_file; do
-            skill_dir=$(dirname "$skill_file")
-            skill_name=$(basename "$skill_dir")
-            replace_managed_symlink \
-                "$skill_dir" \
-                "$dest_root/$skill_name" \
-                "$DOTFILES_DIR/config" \
-                "/skills/$skill_name"
-        done
 }
 
 clone_repo() {

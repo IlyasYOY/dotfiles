@@ -3,8 +3,6 @@
 # shellcheck disable=SC1091
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/codex-external-skills.sh"
-# shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/raspberry-pi.sh"
@@ -16,17 +14,6 @@ setup_basic_directories() {
 
 setup_my_project() {
     info "👨💻 Setting up personal projects..."
-
-    local -a plugin_clone_args=()
-    local plugin
-    for plugin in "${PERSONAL_NVIM_PLUGIN_REPOS[@]}"; do
-        plugin_clone_args+=(
-            "git@github.com:IlyasYOY/$plugin.git"
-            "$PERSONAL_PROJECTS_DIR/$plugin"
-        )
-    done
-
-    clone_repos_parallel "${plugin_clone_args[@]}"
 
     clone_repos_parallel \
         "git@github.com:IlyasYOY/monotask.git" "$PERSONAL_PROJECTS_DIR/monotask" \
@@ -51,8 +38,6 @@ setup_links_to_config_files() {
     mkdir -pv "$HOME/.gnupg"
 
     # Main config links
-    symlink "$DOTFILES_DIR/config/nvim" "$config_dir/nvim"
-    symlink "$DOTFILES_DIR/config/nvim-minimal" "$config_dir/nvim-minimal"
     if is_mac; then
         symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
         symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
@@ -287,70 +272,6 @@ setup_pass() {
     clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" || true
 }
 
-setup_codex() {
-    info "🤖 Setting up Codex..."
-
-    info "🤖 Setting up Codex instructions..."
-    local codex_config_dir="$HOME/.codex"
-    mkdir -pv "$codex_config_dir"
-    symlink "$DOTFILES_DIR/config/codex/AGENTS.md" "$codex_config_dir/AGENTS.md"
-    info "🤖 Setting up Codex rules..."
-    local codex_rules_dir="$codex_config_dir/rules"
-    mkdir -pv "$codex_rules_dir"
-    symlink "$DOTFILES_DIR/config/codex/rules/default.rules" "$codex_rules_dir/default.rules"
-    info "🤖 Setting up Codex skills..."
-    local codex_skills_dir="$codex_config_dir/skills"
-    local codex_namespace_dir="$codex_skills_dir/IlyasYOY"
-    mkdir -pv "$codex_skills_dir"
-
-    if [ -L "$codex_namespace_dir" ]; then
-        local current_target
-        current_target=$(readlink "$codex_namespace_dir")
-        if [ "$current_target" = "$DOTFILES_DIR/config/codex/skills" ]; then
-            rm -f "$codex_namespace_dir"
-            success "Replaced legacy Codex skills namespace symlink"
-        else
-            warning "$codex_namespace_dir is a symlink to another target; leaving Codex skills unchanged"
-            return 0
-        fi
-    fi
-
-    if [ -e "$codex_namespace_dir" ] && [ ! -d "$codex_namespace_dir" ]; then
-        warning "$codex_namespace_dir exists but is not a directory; leaving Codex skills unchanged"
-        return 0
-    fi
-
-    mkdir -pv "$codex_namespace_dir"
-
-    link_managed_skill_tree "$DOTFILES_DIR/config/agent/skills" "$codex_namespace_dir"
-    link_managed_skill_tree "$DOTFILES_DIR/config/codex/skills" "$codex_namespace_dir"
-    install_external_codex_skills
-
-    info "Run \$setup-codex from the dotfiles repository to configure Codex."
-}
-
-setup_opencode() {
-    info "🤖 Setting up OpenCode..."
-
-    local opencode_config_dir="$HOME/.config/opencode"
-    mkdir -pv "$opencode_config_dir"
-
-    symlink \
-        "$DOTFILES_DIR/config/opencode/AGENTS.md" \
-        "$opencode_config_dir/AGENTS.md"
-    symlink "$DOTFILES_DIR/config/opencode/commands" "$opencode_config_dir/commands"
-    symlink "$DOTFILES_DIR/config/opencode/plugins" "$opencode_config_dir/plugins"
-
-    info "🤖 Setting up OpenCode skills..."
-    local opencode_skills_dir="$opencode_config_dir/skills"
-    mkdir -pv "$opencode_skills_dir"
-
-    link_managed_skill_tree "$DOTFILES_DIR/config/agent/skills" "$opencode_skills_dir"
-    link_managed_skill_tree "$DOTFILES_DIR/config/opencode/skills" "$opencode_skills_dir"
-
-    info "Use the setup-opencode skill from the dotfiles repository to configure OpenCode."
-}
-
 main() {
     setup_basic_directories
     setup_platform_dependencies
@@ -367,8 +288,7 @@ main() {
     setup_tmux_plugin_manger
     setup_pass
 
-    setup_codex
-    setup_opencode
+    "$DOTFILES_DIR/sh/setup/workbenches.sh" install
 
     success "🎉 Setup completed successfully!"
     info "Some changes might require a new shell session or system restart"

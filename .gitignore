@@ -5,10 +5,6 @@ __pycache__/
 
 .venv
 
-config/nvim/spell/*.spl
-config/nvim/spell/*.sug
-config/nvim/spell/*.add
-
 NetrwTreeListing
 .vim/
 Session.vim
@@ -16,10 +12,8 @@ Session.vim
 .DB_Store
 .DS_Store
 
-config/nvim/lua/ilyasyoy/hidden.lua
 config/hammerspoon/hidden.lua
 
-config/nvim-minimal/lazy-lock.json
 .aider*
 .qwen
 

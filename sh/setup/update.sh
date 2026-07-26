@@ -3,8 +3,6 @@
 # shellcheck disable=SC1091
 source "$(dirname "$0")/helpers.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/codex-external-skills.sh"
-# shellcheck disable=SC1091
 source "$(dirname "$0")/mac.sh"
 # shellcheck disable=SC1091
 source "$(dirname "$0")/raspberry-pi.sh"
@@ -23,11 +21,6 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
         "$HOME/.password-store"
     )
-    local plugin
-    for plugin in "${PERSONAL_NVIM_PLUGIN_REPOS[@]}"; do
-        repo_paths+=("$PERSONAL_PROJECTS_DIR/$plugin")
-    done
-
     update_repo "$PERSONAL_PROJECTS_DIR/dotfiles" || true
 
     update_repos_parallel "${repo_paths[@]}"
@@ -94,7 +87,7 @@ main() {
     fi
 
     update_local_repos
-    update_external_codex_skills
+    "$DOTFILES_DIR/sh/setup/workbenches.sh" update
     update_tmux_plugins
     update_go_tools
 

@@ -1,340 +1,142 @@
 # AGENTS.md
 
-This file contains instructions for agentic coding assistants operating in this repository. It provides build/lint/test commands and code style guidelines to ensure consistent development practices.
+Instructions for agents operating in the workstation-orchestrator repository.
 
-## Agent Operating Rules
+## Operating rules
 
-- Do not make commits unless the user explicitly asks for one.
+- Do not make commits unless the user explicitly asks.
 - Explain what changed, why it changed, and how it was verified.
-- Preserve user changes already present in the worktree. If unrelated files are
-  dirty, leave them alone.
+- Preserve existing user changes and unrelated dirty files.
+- Do not call work complete until the exact user-facing command or the
+  repository's canonical `make check` has passed.
+- Prefer documented Makefile targets over ad hoc commands.
+- Request approval before the first command expected to require network access,
+  browser or process control, Git index writes, remote Git operations, global
+  Codex/OpenCode writes, or writes outside the allowed repository roots.
+- Never ask the user to paste secrets. Ask them to configure the documented
+  environment variable and verify only whether it is present.
 
-## Repository Overview
+For Python tooling, prefer `uv`. Use
+`uv run --with PyYAML python <script.py>` when a helper requires PyYAML.
 
-This is a personal dotfiles and workstation bootstrap repository for day-to-day
-development. It includes Neovim and shell configuration, bootstrap/update
-scripts, Homebrew manifests, Codex and OpenCode instructions and skills, and
-terminal or desktop configuration for macOS plus a smaller Raspberry Pi
-bootstrap path.
+## Repository responsibility
 
-## Build/Lint/Test Commands
+This repository owns:
 
-### Lua
+- macOS and Raspberry Pi package/bootstrap flows;
+- shell helpers, exports, and aliases;
+- tmux, WezTerm, Hammerspoon, Amethyst, Vim, Git, and GnuPG configuration;
+- language version manager bootstrap;
+- top-level cloning and orchestration of independent workbenches.
+
+It does not own Neovim configuration or agent-tooling implementation.
+
+## Personal repository routing
+
+Before editing a personal repository, inspect its `AGENTS.md`.
+
+- Dotfiles: `~/Projects/IlyasYOY/dotfiles`
+  - shell, workstation bootstrap, Brewfiles, terminal, desktop, GnuPG, and
+    top-level workbench orchestration.
+- Neovim workbench: `~/Projects/IlyasYOY/nvim-workbench`
+  - Neovim configuration, snippets, language integrations, personal plugin
+    registration, local plugin checkout management, and Neovim runtime checks.
+- Agent workbench: `~/Projects/IlyasYOY/agent-workbench`
+  - Codex/OpenCode instructions, config references, commands, plugins, shared
+    and runtime-specific skills, and pinned external Codex skills.
+- KB store: `~/Projects/kb-store`
+  - notes, wiki pages, diary entries, and other persisted knowledge. Read its
+    `AGENTS.md` before choosing a path or writing.
+
+Do not modify dotfiles as a fallback when a request targets another repository.
+
+## Canonical commands
 
 ```bash
-# Run all first-pass CI checks (same command as CI)
 make check
-```
-
-`make check` runs Lua and shell checks.
-
-```bash
-# Lint Lua files without auto-formatting
 make check-lua
-luacheck $(git ls-files -- '*.lua')
-stylua --check $(git ls-files -- '*.lua')
-
-# Format Lua files
-make format-lua
-stylua $(git ls-files -- '*.lua')
-
-# Format specific file
-stylua config/nvim/lua/ilyasyoy/init.lua
-```
-
-CI runs Lua 5.4, pins Luacheck to `1.2.0-1`, installs
-`shellcheck`, and pins StyLua to `v2.5.2` before running `make check`.
-
-### Shell Scripts
-
-```bash
-# Check shell fragments, setup scripts, and shell-shebang files in bin/
 make check-shell
+make check-python
 
-# Fragments without shebangs are linted as bash
-shellcheck -s bash sh/aliases.sh sh/exports.sh
-
-# Run setup flows directly
-bash sh/setup/install.sh
-bash sh/setup/update.sh
-
-# Top-level helpers
 make install
 make update
-
-# Show setup/update debug logs
-make install VERBOSE=1
-make update VERBOSE=1
+make install-workbenches
+make update-workbenches
 ```
 
-## Code Style Guidelines
+`make check` runs Lua, shell, and Python orchestration checks. Workbench
+implementation changes must additionally pass `make check` in the affected
+workbench repository.
 
-### General Principles
+## Shell conventions
 
-- Follow language-specific conventions and tools
-- Use meaningful names for variables, functions, and files
-- Add comments for complex logic
-- Keep functions/methods focused on single responsibilities
-- Handle errors appropriately in each language
+- Use `#!/usr/bin/env bash` for executable Bash scripts.
+- Use `set -euo pipefail` for executable setup scripts when compatible with
+  their usage.
+- Quote variables, use descriptive functions, and prefer `local` variables.
+- Keep `sh/helpers.sh`, `sh/exports.sh`, and `sh/aliases.sh` safe for
+  interactive startup.
+- Shell fragments are linted with `shellcheck -s bash`; standalone scripts are
+  linted as scripts.
+- Put executable setup flows under `sh/setup`.
+- Keep shared clone/update parallelism in `sh/setup/helpers.sh` and respect
+  `GIT_PARALLEL_JOBS`.
+- Keep macOS GnuPG Touch ID behavior coordinated across `Brewfile.mac`,
+  `config/gnupg/gpg-agent.conf`, and `sh/setup/mac.sh`.
 
-### Lua (Neovim Configuration)
-- Use `stylua` with configuration from `stylua.toml`:
-  - 4 spaces indentation
-  - 80 column width
-  - Unix line endings
-  - Double quotes preferred
-  - Omit call parentheses where StyLua allows it
-- Use `luacheck` for linting
-- Follow Neovim Lua conventions
-- Use `vim.keymap.set()` for key mappings
-- Use descriptive keymap descriptions
-- Handle Vim options properly
-- Use local variables when possible
-- Keep shared `vim.pack` specs and eager registration in `config/nvim/lua/ilyasyoy/pack.lua`
-- Keep `config/nvim/nvim-pack-lock.json` under version control when plugin
-  lock state changes; update nvim-treesitter parsers with `:TSUpdate`
-- Keep plugin-level configuration in `config/nvim/after/plugin/*.lua`,
-  including LSP, DAP, Fugitive, Dispatch, FZF, Treesitter, Theme, and Obsidian setup
-- Keep `config/nvim/after/ftplugin/*.lua` focused on buffer-local options,
-  filetype-specific mappings, and commands
-- Keep Neovim colorscheme implementation in the sibling
-  `~/Projects/IlyasYOY/theme.nvim` repository. Dotfiles should only register
-  that plugin in `config/nvim/lua/ilyasyoy/pack.lua` and select/configure it in
-  `config/nvim/after/plugin/theme.lua`; do not reintroduce local
-  `config/nvim/colors/*.lua` themes unless a task explicitly asks for it
-- Keep plugin loading eager unless a task explicitly asks to reintroduce lazy loading
-- `pack.lua` may prefer local plugin checkouts under
-  `~/Projects/IlyasYOY/<plugin>` before falling back to GitHub; preserve that
-  workflow unless the task says otherwise
+## Workbench orchestration
 
-### Shell Scripts
+- `sh/setup/workbenches.sh` is the single dotfiles entrypoint for installing
+  and updating `nvim-workbench` and `agent-workbench`.
+- Default paths come from `NVIM_WORKBENCH_DIR` and `AGENT_WORKBENCH_DIR` in
+  `sh/setup/helpers.sh`; users may override them through
+  `ILYASYOY_NVIM_WORKBENCH_DIR` and `ILYASYOY_AGENT_WORKBENCH_DIR`.
+- Dotfiles may clone a missing workbench, but installation and dependency
+  ownership stay behind that workbench's `make install` and `make update`.
+- Do not copy workbench-owned configuration back into this repository.
+- `config/nvim-minimal` is intentionally retired; do not recreate its link or
+  alias unless a task explicitly requests it.
 
-- Use `#!/usr/bin/env bash` for executable bash scripts
-- Set `set -euo pipefail` in executable setup scripts and new standalone
-  scripts when it will not break sourced interactive usage
-- Use descriptive function names
-- Quote variables properly
-- Use `local` for function variables
-- Add comments for complex operations
-- Use consistent error handling
-- Keep the files sourced from the active shell rc file (`~/.zshrc` on macOS,
-  `~/.bashrc` on Raspberry Pi) — `sh/helpers.sh`, `sh/exports.sh`, and
-  `sh/aliases.sh` — safe for interactive shell startup
-- Treat `sh/aliases.sh` and `sh/exports.sh` as shell fragments linted with
-  `shellcheck -s bash`; `sh/helpers.sh`, `sh/setup/*.sh`, and shell-shebang
-  files in `bin/` are linted as scripts by `make check-shell`
-- Put executable setup flows under `sh/setup/`
-- Keep bootstrap helpers and platform-specific setup behavior in
-  `sh/setup/helpers.sh`, `sh/setup/mac.sh`, and `sh/setup/raspberry-pi.sh`
-- Keep clone/update parallelism in the shared setup helpers and respect
-  `GIT_PARALLEL_JOBS` when changing personal repository bootstrap behavior
-- Keep `PERSONAL_NVIM_PLUGIN_REPOS` in `sh/setup/helpers.sh` as the shared
-  source for cloning, updating, and locally checking personal Neovim plugins
-- Keep macOS GnuPG Touch ID pinentry behavior coordinated across
-  `Brewfile.mac`, `config/gnupg/gpg-agent.conf`, and `sh/setup/mac.sh`
+## File organization
 
-### Python
+- `config/` — remaining workstation application configuration.
+- `Brewfile.*` — platform package manifests.
+- `sh/` — interactive shell files and utilities.
+- `sh/setup/` — install/update/platform/workbench orchestration.
+- `bin/` — personal executable utilities.
+- `tests/` — Python orchestration tests.
+- `.github/workflows/` — CI.
 
-- Follow PEP 8 style guide
-- Use type hints where beneficial
-- Write docstrings for functions and classes
-- Handle exceptions appropriately
-- Use virtual environments
-- Keep imports organized (standard library, third-party, local)
-- Keep Python CLI utilities in `bin/` importable without side effects where
-  practical
-- Prefer standard-library dependencies for personal utility scripts unless
-  the bootstrap manifests already install the required tool
+Use lowercase hyphenated names for shell scripts and lowercase underscore names
+for Python modules.
 
-## File Organization
+## Testing
 
-### Directory Structure
+- Run `make check` before committing or handing off changes.
+- Use `make check-shell` for focused setup/shell iteration.
+- Add automated tests when changing executable orchestration logic.
+- For documentation-only changes, verify instructions against live Makefiles
+  and scripts.
+- Real installation changes should be checked through the narrowest exact
+  user-facing target, such as `make install-workbenches`, before considering
+  the flow complete.
 
-- `config/` - Application configurations
-- `Brewfile.mac`, `Brewfile.mac.cask`, `Brewfile.mac.mas`, `Brewfile.raspberry-pi` - Platform package manifests used by bootstrap flows
-- `sh/` - Shell scripts and utilities
-- `sh/setup/` - Installation and update scripts (install.sh, update.sh, mac.sh, raspberry-pi.sh)
-- `bin/` - Executable personal utilities, including Python CLIs such as
-  `vless-switch` and `ilyasyoy-ffmpeg-parse-chapters`
-- `config/nvim/` - Neovim configuration
-- `config/nvim/nvim-pack-lock.json` - Lock file for `vim.pack` plugins;
-  nvim-treesitter manages parser revisions under Neovim's data directory
-- `config/nvim-minimal/` - Minimal Neovim configuration for reproducing issues
-- `config/nvim/lua/ilyasyoy/pack.lua` - Shared `vim.pack` specs and eager plugin registration
-- `config/nvim/lua/ilyasyoy/functions/` - Shared Neovim Lua helpers for core
-  mappings, Java, password-store, tests, and Treesitter behavior
-- `config/nvim/after/ftplugin/` - Language-specific Neovim configs
-- `config/nvim/after/plugin/` - Per-plugin Neovim configs loaded after plugins become available
-- `~/Projects/IlyasYOY/theme.nvim` - External Neovim colorscheme plugin that
-  provides the `ilyasyoy-mono` theme used by `config/nvim/after/plugin/theme.lua`
-- `config/nvim/after/queries/` - Treesitter query overrides and injections
-- `config/nvim/snippets/` - LuaSnip snippets (gitcommit, go, java, lua, markdown)
-- `config/nvim/spell/` - Checked-in custom spell files used by Neovim
-- `config/wezterm/`, `config/hammerspoon/`, `config/gnupg/`,
-  `config/.tmux.conf`, `config/.vimrc`, `config/.amethyst.yml` - Terminal,
-  desktop, GnuPG, tmux, and Vim configuration
-- `config/.gitignore-global`, `config/.golangci.yml` - Global Git ignore and
-  Go lint configuration linked by setup
-- `config/agent/skills/` - Shared portable skills linked into both Codex and
-  OpenCode; any immediate child directory with `SKILL.md` is installed
-- `config/codex/` - Codex instructions, rules, and Codex-only skills
-- `sh/setup/install.sh` - Links Codex and OpenCode instructions, rules,
-  commands, plugins, and global skills without editing either user config
-- `config/codex/skills/` - Codex-only skills that can read local Codex session
-  state, such as `ai-session-coach` and `session-hardener`
-- `config/codex/external-skills.conf` - Commit-pinned third-party Codex skill
-  repositories and optional included repository paths
-- `sh/setup/codex-external-skills.sh` - Shared exact-commit install and
-  review-gated update functions used by the main setup flows
-- `.agents/skills/` - Repository-local agent skills, including
-  `setup-codex` and `setup-opencode`
-- `.github/workflows/` - CI workflows such as `check.yml`
-- `config/opencode/` - Checked-in OpenCode instructions, commands, plugins,
-  and OpenCode-only skills symlinked into `~/.config/opencode`
+When experimenting with a behavioral hypothesis, add a small reproducible test
+inside the relevant repository instead of relying on an untracked temporary
+experiment.
 
-### File Naming
+## Security and destructive operations
 
-- Use lowercase with hyphens for shell scripts: `my-script.sh`
-- Use lowercase with underscores for Python: `my_module.py`
-- Follow language conventions for other files
-- Use descriptive names that indicate purpose
+- Never commit secrets.
+- Use environment variables for credentials.
+- Resolve exact targets before deleting or replacing files.
+- Preserve unknown user-created files and symlinks.
+- Prefer recoverable operations, and report what was removed or migrated.
 
-### LuaSnip Snippets
+## Git workflow
 
-When modifying or creating snippets in `config/nvim/snippets/*.lua`, use the
-`$dotfiles-luasnip` repo-local skill in `.agents/skills/dotfiles-luasnip/`. It
-covers the snippet structure, LuaSnip APIs, and the required workflow
-(read -> append -> `luacheck` -> `stylua`).
-Currently maintained snippet files are `gitcommit.lua`, `go.lua`, `java.lua`,
-`lua.lua`, and `markdown.lua`.
-
-## Git Workflow
-
-### Commit Messages
-
-- Use conventional commit format when possible
-- Write clear, descriptive commit messages
-- Keep commits focused on single changes
-- Agents must not commit changes without explicit user approval
-
-### Branching
-
-- Use feature branches for new work
-- Keep main/master branch stable
-- Rebase before merging
-
-## Testing Strategy
-
-- Run `make check` before committing changes
-- Use `make check-lua` or `make check-shell` for faster iteration on one area
-- Keep changes compatible with the checks run by `.github/workflows/check.yml`
-- Add targeted automated verification when introducing new executable logic or reproducible experiments
-- For documentation-only changes, verify the edited instructions against the
-  live repo files and scripts they describe
-
-### Agent Experimentation
-
-- When an agent wants to experiment to check a hypothesis, create a small function in the current project that implements the experiment and add an automated test that verifies the hypothesis. Do not run experiments in temporary directories (e.g., /tmp); experiments must live in the repository so they are reproducible and attachable to artifacts.
-- The experiment code and its test must be added to the project's test suite so results are reviewable, reproducible, and easily reusable.
-- Keep experiments small and well-documented. After review, either remove the experiment or refactor its logic into production code with proper tests and documentation.
-
-
-## Security Considerations
-
-- Never commit sensitive information (API keys, passwords)
-- Use environment variables for secrets
-- Follow principle of least privilege
-- Validate inputs and handle errors securely
-- Use secure coding practices for each language
-
-## Performance Guidelines
-
-- Profile code before optimizing
-- Use appropriate data structures
-- Avoid unnecessary computations
-- Cache results when beneficial
-- Consider memory usage in resource-constrained environments
-
-## Documentation
-
-- Update `README.md`, `AGENTS.md`, or agent instructions when workflows or layout change
-- Document configuration options
-- Add inline comments for complex logic
-
-## Development Environment Setup
-
-1. Clone repository: `git clone git@github.com:IlyasYOY/dotfiles.git`
-2. Run installation: `make install`
-3. Use the bootstrap scripts and Brewfiles in this repo as the source of truth
-   for platform-specific setup
-4. Update components later with `make update`
-5. Verify setup by running `make check`
-
-## Agent Configuration
-
-<!-- Skill source markers -->
-- `.agents/skills/setup-codex/SKILL.md` and
-  `.agents/skills/setup-opencode/SKILL.md` are repo-local config workflows.
-  Keep their desired config references inside the skill directories; do not
-  install these two skills globally.
-- `config/agent/skills/<skill>/SKILL.md` is the source marker for portable
-  skills shared by Codex and OpenCode.
-- `config/codex/skills/<skill>/SKILL.md` is Codex-only. Do not install
-  Codex session-history skills into OpenCode because they read
-  `~/.codex/state_5.sqlite` and Codex rollout files. Use separate OpenCode
-  implementations for similarly named OpenCode session-history skills.
-- `config/opencode/skills/<skill>/SKILL.md` is OpenCode-only. Do not install
-  OpenCode session-history skills such as `ai-session-coach` and
-  `session-hardener` into Codex because they read
-  `~/.local/share/opencode/opencode.db` and OpenCode log files.
-- Setup discovers only immediate child directories containing `SKILL.md`; do
-  not add hard-coded skill-name lists to `sh/setup/install.sh`.
-- External Codex skill repositories discover every `SKILL.md` recursively by
-  default. Optional manifest paths narrow discovery; installation must remain
-  commit-pinned and updates must show a diff before changing the accepted pin.
-
-<!-- Codex setup -->
-- `sh/setup/install.sh` links `config/codex/AGENTS.md` to
-  `~/.codex/AGENTS.md`, links `config/codex/rules/default.rules` to
-  `~/.codex/rules/default.rules`, and installs global skills into
-  `~/.codex/skills/IlyasYOY/<skill>`. It must not edit
-  `~/.codex/config.toml`.
-- Run the repo-local `$setup-codex` skill from dotfiles to review, back up,
-  update, and validate `~/.codex/config.toml`.
-- Interactive shells run the unprofiled `codex` command. Keep terminal and
-  desktop settings together in the default `~/.codex/config.toml`.
-- If `~/.codex/skills/IlyasYOY` is a legacy repo-managed symlink, setup should
-  replace it with a directory of per-skill symlinks while preserving unknown
-  user-created entries.
-
-<!-- OpenCode setup -->
-- `sh/setup/install.sh` links `config/opencode/AGENTS.md`, commands, and
-  plugins into `~/.config/opencode`; it must not edit or link the global
-  `opencode.json`.
-- OpenCode skill links are individual skills under
-  `~/.config/opencode/skills/<skill>` from both `config/agent/skills/<skill>`
-  (shared) and `config/opencode/skills/<skill>` (OpenCode-only).
-- OpenCode discovers the repo-local `setup-opencode` skill from
-  `.agents/skills`. Run that skill from dotfiles to review, back up, update,
-  and validate `~/.config/opencode/opencode.json`.
-- Keep the setup skill's reference valid strict JSON. OpenCode-specific command
-  prompts live in `config/opencode/commands/*.md`.
-- Setup should not uninstall Codex or delete existing local Codex sessions,
-  auth, app state, plugins, memories, or OpenCode state.
-- Use the local `git-commit` skill only when the user asks for commit help; do
-  not create commits without explicit approval.
-
-## Tool Versions
-
-- Go: Latest stable version with modules
-- Node.js: LTS via fnm
-- Python: 3.8+ with virtual environments
-- Java: Latest LTS with SDKMAN
-- Neovim: version with Lua support and built-in `vim.pack` support
-- Codex: installed on macOS by the bootstrap flow and configured from
-  `config/codex` plus the repo-local `setup-codex` skill
-- OpenCode: installed by the bootstrap flow and configured from
-  `config/opencode/AGENTS.md`, shared portable skills, and the repo-local
-  `setup-opencode` skill
-
-This document should be updated as coding standards evolve or new tools are adopted.
+- Keep commits focused and use Conventional Commit style when practical.
+- Never create a commit, push, branch, tag, release, or public repository
+  without explicit user authorization for that action.
+- Re-check the worktree and exact staged scope immediately before any approved
+  commit.
