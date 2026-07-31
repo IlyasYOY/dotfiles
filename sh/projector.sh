@@ -4,7 +4,7 @@
 #
 # This file is sourced at shell startup by sh/helpers.sh. It defines a
 # `projector` shell function plus private `_projector_*` helpers so that
-# directory-changing commands (feature/fix/review/merge) persist in the
+# directory-changing commands (feature/release/fix/review/merge) persist in the
 # caller's shell without needing `. projector ...`.
 #
 # It is written to run under both bash and zsh: no `read -p`, no
@@ -378,6 +378,7 @@ _projector_print_usage() {
     echo "  pull                    Pull the latest changes from the default branch of the 'origin' remote."
     echo "  sync                    Pull the latest changes from the default branch of the 'upstream' remote (if configured)."
     echo "  feature <name>          Create a new git worktree for a feature branch and switch to it."
+    echo "  release <name>          Create a new git worktree for a release branch and switch to it."
     echo "  fix <name>              Create a new git worktree for a fix branch and switch to it."
     echo "  chore <name>            Create a new git worktree for a chore branch and switch to it."
     echo "  refactor <name>         Create a new git worktree for a refactor branch and switch to it."
@@ -396,12 +397,13 @@ _projector_print_usage() {
     echo ""
     echo "Notes:"
     echo "  - This tool assumes you're in a git repository with 'origin' remote configured."
-    echo "  - projector is a shell function; directory-changing commands (feature/fix/review/merge)"
+    echo "  - projector is a shell function; directory-changing commands (feature/release/fix/review/merge)"
     echo "    persist in the current shell automatically. No need to source anything."
     echo ""
     echo "Examples:"
     echo "  projector pull                       # Update from origin's default branch"
     echo "  projector feature auth               # Create worktree for 'feature/auth' and switch to it"
+    echo "  projector release 1.2.0              # Create worktree for 'release/1.2.0' and switch to it"
     echo "  projector fix typo                   # Create worktree for 'fix/typo' and switch to it"
     echo "  projector review feature/auth        # Check out existing 'feature/auth' branch and switch to it"
     echo "  projector --no-clone-ignored feature auth  # Same, but skip copying ignored files"
@@ -491,7 +493,7 @@ _projector_main() {
             echo "Syncing from upstream/$default_branch..."
             git pull upstream "$default_branch"
             ;;
-        feature | fix | chore | refactor | ci | docs)
+        feature | release | fix | chore | refactor | ci | docs)
             if [[ $# -ne 1 ]]; then
                 echo "Error: '$command' requires exactly one argument: <name>"
                 return 1
@@ -735,7 +737,7 @@ _projector_main() {
             ;;
         *)
             echo "Error: Unknown command '$command'"
-            echo "Available commands: pull, sync, feature <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, review <branch-name>, merge, cleanup"
+            echo "Available commands: pull, sync, feature <name>, release <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, review <branch-name>, merge, cleanup"
             return 1
             ;;
     esac
