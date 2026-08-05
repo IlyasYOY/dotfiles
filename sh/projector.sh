@@ -80,75 +80,6 @@ _projector_get_branch_worktree_path() {
     return 1
 }
 
-# List worktrees as: <path>|<branch>
-_projector_list_worktrees() {
-    local line current_path="" current_branch=""
-
-    while IFS= read -r line; do
-        case "$line" in
-            worktree\ *)
-                current_path="${line#worktree }"
-                current_branch=""
-                ;;
-            branch\ refs/heads/*)
-                current_branch="${line#branch refs/heads/}"
-                ;;
-            "")
-                if [[ -n "$current_path" ]]; then
-                    printf '%s|%s\n' "$current_path" "$current_branch"
-                fi
-                current_path=""
-                current_branch=""
-                ;;
-        esac
-    done < <(git worktree list --porcelain)
-
-    # Handle trailing entry without blank line
-    if [[ -n "$current_path" ]]; then
-        printf '%s|%s\n' "$current_path" "$current_branch"
-    fi
-}
-
-# Return 0 if <branch> is an ancestor of <default_branch> (i.e., merged)
-_projector_is_branch_merged() {
-    local branch="$1" default_branch="$2"
-    git merge-base --is-ancestor "${branch}" "${default_branch}" >/dev/null 2>&1
-}
-
-_projector_remove_worktree() {
-    local path="$1" dry_run="$2" force="$3"
-
-    if [[ "$dry_run" == "true" ]]; then
-        if [[ "$force" == "true" ]]; then
-            echo "Would remove worktree (force): $path"
-        else
-            echo "Would remove worktree: $path"
-        fi
-        return 0
-    fi
-
-    if [[ "$force" == "true" ]]; then
-        git worktree remove -f "$path" || return 1
-    else
-        git worktree remove "$path" || return 1
-    fi
-}
-
-_projector_delete_branch() {
-    local branch="$1" force="$2" dry_run="$3"
-
-    if [[ "$dry_run" == "true" ]]; then
-        echo "Would delete branch: $branch (force=$force)"
-        return 0
-    fi
-
-    if [[ "$force" == "true" ]]; then
-        git branch -D "$branch"
-    else
-        git branch -d "$branch"
-    fi
-}
-
 # Return 0 if <path> should not be copied as an ignored item.
 _projector_should_skip_ignored_path() {
     local path="$1"
@@ -225,31 +156,6 @@ _projector_copy_ignored_files() {
     done < <(_projector_get_ignored_paths "$source_dir")
 
     echo "Cloned ignored items: copied=$copied skipped=$skipped"
-}
-
-_projector_prompt_yes_no() {
-    local prompt_msg="$1"
-
-    if [[ "${ASSUME_YES:-false}" == "true" ]]; then
-        return 0
-    fi
-
-    printf '%s [y/N]: ' "$prompt_msg" >&2
-    read -r ans
-    case "$ans" in
-        [yY] | [yY][eE][sS]) return 0 ;;
-        *) return 1 ;;
-    esac
-}
-
-# Return 0 if there are uncommitted changes in the worktree at <path>
-_projector_has_uncommitted_changes() {
-    local path="$1"
-    # Use porcelain to detect staged, unstaged and untracked changes
-    if [[ -n "$(git -C "$path" status --porcelain 2>/dev/null)" ]]; then
-        return 0
-    fi
-    return 1
 }
 
 _projector_create_prefixed_worktree() {
@@ -386,14 +292,6 @@ _projector_print_usage() {
     echo "  docs <name>             Create a new git worktree for a docs branch and switch to it."
     echo "  review <branch-name>    Check out an existing branch by name in a new worktree and switch to it."
     echo "  merge                   Switch to the default branch worktree and merge the current branch into it."
-    echo "  cleanup [flags]         Remove unused worktrees. See flags below."
-    echo ""
-    echo "Flags for cleanup:"
-    echo "  --dry-run               Show what would be removed without making changes."
-    echo "  -y, --yes               Assume yes for all prompts (non-interactive)."
-    echo "  --delete-branches       Also delete the branch refs when removing worktrees. (Branches are deleted by default.)"
-    echo "  --force                 Force removal even if worktree has uncommitted changes (dangerous)."
-    echo "  --only-created          Only operate on worktrees that match the projector naming convention (../<project>-*)."
     echo ""
     echo "Notes:"
     echo "  - This tool assumes you're in a git repository with 'origin' remote configured."
@@ -408,7 +306,6 @@ _projector_print_usage() {
     echo "  projector review feature/auth        # Check out existing 'feature/auth' branch and switch to it"
     echo "  projector --no-clone-ignored feature auth  # Same, but skip copying ignored files"
     echo "  projector merge                      # Switch to the default branch worktree and merge the current branch"
-    echo "  projector cleanup --dry-run          # Show what would be removed"
 }
 
 _projector_main() {
@@ -578,166 +475,9 @@ _projector_main() {
 
             _projector_merge_current_branch
             ;;
-        cleanup)
-            # Flags: --dry-run, -y|--yes, --delete-branches, --only-created
-            DRY_RUN="false"
-            ASSUME_YES="false"
-            DELETE_BRANCHES="true"
-            ONLY_CREATED="false"
-            FORCE="false"
-
-            while [[ $# -gt 0 ]]; do
-                case "$1" in
-                    --dry-run)
-                        DRY_RUN="true"
-                        ;;
-                    -y | --yes)
-                        ASSUME_YES="true"
-                        ;;
-                    --delete-branches)
-                        DELETE_BRANCHES="true"
-                        ;;
-                    --only-created)
-                        ONLY_CREATED="true"
-                        ;;
-                    --force)
-                        FORCE="true"
-                        ;;
-                    --help)
-                        _projector_print_usage
-                        return 0
-                        ;;
-                    *)
-                        echo "Error: Unknown option for cleanup: $1"
-                        return 1
-                        ;;
-                esac
-                shift
-            done
-
-            default_branch="$(_projector_get_default_branch)"
-            if [[ -z "$default_branch" ]]; then
-                echo "Error: Unable to determine the default branch"
-                return 1
-            fi
-
-            project_name="$(_projector_get_project_name)"
-            main_worktree="$(_projector_get_main_worktree_path)"
-
-            # Operate from main worktree to ensure git commands target the repository
-            cd "$main_worktree" || return 1
-
-            removed=0
-            skipped=0
-            would_remove=0
-
-            while IFS='|' read -r wt_path wt_branch; do
-                # Skip main worktree
-                if [[ "$wt_path" == "$main_worktree" ]]; then
-                    continue
-                fi
-
-                # Optionally only handle created worktrees matching naming convention
-                if [[ "$ONLY_CREATED" == "true" ]]; then
-                    base="$(basename "$wt_path")"
-                    if [[ "$base" != "${project_name}-"* && "$base" != "$project_name" ]]; then
-                        continue
-                    fi
-                fi
-
-                if [[ -z "$wt_branch" ]]; then
-                    echo "Skipping worktree without branch: $wt_path"
-                    ((skipped++))
-                    continue
-                fi
-
-                if [[ "$wt_branch" == "$default_branch" ]]; then
-                    echo "Skipping default branch worktree: $wt_path ($wt_branch)"
-                    ((skipped++))
-                    continue
-                fi
-
-                if _projector_is_branch_merged "$wt_branch" "$default_branch"; then
-                    if [[ "$DRY_RUN" == "true" ]]; then
-                        if [[ "$FORCE" == "true" ]]; then
-                            echo "Would remove merged worktree: $wt_path (branch: $wt_branch) (force)"
-                        else
-                            echo "Would remove merged worktree: $wt_path (branch: $wt_branch)"
-                        fi
-                        ((would_remove++))
-                    else
-                        # Skip worktrees that have uncommitted changes unless forced
-                        if _projector_has_uncommitted_changes "$wt_path"; then
-                            if [[ "$FORCE" == "true" ]]; then
-                                echo "Removing merged worktree (force, discarding uncommitted changes): $wt_path (branch: $wt_branch)"
-                                _projector_remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
-                                if [[ "$DELETE_BRANCHES" == "true" ]]; then
-                                    _projector_delete_branch "$wt_branch" "false" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
-                                fi
-                                ((removed++))
-                            else
-                                echo "Skipping worktree (uncommitted changes): $wt_path (branch: $wt_branch)"
-                                ((skipped++))
-                            fi
-                        else
-                            echo "Removing merged worktree: $wt_path (branch: $wt_branch)"
-                            _projector_remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
-                            if [[ "$DELETE_BRANCHES" == "true" ]]; then
-                                _projector_delete_branch "$wt_branch" "false" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
-                            fi
-                            ((removed++))
-                        fi
-                    fi
-                    continue
-                fi
-
-                # Not merged
-                if _projector_prompt_yes_no "Worktree at $wt_path on branch '$wt_branch' is not merged into '$default_branch'. Remove worktree?"; then
-                    if [[ "$DRY_RUN" == "true" ]]; then
-                        if [[ "$FORCE" == "true" ]]; then
-                            echo "Would remove unmerged worktree: $wt_path (branch: $wt_branch) (force)"
-                        else
-                            echo "Would remove unmerged worktree: $wt_path (branch: $wt_branch)"
-                        fi
-                        ((would_remove++))
-                    else
-                        # Skip unmerged worktrees that have uncommitted changes unless forced
-                        if _projector_has_uncommitted_changes "$wt_path"; then
-                            if [[ "$FORCE" == "true" ]]; then
-                                echo "Removing unmerged worktree (force, discarding uncommitted changes): $wt_path (branch: $wt_branch)"
-                                _projector_remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
-                                if [[ "$DELETE_BRANCHES" == "true" ]]; then
-                                    # Force delete if unmerged
-                                    _projector_delete_branch "$wt_branch" "true" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
-                                fi
-                                ((removed++))
-                            else
-                                echo "Skipping worktree (uncommitted changes): $wt_path (branch: $wt_branch)"
-                                ((skipped++))
-                            fi
-                        else
-                            echo "Removing unmerged worktree: $wt_path (branch: $wt_branch)"
-                            _projector_remove_worktree "$wt_path" "$DRY_RUN" "$FORCE" || echo "Warning: failed to remove worktree $wt_path"
-                            if [[ "$DELETE_BRANCHES" == "true" ]]; then
-                                # Force delete if unmerged
-                                _projector_delete_branch "$wt_branch" "true" "$DRY_RUN" || echo "Warning: failed to delete branch $wt_branch"
-                            fi
-                            ((removed++))
-                        fi
-                    fi
-                else
-                    echo "Skipping worktree: $wt_path"
-                    ((skipped++))
-                fi
-
-            done < <(_projector_list_worktrees)
-
-            echo "Cleanup summary: removed=$removed skipped=$skipped would_remove=$would_remove"
-
-            ;;
         *)
             echo "Error: Unknown command '$command'"
-            echo "Available commands: pull, sync, feature <name>, release <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, review <branch-name>, merge, cleanup"
+            echo "Available commands: pull, sync, feature <name>, release <name>, fix <name>, chore <name>, refactor <name>, ci <name>, docs <name>, review <branch-name>, merge"
             return 1
             ;;
     esac
