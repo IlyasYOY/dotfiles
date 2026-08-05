@@ -56,7 +56,6 @@ setup_links_to_config_files() {
     symlink "$DOTFILES_DIR/config/.gitignore-global" "$config_dir/git/ignore"
 
     # Home directory links
-    symlink "$DOTFILES_DIR/config/.golangci.yml" "$HOME_DIR/.golangci.yml"
     symlink "$DOTFILES_DIR/config/.tmux.conf" "$HOME_DIR/.tmux.conf"
     symlink "$DOTFILES_DIR/config/.vimrc" "$HOME_DIR/.vimrc"
     if is_mac; then
