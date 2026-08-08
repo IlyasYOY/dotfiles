@@ -32,7 +32,7 @@ their own installation, dependency updates, and canonical checks.
 
 - `sh/setup` — install, update, platform bootstrap, and workbench orchestration.
 - `sh/helpers.sh`, `sh/exports.sh`, `sh/aliases.sh` — interactive shell setup.
-- `config/wezterm`, `config/hammerspoon`, `config/gnupg`,
+- `config/wezterm`, `config/hammerspoon`, `config/gnupg`, `config/worktrunk`,
   `config/.tmux.conf`, `config/.amethyst.yml`, `config/.vimrc` — workstation
   configuration.
 - `Brewfile.*` — platform package manifests.
@@ -59,6 +59,10 @@ make install
 4. configures SDKMAN, GVM, fnm, tmux TPM, and password-store;
 5. clones other personal tools used by the workstation;
 6. clones and calls `make install` in both workbench repositories.
+
+The install also configures Worktrunk's shell integration. The update flow
+refreshes that integration after package upgrades so its shell wrapper stays
+compatible with the installed Worktrunk version.
 
 The workbench installation can be run independently:
 
@@ -101,6 +105,32 @@ make update-workbenches
 Third-party Codex skills remain pinned to exact commits inside
 `agent-workbench`; its update flow shows a diff and requires confirmation
 before changing an accepted pin.
+
+## Git worktrees
+
+[Worktrunk](https://worktrunk.dev/) provides the workstation's Git worktree
+workflow:
+
+```bash
+wt switch -c feature/auth --base=@  # create from the current HEAD
+wt switch feature/auth             # open an existing branch worktree
+wt switch pr:123                    # open a GitHub pull request worktree
+wt list                             # inspect all worktrees
+wt merge                            # squash, rebase, merge, and clean up
+```
+
+New worktrees use Worktrunk's default sibling path,
+`../<repo>.<sanitized-branch>`. Existing Git worktrees remain usable without
+being moved. A blocking `pre-start` hook copies lightweight ignored files from
+the primary worktree before entering a new one; use `--no-hooks` to skip that
+copy for a single `wt switch` invocation. Dependency, build, and virtual
+environment directories are excluded from copying.
+
+`wt merge` intentionally uses Worktrunk's native workflow: it includes
+uncommitted changes, generates a commit message through Codex, squashes and
+rebases onto the target, then removes the merged worktree and branch. Use
+ordinary `git pull` commands for remote updates; Worktrunk does not replace
+Git's pull and sync operations.
 
 ## Local checks
 

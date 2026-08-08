@@ -281,6 +281,7 @@ main() {
     setup_links_to_config_files
     setup_mac_configuration
     setup_shell_rc
+    setup_worktrunk
     setup_git_config
     setup_sdkman
     setup_go_version_manager

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# shellcheck source=/dev/null
-source "$ILYASYOY_DOTFILES_DIR/sh/projector.sh"
-
 # tms runs fzf for me to search through tmux sessions and choose one I want to
 # use. works in and out of the tmux.
 tms() {
@@ -100,10 +97,10 @@ ai-resume() {
 }
 
 # _kb_main_root prints the absolute (physical) path of the main git repository
-# root for the current directory. For a linked worktree (e.g. a projector
-# feature workspace at ../<project>-<suffix>) this resolves to the parent repo
-# root so that notes map to the main project folder. Falls back to the physical
-# $PWD when not in a git repository or when resolution fails.
+# root for the current directory. For a linked worktree this resolves to the
+# primary repository root so that notes map to the main project folder. Falls
+# back to the physical $PWD when not in a git repository or when resolution
+# fails.
 _kb_main_root() {
     local common abs_common
 

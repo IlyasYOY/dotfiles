@@ -185,6 +185,26 @@ symlink() {
     success "Added symlink $link to $target"
 }
 
+setup_worktrunk() {
+    local config_dir="$HOME/.config/worktrunk"
+
+    info "🌳 Configuring Worktrunk..."
+    mkdir -pv "$config_dir"
+    symlink "$DOTFILES_DIR/config/worktrunk/config.toml" "$config_dir/config.toml"
+
+    if ! command -v wt >/dev/null 2>&1; then
+        warning "Worktrunk is not installed; skipping shell integration"
+        return 0
+    fi
+
+    if wt config shell install "$(shell_name)" --yes; then
+        success "Worktrunk shell integration configured"
+    else
+        error "Failed to configure Worktrunk shell integration"
+        return 1
+    fi
+}
+
 clone_repo() {
     local repo="$1"
     local dest="$2"

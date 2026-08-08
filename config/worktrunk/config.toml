@@ -1,0 +1,20 @@
+[pre-start]
+copy-ignored = "wt step copy-ignored"
+
+[step.copy-ignored]
+exclude = [
+  "node_modules/",
+  "vendor/",
+  "build/",
+  "dist/",
+  "target/",
+  ".venv/",
+  "__pycache__/",
+  ".gradle/",
+]
+
+[commit.generation]
+command = "{ printf '%s\\n' '$git-commit'; cat; } | codex exec -m gpt-5.6-luna -c model_reasoning_effort='low' -c system_prompt='' --sandbox=read-only --json - | jq -sr '[.[] | select(.item.type? == \"agent_message\")] | last.item.text'"
+
+[list]
+json-schema = 2

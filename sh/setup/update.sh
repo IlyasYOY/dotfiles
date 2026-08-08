@@ -85,6 +85,7 @@ main() {
         update_raspberry_pi_brew_packages
     fi
 
+    setup_worktrunk
     update_local_repos
     "$DOTFILES_DIR/sh/setup/workbenches.sh" update
     update_tmux_plugins
