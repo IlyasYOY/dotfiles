@@ -27,7 +27,7 @@ end
 
 for _, app in ipairs {
     { shortcut = "1", names = { "WezTerm" } },
-    { shortcut = "2", names = { "Firefox" } },
+    { shortcut = "2", names = { "Google Chrome", "Firefox" } },
     { shortcut = "3", names = { "ChatGPT", "Codex" } },
     { shortcut = "4", names = { "Telegram" } },
     { shortcut = "5", names = { "Final Cut Pro" } },
