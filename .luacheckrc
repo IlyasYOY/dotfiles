@@ -13,6 +13,7 @@ globals = {
     "_",
     "G_P",
     "G_R",
+    "g_launch_or_focus_first",
     "TelescopeGlobalState",
     "_TelescopeConfigurationValues",
     "_TelescopeConfigurationPickers",
