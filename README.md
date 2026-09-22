@@ -153,7 +153,7 @@ checks.
 - `GIT_PARALLEL_JOBS` controls parallel checkout updates.
 - T-Invest MCP is built from `~/Projects/IlyasYOY/t-invest-mcp`; token values
   remain environment variables and are never stored here.
-- Singularity uses its official remote MCP configuration from
-  `agent-workbench`.
+- Task workflows in `kb-store` use Google Tasks through Computer Use in the
+  signed-in browser; no task-service API token is required.
 - The shell alias `nvimconfig` opens the configuration installed by
   `nvim-workbench`.
