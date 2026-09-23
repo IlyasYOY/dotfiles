@@ -9,8 +9,8 @@ independent workbench repositories:
 
 - [`nvim-workbench`](https://github.com/IlyasYOY/nvim-workbench) — Neovim
   configuration and personal plugin development;
-- [`agent-workbench`](https://github.com/IlyasYOY/agent-workbench) — Codex and
-  OpenCode instructions, skills, commands, plugins, and config-review
+- [`agent-workbench`](https://github.com/IlyasYOY/agent-workbench) — Codex
+  instructions, skills, commands, plugins, and config-review
   workflows.
 
 Both workbench repositories follow their upstream `main` branch. They own
@@ -81,10 +81,9 @@ Override them with `ILYASYOY_NVIM_WORKBENCH_DIR` and
 `nvim-workbench` installs `~/.config/nvim`. The former
 `~/.config/nvim-minimal` setup is no longer managed.
 
-`agent-workbench` installs managed Codex/OpenCode instructions and extensions,
-but does not edit `~/.codex/config.toml` or
-`~/.config/opencode/opencode.json`. Run its repository-local `$setup-codex` or
-`$setup-opencode` skill to review and reconcile those files.
+`agent-workbench` installs managed Codex instructions and extensions,
+but does not edit `~/.codex/config.toml`. Run its repository-local
+`$setup-codex` skill to review and reconcile that file.
 
 ## Updating
 

@@ -12,7 +12,7 @@ Instructions for agents operating in the workstation-orchestrator repository.
 - Prefer documented Makefile targets over ad hoc commands.
 - Request approval before the first command expected to require network access,
   browser or process control, Git index writes, remote Git operations, global
-  Codex/OpenCode writes, or writes outside the allowed repository roots.
+  Codex writes, or writes outside the allowed repository roots.
 - Never ask the user to paste secrets. Ask them to configure the documented
   environment variable and verify only whether it is present.
 
@@ -42,7 +42,7 @@ Before editing a personal repository, inspect its `AGENTS.md`.
   - Neovim configuration, snippets, language integrations, personal plugin
     registration, local plugin checkout management, and Neovim runtime checks.
 - Agent workbench: `~/Projects/IlyasYOY/agent-workbench`
-  - Codex/OpenCode instructions, config references, commands, plugins, shared
+  - Codex instructions, config references, commands, plugins, shared
     and runtime-specific skills, and pinned external Codex skills.
 - KB store: `~/Projects/kb-store`
   - notes, wiki pages, diary entries, and other persisted knowledge. Read its

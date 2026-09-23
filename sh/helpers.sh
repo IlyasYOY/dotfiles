@@ -57,28 +57,13 @@ convert-webp-to-png() {
     done
 }
 
-_ai_cli() {
-    if command -v codex >/dev/null 2>&1; then
-        printf "codex\n"
-        return 0
-    fi
-
-    if command -v opencode >/dev/null 2>&1; then
-        printf "opencode\n"
-        return 0
-    fi
-
-    return 1
-}
-
 ai() {
-    local tool
-    if ! tool=$(_ai_cli); then
-        printf "ai: neither codex nor opencode is available\n" >&2
+    if ! command -v codex >/dev/null 2>&1; then
+        printf "ai: codex is not available\n" >&2
         return 1
     fi
 
-    "$tool" "$@"
+    codex "$@"
 }
 
 ai-resume() {
@@ -87,12 +72,7 @@ ai-resume() {
         return 0
     fi
 
-    if command -v opencode >/dev/null 2>&1; then
-        opencode --continue "$@"
-        return 0
-    fi
-
-    printf "ai-resume: neither codex nor opencode is available\n" >&2
+    printf "ai-resume: codex is not available\n" >&2
     return 1
 }
 
@@ -344,83 +324,6 @@ User request: $old_buffer"
         zle end-of-line
     }
 
-    _opencode_shell_command_zsh() {
-        if [ -z "${BUFFER:-}" ]; then
-            return 0
-        fi
-
-        if ! command -v opencode >/dev/null 2>&1; then
-            zle -M "opencode: command not found"
-            return 1
-        fi
-
-        local old_buffer="$BUFFER"
-        local output_file
-        local error_file
-        local generated_command
-        local error_message
-        local prompt
-
-        output_file=$(mktemp "${TMPDIR:-/tmp}/opencode-shell-command.XXXXXX") || {
-            zle -M "opencode: failed to create temp file"
-            return 1
-        }
-        error_file=$(mktemp "${TMPDIR:-/tmp}/opencode-shell-command-error.XXXXXX") || {
-            rm -f "$output_file"
-            zle -M "opencode: failed to create temp file"
-            return 1
-        }
-
-        prompt="Current working directory: $PWD
-User request: $old_buffer"
-
-        BUFFER="$old_buffer  [opencode...]"
-        zle -I
-        zle redisplay
-
-        if ! opencode run --command shell-command "$prompt" >"$output_file" 2>"$error_file"; then
-            BUFFER="$old_buffer"
-            error_message=$(sed -n '1p' "$error_file")
-            rm -f "$output_file" "$error_file"
-            if [ -z "$error_message" ]; then
-                error_message="failed to generate command"
-            fi
-            zle -M "opencode: $error_message"
-            zle redisplay
-            return 1
-        fi
-
-        generated_command=$(awk 'NF { print }' "$output_file")
-        rm -f "$output_file" "$error_file"
-
-        if [ -z "$generated_command" ]; then
-            BUFFER="$old_buffer"
-            zle -M "opencode: generated empty command"
-            zle redisplay
-            return 1
-        fi
-
-        BUFFER="$generated_command"
-        zle end-of-line
-    }
-
-    _ai_shell_command_zsh() {
-        if command -v codex >/dev/null 2>&1; then
-            _codex_shell_command_zsh
-            return $?
-        fi
-
-        if command -v opencode >/dev/null 2>&1; then
-            _opencode_shell_command_zsh
-            return $?
-        fi
-
-        zle -M "ai: neither codex nor opencode is available"
-        return 1
-    }
-
     zle -N _codex_shell_command_zsh
-    zle -N _opencode_shell_command_zsh
-    zle -N _ai_shell_command_zsh
-    bindkey '\ee' _ai_shell_command_zsh
+    bindkey '\ee' _codex_shell_command_zsh
 fi
