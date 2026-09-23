@@ -19,14 +19,15 @@ their own installation, dependency updates, and canonical checks.
 > [!WARNING]
 > This is a personal, opinionated setup. The bootstrap assumes my project
 > layout under `~/Projects/IlyasYOY`, manages shell startup files, clones
-> personal repositories, and contains macOS- and Raspberry Pi-specific setup.
+> personal repositories, and contains macOS-specific setup.
 
 ## Platform support
 
 - macOS packages come from `Brewfile.mac` and `Brewfile.mac.cask`; desktop
   configuration includes WezTerm, Hammerspoon, and Amethyst.
-- Raspberry Pi OS and compatible Debian systems use the smaller
-  `Brewfile.raspberry-pi` plus apt-based bootstrap.
+
+`make install` and `make update` support macOS only and exit before making
+changes on other operating systems. Managed shell startup uses Zsh (`~/.zshrc`).
 
 ## Repository contents
 
@@ -62,8 +63,7 @@ make install
 
 On macOS, installation discovers Homebrew on PATH or under `/opt/homebrew`
 and `/usr/local`, bootstraps it if necessary, and loads its shell environment
-before installing packages. Raspberry Pi bootstrap also checks that Homebrew
-can be loaded before continuing. Installer downloads must complete successfully
+before installing packages. Installer downloads must complete successfully
 and be nonempty before execution; SDKMAN, GVM, and Oh My Zsh must provide their
 initialization files before installation is considered successful. Incomplete
 existing installations are reported and left intact for manual repair.
@@ -74,8 +74,8 @@ missing tmux plugins, even when TPM already exists.
 
 GnuPG setup renders `~/.config/dotfiles/gpg-agent.conf` and links it from
 `~/.gnupg/gpg-agent.conf`. macOS resolves Touch ID pinentry from Homebrew's
-formula prefix and keeps zero cache TTLs and the DisableKeychain preference;
-Raspberry Pi uses apt's `pinentry-curses`. The previous dotfiles-owned symlink
+formula prefix and keeps zero cache TTLs and the DisableKeychain preference.
+The previous dotfiles-owned symlink
 is saved under `~/.gnupg/dotfiles-backup.*` when migrated. Unknown GnuPG files
 and symlinks are left unchanged with a warning. Only generated files bearing
 the dotfiles ownership marker are refreshed by subsequent installs or updates.

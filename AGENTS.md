@@ -23,7 +23,7 @@ For Python tooling, prefer `uv`. Use
 
 This repository owns:
 
-- macOS and Raspberry Pi package/bootstrap flows;
+- macOS package/bootstrap flows;
 - shell helpers, exports, and aliases;
 - tmux, WezTerm, Hammerspoon, Amethyst, Vim, Git, and GnuPG configuration;
 - language version manager bootstrap;

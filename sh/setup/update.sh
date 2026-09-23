@@ -5,8 +5,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/helpers.sh"
 # shellcheck disable=SC1091
 source "$DOTFILES_DIR/sh/setup/mac.sh"
 # shellcheck disable=SC1091
-source "$DOTFILES_DIR/sh/setup/raspberry-pi.sh"
-# shellcheck disable=SC1091
 source "$DOTFILES_DIR/sh/setup/gnupg.sh"
 
 update_local_repos() {
@@ -82,6 +80,11 @@ update_go_tools() {
 }
 
 main() {
+    if ! is_mac; then
+        error "Workstation setup supports macOS only"
+        return 1
+    fi
+
     if [ ! -e "$DOTFILES_DIR/.git" ]; then
         error "Dotfiles checkout is not a Git repository: $DOTFILES_DIR"
         return 1
@@ -97,11 +100,6 @@ main() {
         setup_mac_using_brew_cask
         update_brew_packages
         update_brew_cask_packages
-    elif is_raspberry_pi; then
-        update_raspberry_pi_system
-        update_raspberry_pi_brew
-        setup_raspberry_pi_homebrew_dependencies
-        update_raspberry_pi_brew_packages
     fi
 
     setup_gnupg

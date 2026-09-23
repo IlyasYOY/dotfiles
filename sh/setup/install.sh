@@ -5,8 +5,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/helpers.sh"
 # shellcheck disable=SC1091
 source "$DOTFILES_DIR/sh/setup/mac.sh"
 # shellcheck disable=SC1091
-source "$DOTFILES_DIR/sh/setup/raspberry-pi.sh"
-# shellcheck disable=SC1091
 source "$DOTFILES_DIR/sh/setup/gnupg.sh"
 
 setup_basic_directories() {
@@ -64,11 +62,6 @@ setup_platform_dependencies() {
         setup_mac_using_brew || return 1
         setup_mac_using_brew_cask || return 1
 
-        return 0
-    fi
-
-    if is_raspberry_pi; then
-        setup_raspberry_pi || return 1
         return 0
     fi
 
@@ -232,6 +225,11 @@ setup_pass() {
 }
 
 main() {
+    if ! is_mac; then
+        error "Workstation setup supports macOS only"
+        return 1
+    fi
+
     setup_basic_directories
     setup_oh_my_zsh
     setup_platform_dependencies

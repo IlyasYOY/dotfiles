@@ -40,33 +40,20 @@ class SetupTest(unittest.TestCase):
         path.chmod(0o755)
         return path
 
-    def shell(self, body, script="helpers.sh", platform="mac"):
+    def shell(self, body, script="helpers.sh"):
         source = ROOT / "sh/setup" / script
-        platform_functions = (
-            "is_mac() { return 0; }; is_raspberry_pi() { return 1; };"
-            if platform == "mac" else
-            "is_mac() { return 1; }; is_raspberry_pi() { return 0; };"
-        )
         return subprocess.run(
             ["/bin/bash", "--noprofile", "--norc", "-c",
-             'source "$1"; ' + platform_functions + body, "bash", str(source)],
+             'source "$1"; is_mac() { return 0; }; ' + body, "bash", str(source)],
             env=self.env, cwd=self.home, capture_output=True, text=True, timeout=30,
         )
 
     def test_package_failures_are_nonzero(self):
         self.stub("brew", 'case "$1" in shellenv|--version) exit 0;; *) exit 9;; esac')
-        self.stub("sudo", "exit 9")
-        self.stub("dpkg", "exit 1")
-        for script, platform, functions in (
-            ("mac.sh", "mac", ("update_brew", "update_brew_packages", "update_brew_cask_packages")),
-            ("raspberry-pi.sh", "pi", ("apt_install missing", "setup_raspberry_pi_system_update",
-                                      "update_raspberry_pi_system", "update_raspberry_pi_brew",
-                                      "update_raspberry_pi_brew_packages")),
-        ):
-            for function in functions:
-                with self.subTest(function=function):
-                    result = self.shell(f'source "{ROOT}/sh/setup/{script}"; {function}', platform=platform)
-                    self.assertNotEqual(result.returncode, 0, result.stdout)
+        for function in ("update_brew", "update_brew_packages", "update_brew_cask_packages"):
+            with self.subTest(function=function):
+                result = self.shell(f'source "{ROOT}/sh/setup/mac.sh"; {function}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
 
     def test_parallel_clone_reports_failure_after_all_workers_finish(self):
         self.stub("git", '''
@@ -223,27 +210,6 @@ BREW
         result = self.shell(discover + "setup_mac_homebrew", "install.sh")
         self.assertNotEqual(result.returncode, 0, result.stdout)
 
-    def test_linux_homebrew_bootstrap_checks_artifact_and_preserves_old_block(self):
-        (self.bin / "brew").unlink()
-        discover = 'load_linux_brew() { load_brew "$HOME/.linuxbrew/bin/brew"; }; '
-        self.download("exit 0")
-        result = self.shell(discover + "setup_raspberry_pi_homebrew", "install.sh", "pi")
-        self.assertNotEqual(result.returncode, 0, result.stdout)
-        executable = self.home / ".linuxbrew/bin/brew"
-        executable.parent.mkdir(parents=True)
-        executable.write_text('#!/bin/bash\ncase "$1" in shellenv) printf \'export PATH="%s:$PATH"\\n\' "${0%/*}";; --version) exit 0;; esac\n')
-        executable.chmod(0o755)
-        (self.home / ".bashrc").write_text(
-            "export USER_CONFIG=preserved\n## start ilyasyoy linuxbrew config ##\n"
-            "old shellenv\n## end ilyasyoy linuxbrew config ##\n"
-        )
-        result = self.shell(discover + "setup_raspberry_pi_homebrew", "install.sh", "pi")
-        self.assertEqual(result.returncode, 0, result.stderr)
-        rc = (self.home / ".bashrc").read_text()
-        self.assertNotIn("old shellenv", rc)
-        self.assertEqual(rc.count("## start"), 1)
-        self.assertIn("USER_CONFIG=preserved", rc)
-
     def prepare_pinentry(self):
         prefix = self.root / "pinentry prefix"
         (prefix / "bin").mkdir(parents=True, exist_ok=True)
@@ -268,15 +234,6 @@ BREW
         self.assertIn("default-cache-ttl 0\n", link.read_text())
         self.assertIn("max-cache-ttl 0\n", link.read_text())
         self.assertEqual(len(list((self.home / ".gnupg").glob("dotfiles-backup.*/*"))), 1)
-
-    def test_gnupg_uses_curses_on_raspberry_pi(self):
-        executable = self.stub("pinentry-curses", "exit 0")
-        self.stub("dpkg", "exit 1")
-        self.stub("sudo", 'test "$*" = "apt-get install -y pinentry-curses"')
-        self.stub("gpgconf", "exit 0")
-        result = self.shell("setup_gnupg", "install.sh", "pi")
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(f"pinentry-program {executable}\n", (self.home / ".gnupg/gpg-agent.conf").read_text())
 
     def test_gnupg_preserves_unknown_files_and_links(self):
         self.prepare_pinentry()
@@ -385,7 +342,7 @@ BREW
         checkout.mkdir()
         for directory in ("sh", "config"):
             shutil.copytree(ROOT / directory, checkout / directory)
-        for name in ("Makefile", "Brewfile.mac", "Brewfile.mac.cask", "Brewfile.raspberry-pi"):
+        for name in ("Makefile", "Brewfile.mac", "Brewfile.mac.cask"):
             shutil.copy2(ROOT / name, checkout / name)
         (checkout / ".git").mkdir()
         self.env["TEST_CHECKOUT"] = str(checkout)
@@ -487,6 +444,23 @@ INSTALL
             capture_output=True, text=True, timeout=30,
         )
 
+    def test_make_install_and_update_reject_non_macos_without_changes(self):
+        self.stub("uname", "printf 'Linux\\n'")
+        # Make reads tracked Lua paths even for setup targets; allow only that read.
+        self.stub("git", '''
+            if [ "$1" = ls-files ]; then exit 0; fi
+            printf 'unexpected command: git %s\\n' "$*" >&2
+            exit 97
+        ''')
+        for target in ("install", "update"):
+            with self.subTest(target=target):
+                result = self.make(ROOT, target)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Workstation setup supports macOS only", result.stdout)
+                self.assertNotIn("unexpected command", result.stdout + result.stderr)
+                self.assertEqual(list(self.home.iterdir()), [])
+                self.assertEqual(list(self.tmp.iterdir()), [])
+
     def test_make_install_is_repeatable_and_preserves_shell_startup(self):
         checkout = self.prepare_flow()
         (self.home / ".zshrc").write_text("export USER_CONFIG=preserved\n")
@@ -550,46 +524,6 @@ INSTALL
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Required build checkout is missing", result.stdout)
         self.assertFalse((self.home / "built-go").exists())
-
-    def test_raspberry_pi_update_reconciles_only_its_manifest(self):
-        checkout = self.prepare_flow()
-        required = self.home / "Projects/IlyasYOY/t-invest-mcp"
-        (required / ".git").mkdir(parents=True)
-        (required / "Makefile").write_text("install:\n\t@touch built\n")
-        self.stub("sudo", "exit 0")
-        self.stub("dpkg", "exit 1")
-        self.stub("pinentry-curses", "exit 0")
-        with (checkout / "Brewfile.raspberry-pi").open("a") as manifest:
-            manifest.write('brew "pi-new-dependency"\n')
-        result = subprocess.run(
-            ["/bin/bash", "-c", 'source "$1"; is_mac() { return 1; }; '
-             'is_raspberry_pi() { return 0; }; main', "bash", str(checkout / "sh/setup/update.sh")],
-            cwd=checkout, env=self.env, capture_output=True, text=True, timeout=30,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        packages = (self.root / "installed-packages").read_text()
-        self.assertIn('brew "pi-new-dependency"', packages)
-        self.assertNotIn("cask", packages)
-        self.assertNotIn("touchid", packages)
-
-    def test_bash_startup_with_generated_integrations(self):
-        self.stub("fzf", "exit 0")
-        self.stub("fnm", 'printf "export FNM_STARTED=yes\\n"')
-        self.stub("node", "exit 0")
-        self.stub("npm", "exit 0")
-        (self.home / ".sdkman/bin").mkdir(parents=True)
-        (self.home / ".sdkman/bin/sdkman-init.sh").write_text("export SDKMAN_STARTED=yes\n")
-        (self.home / ".gvm/scripts").mkdir(parents=True)
-        (self.home / ".gvm/scripts/gvm").write_text('gvm() { printf "gvm-ready\\n"; }\n')
-        result = self.shell("setup_shell_rc; setup_sdkman; setup_go_version_manager; setup_node_version_manager", "install.sh", "pi")
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        startup = subprocess.run(
-            ["/bin/bash", "--noprofile", "--rcfile", str(self.home / ".bashrc"), "-i", "-c",
-             'test "$SDKMAN_STARTED:$FNM_STARTED" = yes:yes && type kb-link >/dev/null && gvm'],
-            cwd=self.home, env=self.env, capture_output=True, text=True, timeout=30,
-        )
-        self.assertEqual(startup.returncode, 0, startup.stdout + startup.stderr)
-        self.assertIn("gvm-ready", startup.stdout)
 
     def test_kb_link_preserves_unknown_entries(self):
         kb = self.home / "kb"

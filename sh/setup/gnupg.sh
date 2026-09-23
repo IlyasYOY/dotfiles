@@ -5,12 +5,6 @@ setup_gnupg() {
     if is_mac; then
         prefix=$(brew --prefix pinentry-touchid) || return 1
         pinentry="$prefix/bin/pinentry-touchid"
-    elif is_raspberry_pi; then
-        apt_install pinentry-curses || return 1
-        pinentry=$(command -v pinentry-curses) || {
-            error "pinentry-curses is not available"
-            return 1
-        }
     else
         return 0
     fi

@@ -11,51 +11,17 @@ export KB_DIR="${ILYASYOY_KB_STORE_DIR:-$PROJECTS_DIR/kb-store}"
 export NVIM_WORKBENCH_DIR="${ILYASYOY_NVIM_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/nvim-workbench}"
 export AGENT_WORKBENCH_DIR="${ILYASYOY_AGENT_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/agent-workbench}"
 ZSHRC="$HOME/.zshrc"
-BASHRC="$HOME/.bashrc"
 DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)
 
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
 }
 
-is_linux() {
-    [[ "$(uname -s)" == "Linux" ]]
-}
-
-is_raspberry_pi() {
-    if ! is_linux; then
-        return 1
-    fi
-
-    local model_file
-    for model_file in /proc/device-tree/model /sys/firmware/devicetree/base/model; do
-        if [ -r "$model_file" ] && tr -d '\0' < "$model_file" | grep -qi "Raspberry Pi"; then
-            return 0
-        fi
-    done
-
-    if [ -r /etc/os-release ] && grep -qiE "raspbian|Raspberry Pi OS" /etc/os-release; then
-        return 0
-    fi
-
-    return 1
-}
-
 shell_rc_file() {
-    if is_raspberry_pi; then
-        printf "%s\n" "$BASHRC"
-        return 0
-    fi
-
     printf "%s\n" "$ZSHRC"
 }
 
 shell_name() {
-    if is_raspberry_pi; then
-        printf "bash\n"
-        return 0
-    fi
-
     printf "zsh\n"
 }
 
