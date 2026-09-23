@@ -1,14 +1,5 @@
 #!/usr/bin/env bash
 
-# tms runs fzf for me to search through tmux sessions and choose one I want to
-# use. works in and out of the tmux.
-tms() {
-    selected_session=$(tmux list-sessions -F "#{session_name}" | fzf --prompt="Select tmux session: "); 
-    if [ -n "$selected_session" ]; then 
-        tmux attach -t "$selected_session" || tmux switch-client -t "$selected_session"; 
-    fi
-}
-
 pass-fzf() {
     local password_store_dir selected
 
