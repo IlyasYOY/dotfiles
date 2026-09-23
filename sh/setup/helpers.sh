@@ -12,7 +12,7 @@ export NVIM_WORKBENCH_DIR="${ILYASYOY_NVIM_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR
 export AGENT_WORKBENCH_DIR="${ILYASYOY_AGENT_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/agent-workbench}"
 ZSHRC="$HOME/.zshrc"
 BASHRC="$HOME/.bashrc"
-DOTFILES_DIR=$(realpath "$(dirname "$0")"/../../)
+DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)
 
 is_mac() {
     [[ "$(uname -s)" == "Darwin" ]]
@@ -117,7 +117,7 @@ add_line() {
     local line="$1"
     local dest="$2"
 
-    if ! grep -qxF "$line" "$dest"; then
+    if [ ! -f "$dest" ] || ! grep -qxF "$line" "$dest"; then
         echo "$line" >> "$dest"
         success "Line '$line' in file $dest"
     else
@@ -133,7 +133,7 @@ add_block() {
     start_marker="## start $marker ##"
     end_marker="## end $marker ##"
 
-    if grep -qF "$start_marker" "$file"; then
+    if [ -f "$file" ] && grep -qF "$start_marker" "$file"; then
         python3 - <<'PY' "$file" "$start_marker" "$end_marker" "$content"
 from pathlib import Path
 import sys
@@ -217,6 +217,10 @@ clone_repo() {
             return 1
         fi
     else
+        if [ ! -e "$dest/.git" ]; then
+            error "$dest exists but is not a Git checkout; leaving it unchanged"
+            return 1
+        fi
         debug "Repository already exists: $dest"
     fi
 }
@@ -327,7 +331,7 @@ git_parallel_finish_tasks() {
             read -r task_status < "$status_file" || task_status=1
         fi
 
-        if [ "$task_status" -eq 0 ]; then
+        if [ "$task_status" = 0 ]; then
             success "$task_label"
         else
             failed_count=$((failed_count + 1))
@@ -343,9 +347,74 @@ git_parallel_finish_tasks() {
         rm -rf "$log_dir"
     else
         warning "$failed_count parallel git task(s) failed; logs kept in $log_dir"
+        return 1
     fi
 
     return 0
+}
+
+# Download completely before executing; the subshell owns the cleanup trap.
+run_downloaded_installer() (
+    local url="$1" interpreter="$2"
+    shift 2
+    # Not local: Bash unwinds function locals before EXIT on an errexit failure.
+    downloaded_installer=$(mktemp "${TMPDIR:-/tmp}/dotfiles-installer.XXXXXX") || return 1
+    trap 'rm -f "$downloaded_installer"' EXIT
+    if ! curl -fSL "$url" -o "$downloaded_installer"; then
+        error "Failed to download installer: $url"
+        return 1
+    fi
+    if [ ! -s "$downloaded_installer" ]; then
+        error "Downloaded installer is empty: $url"
+        return 1
+    fi
+    "$interpreter" "$downloaded_installer" "$@"
+)
+
+require_installation_file() {
+    if [ ! -f "$1" ] || [ ! -s "$1" ]; then
+        error "Incomplete installation: missing or empty $1; preserving existing files"
+        return 1
+    fi
+}
+
+# Explicit executable arguments also support nonstandard Homebrew locations.
+load_brew() {
+    local executable environment
+    if executable=$(command -v brew); then
+        set -- "$executable" "$@"
+    fi
+    for executable in "$@"; do
+        [ -x "$executable" ] || continue
+        environment=$("$executable" shellenv) || return 1
+        eval "$environment" || return 1
+        command -v brew >/dev/null 2>&1 || return 1
+        brew --version >/dev/null || return 1
+        return 0
+    done
+    return 1
+}
+
+persist_brew_shellenv() {
+    local executable config
+    executable=$(command -v brew) || return 1
+    # shellcheck disable=SC2016 # Evaluate shellenv when the startup file is sourced.
+    printf -v config 'eval "$(%q shellenv)"' "$executable"
+    add_block "$(shell_rc_file)" "${1:-ilyasyoy homebrew config}" "$config"
+}
+
+setup_tmux_plugins() {
+    local tpm_dir="$HOME/.tmux/plugins/tpm"
+    clone_repo "https://github.com/tmux-plugins/tpm" "$tpm_dir" || return 1
+    if [ ! -x "$tpm_dir/bin/install_plugins" ]; then
+        error "Incomplete TPM installation: $tpm_dir"
+        return 1
+    fi
+    if ! "$tpm_dir/bin/install_plugins"; then
+        error "Failed to install TMUX plugins"
+        return 1
+    fi
+    success "TMUX plugins installed"
 }
 
 clone_repos_parallel() {

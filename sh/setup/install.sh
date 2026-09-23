@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC1091
-source "$(dirname "$0")/helpers.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/helpers.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/mac.sh"
+source "$DOTFILES_DIR/sh/setup/mac.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/raspberry-pi.sh"
+source "$DOTFILES_DIR/sh/setup/raspberry-pi.sh"
+# shellcheck disable=SC1091
+source "$DOTFILES_DIR/sh/setup/gnupg.sh"
 
 setup_basic_directories() {
     info "📁 Creating basic directories..."
@@ -42,14 +44,7 @@ setup_links_to_config_files() {
         symlink "$DOTFILES_DIR/config/wezterm" "$config_dir/wezterm"
         symlink "$DOTFILES_DIR/config/hammerspoon" "$HOME/.hammerspoon"
     fi
-    symlink "$DOTFILES_DIR/config/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
-    setup_mac_pinentry_defaults
-    if command -v gpgconf >/dev/null 2>&1; then
-        gpgconf --kill gpg-agent && gpgconf --launch gpg-agent && debug "restart gpg-agent"
-    else
-        debug "gpgconf is not available yet, skipping gpg-agent restart"
-    fi
-
+    setup_gnupg || return 1
 
     # Git config
     mkdir -pv "$config_dir/git"
@@ -65,14 +60,15 @@ setup_links_to_config_files() {
 
 setup_platform_dependencies() {
     if is_mac; then
-        setup_mac_using_brew
-        setup_mac_using_brew_cask
+        setup_mac_homebrew || return 1
+        setup_mac_using_brew || return 1
+        setup_mac_using_brew_cask || return 1
 
         return 0
     fi
 
     if is_raspberry_pi; then
-        setup_raspberry_pi
+        setup_raspberry_pi || return 1
         return 0
     fi
 
@@ -94,54 +90,31 @@ setup_mac_configuration() {
 }
 
 setup_shell_rc() {
-    local rc_file
+    local rc_file shell fragment legacy_line
     rc_file=$(shell_rc_file)
+    shell=$(shell_name)
+    info "🐚 Configuring $rc_file..."
 
-    if is_raspberry_pi; then
-        info "🐚 Configuring .bashrc..."
-    else
-        info "🐚 Configuring .zshrc..."
-    fi
-
-    local lines=(
-        "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
-        "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
-        "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
-        "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
-    )
-
-    if is_raspberry_pi; then
-        lines=(
-            "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
-            "source <(fzf --bash)"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
-        )
-    else
-        lines=(
-            "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\""
-            "source <(fzf --zsh)"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/helpers.sh"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/exports.sh"
-            "source \$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"
-        )
-    fi
-
-    for line in "${lines[@]}"; do
-        add_line "$line" "$rc_file"
+    add_line "export ILYASYOY_DOTFILES_DIR=\"$DOTFILES_DIR\"" "$rc_file"
+    add_line "source <(fzf --$shell)" "$rc_file"
+    for fragment in helpers exports aliases; do
+        # Earlier installations emitted unquoted source lines. Do not load twice.
+        legacy_line="source \$ILYASYOY_DOTFILES_DIR/sh/$fragment.sh"
+        if grep -qxF "$legacy_line" "$rc_file"; then
+            continue
+        fi
+        add_line "source \"\$ILYASYOY_DOTFILES_DIR/sh/$fragment.sh\"" "$rc_file"
     done
 }
 
 setup_sdkman() {
     info "☕ Installing SDKMAN..."
 
-    if [ ! -d "$HOME/.sdkman" ]; then
-        curl -s "https://get.sdkman.io" | bash
-        success "SDKMAN installed"
-    else
-        debug "SDKMAN already installed"
+    if [ ! -e "$HOME/.sdkman" ] && [ ! -L "$HOME/.sdkman" ]; then
+        run_downloaded_installer https://get.sdkman.io bash || return 1
     fi
+    require_installation_file "$HOME/.sdkman/bin/sdkman-init.sh" || return 1
+    success "SDKMAN installed"
 
     local sdkman_config
     sdkman_config=$'export SDKMAN_DIR="$HOME/.sdkman"\n[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"'
@@ -186,16 +159,12 @@ setup_node_version_manager() {
 
 setup_go_version_manager() {
     info "🐹 Installing GVM..."
-    if [ ! -d "$HOME/.gvm" ]; then
-        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-        # Source GVM immediately
-        # shellcheck source=/dev/null
-        [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
-
-        success "GVM installed"
-    else 
-        debug "GVM already installed"
+    if [ ! -e "$HOME/.gvm" ] && [ ! -L "$HOME/.gvm" ]; then
+        run_downloaded_installer \
+            https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer bash || return 1
     fi
+    require_installation_file "$HOME/.gvm/scripts/gvm" || return 1
+    success "GVM installed"
 
     # GVM configuration
     local gvm_config=$'_gvm_lazy_load() {\n    unset -f gvm\n    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"\n    "$@"\n}\ngvm() { _gvm_lazy_load gvm "$@"; }'
@@ -235,12 +204,13 @@ setup_oh_my_zsh() {
     fi
 
     info "🚀 Installing Oh My Zsh..."
-    if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-        success "Oh My Zsh installed"
-    else
-        debug "Oh My Zsh already installed"
+    if [ ! -e "$HOME/.oh-my-zsh" ] && [ ! -L "$HOME/.oh-my-zsh" ]; then
+        ZSH="$HOME/.oh-my-zsh" run_downloaded_installer \
+            https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh \
+            sh --unattended --keep-zshrc || return 1
     fi
+    require_installation_file "$HOME/.oh-my-zsh/oh-my-zsh.sh" || return 1
+    success "Oh My Zsh installed"
 }
 
 setup_git_config() {
@@ -254,28 +224,16 @@ setup_git_config() {
     git config --global core.quotePath false
 }
 
-setup_tmux_plugin_manger() {
-    info "🖥️ Setting up Tmux Plugin Manager..."
-
-    local tpm_dir="$HOME/.tmux/plugins/tpm"
-    if [ ! -d "$tpm_dir" ]; then
-        if clone_repo "https://github.com/tmux-plugins/tpm" "$tpm_dir"; then
-            "$tpm_dir/bin/install_plugins"
-            success "TPM installed"
-        fi
-    else
-        debug "TPM already installed"
-    fi
-}
-
 setup_pass() {
     info "💻🔐 pass password-store..."
 
-    clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" || true
+    clone_repo "git@github.com:IlyasYOY/password-store.git" "$HOME/.password-store/" ||
+        warning "Optional password-store clone failed"
 }
 
 main() {
     setup_basic_directories
+    setup_oh_my_zsh
     setup_platform_dependencies
     setup_notes
     setup_links_to_config_files
@@ -288,8 +246,7 @@ main() {
     setup_my_project
     setup_go_binaries
     setup_node_version_manager
-    setup_oh_my_zsh
-    setup_tmux_plugin_manger
+    setup_tmux_plugins
     setup_pass
 
     "$DOTFILES_DIR/sh/setup/workbenches.sh" install
@@ -298,4 +255,6 @@ main() {
     info "Some changes might require a new shell session or system restart"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

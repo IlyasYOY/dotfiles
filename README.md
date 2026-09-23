@@ -60,6 +60,26 @@ make install
 5. clones other personal tools used by the workstation;
 6. clones and calls `make install` in both workbench repositories.
 
+On macOS, installation discovers Homebrew on PATH or under `/opt/homebrew`
+and `/usr/local`, bootstraps it if necessary, and loads its shell environment
+before installing packages. Raspberry Pi bootstrap also checks that Homebrew
+can be loaded before continuing. Installer downloads must complete successfully
+and be nonempty before execution; SDKMAN, GVM, and Oh My Zsh must provide their
+initialization files before installation is considered successful. Incomplete
+existing installations are reported and left intact for manual repair.
+
+Oh My Zsh is installed before managed shell configuration and preserves an
+existing `.zshrc`, including symlinks. Repeated installation also installs any
+missing tmux plugins, even when TPM already exists.
+
+GnuPG setup renders `~/.config/dotfiles/gpg-agent.conf` and links it from
+`~/.gnupg/gpg-agent.conf`. macOS resolves Touch ID pinentry from Homebrew's
+formula prefix and keeps zero cache TTLs and the DisableKeychain preference;
+Raspberry Pi uses apt's `pinentry-curses`. The previous dotfiles-owned symlink
+is saved under `~/.gnupg/dotfiles-backup.*` when migrated. Unknown GnuPG files
+and symlinks are left unchanged with a warning. Only generated files bearing
+the dotfiles ownership marker are refreshed by subsequent installs or updates.
+
 The install also configures Worktrunk's shell integration. The update flow
 refreshes that integration after package upgrades so its shell wrapper stays
 compatible with the installed Worktrunk version.
@@ -91,9 +111,19 @@ but does not edit `~/.codex/config.toml`. Run its repository-local
 make update
 ```
 
-The main update refreshes operating-system packages, tracked personal
-repositories, workbenches, tmux plugins, and Go tools. Each workbench follows
+The main update first pulls the executing dotfiles checkout, then reconciles
+the current platform Brewfiles and upgrades installed packages. New formulae
+and casks are installed in the same run; undeclared packages are not removed.
+It also refreshes GnuPG configuration, tracked personal repositories,
+workbenches, missing and installed tmux plugins, and Go tools. Each workbench follows
 its configured upstream branch and then updates the dependencies it owns.
+
+Required package, installer, plugin, and Git failures return a failing exit
+status and stop dependent work. Parallel Git batches finish all workers before
+returning failure and retain logs for diagnosis. Password-store operations are
+explicitly optional. Missing unrelated personal checkouts are skipped during
+updates; the `t-invest-mcp` checkout must exist and update successfully before
+its tools can be built. Dotfiles refresh failures are always fatal.
 
 To update only the workbenches:
 
@@ -195,8 +225,12 @@ make check-python
 ```
 
 `make check` is the same first-pass check used by CI. It validates the
-remaining Lua and shell configuration plus the workbench orchestration
-contract. Run `make check` inside each workbench for its own static and runtime
+remaining Lua and shell configuration plus the setup and workbench orchestration
+contracts. Setup tests exercise failures, repeat installations, file preservation,
+Bash/Zsh startup, and the `make install` / `make update` entrypoints using
+temporary homes and fake external commands; they do not install packages or
+modify live workstation configuration. Bash and Zsh are required to run these
+checks. Run `make check` inside each workbench for its own static and runtime
 checks.
 
 ## Personal integration points
@@ -204,6 +238,9 @@ checks.
 - Project roots default to `~/Projects/IlyasYOY`, `~/Projects/Work`, and
   `~/Projects/kb-store`.
 - `GIT_PARALLEL_JOBS` controls parallel checkout updates.
+- `kb-link` creates `.kb-store` only when absent. Existing unknown files,
+  directories, and symlinks are preserved; conflicts are reported and skipped
+  without creating project notes.
 - T-Invest MCP is built from `~/Projects/IlyasYOY/t-invest-mcp`; token values
   remain environment variables and are never stored here.
 - Task workflows in `kb-store` use Google Tasks through Computer Use in the

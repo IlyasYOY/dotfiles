@@ -12,25 +12,12 @@ apt_install() {
         success "apt installed $dependency"
     else
         error "apt failed to install $dependency"
+        return 1
     fi
 }
 
 load_linux_brew() {
-    if command -v brew >/dev/null 2>&1; then
-        return 0
-    fi
-
-    if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        return 0
-    fi
-
-    if [ -x "$HOME/.linuxbrew/bin/brew" ]; then
-        eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-        return 0
-    fi
-
-    return 1
+    load_brew /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"
 }
 
 setup_raspberry_pi_system_update() {
@@ -45,6 +32,7 @@ setup_raspberry_pi_system_update() {
         success "apt updated and upgraded"
     else
         error "Failed to update and upgrade apt packages"
+        return 1
     fi
 }
 
@@ -64,12 +52,13 @@ setup_raspberry_pi_brew_prerequisites() {
         file
         git
         gnupg
+        pinentry-curses
         procps
     )
 
     local pkg
     for pkg in "${packages[@]}"; do
-        apt_install "$pkg"
+        apt_install "$pkg" || return 1
     done
 }
 
@@ -81,10 +70,10 @@ setup_raspberry_pi_sing_box() {
 
     info "🍓 Installing sing-box..."
 
-    sudo mkdir -p /etc/apt/keyrings
+    sudo mkdir -p /etc/apt/keyrings || return 1
     if [ ! -f /etc/apt/keyrings/sagernet.asc ]; then
-        sudo curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc
-        sudo chmod a+r /etc/apt/keyrings/sagernet.asc
+        sudo curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc || return 1
+        sudo chmod a+r /etc/apt/keyrings/sagernet.asc || return 1
     else
         debug "sing-box apt key already exists"
     fi
@@ -93,13 +82,13 @@ setup_raspberry_pi_sing_box() {
     sagernet_repo=$'Types: deb\nURIs: https://deb.sagernet.org/\nSuites: *\nComponents: *\nEnabled: yes\nSigned-By: /etc/apt/keyrings/sagernet.asc\n'
 
     if ! sudo test -f /etc/apt/sources.list.d/sagernet.sources; then
-        printf "%s" "$sagernet_repo" | sudo tee /etc/apt/sources.list.d/sagernet.sources >/dev/null
+        printf "%s" "$sagernet_repo" | sudo tee /etc/apt/sources.list.d/sagernet.sources >/dev/null || return 1
         success "Configured sing-box apt repository"
     else
         debug "sing-box apt repository already configured"
     fi
 
-    sudo apt-get update
+    sudo apt-get update || return 1
     apt_install sing-box
 }
 
@@ -112,18 +101,18 @@ setup_raspberry_pi_homebrew() {
     info "🍓 Installing Homebrew..."
 
     if ! load_linux_brew; then
-        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 run_downloaded_installer \
+            https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh /bin/bash || return 1
         if ! load_linux_brew; then
             error "Homebrew installed but could not be loaded into the current shell"
+            return 1
         fi
         success "Homebrew installed"
     else
         debug "Homebrew already installed"
     fi
 
-    local brew_config
-    brew_config=$'test -d ~/.linuxbrew && eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"\ntest -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-    add_block "$(shell_rc_file)" "ilyasyoy linuxbrew config" "$brew_config"
+    persist_brew_shellenv "ilyasyoy linuxbrew config"
 }
 
 setup_raspberry_pi_homebrew_dependencies() {
@@ -148,10 +137,10 @@ setup_raspberry_pi() {
         return 1
     fi
 
-    setup_raspberry_pi_system_update
-    setup_raspberry_pi_brew_prerequisites
-    setup_raspberry_pi_sing_box
-    setup_raspberry_pi_homebrew
+    setup_raspberry_pi_system_update || return 1
+    setup_raspberry_pi_brew_prerequisites || return 1
+    setup_raspberry_pi_sing_box || return 1
+    setup_raspberry_pi_homebrew || return 1
     setup_raspberry_pi_homebrew_dependencies
 }
 
@@ -167,6 +156,7 @@ update_raspberry_pi_system() {
         success "apt updated and upgraded"
     else
         error "Failed to update and upgrade apt packages"
+        return 1
     fi
 }
 
@@ -187,6 +177,7 @@ update_raspberry_pi_brew() {
         success "Homebrew updated"
     else
         error "Failed to update Homebrew"
+        return 1
     fi
 }
 
@@ -207,5 +198,6 @@ update_raspberry_pi_brew_packages() {
         success "Homebrew packages upgraded"
     else
         error "Failed to upgrade Homebrew packages"
+        return 1
     fi
 }

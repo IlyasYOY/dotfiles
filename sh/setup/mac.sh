@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+load_mac_brew() {
+    load_brew /opt/homebrew/bin/brew /usr/local/bin/brew
+}
+
+setup_mac_homebrew() {
+    if ! load_mac_brew; then
+        NONINTERACTIVE=1 run_downloaded_installer \
+            https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh /bin/bash || return 1
+        if ! load_mac_brew; then
+            error "Homebrew installed but could not be loaded into the current shell"
+            return 1
+        fi
+    fi
+    persist_brew_shellenv
+}
+
 setup_mac_using_brew() {
     if ! is_mac; then 
         info "This is not mac, skipping installing Homebrew packages"
@@ -124,6 +140,7 @@ update_brew() {
         success "Brew updated"
     else
         error "Failed to update Brew"
+        return 1
     fi
 }
 
@@ -135,10 +152,11 @@ update_brew_packages() {
 
     info "🍺 Updating Homebrew packages..."
 
-    if brew upgrade -y; then
+    if brew upgrade --formula; then
         success "Brew packages upgraded"
     else
         error "Failed to upgrade packages"
+        return 1
     fi
 }
 
@@ -150,9 +168,10 @@ update_brew_cask_packages() {
 
     info "🍺 Updating Homebrew cask packages..."
 
-    if brew upgrade --cask -y; then
+    if brew upgrade --cask; then
         success "Brew casks upgraded"
     else
         error "Failed to upgrade casks"
+        return 1
     fi
 }

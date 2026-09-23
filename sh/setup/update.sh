@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC1091
-source "$(dirname "$0")/helpers.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/helpers.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/mac.sh"
+source "$DOTFILES_DIR/sh/setup/mac.sh"
 # shellcheck disable=SC1091
-source "$(dirname "$0")/raspberry-pi.sh"
+source "$DOTFILES_DIR/sh/setup/raspberry-pi.sh"
+# shellcheck disable=SC1091
+source "$DOTFILES_DIR/sh/setup/gnupg.sh"
 
 update_local_repos() {
     local -a repo_paths=(
@@ -19,17 +21,20 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/remotion-projects"
         "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
-        "$HOME/.password-store"
     )
-    update_repo "$PERSONAL_PROJECTS_DIR/dotfiles" || true
 
-    update_repos_parallel "${repo_paths[@]}"
+    if [ ! -e "$PERSONAL_PROJECTS_DIR/t-invest-mcp/.git" ]; then
+        error "Required build checkout is missing: $PERSONAL_PROJECTS_DIR/t-invest-mcp"
+        return 1
+    fi
+    update_repos_parallel "${repo_paths[@]}" || return 1
+    update_repo "$HOME/.password-store" || warning "Optional password-store update failed"
 }
 
 update_repo() {
     local repo_path="$1"
 
-    if [ -d "$repo_path/.git" ]; then
+    if [ -e "$repo_path/.git" ]; then
         info "Updating repository: $repo_path"
         if git -C "$repo_path" pull; then
             success "Updated $repo_path"
@@ -44,10 +49,12 @@ update_repo() {
 
 update_tmux_plugins() {
     info "Updating TMUX plugins..."
+    setup_tmux_plugins || return 1
     if "$HOME_DIR/.tmux/plugins/tpm/bin/update_plugins" all; then
         success "TMUX plugins updated"
     else
         error "Failed to update TMUX plugins"
+        return 1
     fi
 }
 
@@ -75,16 +82,29 @@ update_go_tools() {
 }
 
 main() {
+    if [ ! -e "$DOTFILES_DIR/.git" ]; then
+        error "Dotfiles checkout is not a Git repository: $DOTFILES_DIR"
+        return 1
+    fi
+    update_repo "$DOTFILES_DIR"
     if is_mac; then
+        if ! load_mac_brew; then
+            error "Homebrew is not available; run make install to bootstrap it"
+            return 1
+        fi
         update_brew
+        setup_mac_using_brew
+        setup_mac_using_brew_cask
         update_brew_packages
         update_brew_cask_packages
     elif is_raspberry_pi; then
         update_raspberry_pi_system
         update_raspberry_pi_brew
+        setup_raspberry_pi_homebrew_dependencies
         update_raspberry_pi_brew_packages
     fi
 
+    setup_gnupg
     setup_worktrunk
     update_local_repos
     "$DOTFILES_DIR/sh/setup/workbenches.sh" update
@@ -93,4 +113,6 @@ main() {
 
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

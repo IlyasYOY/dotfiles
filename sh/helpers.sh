@@ -112,7 +112,17 @@ kb-link() {
         return 1
     fi
 
-    ln -sfnv "$kb_dir" ".kb-store"
+    if [ -L .kb-store ]; then
+        if [ "$(readlink .kb-store)" != "$kb_dir" ]; then
+            printf 'kb-link: .kb-store points elsewhere; leaving it unchanged\n' >&2
+            return 0
+        fi
+    elif [ -e .kb-store ]; then
+        printf 'kb-link: .kb-store already exists; leaving it unchanged\n' >&2
+        return 0
+    else
+        ln -sv "$kb_dir" .kb-store || return 1
+    fi
 
     main_root=$(_kb_main_root)
     rel_path="${main_root#"$(_kb_home_phy)"}"
