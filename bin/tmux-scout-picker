@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep Scout's picker and navigation logic; customize only its fzf invocation.
+fzf() (
+    # fzf starts another shell inside its popup. Do not wrap that inner launch.
+    unset -f fzf
+    command fzf "$@" \
+        --tmux 'center,100%,100%,border-native' \
+        --preview '' \
+        --preview-window hidden
+)
+export -f fzf
+
+scout_dir=${SCOUT_DIR:-}
+if [[ -z "$scout_dir" ]]; then
+    scout_env=$(tmux show-environment -g SCOUT_DIR)
+    scout_dir=${scout_env#SCOUT_DIR=}
+fi
+
+exec bash "$scout_dir/scripts/picker/picker.sh" "$@"

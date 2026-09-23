@@ -106,6 +106,60 @@ Third-party Codex skills remain pinned to exact commits inside
 `agent-workbench`; its update flow shows a diff and requires confirmation
 before changing an accepted pin.
 
+## Agent monitoring in tmux
+
+[tmux-scout](https://github.com/qeesung/tmux-scout) opens an agent picker with
+`prefix + O`; `prefix + w` remains the normal window tree.
+Enter jumps to the selected agent, Esc closes the picker, Ctrl-R refreshes
+it, and Ctrl-T toggles automatic refresh. The status bar shows waiting, busy,
+and done counts (plus idle when present); clicking the widget opens the picker.
+
+The picker fills the tmux client area with a full-width agent list and no preview.
+The local `bin/tmux-scout-picker` launcher overrides fzf options only for Scout;
+installed plugin files stay unchanged. Reload `~/.tmux.conf` to apply changes.
+To restore Scout's original layout, remove the two local binding overrides
+after TPM initialization and reload the config.
+
+`make check` covers the launcher contract. With tmux running and at least one
+Scout agent available, run the optional live UI check with
+`uv run --with pyte python tests/manual_tmux_scout_picker.py`.
+
+Install the plugin with TPM (`prefix + I`), then configure **only Codex**:
+
+```bash
+~/.tmux/plugins/tmux-scout/scripts/setup.sh install --codex
+~/.tmux/plugins/tmux-scout/scripts/setup.sh status --codex
+~/.tmux/plugins/tmux-scout/scripts/setup.sh doctor
+```
+
+Back up `~/.codex/config.toml` and any existing `~/.codex/hooks.json` first.
+The upstream installer rewrites TOML formatting, adds lifecycle hooks and trust
+entries, and wraps the existing `notify` command (saved in
+`~/.tmux-scout/codex-original-notify.json`). Review the resulting diff and
+preserve unrelated settings and comments. Hook installation is deliberately
+separate from `make install`. Start a new Codex session to load the hooks.
+
+Scout uses Node.js and fzf, captures the Node PATH when loaded (including fnm),
+and runs a tmux-owned background monitor. Reload tmux from a shell with Node
+available after changing Node versions. Runtime data lives in `~/.tmux-scout`.
+
+To remove the integration while the plugin is still installed:
+
+```bash
+~/.tmux/plugins/tmux-scout/scripts/setup.sh uninstall --codex
+tmux set-option -g @scout-watchdog off
+~/.tmux/plugins/tmux-scout/scripts/setup.sh watcher stop
+tmux set-hook -gu 'pane-focus-in[9909]'
+tmux unbind-key O
+tmux bind-key -T root MouseDown1Status switch-client -t =
+```
+
+Verify that the original `notify` command was restored. Remove the Scout plugin
+declaration, `@scout-key`, widget, and local picker binding overrides from the
+tmux config before reloading it.
+Restore `status-interval` to its previous value if desired. Remove only Scout's
+feature-flag changes using the backup as a reference; preserve later Codex edits.
+
 ## Git worktrees
 
 [Worktrunk](https://worktrunk.dev/) provides the workstation's Git worktree
