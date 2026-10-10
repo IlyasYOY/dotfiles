@@ -16,7 +16,7 @@ update_local_repos() {
         "$PERSONAL_PROJECTS_DIR/go-retry"
         "$PERSONAL_PROJECTS_DIR/httpservertest"
         "$PERSONAL_PROJECTS_DIR/monotask"
-        "$PERSONAL_PROJECTS_DIR/remotion-projects"
+        "$PERSONAL_PROJECTS_DIR/video-assets"
         "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
         "$PERSONAL_PROJECTS_DIR/tasks-assistant-telegram-bot"
     )
