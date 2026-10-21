@@ -135,6 +135,25 @@ Third-party Codex skills remain pinned to exact commits inside
 `agent-workbench`; its update flow shows a diff and requires confirmation
 before changing an accepted pin.
 
+## Codex launch modes
+
+Use these shell aliases to choose whether Apps and Plugins are available for
+a Codex CLI invocation:
+
+```bash
+codex-core                   # explicitly disable Apps and Plugins
+codex-extra                  # explicitly enable Apps and Plugins
+codex-core resume --last      # resume with both disabled
+codex-extra "Review my notes" # pass a prompt with both enabled
+```
+
+Both aliases forward additional arguments and preserve Codex's exit status.
+The flags apply only to that CLI invocation; they do not change project
+configuration or Desktop settings. Enabling Apps and Plugins allows already
+configured integrations to be used; it does not install or connect them.
+Open a new shell or run `source "$ILYASYOY_DOTFILES_DIR/sh/aliases.sh"` to load
+the aliases in an existing shell.
+
 ## Git worktrees
 
 [Worktrunk](https://worktrunk.dev/) provides the workstation's Git worktree
