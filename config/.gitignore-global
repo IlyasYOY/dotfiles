@@ -19,6 +19,3 @@ __pycache__/
 
 # monotask
 .mtignore
-
-# kb-store symlinks
-.kb-store

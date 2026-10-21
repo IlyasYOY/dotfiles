@@ -44,9 +44,6 @@ Before editing a personal repository, inspect its `AGENTS.md`.
 - Agent workbench: `~/Projects/IlyasYOY/agent-workbench`
   - Codex instructions, config references, commands, plugins, shared
     and runtime-specific skills, and pinned external Codex skills.
-- KB store: `~/Projects/kb-store`
-  - notes, wiki pages, diary entries, and other persisted knowledge. Read its
-    `AGENTS.md` before choosing a path or writing.
 
 Do not modify dotfiles as a fallback when a request targets another repository.
 

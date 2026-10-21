@@ -376,7 +376,6 @@ BREW
                 esac
                 ;;
             -C)
-                if [ "$3" = init ]; then mkdir -p "$2/.git"; exit 0; fi
                 test "$3" = pull || exit 97
                 if [ "$2" = "$TEST_CHECKOUT" ]; then
                     test "${FAIL_OPERATION:-}" != pull || exit 8
@@ -467,6 +466,7 @@ INSTALL
         for _ in range(2):
             result = self.make(checkout, "install")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse((self.home / "Projects/kb-store").exists())
         rc = (self.home / ".zshrc").read_text()
         self.assertEqual(rc.count("/sh/helpers.sh"), 1)
         self.assertEqual(rc.count("## start ilyasyoy sdkman config"), 1)
@@ -477,11 +477,26 @@ INSTALL
         startup = subprocess.run(
             ["zsh", "-d", "-i", "-c",
              'test "$USER_CONFIG:$SDKMAN_STARTED:$WORKTRUNK_STARTED:$FNM_STARTED" = preserved:yes:yes:yes && '
-             'whence kb-link >/dev/null && gvm'],
+             'gvm'],
             cwd=self.home, env=self.env, capture_output=True, text=True, timeout=30,
         )
         self.assertEqual(startup.returncode, 0, startup.stdout + startup.stderr)
         self.assertIn("gvm-ready", startup.stdout)
+
+    def test_make_install_preserves_existing_notes_and_links(self):
+        checkout = self.prepare_flow()
+        kb = self.home / "Projects/kb-store"
+        kb.mkdir(parents=True)
+        note = kb / "README.md"
+        note.write_text("user notes\n")
+        link = self.home / ".kb-store"
+        link.symlink_to(kb)
+        for _ in range(2):
+            result = self.make(checkout, "install")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(note.read_text(), "user notes\n")
+            self.assertEqual(link.readlink(), kb)
+            self.assertFalse((kb / ".git").exists())
 
     def test_make_update_installs_new_manifest_dependency_and_repairs_plugins(self):
         checkout = self.prepare_flow()
@@ -524,65 +539,6 @@ INSTALL
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Required build checkout is missing", result.stdout)
         self.assertFalse((self.home / "built-go").exists())
-
-    def test_kb_link_preserves_unknown_entries(self):
-        kb = self.home / "kb"
-        kb.mkdir()
-        self.env["ILYASYOY_KB_STORE_DIR"] = str(kb)
-        self.stub("git", "exit 1")
-        link = self.home / ".kb-store"
-        other = self.home / "other"
-        other.mkdir()
-        for kind in ("file", "directory", "symlink", "dangling"):
-            with self.subTest(kind=kind):
-                if link.is_symlink() or link.is_file():
-                    link.unlink()
-                elif link.exists():
-                    shutil.rmtree(link)
-                if kind == "file":
-                    link.write_text("user data\n")
-                elif kind == "directory":
-                    link.mkdir()
-                else:
-                    link.symlink_to(other if kind == "symlink" else self.home / "missing")
-                before = link.readlink() if link.is_symlink() else None
-                result = subprocess.run(
-                    ["/bin/bash", "-c", 'source "$1"; kb-link', "bash", str(ROOT / "sh/helpers.sh")],
-                    cwd=self.home, env=self.env, capture_output=True, text=True, timeout=30,
-                )
-                self.assertEqual(result.returncode, 0, result.stderr)
-                if kind == "file":
-                    self.assertEqual(link.read_text(), "user data\n")
-                elif kind == "directory":
-                    self.assertTrue(link.is_dir() and not link.is_symlink())
-                else:
-                    self.assertEqual(link.readlink(), before)
-                if link.is_dir() and not link.is_symlink():
-                    shutil.rmtree(link)
-                else:
-                    link.unlink()
-
-    def test_kb_link_creates_link_and_preserves_existing_notes_on_repeat(self):
-        kb = self.home / "kb"
-        project = self.home / "project"
-        kb.mkdir()
-        project.mkdir()
-        self.env["ILYASYOY_KB_STORE_DIR"] = str(kb)
-        self.stub("git", "exit 1")
-        for iteration in range(2):
-            result = subprocess.run(
-                ["/bin/bash", "-c", 'source "$1"; kb-link', "bash", str(ROOT / "sh/helpers.sh")],
-                cwd=project, env=self.env, capture_output=True, text=True, timeout=30,
-            )
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual((project / ".kb-store").readlink(), kb)
-            note = kb / "project/branch-master/README.md"
-            if iteration == 0:
-                self.assertTrue(note.exists())
-                note.write_text("user notes\n")
-            else:
-                self.assertEqual(note.read_text(), "user notes\n")
-
 
 if __name__ == "__main__":
     unittest.main()

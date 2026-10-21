@@ -21,16 +21,6 @@ setup_my_project() {
         "git@github.com:IlyasYOY/t-invest-mcp.git" "$PERSONAL_PROJECTS_DIR/t-invest-mcp"
 }
 
-setup_notes() {
-    info "📝 Setting up notes..."
-
-    mkdir -pv "$KB_DIR"
-    if [ ! -d "$KB_DIR/.git" ]; then
-        git -C "$KB_DIR" init
-        success "Initialized kb-store git repo"
-    fi
-}
-
 setup_links_to_config_files() {
     info "⚙️ Setting up config links..."
     local config_dir="$HOME/.config"
@@ -233,7 +223,6 @@ main() {
     setup_basic_directories
     setup_oh_my_zsh
     setup_platform_dependencies
-    setup_notes
     setup_links_to_config_files
     setup_mac_configuration
     setup_shell_rc
