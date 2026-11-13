@@ -477,6 +477,7 @@ INSTALL
         rc = (self.home / ".zshrc").read_text()
         self.assertEqual(rc.count("/sh/helpers.sh"), 1)
         self.assertEqual(rc.count("## start ilyasyoy sdkman config"), 1)
+        self.assertTrue((self.home / "Projects/IlyasYOY/0_projects/t-invest-mcp/.git").is_dir())
         self.assertTrue((self.home / "built-t-invest").exists())
         self.assertTrue((self.root / "nvim/completed-install").exists())
         self.assertFalse((self.home / "Projects/IlyasYOY/agent-workbench").exists())
@@ -508,7 +509,7 @@ INSTALL
 
     def test_make_update_installs_new_manifest_dependency_and_repairs_plugins(self):
         checkout = self.prepare_flow()
-        required = self.home / "Projects/IlyasYOY/t-invest-mcp"
+        required = self.home / "Projects/IlyasYOY/0_projects/t-invest-mcp"
         (required / ".git").mkdir(parents=True)
         (required / "Makefile").write_text("install:\n\t@touch built\n")
         (self.home / ".password-store/.git").mkdir(parents=True)
@@ -533,7 +534,7 @@ INSTALL
 
     def test_make_update_stops_after_required_failures(self):
         checkout = self.prepare_flow()
-        (self.home / "Projects/IlyasYOY/t-invest-mcp/.git").mkdir(parents=True)
+        (self.home / "Projects/IlyasYOY/0_projects/t-invest-mcp/.git").mkdir(parents=True)
         for operation in ("pull", "update", "bundle", "upgrade", "personal-pull"):
             with self.subTest(operation=operation):
                 self.env["FAIL_OPERATION"] = operation

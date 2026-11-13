@@ -44,8 +44,8 @@ Neovim and agent-tooling sources intentionally do not live here.
 ## Installation
 
 ```bash
-mkdir -pv ~/Projects/IlyasYOY
-cd ~/Projects/IlyasYOY
+mkdir -pv ~/Projects/IlyasYOY/0_projects
+cd ~/Projects/IlyasYOY/0_projects
 git clone git@github.com:IlyasYOY/dotfiles.git dotfiles
 cd dotfiles
 make install
@@ -89,7 +89,7 @@ The workbench installation can be run independently:
 make install-workbenches
 ```
 
-The default checkout is `~/Projects/IlyasYOY/nvim-workbench`.
+The default checkout is `~/Projects/IlyasYOY/0_projects/nvim-workbench`.
 Override it with `ILYASYOY_NVIM_WORKBENCH_DIR`. The existing
 `install-workbenches` and `update-workbenches` target names now manage only
 Neovim; the former agent-workbench override is ignored.
@@ -188,9 +188,9 @@ checks.
 
 ## Personal integration points
 
-- Project roots default to `~/Projects/IlyasYOY` and `~/Projects/Work`.
+- Project roots default to `~/Projects/IlyasYOY/0_projects` and `~/Projects/Work`.
 - `GIT_PARALLEL_JOBS` controls parallel checkout updates.
-- T-Invest MCP is built from `~/Projects/IlyasYOY/t-invest-mcp`; token values
+- T-Invest MCP is built from `~/Projects/IlyasYOY/0_projects/t-invest-mcp`; token values
   remain environment variables and are never stored here.
 - The shell alias `nvimconfig` opens the configuration installed by
   `nvim-workbench`.

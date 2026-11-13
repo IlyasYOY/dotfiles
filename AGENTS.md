@@ -35,10 +35,10 @@ It does not own Neovim configuration or agent-tooling implementation.
 
 Before editing a personal repository, inspect its `AGENTS.md`.
 
-- Dotfiles: `~/Projects/IlyasYOY/dotfiles`
+- Dotfiles: `~/Projects/IlyasYOY/0_projects/dotfiles`
   - shell, workstation bootstrap, Brewfiles, terminal, desktop, GnuPG, and
     top-level workbench orchestration.
-- Neovim workbench: `~/Projects/IlyasYOY/nvim-workbench`
+- Neovim workbench: `~/Projects/IlyasYOY/0_projects/nvim-workbench`
   - Neovim configuration, snippets, language integrations, personal plugin
     registration, local plugin checkout management, and Neovim runtime checks.
 - Home Repo: `~/Projects/IlyasYOY`

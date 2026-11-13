@@ -6,7 +6,7 @@ set -euo pipefail
 export HOME_DIR="$HOME"
 PROJECTS_DIR="$HOME/Projects"
 export WORK_PROJECTS_DIR="$PROJECTS_DIR/Work"
-export PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY"
+export PERSONAL_PROJECTS_DIR="$PROJECTS_DIR/IlyasYOY/0_projects"
 export NVIM_WORKBENCH_DIR="${ILYASYOY_NVIM_WORKBENCH_DIR:-$PERSONAL_PROJECTS_DIR/nvim-workbench}"
 ZSHRC="$HOME/.zshrc"
 DOTFILES_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)
