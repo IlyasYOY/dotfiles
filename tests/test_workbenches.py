@@ -9,11 +9,10 @@ import unittest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = REPO_ROOT / "sh" / "setup" / "workbenches.sh"
 
 
 class WorkbenchOrchestrationTest(unittest.TestCase):
-    def test_install_and_update_delegate_to_both_workbenches(self) -> None:
+    def test_targets_delegate_only_to_neovim_despite_legacy_agent_override(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             log = root / "calls.log"
@@ -42,32 +41,40 @@ class WorkbenchOrchestrationTest(unittest.TestCase):
                 }
             )
 
-            subprocess.run(
-                [str(SCRIPT), "install"],
-                cwd=REPO_ROOT,
-                env=environment,
-                check=True,
-                capture_output=True,
-                text=True,
+            # A retired checkout must not receive install/update calls; a missing
+            # one must not be cloned even when an old shell exports its override.
+            binaries = root / "bin"
+            binaries.mkdir()
+            git = binaries / "git"
+            git.write_text(
+                '#!/bin/sh\n'
+                'if [ "$1" = ls-files ]; then exit 0; fi\n'
+                'printf "unexpected git call\\n" >> "$WORKBENCH_TEST_LOG"\n'
+                'exit 97\n'
             )
-            subprocess.run(
-                [str(SCRIPT), "update"],
-                cwd=REPO_ROOT,
-                env=environment,
-                check=True,
-                capture_output=True,
-                text=True,
-            )
+            git.chmod(0o755)
+            environment["PATH"] = f"{binaries}{os.pathsep}{environment['PATH']}"
+            for exists in (True, False):
+                with self.subTest(agent_checkout_exists=exists):
+                    if not exists:
+                        (agent / "Makefile").unlink()
+                        agent.rmdir()
+                    log.unlink(missing_ok=True)
+                    for action in ("install", "update"):
+                        subprocess.run(
+                            ["make", f"{action}-workbenches"],
+                            cwd=REPO_ROOT,
+                            env=environment,
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
 
-            self.assertEqual(
-                log.read_text().splitlines(),
-                [
-                    "nvim install",
-                    "agent install",
-                    "nvim update",
-                    "agent update",
-                ],
-            )
+                    self.assertEqual(
+                        log.read_text().splitlines(),
+                        ["nvim install", "nvim update"],
+                    )
+                    self.assertEqual(agent.exists(), exists)
 
 
 if __name__ == "__main__":

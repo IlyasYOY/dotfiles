@@ -4,17 +4,16 @@ Personal workstation bootstrap and the top-level orchestrator for my development
 environment.
 
 This repository owns operating-system packages, shell startup, terminal and
-desktop configuration, language version managers, and coordination of two
-independent workbench repositories:
+desktop configuration, language version managers, and coordination of
+[`nvim-workbench`](https://github.com/IlyasYOY/nvim-workbench) for Neovim
+configuration and personal plugin development. That workbench follows its
+upstream `main` branch and owns its installation, dependency updates, and checks.
 
-- [`nvim-workbench`](https://github.com/IlyasYOY/nvim-workbench) — Neovim
-  configuration and personal plugin development;
-- [`agent-workbench`](https://github.com/IlyasYOY/agent-workbench) — Codex
-  instructions, skills, commands, plugins, and config-review
-  workflows.
-
-Both workbench repositories follow their upstream `main` branch. They own
-their own installation, dependency updates, and canonical checks.
+Start agent sessions in the Home Repo at `~/Projects/IlyasYOY`. This cockpit
+owns shared agent instructions, skills, docs, and project routing. Personal
+agent material is used there directly, without a global installation.
+The retired `agent-workbench` repository is retained as an archive; its
+installation instructions are historical and must not be used for this setup.
 
 > [!WARNING]
 > This is a personal, opinionated setup. The bootstrap assumes my project
@@ -59,7 +58,7 @@ make install
 3. links terminal, desktop, Git, GnuPG, and shell configuration;
 4. configures SDKMAN, GVM, fnm, tmux TPM, and password-store;
 5. clones other personal tools used by the workstation;
-6. clones and calls `make install` in both workbench repositories.
+6. clones and calls `make install` in `nvim-workbench`.
 
 On macOS, installation discovers Homebrew on PATH or under `/opt/homebrew`
 and `/usr/local`, bootstraps it if necessary, and loads its shell environment
@@ -90,20 +89,13 @@ The workbench installation can be run independently:
 make install-workbenches
 ```
 
-Default checkout locations are:
-
-- `~/Projects/IlyasYOY/nvim-workbench`
-- `~/Projects/IlyasYOY/agent-workbench`
-
-Override them with `ILYASYOY_NVIM_WORKBENCH_DIR` and
-`ILYASYOY_AGENT_WORKBENCH_DIR`.
+The default checkout is `~/Projects/IlyasYOY/nvim-workbench`.
+Override it with `ILYASYOY_NVIM_WORKBENCH_DIR`. The existing
+`install-workbenches` and `update-workbenches` target names now manage only
+Neovim; the former agent-workbench override is ignored.
 
 `nvim-workbench` installs `~/.config/nvim`. The former
 `~/.config/nvim-minimal` setup is no longer managed.
-
-`agent-workbench` installs managed Codex instructions and extensions,
-but does not edit `~/.codex/config.toml`. Run its repository-local
-`$setup-codex` skill to review and reconcile that file.
 
 ## Updating
 
@@ -115,8 +107,8 @@ The main update first pulls the executing dotfiles checkout, then reconciles
 the current platform Brewfiles and upgrades installed packages. New formulae
 and casks are installed in the same run; undeclared packages are not removed.
 It also refreshes GnuPG configuration, tracked personal repositories,
-workbenches, missing and installed tmux plugins, and Go tools. Each workbench follows
-its configured upstream branch and then updates the dependencies it owns.
+`nvim-workbench`, missing and installed tmux plugins, and Go tools. The workbench
+follows its configured upstream branch and updates the dependencies it owns.
 
 Required package, installer, plugin, and Git failures return a failing exit
 status and stop dependent work. Parallel Git batches finish all workers before
@@ -125,15 +117,11 @@ explicitly optional. Missing unrelated personal checkouts are skipped during
 updates; the `t-invest-mcp` checkout must exist and update successfully before
 its tools can be built. Dotfiles refresh failures are always fatal.
 
-To update only the workbenches:
+To update only the Neovim workbench:
 
 ```bash
 make update-workbenches
 ```
-
-Third-party Codex skills remain pinned to exact commits inside
-`agent-workbench`; its update flow shows a diff and requires confirmation
-before changing an accepted pin.
 
 ## Codex launch modes
 

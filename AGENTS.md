@@ -41,9 +41,10 @@ Before editing a personal repository, inspect its `AGENTS.md`.
 - Neovim workbench: `~/Projects/IlyasYOY/nvim-workbench`
   - Neovim configuration, snippets, language integrations, personal plugin
     registration, local plugin checkout management, and Neovim runtime checks.
-- Agent workbench: `~/Projects/IlyasYOY/agent-workbench`
-  - Codex instructions, config references, commands, plugins, shared
-    and runtime-specific skills, and pinned external Codex skills.
+- Home Repo: `~/Projects/IlyasYOY`
+  - Start agent sessions in this cockpit; read its `AGENTS.md` for shared
+    instructions, skills, docs, and project routing. The retired
+    `agent-workbench` repository is archival, not an installation source.
 
 Do not modify dotfiles as a fallback when a request targets another repository.
 
@@ -83,11 +84,11 @@ workbench repository.
 
 ## Workbench orchestration
 
-- `sh/setup/workbenches.sh` is the single dotfiles entrypoint for installing
-  and updating `nvim-workbench` and `agent-workbench`.
-- Default paths come from `NVIM_WORKBENCH_DIR` and `AGENT_WORKBENCH_DIR` in
-  `sh/setup/helpers.sh`; users may override them through
-  `ILYASYOY_NVIM_WORKBENCH_DIR` and `ILYASYOY_AGENT_WORKBENCH_DIR`.
+- `sh/setup/workbenches.sh` installs and updates `nvim-workbench` only.
+- Its default path comes from `NVIM_WORKBENCH_DIR` in `sh/setup/helpers.sh`;
+  users may override it through `ILYASYOY_NVIM_WORKBENCH_DIR`.
+- Personal agent material belongs to the cockpit and is used there directly;
+  workstation setup does not install it into global agent directories.
 - Dotfiles may clone a missing workbench, but installation and dependency
   ownership stay behind that workbench's `make install` and `make update`.
 - Do not copy workbench-owned configuration back into this repository.

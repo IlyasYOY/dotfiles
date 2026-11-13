@@ -3,12 +3,20 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import textwrap
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# Apple's /usr/bin/make launcher writes xcrun_db into TMPDIR. Resolve the
+# underlying tool before testing whether setup itself touches the fake home.
+MAKE = (
+    subprocess.check_output(["xcrun", "--find", "make"], text=True).strip()
+    if sys.platform == "darwin"
+    else shutil.which("make")
+)
 
 
 class SetupTest(unittest.TestCase):
@@ -20,6 +28,7 @@ class SetupTest(unittest.TestCase):
         self.home.mkdir()
         self.bin = self.root / "bin"
         self.bin.mkdir()
+        (self.bin / "make").symlink_to(MAKE)
         self.tmp = self.root / "tmp"
         self.tmp.mkdir()
         self.env = {
@@ -429,12 +438,10 @@ INSTALL
         self.stub("node", "exit 0")
         self.stub("npm", "exit 0")
         self.prepare_tpm()
-        for name, variable in (("nvim", "ILYASYOY_NVIM_WORKBENCH_DIR"),
-                               ("agent", "ILYASYOY_AGENT_WORKBENCH_DIR")):
-            workbench = self.root / name
-            workbench.mkdir()
-            (workbench / "Makefile").write_text("install update:\n\t@touch completed-$@\n")
-            self.env[variable] = str(workbench)
+        workbench = self.root / "nvim"
+        workbench.mkdir()
+        (workbench / "Makefile").write_text("install update:\n\t@touch completed-$@\n")
+        self.env["ILYASYOY_NVIM_WORKBENCH_DIR"] = str(workbench)
         return checkout
 
     def make(self, checkout, target):
@@ -471,7 +478,8 @@ INSTALL
         self.assertEqual(rc.count("/sh/helpers.sh"), 1)
         self.assertEqual(rc.count("## start ilyasyoy sdkman config"), 1)
         self.assertTrue((self.home / "built-t-invest").exists())
-        self.assertTrue((self.root / "agent/completed-install").exists())
+        self.assertTrue((self.root / "nvim/completed-install").exists())
+        self.assertFalse((self.home / "Projects/IlyasYOY/agent-workbench").exists())
         self.assertTrue((self.home / ".tmux/plugins/declared-plugin").exists())
         self.assertNotIn("unexpected command", result.stderr)
         startup = subprocess.run(
@@ -509,7 +517,8 @@ INSTALL
         self.assertIn('brew "new-dependency"', (self.root / "installed-packages").read_text())
         self.assertTrue((required / "built").exists())
         self.assertTrue((self.home / ".tmux/plugins/declared-plugin/updated").exists())
-        self.assertTrue((self.root / "agent/completed-update").exists())
+        self.assertTrue((self.root / "nvim/completed-update").exists())
+        self.assertFalse((self.home / "Projects/IlyasYOY/agent-workbench").exists())
 
     def test_make_install_stops_after_required_failures(self):
         checkout = self.prepare_flow()
@@ -520,7 +529,7 @@ INSTALL
                 self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertNotIn("Setup completed successfully", result.stdout)
                 self.assertFalse((self.home / "built-t-invest").exists())
-                self.assertFalse((self.root / "agent/completed-install").exists())
+                self.assertFalse((self.root / "nvim/completed-install").exists())
 
     def test_make_update_stops_after_required_failures(self):
         checkout = self.prepare_flow()
@@ -531,7 +540,7 @@ INSTALL
                 result = self.make(checkout, "update")
                 self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertFalse((self.home / "built-go").exists())
-                self.assertFalse((self.root / "agent/completed-update").exists())
+                self.assertFalse((self.root / "nvim/completed-update").exists())
 
     def test_missing_required_build_checkout_stops_update(self):
         checkout = self.prepare_flow()

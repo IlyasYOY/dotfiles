@@ -22,18 +22,14 @@ ensure_workbench() {
 
 install_workbenches() {
     ensure_workbench "nvim-workbench" "$NVIM_WORKBENCH_DIR"
-    ensure_workbench "agent-workbench" "$AGENT_WORKBENCH_DIR"
 
     make -C "$NVIM_WORKBENCH_DIR" install
-    make -C "$AGENT_WORKBENCH_DIR" install
 }
 
 update_workbenches() {
     ensure_workbench "nvim-workbench" "$NVIM_WORKBENCH_DIR"
-    ensure_workbench "agent-workbench" "$AGENT_WORKBENCH_DIR"
 
     make -C "$NVIM_WORKBENCH_DIR" update
-    make -C "$AGENT_WORKBENCH_DIR" update
 }
 
 case "${1:-}" in
